@@ -1,2 +1,2 @@
 # Android
-StreetHawk SDK for Android
+Coming soon.. Please contact support@streethawk.com

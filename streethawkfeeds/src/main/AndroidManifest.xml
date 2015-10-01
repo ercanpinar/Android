@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.streethawk.library.feeds" >
+
+    <application
+        android:allowBackup="true"
+        android:label="@string/app_name" >
+        <receiver
+            android:name=".SHCoreModuleReceiver"
+            android:enabled="true"
+            android:exported="true" >
+            <intent-filter>
+                <action android:name="com.streethawk.intent.action.APP_STATUS_NOTIFICATION" />
+            </intent-filter>
+        </receiver>
+    </application>
+
+</manifest>

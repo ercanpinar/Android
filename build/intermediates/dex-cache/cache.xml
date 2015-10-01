@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        jar="/Users/anuragkondeya/AndroidStudioWorkspace/openSourceSDK_android/Android/AppDemo/build/intermediates/exploded-aar/com.streethawk/growth/1.7.0/jars/classes.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="d754348522a25495e656985765f15582a9ec713d">
+        <dex dex="/Users/anuragkondeya/AndroidStudioWorkspace/openSourceSDK_android/Android/AppDemo/build/intermediates/pre-dexed/debug/classes-a58e1497f1c3f0a3f8898f154f3bc0d6425b7853.jar" />
+    </item>
+    <item
+        jar="/Users/anuragkondeya/AndroidStudioWorkspace/openSourceSDK_android/Android/AppDemo/build/intermediates/exploded-aar/com.streethawk/beacon/1.7.0/jars/classes.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="80bd4cff11d965b0e2d8f4fc992bc600d708f686">
+        <dex dex="/Users/anuragkondeya/AndroidStudioWorkspace/openSourceSDK_android/Android/AppDemo/build/intermediates/pre-dexed/debug/classes-7d7b219bb1511df96d96458b9699addea5f9ec4c.jar" />
+    </item>
+    <item
+        jar="/Users/anuragkondeya/AndroidStudioWorkspace/openSourceSDK_android/Android/AppDemo/build/intermediates/exploded-aar/com.google.android.gms/play-services-base/7.8.0/jars/classes.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="c0c912d58c9468b1f9d9769c8975afdf2c85d681">
+        <dex dex="/Users/anuragkondeya/AndroidStudioWorkspace/openSourceSDK_android/Android/AppDemo/build/intermediates/pre-dexed/debug/classes-7178b84e4e2fc02a6ab5d37250fad00642b01a70.jar" />
+    </item>
+    <item
+        jar="/Users/anuragkondeya/Android_SDK/adt-bundle-mac-x86_64-20131030/sdk/extras/android/m2repository/com/android/support/support-annotations/23.0.0/support-annotations-23.0.0.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="990e7f98a7bad86a40b1f0bcfeb039023afd0839">
+        <dex dex="/Users/anuragkondeya/AndroidStudioWorkspace/openSourceSDK_android/Android/AppDemo/build/intermediates/pre-dexed/debug/support-annotations-23.0.0-1b66bf847f795bddf88de482402dfca9eb9aad20.jar" />
+    </item>
+    <item
+        jar="/Users/anuragkondeya/AndroidStudioWorkspace/openSourceSDK_android/Android/AppDemo/build/intermediates/exploded-aar/com.google.android.gms/play-services-gcm/7.8.0/jars/classes.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="c756d14e99d39471e99013a1e8fd2f3813ed42bf">
+        <dex dex="/Users/anuragkondeya/AndroidStudioWorkspace/openSourceSDK_android/Android/AppDemo/build/intermediates/pre-dexed/debug/classes-fdf6a53599cb9f50d16a0b872dfb7344cb47b386.jar" />
+    </item>
+    <item
+        jar="/Users/anuragkondeya/AndroidStudioWorkspace/openSourceSDK_android/Android/AppDemo/build/intermediates/exploded-aar/com.streethawk/core/1.7.0/jars/classes.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="ae77a3d36a49f6af05b20aa30d2a4723627487fb">
+        <dex dex="/Users/anuragkondeya/AndroidStudioWorkspace/openSourceSDK_android/Android/AppDemo/build/intermediates/pre-dexed/debug/classes-28347bb0b8a3d2171b7ced99294edee08475e016.jar" />
+    </item>
+    <item
+        jar="/Users/anuragkondeya/AndroidStudioWorkspace/openSourceSDK_android/Android/AppDemo/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.0.0/jars/classes.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="4fcf0b1879f8caf497c073e1432d398e9e2988c1">
+        <dex dex="/Users/anuragkondeya/AndroidStudioWorkspace/openSourceSDK_android/Android/AppDemo/build/intermediates/pre-dexed/debug/classes-c9afbd31740e88842cfe54c62beb354d1161bce8.jar" />
+    </item>
+    <item
+        jar="/Users/anuragkondeya/AndroidStudioWorkspace/openSourceSDK_android/Android/AppDemo/build/intermediates/exploded-aar/com.google.android.gms/play-services-location/7.8.0/jars/classes.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="4a135d56554069e5d0ff80e3220e887e57146ee5">
+        <dex dex="/Users/anuragkondeya/AndroidStudioWorkspace/openSourceSDK_android/Android/AppDemo/build/intermediates/pre-dexed/debug/classes-9069f4aca2c85e44329a40ad84c652463f29c0a6.jar" />
+    </item>
+    <item
+        jar="/Users/anuragkondeya/AndroidStudioWorkspace/openSourceSDK_android/Android/AppDemo/build/intermediates/exploded-aar/com.streethawk/push/1.7.0/jars/classes.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="fb7193964a48289f393ccda8ea2e8bef04243e91">
+        <dex dex="/Users/anuragkondeya/AndroidStudioWorkspace/openSourceSDK_android/Android/AppDemo/build/intermediates/pre-dexed/debug/classes-1513783ffd271adf3ccf48bd2e27922c1a090746.jar" />
+    </item>
+    <item
+        jar="/Users/anuragkondeya/AndroidStudioWorkspace/openSourceSDK_android/Android/AppDemo/build/intermediates/exploded-aar/com.streethawk/locations/1.7.0/jars/classes.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="ba39c112f4abae0d854cbb73279e9bb4351c71f8">
+        <dex dex="/Users/anuragkondeya/AndroidStudioWorkspace/openSourceSDK_android/Android/AppDemo/build/intermediates/pre-dexed/debug/classes-38176018b471ba2360685fce71154701ef7682c6.jar" />
+    </item>
+    <item
+        jar="/Users/anuragkondeya/AndroidStudioWorkspace/openSourceSDK_android/Android/AppDemo/build/intermediates/exploded-aar/com.google.android.gms/play-services-maps/7.8.0/jars/classes.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="cb6fab7a71fa9ec1f483d44c5fca65ab469d8aca">
+        <dex dex="/Users/anuragkondeya/AndroidStudioWorkspace/openSourceSDK_android/Android/AppDemo/build/intermediates/pre-dexed/debug/classes-3dc66b154d64e27c68bdd8d92410121444f4b5fc.jar" />
+    </item>
+    <item
+        jar="/Users/anuragkondeya/AndroidStudioWorkspace/openSourceSDK_android/Android/AppDemo/build/intermediates/exploded-aar/com.android.support/support-v4/23.0.0/jars/classes.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="8413c27b45b7fe61dca4a98159f65e2cee215f5a">
+        <dex dex="/Users/anuragkondeya/AndroidStudioWorkspace/openSourceSDK_android/Android/AppDemo/build/intermediates/pre-dexed/debug/classes-276db61b0801d049e506540ff8d8cb7fede021b3.jar" />
+    </item>
+    <item
+        jar="/Users/anuragkondeya/AndroidStudioWorkspace/openSourceSDK_android/Android/AppDemo/build/intermediates/exploded-aar/com.android.support/support-v4/23.0.0/jars/libs/internal_impl-23.0.0.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="8bd336eeae661e8311330284897ee07f8ebaa297">
+        <dex dex="/Users/anuragkondeya/AndroidStudioWorkspace/openSourceSDK_android/Android/AppDemo/build/intermediates/pre-dexed/debug/internal_impl-23.0.0-34f9400fe81b380f596037f16f1494f98e2a63d2.jar" />
+    </item>
+
+</items>

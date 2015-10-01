@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="push-1.7.0">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/AppDemo/build/intermediates/exploded-aar/com.streethawk/push/1.7.0/res" />
+      <root url="jar://$PROJECT_DIR$/AppDemo/build/intermediates/exploded-aar/com.streethawk/push/1.7.0/jars/classes.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.streethawk/push/1.7.0/225feb12e11eead829893c684e4e49200a9bb5a1/push-1.7.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

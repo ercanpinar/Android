@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="growth-1.7.0">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/AppDemo/build/intermediates/exploded-aar/com.streethawk/growth/1.7.0/jars/classes.jar!/" />
+      <root url="file://$PROJECT_DIR$/AppDemo/build/intermediates/exploded-aar/com.streethawk/growth/1.7.0/res" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.streethawk/growth/1.7.0/5bc80cab74b51f36d04a5ac14f7d2e20070e07b3/growth-1.7.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

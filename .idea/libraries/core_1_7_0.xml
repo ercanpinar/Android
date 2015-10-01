@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="core-1.7.0">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/streethawkgrowth/build/intermediates/exploded-aar/com.streethawk/core/1.7.0/res" />
+      <root url="jar://$PROJECT_DIR$/streethawkgrowth/build/intermediates/exploded-aar/com.streethawk/core/1.7.0/jars/classes.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.streethawk/core/1.7.0/7dfb8a908af6f793bbe34366ddd6f3e48d7c7eeb/core-1.7.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

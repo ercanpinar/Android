@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<resources>
+    <!--Required, your Segment project write key-->
+    <string name="analytics_write_key">m32GZxXgB0KVnKSbRLkLdskQqBPqE0Ks</string>
+</resources>

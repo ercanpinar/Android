@@ -34,7 +34,6 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.streethawk:core:1.7.0'
+    compile project (':streethawkcore')
     compile 'com.google.android.gms:play-services-location:7.8.0'
 }
-apply from: 'https://raw.github.com/chrisbanes/gradle-mvn-push/master/gradle-mvn-push.gradle'

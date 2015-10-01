@@ -21,21 +21,9 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-
-    /*
     compile project (':streethawkcore')
     compile project (':streethawkgrowth')
     compile project (':streethawkpush')
     compile project (':streethawklocations')
     compile project (':streethawkbeacon')
-    */
-
-    compile 'com.streethawk:core:1.7.0'
-    compile 'com.streethawk:growth:1.7.0'
-    compile 'com.streethawk:push:1.7.0'
-    compile 'com.streethawk:locations:1.7.0'
-    compile 'com.streethawk:beacon:1.7.0'
-
-
-
 }

@@ -50,8 +50,8 @@ class LoggingBase {
 
     /*Member variables*/
     private static String mHostUrl = null;
-    public static final String PROD_DEFAULT_HOST_URL = "https://api.streethawk.com";
-
+    //public static final String PROD_DEFAULT_HOST_URL = "https://api.streethawk.com";
+    public static final String PROD_DEFAULT_HOST_URL = "https://dev.streethawk.com";
     public enum ApiMethod {
         APP_GET_STATUS,
         USER_ALERT_SETTINGS,

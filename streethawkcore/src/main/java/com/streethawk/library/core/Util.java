@@ -257,7 +257,7 @@ public class Util {
         if (tmpAppKey != null && (!tmpAppKey.isEmpty())) {
             return tmpAppKey.replace(" ", "");
         } else {
-            Log.e(TAG, SUBTAG + "no app_key mentioned in AndroidManifest.xml. Please refer to Android SDK integration docs");
+            Log.e(TAG, SUBTAG + "No App key specified");
             return null;
         }
     }

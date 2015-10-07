@@ -27,5 +27,6 @@ class Constants {
    public static final  int BLE_SCAN_INTERVAL_BG = 2 * ONE_MINUTE;         // 2 minutes
    public static final  int BLE_SCAN_INTERVAL_FG = 1 * ONE_MINUTE;         // 1 minute
    public static final String BEACON_MONITOR_FLAG = "beaconmonitorflag";
+   public static final int CODE_IBEACON_UPDATES = 21;
 
 }

@@ -105,6 +105,14 @@ public enum StreetHawk {
 
     }
 
+    /**
+     * API to get version of StreetHawk Library
+     *
+     * @return version
+     */
+    public String getSHLibraryVersion() {
+        return Constants.SHLIBRARY_VERSION;
+    }
 
     /**
      * Set device's Advertisement ID into StreetHawk SDK
@@ -192,6 +200,49 @@ public enum StreetHawk {
             }
         }).start();
     }
+
+
+    /**
+     * Call notifyEnterView when a view or fragment is visible to user
+     * @param viewName
+     */
+    public void notifyViewEnter(final String viewName){
+        if(null==viewName)
+            return;
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Bundle extras = new Bundle();
+                extras.putString(Constants.CODE, Integer.toString(Constants.CODE_USER_ENTER_ACTIVITY));
+                extras.putString(Constants.SHMESSAGE_ID, null);
+                extras.putString(Constants.TYPE_STRING, viewName);
+                final Logging shManager = Logging.getLoggingInstance(mContext);
+                shManager.addLogsForSending(extras);
+            }
+        }).start();
+
+    }
+
+    /**
+     * Call notifyEnterView when user exits a view or fragment
+     * @param viewName
+     */
+    public void notifyViewExit(final String viewName){
+        if(null==viewName)
+            return;
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Bundle extras = new Bundle();
+                extras.putString(Constants.CODE, Integer.toString(Constants.CODE_USER_LEAVE_ACTIVITY));
+                extras.putString(Constants.SHMESSAGE_ID, null);
+                extras.putString(Constants.TYPE_STRING,viewName);
+                final Logging shManager = Logging.getLoggingInstance(mContext);
+                shManager.addLogsForSending(extras);
+            }
+        }).start();
+    }
+
 
     @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     private void setActivityLifecycleCallbacks(Application application) {
@@ -617,6 +668,15 @@ public enum StreetHawk {
         }
     }
 
+    /**
+     * API return app_key used by StreetHawk to identify your application
+     *
+     * @return app_key for server conversation.
+     */
+    public String getAppKey(Context context) {
+       return Util.getAppKey(context);
+    }
+
 
 
 
@@ -815,7 +875,6 @@ public enum StreetHawk {
      *
      * @param pauseMinutes minutes to be paused
      */
-
     public void shAlertSetting(final int pauseMinutes) {
         if (null == mContext) {
             Log.e(Util.TAG, SUBTAG + "Streethawk is not initialized properly in your app");
@@ -832,6 +891,4 @@ public enum StreetHawk {
             e.printStackTrace();
         }
     }
-
-
 }

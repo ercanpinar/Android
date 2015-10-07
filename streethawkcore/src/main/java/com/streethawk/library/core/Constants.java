@@ -90,7 +90,7 @@ class Constants {
     /*Library version*/
     public final static String SELLING_ARGUMENT    = "1";
     public final static String FEATURE_NUMBER      = "7";
-    public final static String BUGFIX_NUMBER       = "0";
+    public final static String BUGFIX_NUMBER       = "1";
 
     /*Release parameters */
     public static final String SHLIBRARY_VERSION = SELLING_ARGUMENT + "." + FEATURE_NUMBER + "." + BUGFIX_NUMBER;

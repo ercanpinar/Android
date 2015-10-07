@@ -5,3 +5,4 @@ AppDemo/AppDemo.iml
 build/
 gradle/
 local.properties
+gradle.properties

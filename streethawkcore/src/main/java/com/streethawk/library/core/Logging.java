@@ -427,10 +427,13 @@ public class Logging extends LoggingBase {
                                     String ack_key = object.getString(JSON_VALUE);
                                     staggingEdit.remove(ack_key);
                                     staggingEdit.commit();
+
                                 } catch (JSONException e) {
                                 }
 
                                 processAppStatusCall(answer);
+                                //Recursion for flushing failed bundles
+                                flushLogsToServer(null);
                             } else {
                                 processErrorAckFromServer(answer);
                             }

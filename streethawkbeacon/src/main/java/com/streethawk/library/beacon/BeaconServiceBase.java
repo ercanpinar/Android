@@ -59,7 +59,6 @@ public abstract class BeaconServiceBase extends Service {
 
     private static HashMap<String, Double> mVisibleBeacons = new HashMap<String, Double>();     // lists beacons which are visible in this scan
     private static HashMap<String, Double> mOldBeacons = new HashMap<String, Double>();         // lists beacons which were seen in previous iterarion
-    private final int CODE_IBEACON_UPDATES = 21;
 
     public BeaconServiceBase(Context context) {
         this.mContext = context;
@@ -101,7 +100,7 @@ public abstract class BeaconServiceBase extends Service {
             mOldBeacons.clear();
             return;
         }
-        params.putString(Util.CODE, Integer.toString(CODE_IBEACON_UPDATES));
+        params.putString(Util.CODE, Integer.toString(Constants.CODE_IBEACON_UPDATES));
         params.putString(Util.SHMESSAGE_ID, null);
         params.putString("json", object.toString());
         manager.addLogsForSending(params);
@@ -317,7 +316,7 @@ public abstract class BeaconServiceBase extends Service {
             if (object.toString().equals("{ }")) {
                 return;
             }
-            params.putString(Util.CODE, Integer.toString(CODE_IBEACON_UPDATES));
+            params.putString(Util.CODE, Integer.toString(Constants.CODE_IBEACON_UPDATES));
             params.putString(Util.SHMESSAGE_ID, null);
             params.putString("json", object.toString());
             Log.i(Util.TAG, SUBTAG + "Notifying beacons detected" + object.toString());

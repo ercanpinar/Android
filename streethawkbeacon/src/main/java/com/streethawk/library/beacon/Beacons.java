@@ -20,9 +20,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
+import android.os.Bundle;
 import android.util.Log;
 
 import com.streethawk.library.core.*;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class Beacons extends PluginBase {
 
@@ -38,6 +42,99 @@ public class Beacons extends PluginBase {
             mInstance = new Beacons();
         return mInstance;
     }
+
+    /**
+     * API to notify streethawk server when device enters a beacon region.
+     * Use this API if you are using third party library support for beacons
+     * Please note that respective beacon's parameters (UUID major and minor) needs to be registered with Streethawk server
+     *
+     * @param UUID     UUID of the beacon detected
+     * @param major    major number of beacon detected
+     * @param minor    minor number of beacon detected
+     * @param distance distance of beacon from device
+     * @return 0 for successful reporting
+     * -1 for error, Check logcat messages for details
+     */
+    public int shEnterBeacon(final Context context, String UUID, int major, int minor, double distance) {
+        if (null == context)
+            return -1;
+        if (null == UUID) {
+            Log.e(Util.TAG, "UUID cannot be null");
+            return -1;
+        }
+        BeaconDB beaconDB = BeaconDB.getInstance(context);
+        String beaconId = beaconDB.getBeaconId(UUID, major, minor);
+        if (null == beaconId) {
+            Log.w(Util.TAG, "Beacon not found in streethawk list. Beacon is ignored from reporting");
+            return -1;
+        } else {
+            final JSONObject object = new JSONObject();
+            try {
+                object.put(beaconId,distance);
+            } catch (JSONException e) {
+                e.printStackTrace();
+                return -1;
+            }
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    Logging manager = Logging.getLoggingInstance(context);
+                    Bundle params = new Bundle();
+                    params.putString(Util.CODE, Integer.toString(Constants.CODE_IBEACON_UPDATES));
+                    params.putString(Util.SHMESSAGE_ID, null);
+                    params.putString("json", object.toString());
+                    manager.addLogsForSending(params);
+                }
+            }).start();
+        }
+        return -1;
+    }
+
+    /**
+     * API to notify streethawk server when device exits a beacon region.
+     * Use this API if you are using third party library support for beacons
+     *
+     * @param UUID  UUID of the beacon detected
+     * @param major major number of beacon detected
+     * @param minor distance of beacon from device
+     * @return 0 for successful reporting
+     * -1 for error, Check logcat messages for details
+     */
+    public int shExitBeacon(final Context context, String UUID, int major, int minor) {
+        if (null == context)
+            return -1;
+        if (null == UUID) {
+            Log.e(Util.TAG, "UUID cannot be null");
+            return -1;
+        }
+        BeaconDB beaconDB = BeaconDB.getInstance(context);
+        String beaconId = beaconDB.getBeaconId(UUID, major, minor);
+        if (null == beaconId) {
+            Log.w(Util.TAG, "Beacon not found in streethawk list. Beacon is ignored from reporting");
+            return -1;
+        } else {
+            final JSONObject object = new JSONObject();
+            try {
+                object.put(beaconId,-1);
+            } catch (JSONException e) {
+                e.printStackTrace();
+                return -1;
+            }
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    Logging manager = Logging.getLoggingInstance(context);
+                    Bundle params = new Bundle();
+                    params.putString(Util.CODE, Integer.toString(Constants.CODE_IBEACON_UPDATES));
+                    params.putString(Util.SHMESSAGE_ID, null);
+                    params.putString("json", object.toString());
+                    manager.addLogsForSending(params);
+                }
+            }).start();
+        }
+        return -1;
+    }
+
 
     private boolean isDeviceSupportBLE() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2)

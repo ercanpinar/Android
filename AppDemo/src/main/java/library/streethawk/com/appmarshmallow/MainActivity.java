@@ -43,9 +43,9 @@ public class MainActivity extends Activity implements ISHObserver {
         Push.getInstance(this).registerSHObserver(this);  //Register this class as implementation of ISHObserver
 
         // Enter your project number here (https://streethawk.freshdesk.com/solution/articles/5000608997)
-        Push.getInstance(this).registerForPushMessaging(app,"<REPLACE_PROJECT_NUMBER>");
+        Push.getInstance(this).registerForPushMessaging(app,"<PROJECT_NUMBER>");
         // Enter APP_KEY for your application registered with StreetHawk server
-        StreetHawk.INSTANCE.setAppKey("<REPLACE_YOUR_APP_KEY>");
+        StreetHawk.INSTANCE.setAppKey("<APP_KEY>");
         StreetHawk.INSTANCE.init(app);
     }
 

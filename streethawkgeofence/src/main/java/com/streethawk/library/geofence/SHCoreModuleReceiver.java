@@ -81,6 +81,7 @@ public class SHCoreModuleReceiver extends BroadcastReceiver {
                         logMap.put(Util.INSTALL_ID, installId);
                         BufferedReader reader = null;
                         try {
+                            String libVersion = Util.getLibraryVersion();
                             URL url = Util.getGeofenceUrl(context);
                             HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
                             connection.setReadTimeout(10000);
@@ -90,7 +91,8 @@ public class SHCoreModuleReceiver extends BroadcastReceiver {
                             connection.setDoOutput(true);
                             connection.setRequestProperty("X-Installid", installId);
                             connection.setRequestProperty("X-App-Key", app_key);
-                            connection.setRequestProperty("User-Agent", app_key + "(" + Util.getLibraryVersion() + ")");
+                            connection.setRequestProperty("X-Version",libVersion);
+                            connection.setRequestProperty("User-Agent", app_key + "(" + libversion + ")");
                             OutputStream os = connection.getOutputStream();
                             BufferedWriter writer = new BufferedWriter(
                                     new OutputStreamWriter(os, "UTF-8"));

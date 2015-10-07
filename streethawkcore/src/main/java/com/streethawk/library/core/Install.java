@@ -302,9 +302,10 @@ class Install extends LoggingBase {
                     connection.setRequestMethod("POST");
                     connection.setDoInput(true);
                     connection.setDoOutput(true);
-                    connection.setRequestProperty("X-Installid",installId);
+                    connection.setRequestProperty("X-Installid", installId);
                     connection.setRequestProperty("X-App-Key", app_key);
-                    connection.setRequestProperty("User-Agent", app_key + "(" + Util.getLibraryVersion() + ")");
+                    String libVersion = Util.getLibraryVersion();
+                    connection.setRequestProperty("User-Agent", app_key + "(" + libVersion + ")");
                     OutputStream os = connection.getOutputStream();
                     BufferedWriter writer = new BufferedWriter(
                             new OutputStreamWriter(os, "UTF-8"));

@@ -485,7 +485,9 @@ public class StreetHawkCoreService extends Service implements Thread.UncaughtExc
                         conn.setDoOutput(true);
                         conn.setRequestProperty("X-Installid", installId);
                         conn.setRequestProperty("X-App-Key", app_key);
-                        conn.setRequestProperty("User-Agent", app_key + "(" + Util.getLibraryVersion() + ")");
+                        String libVersion = Util.getLibraryVersion();
+                        conn.setRequestProperty("X-Version",libVersion);
+                        conn.setRequestProperty("User-Agent", app_key + "(" + libVersion + ")");
                         conn.setRequestProperty("Connection", "Keep-Alive");
                         conn.setRequestProperty("Cache-Control", "no-cache");
                         conn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);

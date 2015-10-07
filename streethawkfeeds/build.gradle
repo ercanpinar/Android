@@ -27,12 +27,12 @@ android {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            proguardFile '/Users/anuragkondeya/AndroidStudioWorkspace/StreetHawkModuleCode/StreetHawkSDK/streethawkfeeds/proguard-rules.pro'
+            proguardFile '/Users/anuragkondeya/AndroidStudioWorkspace/opensourceSDK/Android/streethawkfeeds/proguard-rules.pro'
         }
     }
 }
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile project (':streethawkcore')
+    compile project(':streethawkcore')
 }

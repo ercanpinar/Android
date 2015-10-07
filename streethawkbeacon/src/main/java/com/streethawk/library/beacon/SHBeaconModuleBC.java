@@ -122,6 +122,7 @@ public class SHBeaconModuleBC extends BroadcastReceiver {
                         try {
                             URL url = Util.getBeaconUrl(context);
                             HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+                            String libVersion = Util.getLibraryVersion();
                             connection.setReadTimeout(10000);
                             connection.setConnectTimeout(15000);
                             connection.setRequestMethod("GET");
@@ -129,7 +130,8 @@ public class SHBeaconModuleBC extends BroadcastReceiver {
                             connection.setDoOutput(true);
                             connection.setRequestProperty("X-Installid", installId);
                             connection.setRequestProperty("X-App-Key", app_key);
-                            connection.setRequestProperty("User-Agent", app_key + "(" + Util.getLibraryVersion() + ")");
+                            connection.setRequestProperty("X-Version",libVersion);
+                            connection.setRequestProperty("User-Agent", app_key + "(" + libVersion + ")");
                             OutputStream os = connection.getOutputStream();
                             BufferedWriter writer = new BufferedWriter(
                                     new OutputStreamWriter(os, "UTF-8"));

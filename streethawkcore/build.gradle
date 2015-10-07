@@ -28,7 +28,7 @@ android {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            proguardFile '/Users/anuragkondeya/AndroidStudioWorkspace/StreetHawkModuleCode/StreetHawkSDK/streethawkcore/proguard-rules.pro'
+            proguardFile '/Users/anuragkondeya/AndroidStudioWorkspace/opensourceSDK/Android/streethawkcore/proguard-rules.pro'
         }
     }
 }

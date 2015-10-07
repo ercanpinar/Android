@@ -148,9 +148,11 @@ class AlertSettings extends LoggingBase{
             connection.setRequestMethod("GET");
             connection.setDoInput(true);
             connection.setDoOutput(true);
+            String libVersion = Util.getLibraryVersion();
             connection.setRequestProperty("X-Installid", installId);
             connection.setRequestProperty("X-App-Key", app_key);
-            connection.setRequestProperty("User-Agent", app_key + "(" + Util.getLibraryVersion()+ ")");
+            connection.setRequestProperty("X-Version",libVersion);
+            connection.setRequestProperty("User-Agent", app_key + "(" + libVersion+ ")");
             connection.connect();
 
             if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
@@ -208,9 +210,11 @@ class AlertSettings extends LoggingBase{
             connection.setRequestMethod("POST");
             connection.setDoInput(true);
             connection.setDoOutput(true);
+            String libVersion = Util.getLibraryVersion();
             connection.setRequestProperty("X-Installid", installId);
             connection.setRequestProperty("X-App-Key", app_key);
-            connection.setRequestProperty("User-Agent", app_key + "(" + Util.getLibraryVersion() + ")");
+            connection.setRequestProperty("X-Version",libVersion);
+            connection.setRequestProperty("User-Agent", app_key + "(" + libVersion + ")");
             connection.setRequestProperty(COOKIE_KEY, SESSION_ID_KEY + "=" + Util.getSessionId(mContext));
             connection.connect();
             OutputStream os = connection.getOutputStream();

@@ -1,0 +1,47 @@
+<resources>
+    <string name="STREETHAWK_SHOW_URL_POSITIVE">Show</string>
+    <string name="STREETHAWK_SHOW_URL_NEGATIVE">Cancel</string>
+    <string name="STREETHAWK_SHOW_URL_CLOSE">Close</string>
+
+    <string name="STREETHAWK_OPEN_APP_POSITIVE">Open</string>
+    <string name="STREETHAWK_OPEN_APP_NEGATIVE">Cancel</string>
+
+    <string name="STREETHAWK_RATE_POSITIVE">Rate</string>
+    <string name="STREETHAWK_RATE_NEGATIVE">Later</string>
+    <string name="STREETHAWK_RATE_NEUTRAL">Decline</string>
+
+    <string name="STREETHAWK_UPDATE_POSITIVE">Update</string>
+    <string name="STREETHAWK_UPDATE_NEGATIVE">Decline</string>
+
+    <string name="STREETHAWK_CALL_POSITIVE">Call</string>
+    <string name="STREETHAWK_CALL_NEGATIVE">Cancel</string>
+
+    <string name="STREETHAWK_SIMPLE_MESSAGE_POSITIVE">Okay</string>
+    <string name="STREETHAWK_SIMPLE_MESSAGE_NOTIFICATION_POSITIVE">Read</string>
+
+    <string name="STREETHAWK_RAW_JSON_POSITIVE">Open</string>
+    <string name="STREETHAWK_RAW_JSON_NEGATIVE">Decline</string>
+
+
+    <string name="STREETHAWK_PUSH_POSITIVE">Enable</string>
+    <string name="STREETHAWK_PUSH_NEGATIVE">Dismiss</string>
+
+    <string name="STREETHAWK_LOCATION_POSITIVE">Enable</string>
+    <string name="STREETHAWK_LOCATION_NEGATIVE">Dismiss</string>
+
+    <string name="STREETHAWK_BLUETOOTH_POSITIVE">Enable</string>
+    <string name="STREETHAWK_BLUETOOTH_NEGATIVE">Dismiss</string>
+
+    <string name="STREETHAWK_FEEDBACK_POSITIVE">Show</string>
+    <string name="STREETHAWK_FEEDBACK_NEGATIVE">Dismiss</string>
+    <string name="STREETHAWK_FEEDBACK_SUBMIT">Submit</string>
+    <string name="STREETHAWK_FEEDBACK_CANCEL">Cancel</string>
+    <string name="STREETHAWK_FEEDBACK_HINT_TITLE">Enter title for feedback</string>
+    <string name="STREETHAWK_FEEDBACK_HINT_CONTENT">Enter feedback here</string>
+    <string name="STREETHAWK_FEEDBACK_TOAST_SUCCESS">Thanks for your feedback</string>
+    <string name="STREETHAWK_FEEDBACK_TOAST_ERROR">Please enter your feedback message</string>
+    <string name="STREETHAWK_GROWTH_DEFAULT_EMAIL_SUBJECT">Hey! Download an amazing application</string>
+    <string name="STREETHAWK_GROWTH_DEFAULT_EMAIL_BODY">Hi Download an amazing application from the link below </string>
+    <string name="BLUETOOTH_ENABLE_TOAST">Bluetooth is turned on </string>
+
+</resources>

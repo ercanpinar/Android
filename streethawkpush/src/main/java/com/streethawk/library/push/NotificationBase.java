@@ -279,7 +279,7 @@ class NotificationBase {
                 break;
 
             case TYPE_SIMPLE_PUSH_NOTIFICATION_POSITIVE:
-                id = context.getResources().getIdentifier("SIMPLE_PUSH_NOTIFICATION_POSITIVE", "string", packageName);
+                id = context.getResources().getIdentifier("STREETHAWK_SIMPLE_MESSAGE_NOTIFICATION_POSITIVE", "string", packageName);
                 if (0 == id)
                     return SIMPLE_PUSH_NOTIFICATION_POSITIVE;
                 break;

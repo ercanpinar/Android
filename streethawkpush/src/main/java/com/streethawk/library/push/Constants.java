@@ -39,6 +39,9 @@ class Constants {
     public static final String KEY_REGISTEREDREQUESTED = "isPushRegistered";
     public static final String PROPERTY_APP_VERSION = "app_version";
 
+    public static final String IS_PUSH_FIRST_RUN = "ispushfirstrun";
+
+
     //Results
     public static final int STREETHAWK_ACCEPTED = 1;
     public static final int STREETHAWK_DECLINED = -1;

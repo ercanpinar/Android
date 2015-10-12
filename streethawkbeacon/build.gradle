@@ -36,5 +36,8 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
+    //compile 'com.streethawk:core:1.7.3'
     compile project(':streethawkcore')
 }
+
+//apply from: '../sh_maven_push.gradle'

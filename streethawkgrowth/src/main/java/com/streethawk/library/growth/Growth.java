@@ -21,8 +21,10 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.os.Build;
+import android.util.Log;
 
 import com.streethawk.library.core.PluginBase;
+import com.streethawk.library.core.Util;
 
 public class Growth extends PluginBase{
 
@@ -30,6 +32,7 @@ public class Growth extends PluginBase{
     private static Context mContext;
     private final String SUBTAG = "Growth";
     private static boolean activityLifecycleRegistered = false;
+    private String REGISTERED = "flaggrowthregister";
 
     private static Growth mGrowth = null;
 
@@ -139,6 +142,33 @@ public class Growth extends PluginBase{
             }
         }).start();
     }
+
+    /**
+     * Call addGrowthModule() to add growth modules in installs which have already been released with StreetHawk core module.
+     */
+    public void addGrowthModule(){
+        String installId = Util.getInstallId(mContext);
+        if(null==installId) {
+            // For this case
+            Log.e(Util.TAG, SUBTAG + " install not registered when init was called");
+            return;
+        }
+        else{
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    boolean isRegistered = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE).getBoolean(REGISTERED,false);
+                    if(!isRegistered){
+                        Register object =  new Register(mContext);
+                        object.registerStreetHawkGrowth();
+                    }
+                }
+            }).start();
+            return;
+        }
+    }
+
+
 
     @Override
     public void notifyInstallRegistered(Context context) {

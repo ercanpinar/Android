@@ -67,7 +67,6 @@ public class Push extends PluginBase {
     private static final int MAX_ATTEMPTS = 5;
     private static final int BACKOFF_MILLI_SECONDS = 2000;
     private static final String SHGCM_SENDER_KEY_APP = "shgcmsenderkeyapp";
-    private final String KEY_REGISTEREDREQUESTED = "isPushRegistered";
     private static final String SUBTAG = "PUSH ";
     private static ISHObserver mISHObserverObject = null;
     private boolean activityLifecycleRegistered = false;
@@ -280,9 +279,10 @@ public class Push extends PluginBase {
             return true;
         } else {
             Log.i(Util.TAG, SUBTAG + "Install not registered with StreetHawk");
-            final SharedPreferences prefs = getGcmPreferences();
+
+            SharedPreferences prefs = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
             final SharedPreferences.Editor e = prefs.edit();
-            e.putBoolean(KEY_REGISTEREDREQUESTED, true);
+            e.putBoolean(Util.SHGCMREGISTERED, false);
             e.commit();
             return false;
         }
@@ -510,7 +510,7 @@ public class Push extends PluginBase {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                if (getGcmPreferences().getBoolean(KEY_REGISTEREDREQUESTED, false)) {
+                if(!isPushRegistered()){
                     register();
                 }
             }
@@ -530,8 +530,29 @@ public class Push extends PluginBase {
                 displayPendingDialog(context);
             }
         });
+    }
 
+    /**
+     * Call addPushModule() to add growth modules in installs which have already been released with StreetHawk core module.
+     */
+    public void addPushModule(){
+        String installId = Util.getInstallId(mContext);
+        if(null==installId) {
+            // For this case
+            Log.e(Util.TAG,SUBTAG+" install not registered when init was called");
+            return;
+        }
+        else{
+            if(!isPushRegistered()){
+                register();
+            }
+            return;
+        }
+    }
 
+    private boolean isPushRegistered(){
+        SharedPreferences prefs = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
+        return prefs.getBoolean(Util.SHGCMREGISTERED, false);
     }
 
     private void hideSoftKeyboard() {
@@ -545,7 +566,7 @@ public class Push extends PluginBase {
 
     @Override
     public void notifyInstallRegistered(Context context) {
-        if (getGcmPreferences().getBoolean(KEY_REGISTEREDREQUESTED, true)) {
+        if(!isPushRegistered()){
             register();
         }
     }

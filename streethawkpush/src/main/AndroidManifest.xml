@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="library.streethawk.com.streethawkpush" >
+    package="library.streethawk.com.streethawkpush">
 
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
@@ -12,18 +12,19 @@
 
     <application
         android:allowBackup="true"
-        android:label="@string/app_name" >
+        android:label="@string/app_name">
         <activity
             android:name="com.streethawk.library.push.SHFeedbackActivity"
-            android:label="@string/title_activity_shfeedback" >
-        </activity>
-
+            android:label="@string/title_activity_shfeedback"></activity>
         <service
-            android:name="com.streethawk.library.push.GCMIntentService"
-            android:exported="false" >
+            android:name="com.streethawk.library.push.SHGcmListenerService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+            </intent-filter>
         </service>
 
-        <receiver android:name="com.streethawk.library.push.PushNotificationBroadcastReceiver" >
+        <receiver android:name="com.streethawk.library.push.PushNotificationBroadcastReceiver">
             <intent-filter>
                 <action android:name="com.streethawk.intent.action.pushnotification" />
                 <action android:name="com.streethawk.intent.action.gcm.STREETHAWK_DECLINED" />
@@ -32,6 +33,15 @@
                 <action android:name="com.streethawk.intent.action.APP_STATUS_NOTIFICATION" />
             </intent-filter>
         </receiver>
+
+        <service
+            android:name="com.streethawk.library.push.SHInstanceIDListenerService"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.google.android.gms.iid.InstanceID"/>
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

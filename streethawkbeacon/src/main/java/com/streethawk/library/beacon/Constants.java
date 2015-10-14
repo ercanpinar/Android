@@ -21,6 +21,10 @@ package com.streethawk.library.beacon;
  * String constants
  */
 class Constants {
+
+   public static final String TAG = "StreetHawk";
+   public static final String SUBTAG = "Beacon ";
+
    public static final String BROADCAST_BEACON_SCAN_TRIGGER = "com.streethawk.intent.action.gcm.STREETHAWK_APP_BEACON_WIFI_MODE";
    public static final  int ONE_SECOND = 1000;
    public static final  int ONE_MINUTE = 60 * ONE_SECOND;

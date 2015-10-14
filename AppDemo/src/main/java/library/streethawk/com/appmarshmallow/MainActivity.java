@@ -11,7 +11,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
-import com.streethawk.library.beacon.Beacons;
 import com.streethawk.library.core.StreetHawk;
 import com.streethawk.library.growth.Growth;
 import com.streethawk.library.locations.SHLocation;
@@ -36,16 +35,16 @@ public class MainActivity extends Activity implements ISHObserver {
         * registerSHPlugin call is not required if you wish to use only core module
         * */
 
-        StreetHawk.INSTANCE.registerSHPlugin(Growth.getInstance(app, this));
-        StreetHawk.INSTANCE.registerSHPlugin(Push.getInstance(this));
-        StreetHawk.INSTANCE.registerSHPlugin(SHLocation.getInstance(this));
-        StreetHawk.INSTANCE.registerSHPlugin(Beacons.getInstance(this));
-        Push.getInstance(this).registerSHObserver(this);  //Register this class as implementation of ISHObserver
+        //StreetHawk.INSTANCE.registerSHPlugin(Growth.getInstance(app, this));
+        //StreetHawk.INSTANCE.registerSHPlugin(Push.getInstance(this));
+        //StreetHawk.INSTANCE.registerSHPlugin(SHLocation.getInstance(this));
+        //StreetHawk.INSTANCE.registerSHPlugin(Beacons.getInstance(this));
 
+       Push.getInstance(this).registerSHObserver(this);  //Register this class as implementation of ISHObserver
         // Enter your project number here (https://streethawk.freshdesk.com/solution/articles/5000608997)
-        Push.getInstance(this).registerForPushMessaging(app,"<REPLACE_WITH_YOUR_PROJECT_NUMBER>");
+        Push.getInstance(this).registerForPushMessaging("<PROJECT_NUMBER>");
         // Enter APP_KEY for your application registered with StreetHawk server
-        StreetHawk.INSTANCE.setAppKey("<REPLACE_WITH_YOUR_APP_KEY>");
+        StreetHawk.INSTANCE.setAppKey("<APP_KEY>");
         StreetHawk.INSTANCE.init(app);
     }
 
@@ -56,7 +55,7 @@ public class MainActivity extends Activity implements ISHObserver {
         StreetHawk.INSTANCE.tagCuid("support@streethawk.com");
 
         // Start Beacon Monitoring.
-        Beacons.getInstance(this).startBeaconService();
+        //Beacons.INSTANCE.startBeaconService();
 
     }
 
@@ -88,7 +87,7 @@ public class MainActivity extends Activity implements ISHObserver {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    SHLocation.getInstance(this).startLocationReporting(getApplication());
+                    SHLocation.getInstance(this).startLocationReporting();
                 } else {
 
                     Log.e(TAG, "Permission not granted by user");
@@ -104,12 +103,12 @@ public class MainActivity extends Activity implements ISHObserver {
      */
     public void Growth(View view){
         // Call originateShare API to generate and share universal link
-        Growth.getInstance(getApplication(), this).originateShareWithCampaign("1", "<Deeplink URL>", null);
+        Growth.getInstance(this).originateShareWithCampaign("1", "<Deeplink URL>", null);
     }
 
 
     /**
-     * Sample code for asing permission and enabling location reporting for Andorid M devices.
+     * Sample code for asking permission and enabling location reporting for Andorid M devices.
      * @param v
      */
     public void StartLocationReporting(View v) {

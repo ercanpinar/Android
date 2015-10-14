@@ -21,6 +21,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -34,12 +35,13 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.util.HashMap;
-import java.util.Set;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -65,6 +67,7 @@ class Install extends LoggingBase {
 
         public String macaddress;
         public String ipaddress;
+
         public void fillFromJson(Context context, JSONObject item) throws JSONException {
             if (item == null) {
                 return;
@@ -127,15 +130,12 @@ class Install extends LoggingBase {
 
     } //End of class InstallInfo
 
-    private Set<PluginBase> mPluginArray;
+    //private Set<PluginBase> mPluginArray;
 
     public static final int INSTALL_CODE_IGNORE = 0;
     public static final int INSTALL_CODE_REGISTER = 1;
     public static final int INSTALL_CODE_PUSH_TOKEN = 2;
     public static final int INSTALl_CODE_ALERTSETTINGS = 3;
-
-
-
 
 
     public static InstallInfo parseInstallInfo(Context context, String json) {
@@ -157,7 +157,6 @@ class Install extends LoggingBase {
     private static final String SUBTAG = "Install ";
     private static Install mInstall = null;
     private static Context mContext;
-
     private static final String INSTALL_LOG_ALLOWED = "install_log_allowed";
     private static final String SESSION_ID_KEY = "sessionid";
     private static final String COOKIE_KEY = "Cookie";
@@ -194,6 +193,8 @@ class Install extends LoggingBase {
     private final String FEATURE_BEACONS = "feature_ibeacons";
     private final String ADVERTISING_IDENTIFIER = "advertising_identifier";
     private final String UTC_OFFSET = "utc_offset";
+    private final String IDENTIFIER_FOR_VENDOR = "identifier_for_vendor";
+
 
     private Install(Context context) {
         super(context);
@@ -218,19 +219,20 @@ class Install extends LoggingBase {
 
     /**
      * Use this function if you wish to update sinfle param for the install
-     * @param key param to be updated
+     *
+     * @param key   param to be updated
      * @param Value value of params
      */
-    public void updateInstall(String key, String Value,int code){
+    public void updateInstall(String key, String Value, int code) {
         HashMap<String, String> logMap = new HashMap<String, String>();
         logMap.put(key, Value);
-        updateInstall(logMap,code);
+        updateInstall(logMap, code);
     }
 
 
-    public void updateAckStatusFromCode(int code,boolean status){
+    public void updateAckStatusFromCode(int code, boolean status) {
 
-        switch(code){
+        switch (code) {
             case INSTALL_CODE_IGNORE:
                 break;
             case INSTALL_CODE_PUSH_TOKEN:
@@ -245,21 +247,22 @@ class Install extends LoggingBase {
 
     /**
      * Use this function if you wish to update multiple params for thes install
+     *
      * @param logMap HashMap< params,value >
      */
-    public void updateInstall(final HashMap<String,String>logMap,int code){
+    public void updateInstall(final HashMap<String, String> logMap, int code) {
         if (!Util.isNetworkConnected(mContext)) {
             Log.e(Util.TAG, SUBTAG + "Failed to Update install No network connection");
             return;
         }
         try {
-            URL url = new URL(buildUri(mContext,ApiMethod.INSTALL_UPDATE, null));
-            if(null!=logMap) {
+            URL url = new URL(buildUri(mContext, ApiMethod.INSTALL_UPDATE, null));
+            if (null != logMap) {
                 String installId = Util.getInstallId(mContext);
-                if (null == installId){
+                if (null == installId) {
                     return;
                 }
-                    logMap.put(Constants.INSTALL_ID,installId );
+                logMap.put(Constants.INSTALL_ID, installId);
                 logMap.put(APP_KEY, Util.getAppKey(mContext));
                 logMap.put(SH_LIBRARY_VERSION, Util.getLibraryVersion());
                 logMap.put(CLIENT_VERSION, Util.getAppVersionName(mContext));
@@ -274,21 +277,21 @@ class Install extends LoggingBase {
 
     }
 
-    public void setAlertSettings(int pauseMinutes,int code){
+    public void setAlertSettings(int pauseMinutes, int code) {
         String installId = Util.getInstallId(mContext);
         HashMap<String, String> logMap = new HashMap<String, String>();
         logMap.put(Constants.INSTALL_ID, installId);
         logMap.put(Constants.PAUSE_MINUTES, Integer.toString(pauseMinutes));
         try {
-            URL url = new URL(buildUri(mContext,ApiMethod.USER_ALERT_SETTINGS, null));
-            flushInstallParamsToServer(url,logMap,code);
+            URL url = new URL(buildUri(mContext, ApiMethod.USER_ALERT_SETTINGS, null));
+            flushInstallParamsToServer(url, logMap, code);
         } catch (MalformedURLException e) {
             e.printStackTrace();
             return;
         }
     }
 
-    private void flushInstallParamsToServer(final URL url,final HashMap<String,String>logMap,final int code){
+    private void flushInstallParamsToServer(final URL url, final HashMap<String, String> logMap, final int code) {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -316,10 +319,9 @@ class Install extends LoggingBase {
                     os.close();
                     reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
                     String answer = reader.readLine();
-                    Logging instance = Logging.getLoggingInstance(mContext);
                     if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
                         processAppStatusCall(answer);
-                        updateAckStatusFromCode(code,true);
+                        updateAckStatusFromCode(code, true);
                         InstallInfo installInfo = parseInstallInfo(mContext, answer);
                         if (installInfo != null && !TextUtils.isEmpty(installInfo.installid)) {
                             SharedPreferences prefs = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
@@ -327,13 +329,62 @@ class Install extends LoggingBase {
                             e.putBoolean(Constants.SHINSTALL_STATE, true);
                             e.putString(Constants.INSTALL_ID, installInfo.installid);       //App received installid here
                             e.commit();
-                            if(code==INSTALL_CODE_REGISTER) {
-                                if (null != mPluginArray) {
-                                    for (PluginBase obj : mPluginArray) {
-                                        obj.notifyInstallRegistered(mContext);
+                            //Init modules available
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Class noParams[] = {};
+                                    Class[] paramContext = new Class[1];
+                                    paramContext[0] = Context.class;
+                                    Class growth = null;
+                                    try {
+                                        growth = Class.forName("com.streethawk.library.growth.Growth");
+                                        Method growthMethod = growth.getMethod("getInstance", paramContext);
+                                        Object obj = growthMethod.invoke(null, mContext);
+                                        if (null != obj) {
+                                            Method addGrowthModule = growth.getDeclaredMethod("addGrowthModule", noParams);
+                                            addGrowthModule.invoke(obj);
+                                        }
+                                    } catch (ClassNotFoundException e1) {
+                                        Log.w(Util.TAG, "Growth module is not  not present");
+                                    } catch (IllegalAccessException e1) {
+                                        e1.printStackTrace();
+                                    } catch (NoSuchMethodException e1) {
+                                        e1.printStackTrace();
+                                    } catch (InvocationTargetException e1) {
+                                        e1.printStackTrace();
+                                    }
+
+                                }
+                            }).start();
+
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Class noParams[] = {};
+                                    Class[] paramContext = new Class[1];
+                                    paramContext[0] = Context.class;
+                                    Class push = null;
+                                    try {
+                                        push = Class.forName("com.streethawk.library.push.Push");
+                                        Method pushMethod = push.getMethod("getInstance", paramContext);
+                                        Object obj = pushMethod.invoke(null, mContext);
+                                        if (null != obj) {
+                                            Method addPushModule = push.getDeclaredMethod("addPushModule", noParams);
+                                            addPushModule.invoke(obj);
+                                        }
+                                    } catch (ClassNotFoundException e1) {
+                                        Log.w(Util.TAG, "Push module is not  not present");
+                                    } catch (IllegalAccessException e1) {
+                                        e1.printStackTrace();
+                                    } catch (NoSuchMethodException e1) {
+                                        e1.printStackTrace();
+                                    } catch (InvocationTargetException e1) {
+                                        e1.printStackTrace();
                                     }
                                 }
-                            }
+                            }).start();
+
                             int timezone = Util.getTimeZoneOffsetInMinutes();
                             Bundle logParams = new Bundle();
                             logParams.putString(Constants.CODE, Integer.toString(Constants.CODE_DEVICE_TIMEZONE));
@@ -376,7 +427,7 @@ class Install extends LoggingBase {
             Log.e(Util.TAG, SUBTAG + "Failed to register install as Appkey is null");
             return;
         }
-        if(Util.getInstallId(mContext)!=null){
+        if (Util.getInstallId(mContext) != null) {
             // Install is already registered
             return;
         }
@@ -395,12 +446,18 @@ class Install extends LoggingBase {
                 logMap.put(RESOLUTION, Util.getScreenResolution(mContext));
                 logMap.put(DEVELOPMENT_PLATFORM, Util.getPlatformName());
                 logMap.put(LIVE, Boolean.toString(Util.isAppInstalledFromPlayStore(mContext)));
-                logMap.put(UTC_OFFSET,Integer.toString(Util.getTimeZoneOffsetInMinutes()));
-                logMap.put(ADVERTISING_IDENTIFIER,Util.getAdvertisingIdentifier(mContext));
+                logMap.put(UTC_OFFSET, Integer.toString(Util.getTimeZoneOffsetInMinutes()));
+                logMap.put(ADVERTISING_IDENTIFIER, Util.getAdvertisingIdentifier(mContext));
+                try {
+                    TelephonyManager telephonyManager = (TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE);
+                    if (null != telephonyManager) {
+                        logMap.put(IDENTIFIER_FOR_VENDOR, telephonyManager.getDeviceId());
+                    }
+                } catch (SecurityException e) {}
 
                 try {
-                    URL url = new URL(buildUri(mContext,ApiMethod.INSTALL_REGISTER, null));
-                    flushInstallParamsToServer(url,logMap,INSTALL_CODE_REGISTER);
+                    URL url = new URL(buildUri(mContext, ApiMethod.INSTALL_REGISTER, null));
+                    flushInstallParamsToServer(url, logMap, INSTALL_CODE_REGISTER);
                 } catch (MalformedURLException e) {
                     e.printStackTrace();
                     return;
@@ -408,8 +465,4 @@ class Install extends LoggingBase {
             }
         }).start();
     }
-    public void registerPlugins(Set<PluginBase> pluginArray){
-        this.mPluginArray = pluginArray;
-    }
-
 }

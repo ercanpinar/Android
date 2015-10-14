@@ -28,8 +28,7 @@ import com.streethawk.library.core.*;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class Beacons extends PluginBase {
-
+public class Beacons{
     private final String SUBTAG = "Beacons ";
     private static Beacons mInstance = null;
     private static Context mContext;
@@ -200,10 +199,5 @@ public class Beacons extends PluginBase {
             return false;
         }
         return startBeaconService();
-    }
-
-    @Override
-    public void notifyInstallRegistered(Context context) {
-
     }
 }

@@ -34,12 +34,12 @@ class Constants {
     public static final String SHOW_PENDING_DIALOG      = "shShowPendingDialog";
     public static final String SHFORCEPUSHTOBG          = "shforcepushtobg";            // if true, push message will always be displayed in notification bar
     public static final String PHONEGAP_URL             = "shphonegapurl";
-    public static final String SHGCM_SENDER_KEY_APP = "shgcmsenderkeyapp";
-    public static final String PROPERTY_REG_ID = "registration_id";
-    public static final String KEY_REGISTEREDREQUESTED = "isPushRegistered";
-    public static final String PROPERTY_APP_VERSION = "app_version";
-
-    public static final String IS_PUSH_FIRST_RUN = "ispushfirstrun";
+    public static final String SHGCM_SENDER_KEY_APP     = "shgcmsenderkeyapp";
+    //public static final String PROPERTY_REG_ID          = "registration_id";
+    public static final String KEY_REGISTEREDREQUESTED  = "isPushRegistered";
+    public static final String PROPERTY_APP_VERSION     = "app_version";
+    public static final String IS_PUSH_FIRST_RUN        = "ispushfirstrun";
+    public static final String PUSH_ACCESS_DATA         = "pushaccessData";
 
 
     //Results

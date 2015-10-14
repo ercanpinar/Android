@@ -15,6 +15,7 @@
  * License along with this library.
  */
 package com.streethawk.library.core;
+
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ActivityManager;
@@ -30,13 +31,14 @@ import android.util.Log;
 
 import org.json.JSONObject;
 
-import java.util.HashMap;
-import java.util.HashSet;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+
 public enum StreetHawk {
     INSTANCE;
 
@@ -89,21 +91,32 @@ public enum StreetHawk {
         this.currentActivity = currentActivity;
     }
 
+    /**
+     * Returns instance of current activity
+     *
+     * @return activity
+     */
     public Activity getCurrentActivity() {
         return this.currentActivity;
     }
 
-    HashMap<String, PluginBase> pluginMap;
+    //HashMap<String, PluginBase> pluginMap;
+
+
+    /**
+     * Use registerSHPlugin to register StreetHawk modules to be used in your application
+     * @param pluginObject
 
     public void registerSHPlugin(PluginBase pluginObject) {
 
-        // This means all plugin class should be singleton in nature. non singleton will not work here
-        if (null == pluginMap) {
-            pluginMap = new HashMap<String, PluginBase>();
-        }
-        pluginMap.put(pluginObject.getClass().toString(), pluginObject);
+    // This means all plugin class should be singleton in nature. non singleton will not work here
+    if (null == pluginMap) {
+    pluginMap = new HashMap<String, PluginBase>();
+    }
+    pluginMap.put(pluginObject.getClass().toString(), pluginObject);
 
     }
+     */
 
     /**
      * API to get version of StreetHawk Library
@@ -116,14 +129,28 @@ public enum StreetHawk {
 
     /**
      * Set device's Advertisement ID into StreetHawk SDK
+     *
      * @param context
      * @param advertisementId
      */
-    public void setAdvertisementId(Context context,String advertisementId){
-        SharedPreferences sharedPreferences = context.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
-        SharedPreferences.Editor e = sharedPreferences.edit();
-        e.putString(Constants.SHADVERTISEMENTID,advertisementId);
-        e.commit();
+    public void setAdvertisementId(final Context context, final String advertisementId) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                SharedPreferences sharedPreferences = context.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
+                String old = sharedPreferences.getString(Constants.SHADVERTISEMENTID, null);
+                if (null != old) {
+                    if (old.equals(advertisementId))
+                        return;
+                }
+                SharedPreferences.Editor e = sharedPreferences.edit();
+                e.putString(Constants.SHADVERTISEMENTID, advertisementId);
+                e.commit();
+                if (null != getInstallId(context)) {
+                    Install.getInstance(context).updateInstall("advertising_identifier", advertisementId, 0);
+                }
+            }
+        }).start();
     }
 
 
@@ -153,16 +180,16 @@ public enum StreetHawk {
     private static String mSenderID;
     private boolean activityLifecycleRegistered = false;
 
-    private void getPluginArray(HashSet<PluginBase> pluginArray){
-        for (String key : pluginMap.keySet()) {
-            pluginArray.add(pluginMap.get(key));
-        }
-    }
 
-    public void setAppKey(String app_key){
+    public void setAppKey(String app_key) {
         mAppKey = app_key;
     }
 
+    /**
+     * Function to initialise and Start StreetHawk SDK
+     *
+     * @param application
+     */
     public void init(final Application application) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
             setActivityLifecycleCallbacks(application);
@@ -171,32 +198,73 @@ public enum StreetHawk {
             Log.e(Util.TAG, SUBTAG + "StreetHawk is not initialised as application is null in init");
             return;
         }
+        //Register all module's activityLifecycle
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Class noParams[] = {};
+                Class[] appParams = new Class[1];
+                appParams[0] = Application.class;
+                Class growth = null;
+                try {
+                    growth = Class.forName("com.streethawk.library.growth.Growth");
+                    Method growthMethod = growth.getMethod("setActivityLifecycleCallbacks", appParams);
+                    growthMethod.invoke(null, application);
+                } catch (ClassNotFoundException e1) {
+                    Log.w(Util.TAG, "Growth module is not  not present");
+                } catch (IllegalAccessException e1) {
+                    e1.printStackTrace();
+                } catch (NoSuchMethodException e1) {
+                    e1.printStackTrace();
+                } catch (InvocationTargetException e1) {
+                    e1.printStackTrace();
+                }
+                Class push = null;
+                try {
+                    push = Class.forName("com.streethawk.library.push.Push");
+                    Method pushMethod = push.getMethod("setActivityLifecycleCallbacks", appParams);
+                    pushMethod.invoke(null, application);
+                } catch (ClassNotFoundException e1) {
+                    Log.w(Util.TAG, "Push module is not  not present");
+                } catch (IllegalAccessException e1) {
+                    e1.printStackTrace();
+                } catch (NoSuchMethodException e1) {
+                    e1.printStackTrace();
+                } catch (InvocationTargetException e1) {
+                    e1.printStackTrace();
+                }
+                Class location = null;
+                try {
+                    location = Class.forName("com.streethawk.library.locations.SHLocation");
+                    Method locationMethod = location.getMethod("setActivityLifecycleCallbacks", appParams);
+                    locationMethod.invoke(null, application);
+                } catch (ClassNotFoundException e1) {
+                    Log.w(Util.TAG, "Push module is not  not present");
+                } catch (IllegalAccessException e1) {
+                    e1.printStackTrace();
+                } catch (NoSuchMethodException e1) {
+                    e1.printStackTrace();
+                } catch (InvocationTargetException e1) {
+                    e1.printStackTrace();
+                }
+
+            }
+        }).start();
         new Thread(new Runnable() {
             @Override
             public void run() {
                 mContext = application.getApplicationContext();
-                //Register install
-                if (null == pluginMap) {
-                    pluginMap = new HashMap<String, PluginBase>();
-                }
-                HashSet<PluginBase> pluginArray = new HashSet<PluginBase>();
-                getPluginArray(pluginArray);
-
                 if (Util.getInstallId(mContext) == null) {
-                    if(null!=mAppKey){
+                    if (null != mAppKey) {
                         SharedPreferences sharedPreferences = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
                         SharedPreferences.Editor e = sharedPreferences.edit();
-                        e.putString(Util.SHAPP_KEY,mAppKey);
+                        e.putString(Util.SHAPP_KEY, mAppKey);
                         e.commit();
                     }
-                    Install install = Install.getInstance(mContext);
-                    install.registerPlugins(pluginArray);
-                    install.registerInstall();
+                    Install.getInstance(mContext).registerInstall();
                 }
                 Intent coreService = new Intent(mContext, StreetHawkCoreService.class);
                 mContext.startService(coreService);
-                Logging.getLoggingInstance(mContext).registerPlugins(pluginArray);
-                AppActivityTracking.getActivityTrackingInstance().registerPlugins(pluginArray);
             }
         }).start();
     }
@@ -204,10 +272,11 @@ public enum StreetHawk {
 
     /**
      * Call notifyEnterView when a view or fragment is visible to user
+     *
      * @param viewName
      */
-    public void notifyViewEnter(final String viewName){
-        if(null==viewName)
+    public void notifyViewEnter(final String viewName) {
+        if (null == viewName)
             return;
         new Thread(new Runnable() {
             @Override
@@ -225,10 +294,11 @@ public enum StreetHawk {
 
     /**
      * Call notifyEnterView when user exits a view or fragment
+     *
      * @param viewName
      */
-    public void notifyViewExit(final String viewName){
-        if(null==viewName)
+    public void notifyViewExit(final String viewName) {
+        if (null == viewName)
             return;
         new Thread(new Runnable() {
             @Override
@@ -236,7 +306,7 @@ public enum StreetHawk {
                 Bundle extras = new Bundle();
                 extras.putString(Constants.CODE, Integer.toString(Constants.CODE_USER_LEAVE_ACTIVITY));
                 extras.putString(Constants.SHMESSAGE_ID, null);
-                extras.putString(Constants.TYPE_STRING,viewName);
+                extras.putString(Constants.TYPE_STRING, viewName);
                 final Logging shManager = Logging.getLoggingInstance(mContext);
                 shManager.addLogsForSending(extras);
             }
@@ -255,15 +325,17 @@ public enum StreetHawk {
 
     /**
      * API to tag cuid of the install
+     *
      * @param value unique identifier of the user (Example email address)
      * @return
      */
-    public boolean tagCuid(String value){
-        return tagString("sh_cuid",value);
+    public boolean tagCuid(String value) {
+        return tagString("sh_cuid", value);
     }
 
     /**
      * API to numeric tag a profile
+     *
      * @param key
      * @param numeric_value
      * @return true for success false if failed
@@ -387,6 +459,7 @@ public enum StreetHawk {
 
     /**
      * Function validates date entered by user
+     *
      * @param dateTime
      * @return
      */
@@ -669,16 +742,13 @@ public enum StreetHawk {
     }
 
     /**
-     * API return app_key used by StreetHawk to identify your application
+     * API returns app_key used by StreetHawk to identify your application
      *
      * @return app_key for server conversation.
      */
     public String getAppKey(Context context) {
-       return Util.getAppKey(context);
+        return Util.getAppKey(context);
     }
-
-
-
 
 
     /**

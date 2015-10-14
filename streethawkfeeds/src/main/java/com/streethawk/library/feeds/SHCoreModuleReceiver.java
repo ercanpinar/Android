@@ -33,6 +33,8 @@ public class SHCoreModuleReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent){
         if (intent.getAction() == Util.BROADCAST_SH_APP_STATUS_NOTIFICATION) {
             String installId = intent.getStringExtra(Util.INSTALL_ID);
+            if(null==installId)
+                return;
             if (installId.equals(Util.getInstallId(context))) {
                 String answer = intent.getStringExtra(Util.APP_STATUS_ANSWER);
                 try {

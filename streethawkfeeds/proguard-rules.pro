@@ -19,9 +19,9 @@
 -keep public interface com.streethawk.library.feeds.ISHFeedItemObserver{
     public *;
 }
--keep public interface com.streethawk.library.feeds.SHCoreModuleReceiver{
+-keep public class com.streethawk.library.feeds.SHCoreModuleReceiver{
     public *;
 }
--keep public interface com.streethawk.library.feeds.SHFeedItem{
+-keep public class com.streethawk.library.feeds.SHFeedItem{
     public *;
 }

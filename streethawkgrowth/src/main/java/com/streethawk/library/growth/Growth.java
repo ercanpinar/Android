@@ -23,37 +23,53 @@ import android.content.Context;
 import android.os.Build;
 import android.util.Log;
 
-import com.streethawk.library.core.PluginBase;
 import com.streethawk.library.core.Util;
 
-public class Growth extends PluginBase{
+public class Growth{
 
     private static Activity mActivity;
     private static Context mContext;
     private final String SUBTAG = "Growth";
     private static boolean activityLifecycleRegistered = false;
     private String REGISTERED = "flaggrowthregister";
+    public static Application mApplication;
 
     private static Growth mGrowth = null;
 
     private Growth(){}
+    /**
+     * Core uses setActivityLifecycleCallbacks to register to activity lifecycle call backs
+     * @param app
+     */
+    @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+    public static void setActivityLifecycleCallbacks(Application app) {
+        if (!activityLifecycleRegistered) {
+            app.registerActivityLifecycleCallbacks(GrowthActivityLifecycleCallback.getInstance());
+            activityLifecycleRegistered = true;
+        }
+    }
 
-    public static Growth getInstance(Application app,Activity activity){
-        setActivityLifecycleCallbacks(app);
-        mActivity = activity;
-        mContext = activity.getApplicationContext();
+    /**
+     * Returns instance of Growth class
+     * @param context activity context
+     * @return instance of Growth class
+     */
+    public static Growth getInstance(Context context){
+        mContext = context;
         if(null==mGrowth)
             mGrowth = new Growth();
         return mGrowth;
     }
 
-    @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-    private static void setActivityLifecycleCallbacks(Application application) {
-        if (!activityLifecycleRegistered) {
-            application.registerActivityLifecycleCallbacks(GrowthActivityLifecycleCallback.getInstance());
-            activityLifecycleRegistered = true;
+    protected void setCurrentActivity(final Activity activity) {
+        if (null == activity) {
+            Log.e(Util.TAG, SUBTAG + "Returning from activityResumedByService as activity is null");
+            return;
         }
+        mActivity = activity;
     }
+
+
 
     /**
      * Use originateShareWithCampaign to get the share URL.
@@ -166,13 +182,5 @@ public class Growth extends PluginBase{
             }).start();
             return;
         }
-    }
-
-
-
-    @Override
-    public void notifyInstallRegistered(Context context) {
-        Register object =  new Register(mContext);
-        object.registerStreetHawkGrowth();
     }
 }

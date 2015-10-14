@@ -19,9 +19,6 @@
 -keep public class com.streethawk.library.core.Logging{
     public *;
 }
--keep public class com.streethawk.library.core.PluginBase{
-    public *;
-}
 -keep public class com.streethawk.library.core.SHSqliteBase{
     public *;
 }

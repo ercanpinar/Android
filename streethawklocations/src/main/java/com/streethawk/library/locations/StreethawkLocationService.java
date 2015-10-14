@@ -24,25 +24,25 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
 import com.streethawk.library.core.Logging;
 import com.streethawk.library.core.Util;
 
 public class StreethawkLocationService extends Service {
-    private static GoogleApiClient mGoogleApiClient;
-
     private final int DEFAULT_UPDATE_DISTANCE_BG = 500;                // 	500 meters in background
     private final int DEFAULT_UPDATE_INTERVAL_FG = 2 * 60 * 1000;        // 2 minute in Foreground
     private final int DEFAULT_UPDATE_DISTANCE_FG = 100;                // 	100 meters in background
     private final int DEFAULT_UPDATE_INTERVAL_BG = 6 * 60 * 1000;        // 6 minutes in background
+    private static Context mContext;
+
+    LocationManager locationManager;
+    LocationListener locationListener;
 
     private static int VALUE_UPDATE_INTERVAL_BG = 0;                    // 6 minutes in background
     private static int VALUE_UPDATE_DISTANCE_BG = 0;                    // 	500 meters in background
@@ -72,7 +72,7 @@ public class StreethawkLocationService extends Service {
             } else {
                 return false;
             }
-        }else {
+        } else {
             return true;
         }
     }
@@ -89,10 +89,11 @@ public class StreethawkLocationService extends Service {
 
     @Override
     public void onCreate() {
-        Context context = getApplicationContext();
-        if (getUseLocation(context)) {
-            if (checkForLocationPermission(context)) {
-                startLocationReporting(context);
+        mContext = getApplicationContext();
+        if (getUseLocation(mContext)) {
+            locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+            if (checkForLocationPermission(mContext)) {
+                startLocationReporting(mContext);
             } else {
                 this.stopSelf();
             }
@@ -101,80 +102,124 @@ public class StreethawkLocationService extends Service {
         }
     }
 
-    private com.google.android.gms.location.LocationListener getLocationListener(final Context context) {
-        return new com.google.android.gms.location.LocationListener() {
-            @Override
-            public void onLocationChanged(android.location.Location location) {
-                if (null == context)
-                    return;
-                if (!Util.isNetworkConnected(context))
-                    return;
-                Bundle extras = new Bundle();
-                double lat = location.getLatitude();
-                double lng = location.getLongitude();
-                extras.putString(Util.CODE, Integer.toString(Constants.CODE_LOCATION_UPDATES));
-                extras.putString(Util.SHMESSAGE_ID, null);
-                extras.putString(Constants.LOCAL_TIME, Util.getFormattedDateTime(System.currentTimeMillis(), false));
-                extras.putString(Constants.SHLATTITUDE, Double.toString(lat));
-                extras.putString(Constants.SHLONGITUDE, Double.toString(lng));
-                Logging manager = Logging.getLoggingInstance(context);
-                manager.addLogsForSending(extras);
+
+    public Location getLastKnownLocation(Context context){
+        LocationManager lm = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
+        String locationProvider=null;
+        try {
+            if(lm.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+                locationProvider = LocationManager.GPS_PROVIDER;
             }
-        };
+        } catch(Exception ex) {
+            locationProvider = null;
+        }
+
+        try {
+            if(lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)){
+                locationProvider = LocationManager.NETWORK_PROVIDER;
+            }
+        } catch(Exception ex) {
+            locationProvider = null;
+        }
+        if(null==locationProvider)
+            return null;
+        try {
+            return locationManager.getLastKnownLocation(locationProvider);
+        }catch(SecurityException e){
+            return null;
+        }
     }
 
-    private GoogleApiClient.OnConnectionFailedListener mOnConnectionFailedListener = new GoogleApiClient.OnConnectionFailedListener() {
-        @Override
-        public void onConnectionFailed(ConnectionResult connectionResult) {
-            Log.e(Util.TAG, SUBTAG + "Connection failed Error code" + connectionResult.getErrorCode());
-        }
-    };
-
-    private GoogleApiClient.ConnectionCallbacks getConnectionCallback(final Context context) {
-        return new GoogleApiClient.ConnectionCallbacks() {
-            @Override
-            public void onConnected(Bundle bundle) {
-                boolean isFg = !(Util.isAppBG(context));
-                try {
-                    LocationRequest locationRequest = new LocationRequest().create()
-                            .setInterval(isFg ? DEFAULT_UPDATE_INTERVAL_FG : DEFAULT_UPDATE_INTERVAL_BG)
-                            .setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY)
-                            .setSmallestDisplacement(isFg ? DEFAULT_UPDATE_DISTANCE_FG : DEFAULT_UPDATE_DISTANCE_BG);
-                    LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, locationRequest, getLocationListener(context));
-                } catch (Exception e) {
-                    // Handling exception as issue location returns true for mContext = null
-                    e.printStackTrace();
+    public LocationListener setLocationListener() {
+        if (null == locationListener) {
+            locationListener = new LocationListener() {
+                public void onLocationChanged(Location location) {
+                    Bundle extras = new Bundle();
+                    double lat = location.getLatitude();
+                    double lng = location.getLongitude();
+                    extras.putString(Util.CODE, Integer.toString(Constants.CODE_LOCATION_UPDATES));
+                    extras.putString(Util.SHMESSAGE_ID, null);
+                    extras.putString(Constants.LOCAL_TIME, Util.getFormattedDateTime(System.currentTimeMillis(), false));
+                    extras.putString(Constants.SHLATTITUDE, Double.toString(lat));
+                    extras.putString(Constants.SHLONGITUDE, Double.toString(lng));
+                    Logging manager = Logging.getLoggingInstance(mContext);
+                    manager.addLogsForSending(extras);
                 }
-            }
 
-            @Override
-            public void onConnectionSuspended(int i) {
-            }
-        };
+                @Override
+                public void onStatusChanged(String provider, int status, Bundle extras) {
+
+                }
+
+                @Override
+                public void onProviderEnabled(String provider) {
+
+                }
+
+                @Override
+                public void onProviderDisabled(String provider) {
+
+                }
+            };
+        }
+        return locationListener;
     }
 
-    public Location getLastKnownLocation() {
-        Location location = null;
-        if (null != mGoogleApiClient) {
-            if (mGoogleApiClient.isConnected()) {
-                location = LocationServices.FusedLocationApi.getLastLocation(
-                        mGoogleApiClient);
+
+    public void startLocationReporting(final Context context) {
+        LocationManager lm = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
+        String locationProvider=null;
+        try {
+            if(lm.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+                locationProvider = LocationManager.GPS_PROVIDER;
             }
+        } catch(Exception ex) {
+            locationProvider = null;
         }
-        return location;
-    }
 
-
-    public void startLocationReporting(Context context) {
-        if (null != mGoogleApiClient) {
-            mGoogleApiClient.disconnect();
+        try {
+            if(lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)){
+                locationProvider = LocationManager.NETWORK_PROVIDER;
+            }
+        } catch(Exception ex) {
+            locationProvider = null;
         }
-        mGoogleApiClient = new GoogleApiClient.Builder(context)
-                .addApi(LocationServices.API)
-                .addConnectionCallbacks(getConnectionCallback(context))
-                .addOnConnectionFailedListener(mOnConnectionFailedListener)
-                .build();
-        mGoogleApiClient.connect();
+        if(null==locationProvider)
+            return;
+        try {
+            if (null == locationManager) {
+                locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+            }
+            if (null == locationManager) {
+                Log.e(Util.TAG, SUBTAG + "Device doesn't support locations");
+                return;
+            }
+            if (VALUE_UPDATE_INTERVAL_BG <= 0) {
+                VALUE_UPDATE_INTERVAL_BG = DEFAULT_UPDATE_INTERVAL_BG;
+            }
+            if (VALUE_UPDATE_INTERVAL_FG <= 0) {
+                VALUE_UPDATE_INTERVAL_FG = DEFAULT_UPDATE_INTERVAL_FG;
+            }
+            if (VALUE_UPDATE_DISTANCE_BG <= 0) {
+                VALUE_UPDATE_DISTANCE_BG = DEFAULT_UPDATE_DISTANCE_BG;
+            }
+            if (VALUE_UPDATE_DISTANCE_FG <= 0) {
+                VALUE_UPDATE_DISTANCE_FG = DEFAULT_UPDATE_DISTANCE_FG;
+            }
+            int distance;
+            int interval;
+            if (Util.isAppBG(context)) {
+                distance = VALUE_UPDATE_INTERVAL_BG;
+                interval = DEFAULT_UPDATE_DISTANCE_BG;
+            } else {
+                distance = VALUE_UPDATE_INTERVAL_FG;
+                interval = DEFAULT_UPDATE_DISTANCE_FG;
+            }
+            locationManager.requestLocationUpdates(locationProvider, distance, interval, setLocationListener());
+        } catch (SecurityException e) {
+            Log.e(Util.TAG, SUBTAG + "Location permission are not provided by yser");
+        }
+
     }
 
     @Override

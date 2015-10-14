@@ -34,14 +34,13 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.inputmethod.InputMethodManager;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
-import com.streethawk.library.core.PluginBase;
+import com.google.android.gms.iid.InstanceID;
 import com.streethawk.library.core.StreetHawk;
 import com.streethawk.library.core.Util;
 
@@ -51,7 +50,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-public class Push extends PluginBase {
+public class Push{
     private static Context mContext;
     private static String mSenderID;
     private static Push mPush;
@@ -69,11 +68,16 @@ public class Push extends PluginBase {
     private static final String SHGCM_SENDER_KEY_APP = "shgcmsenderkeyapp";
     private static final String SUBTAG = "PUSH ";
     private static ISHObserver mISHObserverObject = null;
-    private boolean activityLifecycleRegistered = false;
+    private static boolean activityLifecycleRegistered = false;
 
     private Push() {
     }
 
+    /**
+     * Get instance of Push Class
+     * @param context Application context
+     * @return instance of push class
+     */
     public static Push getInstance(Context context) {
         if (null == mPush)
             mPush = new Push();
@@ -81,40 +85,10 @@ public class Push extends PluginBase {
         return mPush;
     }
 
-    private SharedPreferences getGcmPreferences() {
-        return mContext.getSharedPreferences(PREFS_KEY, Context.MODE_PRIVATE);
-    }
-
     /**
-     * Gets the current registration ID for application on GCM service, if there
-     * is one.
-     * <p/>
-     * If result is empty, the app needs to register.
-     *
-     * @return registration ID, or empty string if there is no existing
-     * registration ID.
+     * Save senderID
+     * @param senderId
      */
-    private String getRegistrationId() {
-        final SharedPreferences prefs = getGcmPreferences();
-        String registrationId = prefs.getString(PROPERTY_REG_ID, "");
-        if (TextUtils.isEmpty(registrationId)) {
-            Log.i(Util.TAG, SUBTAG + "Registration not found.");
-            return "";
-        }
-        int registeredVersion = prefs.getInt(PROPERTY_APP_VERSION, Integer.MIN_VALUE);
-        int currentVersion = Util.getAppVersion(mContext);
-        if (registeredVersion != currentVersion) {
-            Log.i(Util.TAG, SUBTAG + "App version changed.");
-            return "";
-        }
-        return registrationId;
-    }
-
-
-    private boolean isRegistered() {
-        return getRegistrationId().length() > 0;
-    }
-
     private static void saveSenderId(String senderId) {
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
         SharedPreferences.Editor e = sharedPreferences.edit();
@@ -122,65 +96,31 @@ public class Push extends PluginBase {
         e.commit();
     }
 
-    private static String getGcmSenderId() {
-        String senderId = null;
-        SharedPreferences sharedPreferences = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
-        senderId = sharedPreferences.getString(SHGCM_SENDER_KEY_APP, null);
-        if (null != senderId) {
-            if (!senderId.isEmpty()) {
-                return senderId;
-
-            } else {
-                Log.w(Util.TAG, SUBTAG + "Application is missing GCM senderKey. Please Refer Streethawk docs for details");
-                return null;
-            }
-        }
-        Log.e(Util.TAG, SUBTAG + "Application is missing GCM senderKey. Please Refer Streethawk docs for details");
-        return null;
-    }
-
-    /**
-     * Stores the registration ID and the app versionCode in the application's
-     * {@code SharedPreferences}.
-     *
-     * @param regId registration ID
-     */
-    private void setRegistrationId(String regId) {
-        final SharedPreferences prefs = getGcmPreferences();
-        int appVersion = Util.getAppVersion(mContext);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(PROPERTY_REG_ID, regId);
-        editor.putInt(PROPERTY_APP_VERSION, appVersion);
-        editor.commit();
-    }
-
-    private boolean getGCMRegistered() {
+    private boolean isGCMRegistered() {
         SharedPreferences prefs = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
         return prefs.getBoolean(Util.SHGCMREGISTERED, false);
     }
 
-    private void updateInstallWithGcmIdIfNeeded() {
-        checkDevice();
-        checkManifest();
-        if (getGCMRegistered()) {
+    private void updateInstallWithGcmIdIfNeeded(String token) {
+        if (isGCMRegistered()) {
             return;
+        }else{
+            if(token==null){
+                SharedPreferences prefs = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
+                SharedPreferences.Editor e = prefs.edit();
+                e.putBoolean(Util.SHGCMREGISTERED, false);
+                e.commit();
+                return;
+            }
+            if (token.isEmpty()) {
+                SharedPreferences prefs = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
+                SharedPreferences.Editor e = prefs.edit();
+                e.putBoolean(Util.SHGCMREGISTERED, false);
+                e.commit();
+                return;
+            }
         }
-        String registrationId = getRegistrationId();
-        if (null == registrationId) {
-            SharedPreferences prefs = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
-            SharedPreferences.Editor e = prefs.edit();
-            e.putBoolean(Util.SHGCMREGISTERED, false);
-            e.commit();
-            return;
-        }
-        if (registrationId.isEmpty()) {
-            SharedPreferences prefs = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
-            SharedPreferences.Editor e = prefs.edit();
-            e.putBoolean(Util.SHGCMREGISTERED, false);
-            e.commit();
-            return;
-        }
-        Util.updateAccessDaa(mContext,registrationId);
+        Util.updateAccessData(mContext, token);
     }
 
     /**
@@ -191,20 +131,22 @@ public class Push extends PluginBase {
      *
      * @throws UnsupportedOperationException if the device does not support GCM.
      */
-    private void checkDevice() {
+    private boolean checkDevice() {
         int version = Build.VERSION.SDK_INT;
         if (version < 8) {
-            throw new UnsupportedOperationException("Device must be at least " + "API Level 8 (instead of " + version + ")");
+            Log.e(Util.TAG, "Device doesn't support push notification");
+            return false;
         }
         PackageManager packageManager = mContext.getPackageManager();
         try {
             packageManager.getPackageInfo(GSF_PACKAGE, 0);
         } catch (PackageManager.NameNotFoundException e) {
-            throw new UnsupportedOperationException("Device does not have package " + GSF_PACKAGE);
+            Log.e(Util.TAG,"Device does not have package " + GSF_PACKAGE);
         }
+        return true;
     }
 
-    private void checkReceiver(Context context, Set<String> allowedReceivers, String action) {
+    private boolean checkReceiver(Context context, Set<String> allowedReceivers, String action) {
         PackageManager pm = context.getPackageManager();
         String packageName = context.getPackageName();
         Intent intent = new Intent(action);
@@ -212,6 +154,7 @@ public class Push extends PluginBase {
         List<ResolveInfo> receivers = pm.queryBroadcastReceivers(intent, PackageManager.GET_INTENT_FILTERS);
         if (receivers.isEmpty()) {
             Log.e(Util.TAG, SUBTAG + "No receivers for action " + action);
+            return false;
         }
         Log.v(Util.TAG, SUBTAG + "Found " + receivers.size() + " receivers for action " + action);
         for (ResolveInfo receiver : receivers) {
@@ -219,11 +162,13 @@ public class Push extends PluginBase {
             if (!allowedReceivers.contains(name)) {
                 //throw new IllegalStateException("Receiver " + name + " is not set with permission " + PERMISSION_GCM_INTENTS);
                 Log.e(Util.TAG, SUBTAG + "Receiver " + name + " is not set with permission " + PERMISSION_GCM_INTENTS);
+                return false;
             }
         }
+        return true;
     }
 
-    private void checkManifest() {
+    private boolean checkManifest() {
         PackageManager packageManager = mContext.getPackageManager();
         String packageName = mContext.getPackageName();
         // check receivers
@@ -231,11 +176,13 @@ public class Push extends PluginBase {
         try {
             receiversInfo = packageManager.getPackageInfo(packageName, PackageManager.GET_RECEIVERS);
         } catch (PackageManager.NameNotFoundException e) {
-            Log.w(Util.TAG, SUBTAG + "Could not get receivers for package " + packageName);
+            Log.e(Util.TAG, SUBTAG + "Could not get receivers for package " + packageName);
+            return false;
         }
         ActivityInfo[] receivers = receiversInfo.receivers;
         if (receivers == null || receivers.length == 0) {
-            Log.w(Util.TAG, SUBTAG + "Could not get receivers for package " + packageName);
+            Log.e(Util.TAG, SUBTAG + "Could not get receivers for package " + packageName);
+            return false;
         }
         HashSet<String> allowedReceivers = new HashSet<String>();
         for (ActivityInfo receiver : receivers) {
@@ -245,47 +192,85 @@ public class Push extends PluginBase {
         }
         if (allowedReceivers.isEmpty()) {
             Log.w(Util.TAG, SUBTAG + "No receiver allowed to receive " + PERMISSION_GCM_INTENTS);
+            return false;
         }
-        checkReceiver(mContext, allowedReceivers, INTENT_FROM_GCM_MESSAGE);
+        if(!checkReceiver(mContext, allowedReceivers, INTENT_FROM_GCM_MESSAGE)){
+            return false;
+        }
+        return true;
     }
 
+    /**
+     * Core uses setActivityLifecycleCallbacks to register to activity lifecycle call backs
+     * @param application
+     */
     @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-    private void setActivityLifecycleCallbacks(Application application) {
+     public static void setActivityLifecycleCallbacks(Application application) {
         if (!activityLifecycleRegistered) {
             application.registerActivityLifecycleCallbacks(PushActivityLifecycleCallback.getInstance());
             activityLifecycleRegistered = true;
         }
     }
 
-    public boolean registerForPushMessaging(Application app,String project_number) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-            setActivityLifecycleCallbacks(app);
-        }
-        return reRegister(project_number);
+
+    /**
+     * Call this API to register for StreetHawk push messaging service
+     * @param project_number Project number as obtained for Google for your project
+     * @return true is register is successful else false
+     */
+    public void registerForPushMessaging(final String project_number) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if(!checkDevice())
+                    return;
+
+                if(!checkManifest()){
+                    return;
+                }
+                // Get Registration id
+                InstanceID instanceID = InstanceID.getInstance(mContext);
+                String token=null;
+                try {
+                    token = instanceID.getToken(project_number,
+                            GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return;
+                }
+                // Save Registration id
+                SharedPreferences prefs = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
+                final SharedPreferences.Editor e = prefs.edit();
+                e.putString(Constants.PUSH_ACCESS_DATA, token);
+                e.putString(SHGCM_SENDER_KEY_APP, project_number);
+                e.commit();
+                addPushModule();
+                return;
+            }
+        }).start();
     }
 
-    public boolean reRegister(String project_number){
-        if(null==project_number){
-            mSenderID=getGcmSenderId();
-        }else {
-            mSenderID = project_number;
+    /**
+     * Call addPushModule() to add growth modules in installs which have already been released with StreetHawk core module.
+     */
+    public void addPushModule(){
+        String installId = Util.getInstallId(mContext);
+        if(null==installId) {
+            // For this case
+            Log.e(Util.TAG,SUBTAG+" install not registered when init was called");
+            return;
         }
-        if(null==mSenderID){
-            Log.e(Util.TAG,SUBTAG+" null project_number/ sedner id in registerForPushMessaging");
+        else{
+            if(!isPushRegistered()){
+                register();
+            }
+            return;
         }
-        setAppPageReceiver(mISHObserverObject);
-        if (isRegistered()) {
-            updateInstallWithGcmIdIfNeeded();
-            return true;
-        } else {
-            Log.i(Util.TAG, SUBTAG + "Install not registered with StreetHawk");
+    }
 
-            SharedPreferences prefs = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
-            final SharedPreferences.Editor e = prefs.edit();
-            e.putBoolean(Util.SHGCMREGISTERED, false);
-            e.commit();
-            return false;
-        }
+    private boolean isPushRegistered(){
+        SharedPreferences prefs = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
+        return prefs.getBoolean(Util.SHGCMREGISTERED, false);
     }
 
     private static void sendNotification(Context context, String title, String message, String submessage, PendingIntent intent) {
@@ -307,7 +292,7 @@ public class Push extends PluginBase {
      * doesn't, display a dialog that allows users to download the APK from the
      * Google Play Store or enable it in the device's system settings.
      */
-    public boolean checkPlayServices() {
+    private boolean checkPlayServices() {
         int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(mContext);
         if (resultCode != ConnectionResult.SUCCESS) {
             if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
@@ -316,7 +301,7 @@ public class Push extends PluginBase {
                 PendingIntent intent = GooglePlayServicesUtil.getErrorPendingIntent(resultCode, mContext, PLAY_SERVICES_RESOLUTION_REQUEST);
                 sendNotification(mContext, title, message, "", intent);
             } else {
-                Log.i(Util.TAG, SUBTAG + "This device is not supported.");
+                Log.e(Util.TAG, SUBTAG + "This device is not supported.");
             }
             return false;
         }
@@ -328,43 +313,35 @@ public class Push extends PluginBase {
             Log.e(Util.TAG, SUBTAG + "Error in google play services.. returning");
             return;
         }
-        if(null==mSenderID){
-            Log.e(Util.TAG,SUBTAG+"Sender id is null, returning");
-        }
         saveSenderId(mSenderID);
         new Thread(new Runnable() {
             @Override
             public void run() {
                 long backoff = BACKOFF_MILLI_SECONDS + new Random().nextInt(1000);
                 for (int i = 1; i <= MAX_ATTEMPTS; i++) {
-                    try {
-                        GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(mContext);
-                        String senderId = getGcmSenderId();
-                        String registrationId=null;
-                        if(null!=senderId) {
-                            registrationId = gcm.register(senderId);
-                        }else{
-                            Log.e(Util.TAG,SUBTAG+"snderid is null returning..");
+                        SharedPreferences prefs = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
+                        String token  = prefs.getString(Constants.PUSH_ACCESS_DATA,null);
+                        if(null!=token) {
+                            updateInstallWithGcmIdIfNeeded(token);
                             return;
+                        }else{
+                            Log.e(Util.TAG,"Access data is null");
                         }
-                        setRegistrationId(registrationId);
-                        updateInstallWithGcmIdIfNeeded();
-                    } catch (IOException ex) {
-                        if (i == MAX_ATTEMPTS) {
-                            break;
-                        }
-                        try {
+                       try {
                             Thread.sleep(backoff);
                         } catch (InterruptedException e1) {
                             Thread.currentThread().interrupt();
                         }
                         backoff *= 2;
                     }
-                }
             }
         }).start();
     }
 
+    /**
+     * return true if push is enabled for the device.
+     * @return
+     */
     public boolean isUsePush() {
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
         if (sharedPreferences != null)
@@ -373,6 +350,10 @@ public class Push extends PluginBase {
             return true;
     }
 
+    /**
+     * use this function if you want to dont want to use default dialogs theme and instead use you own cutom theme
+     * @param answer
+     */
     public void setUseCustomDialog(boolean answer){
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
         SharedPreferences.Editor e = sharedPreferences.edit();
@@ -399,6 +380,10 @@ public class Push extends PluginBase {
         }
     }
 
+    /**
+     * Register class which implements ISHObserver
+     * @param object
+     */
     public void registerSHObserver(ISHObserver object) {
         mISHObserverObject = object;
     }
@@ -499,6 +484,10 @@ public class Push extends PluginBase {
         alert.display(pushData);
     }
 
+    /**
+     * Application need not use this call. Notify observers when app is foregrounded
+     * @param activity
+     */
     public void notifyAppForegrounded(Activity activity) {
         final Context context = activity.getApplicationContext();
         activity.runOnUiThread(new Runnable() {
@@ -516,12 +505,18 @@ public class Push extends PluginBase {
             }
         }).start();
     }
-
+    /**
+     * Application need not use this call. Notify observers when app is backgrounded
+     * @param activity
+     */
     public void notifyAppBackgrounded(Activity activity) {
         SHForegroundNotification alert = SHForegroundNotification.getDialogInstance(null, null);
         alert.dismissForegroundDialog();
     }
-
+    /**
+     * Application need not use this call. Notify observers when orientation is changed
+     * @param activity
+     */
     public void notifyChangeOrientation(Activity activity) {
         final Context context = activity.getApplicationContext();
         activity.runOnUiThread(new Runnable() {
@@ -531,30 +526,6 @@ public class Push extends PluginBase {
             }
         });
     }
-
-    /**
-     * Call addPushModule() to add growth modules in installs which have already been released with StreetHawk core module.
-     */
-    public void addPushModule(){
-        String installId = Util.getInstallId(mContext);
-        if(null==installId) {
-            // For this case
-            Log.e(Util.TAG,SUBTAG+" install not registered when init was called");
-            return;
-        }
-        else{
-            if(!isPushRegistered()){
-                register();
-            }
-            return;
-        }
-    }
-
-    private boolean isPushRegistered(){
-        SharedPreferences prefs = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
-        return prefs.getBoolean(Util.SHGCMREGISTERED, false);
-    }
-
     private void hideSoftKeyboard() {
         Activity activity = StreetHawk.INSTANCE.getCurrentActivity();
         if (activity == null) {
@@ -562,12 +533,5 @@ public class Push extends PluginBase {
         }
         InputMethodManager manager = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
         manager.hideSoftInputFromWindow((IBinder) activity.getWindow().getDecorView().getWindowToken(), 0);
-    }
-
-    @Override
-    public void notifyInstallRegistered(Context context) {
-        if(!isPushRegistered()){
-            register();
-        }
     }
 }

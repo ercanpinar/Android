@@ -51,7 +51,7 @@ public class LocationReceiver extends BroadcastReceiver {
                     e.printStackTrace();
                 }
             }else {
-                Location location = StreethawkLocationService.getInstance().getLastKnownLocation();
+                Location location = StreethawkLocationService.getInstance().getLastKnownLocation(context);
                 if (null != location) {
                     double lat = location.getLatitude();
                     double lng = location.getLongitude();
@@ -77,7 +77,7 @@ public class LocationReceiver extends BroadcastReceiver {
                     } catch (Exception e) {
                         return;
                     }
-                    Location location = StreethawkLocationService.getInstance().getLastKnownLocation();
+                    Location location = StreethawkLocationService.getInstance().getLastKnownLocation(context);
                     if (null != location) {
                         double lat = location.getLatitude();
                         double lng = location.getLongitude();

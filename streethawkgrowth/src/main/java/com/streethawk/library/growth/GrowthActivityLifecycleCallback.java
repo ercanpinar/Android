@@ -50,6 +50,8 @@ class GrowthActivityLifecycleCallback implements Application.ActivityLifecycleCa
     public void onActivityResumed(Activity activity) {
         if(null==activity)
             return;
+
+        Growth.getInstance(activity.getApplicationContext()).setCurrentActivity(activity);
         final Context context = activity.getApplicationContext();
         final Intent intent = activity.getIntent();
         new Thread(new Runnable() {

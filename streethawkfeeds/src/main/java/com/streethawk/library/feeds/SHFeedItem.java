@@ -23,7 +23,6 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.streethawk.library.core.Logging;
-import com.streethawk.library.core.PluginBase;
 import com.streethawk.library.core.Util;
 
 import org.json.JSONArray;
@@ -52,7 +51,7 @@ import javax.net.ssl.HttpsURLConnection;
  * 3. App to call StreetHawk.INSTANCE.shGetFeedDataFromServer(context) for fetching feed data from server. This is the place where he can start displaying progress bar
  * 4. App to notify result with feedID
  */
-public class SHFeedItem extends PluginBase{
+public class SHFeedItem{
     private static Context mContext;
     private final String OFFSET         = "offset";
     private final int CODE_FEED_ACK     = 8200;
@@ -92,6 +91,10 @@ public class SHFeedItem extends PluginBase{
         }
     }
 
+    /**
+     * Send acknowledgement for the received feed item
+     * @param feedId
+     */
     public void sendFeedAck(int feedId) {
         if (null == mContext) {
             Log.e(Util.TAG, "notifyFeedResult: context==null returning..");
@@ -103,6 +106,11 @@ public class SHFeedItem extends PluginBase{
         manager.addLogsForSending(params);
     }
 
+    /**
+     * Notify feed result for user action on feed item.
+     * @param feedId Id of feed item associated with result
+     * @param result 1 Accepted, 0 postponed, -1 decline
+     */
     public void notifyFeedResult(int feedId, int result) {
         if (null == mContext) {
             Log.e(Util.TAG, "notifyFeedResult: context==null returning..");
@@ -177,10 +185,4 @@ public class SHFeedItem extends PluginBase{
             }.execute();
         }
     }
-
-    @Override
-    public void notifyInstallRegistered(Context context) {
-
-    }
-
 }

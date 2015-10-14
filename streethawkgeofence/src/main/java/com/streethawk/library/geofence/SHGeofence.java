@@ -49,6 +49,11 @@ public class SHGeofence extends PluginBase implements GoogleApiClient.Connection
     private SHGeofence() {
     }
 
+    /**
+     * Returns instance of SHGeofence class
+     * @param context
+     * @return
+     */
     public static SHGeofence getInstance(Context context) {
         mContext = context;
         if (null == mInstance)
@@ -107,7 +112,9 @@ public class SHGeofence extends PluginBase implements GoogleApiClient.Connection
         return null;
     }
 
-
+    /**
+     * Function to stop monitoring of geofences
+     */
     public void stopMonitoring() {
         if (null != mGoogleApiClient) {
             LocationServices.GeofencingApi.removeGeofences(
@@ -121,6 +128,9 @@ public class SHGeofence extends PluginBase implements GoogleApiClient.Connection
         }
     }
 
+    /**
+     * Function to start monitoring geofences
+     */
     public void startGeofenceMonitoring() {
         new Thread(new Runnable() {
             @Override
@@ -131,6 +141,7 @@ public class SHGeofence extends PluginBase implements GoogleApiClient.Connection
         }).start();
 
     }
+
 
     public void monitorGeofence() {
         GeofencingRequest request = getGeofencingRequest();

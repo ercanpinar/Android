@@ -54,7 +54,7 @@ public class GCMReceiver extends WakefulBroadcastReceiver {
             if(!(installId.equals(storedInstallId))) {
                 return;  // return if storedInstall id is not matching my install id
             }
-            ComponentName comp = new ComponentName(context.getPackageName(),GCMIntentService.class.getName());
+            ComponentName comp = new ComponentName(context.getPackageName(),SHGcmListenerService.class.getName());
             startWakefulService(context, (intent.setComponent(comp)));
             setResultCode(Activity.RESULT_OK);
         }

@@ -544,7 +544,7 @@ public class Util {
             return ((c2.getTimeZone().getRawOffset() / (1000 * 60)));
     }
 
-    public static void updateAccessDaa(Context context,String registrationId){
+    public static void updateAccessData(Context context, String registrationId){
         Install.getInstance(context).updateInstall(ACCESS_DATA, registrationId, Install.INSTALL_CODE_PUSH_TOKEN);
     }
 

@@ -90,11 +90,11 @@ class Constants {
     /*Library version*/
     public final static String SELLING_ARGUMENT    = "1";
     public final static String FEATURE_NUMBER      = "7";
-    public final static String BUGFIX_NUMBER       = "3";
+    public final static String BUGFIX_NUMBER       = "4";
 
     /*Release parameters */
     public static final String SHLIBRARY_VERSION = SELLING_ARGUMENT + "." + FEATURE_NUMBER + "." + BUGFIX_NUMBER;
     public static final int RELEASE_PLATFORM = PLATFORM_ANDROID_NATIVE;
-    public static final String DISTRIBUTION_TYPE = DISTRIBUTION_AAR;
+    public static final String DISTRIBUTION_TYPE = DISTRIBUTION_REFERENCE_LIB;
     public static final String BROADCAST_APP_STATUS_CHK = "com.streethawk.intent.action.gcm.STREETHAWK_APP_STATUS_CHK";
 }

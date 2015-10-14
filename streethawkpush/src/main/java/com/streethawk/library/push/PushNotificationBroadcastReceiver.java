@@ -39,6 +39,8 @@ import android.provider.Settings;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.google.android.gms.iid.InstanceID;
 import com.streethawk.library.core.Logging;
 import com.streethawk.library.core.StreetHawk;
 import com.streethawk.library.core.Util;
@@ -47,6 +49,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.List;
 
 
@@ -196,30 +199,58 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver {
                         if (object.get(Util.APP_STATUS) instanceof JSONObject) {
                             JSONObject app_status = object.getJSONObject(Util.APP_STATUS);
                             if (app_status.has(PROJECT_NUMBER) && !app_status.isNull(PROJECT_NUMBER)) {
-                                Object value_project_number = app_status.get(PROJECT_NUMBER);
+                                final Object value_project_number = app_status.get(PROJECT_NUMBER);
                                 if (value_project_number instanceof String) {
-                                    String newSenderID = (String)value_project_number;
+                                    final String newSenderID = (String)value_project_number;
                                     if(value_project_number==null)
                                         return;
                                     if(newSenderID.isEmpty())
                                         return;
-                                    SharedPreferences sharedPreferences = context.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
-                                    String stored_sender_key = sharedPreferences.getString(Constants.SHGCM_SENDER_KEY_APP, null);
-                                    if(null==stored_sender_key){
-                                        SharedPreferences.Editor e = sharedPreferences.edit();
-                                        e.putString(Constants.SHGCM_SENDER_KEY_APP, newSenderID);
-                                        e.putString(Constants.PROPERTY_REG_ID, null);
-                                        e.commit();
-                                        Push.getInstance(context).reRegister(newSenderID);
-                                    }else{
-                                        if(!(stored_sender_key.equals(value_project_number))){
-                                            SharedPreferences.Editor e = sharedPreferences.edit();
-                                            e.putString(Constants.SHGCM_SENDER_KEY_APP, newSenderID);
-                                            e.putString(Constants.PROPERTY_REG_ID, null);
-                                            e.commit();
-                                            Push.getInstance(context).reRegister(newSenderID);
+                                    new Thread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            SharedPreferences sharedPreferences = context.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
+                                            String stored_sender_key = sharedPreferences.getString(Constants.SHGCM_SENDER_KEY_APP, null);
+                                            if(null==stored_sender_key){
+                                                SharedPreferences.Editor e = sharedPreferences.edit();
+                                                e.putString(Constants.SHGCM_SENDER_KEY_APP, newSenderID);
+                                                InstanceID instanceID = InstanceID.getInstance(context);
+                                                String token=null;
+                                                try {
+                                                    token = instanceID.getToken(newSenderID,
+                                                            GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
+                                                    if(null!=token){
+                                                        e.putString(Constants.PUSH_ACCESS_DATA, token);
+                                                        Push.getInstance(context).addPushModule();
+                                                    }
+                                                } catch (IOException ex) {
+                                                    ex.printStackTrace();
+                                                    return;
+                                                }
+                                                e.commit();
+                                            }else{
+                                                if(!(stored_sender_key.equals(value_project_number))){
+                                                    SharedPreferences.Editor e = sharedPreferences.edit();
+                                                    e.putString(Constants.SHGCM_SENDER_KEY_APP, newSenderID);
+                                                    InstanceID instanceID = InstanceID.getInstance(context);
+                                                    String token=null;
+                                                    try {
+                                                        token = instanceID.getToken(newSenderID,
+                                                                GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
+                                                        if(null!=token){
+                                                            e.putString(Constants.PUSH_ACCESS_DATA, token);
+                                                            Push.getInstance(context).addPushModule();
+                                                        }
+                                                    } catch (IOException ex) {
+                                                        ex.printStackTrace();
+                                                        return;
+                                                    }
+                                                    e.commit();
+                                                    Push.getInstance(context).addPushModule();
+                                                }
+                                            }
                                         }
-                                    }
+                                    }).start();
                                 }
                             }
                             if (object.has(PUSH)) {

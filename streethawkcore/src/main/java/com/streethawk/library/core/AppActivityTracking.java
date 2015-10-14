@@ -21,8 +21,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
-import java.util.Set;
-
 
 class AppActivityTracking{
 
@@ -34,6 +32,8 @@ class AppActivityTracking{
     private String SESSION_LENGTH = "length";
     private String BG = "bg";
     private String SHARED_PREF_ACTIVITY = "sharedprefactivity";  // shared preference to keep a note of activity start time
+
+    /*
     private static Set<PluginBase> mPluginArray=null;
 
     public void registerPlugins(Set<PluginBase> pluginArray){
@@ -41,6 +41,7 @@ class AppActivityTracking{
             this.mPluginArray = pluginArray;
         }
     }
+    */
 
     private void SaveSessionTime(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);

@@ -27,7 +27,7 @@ class GeofenceData {
     private double  mLongitude;         // Longitude of geofence
     private float   mRadius;            // Radius of geofence
     private String  mParent;            // ID of parent node of geofence. Null is Root node
-    private boolean mHasChildNodes;              // Boolean specifying if current geofence has nodes.
+    private boolean mHasChildNodes;     // Boolean specifying if current geofence has nodes.
 
 
     public GeofenceData setGeofenceID(String ID){this.mGeofenceID=ID; return this;}

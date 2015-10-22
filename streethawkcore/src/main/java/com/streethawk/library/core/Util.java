@@ -16,6 +16,7 @@
  */
 package com.streethawk.library.core;
 
+import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.ComponentName;
 import android.content.Context;
@@ -67,6 +68,8 @@ public class Util {
     private static final String ACCESS_DATA = "access_data";
     public static final String SHGCMREGISTERED = "shgcmregistered";
 
+    public static Activity mActivity;
+
     public static final String INSTALL_ID = "installid";
 
     /*Params*/
@@ -77,7 +80,6 @@ public class Util {
     public static final String SHSHARED_PREF_PERM = "shstoreperm";      // stores data associated with install permanently
 
     public static final String BROADCAST_SH_APP_STATUS_NOTIFICATION = "com.streethawk.intent.action.APP_STATUS_NOTIFICATION";
-
 
     /**
      * Function returns network status of the device

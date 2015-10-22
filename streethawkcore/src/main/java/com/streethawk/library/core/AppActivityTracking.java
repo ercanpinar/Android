@@ -20,6 +20,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 
 class AppActivityTracking{
@@ -49,19 +53,40 @@ class AppActivityTracking{
         e.putLong(SESSION_TIME, System.currentTimeMillis());
         e.commit();
     }
-/*
+
     public void notifyChangedOrientation(final Activity activity){
+        final Context context = activity.getApplicationContext();
         new Thread(new Runnable() {
             @Override
             public void run() {
-                if(null!=mPluginArray){
-                    for(PluginBase obj:mPluginArray)
-                        obj.notifyChangeOrientation(activity);
+                Class[] paramContext = new Class[1];
+                paramContext[0] = Context.class;
+                Class[] paramActivity = new Class[1];
+                paramActivity[0] = Activity.class;
+
+                Class push = null;
+
+                try {
+                    push = Class.forName("com.streethawk.library.push.Push");
+                    Method pushMethod = push.getMethod("getInstance", paramContext);
+                    Object obj = pushMethod.invoke(null, context);
+                    if (null != obj) {
+                        Method addPushModule = push.getDeclaredMethod("notifyChangeOrientation", paramActivity);
+                        addPushModule.invoke(obj,activity);
+                    }
+                } catch (ClassNotFoundException e1) {
+                    Log.w(Util.TAG, "Push module is not  not present");
+                } catch (IllegalAccessException e1) {
+                    e1.printStackTrace();
+                } catch (NoSuchMethodException e1) {
+                    e1.printStackTrace();
+                } catch (InvocationTargetException e1) {
+                    e1.printStackTrace();
                 }
             }
         }).start();
     }
-*/
+
     private long getSessionTime(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
         Long sessionTime = sharedPreferences.getLong(SESSION_TIME, -1);
@@ -133,24 +158,41 @@ class AppActivityTracking{
                 }
             }
         }).start();
-        /*
         new Thread(new Runnable() {
             @Override
             public void run() {
-                if(null!=mPluginArray){
-                    for(PluginBase obj:mPluginArray)
-                        obj.notifyAppForegrounded(activity);
+                Class[] paramContext = new Class[1];
+                paramContext[0] = Context.class;
+                Class[] paramActivity = new Class[1];
+                paramActivity[0] = Activity.class;
+
+                Class push = null;
+
+                try {
+                    push = Class.forName("com.streethawk.library.push.Push");
+                    Method pushMethod = push.getMethod("getInstance", paramContext);
+                    Object obj = pushMethod.invoke(null, context);
+                    if (null != obj) {
+                        Method addPushModule = push.getDeclaredMethod("notifyAppForegrounded", paramActivity);
+                        addPushModule.invoke(obj,activity);
+                    }
+                } catch (ClassNotFoundException e1) {
+                    Log.w(Util.TAG, "Push module is not  not present");
+                } catch (IllegalAccessException e1) {
+                    e1.printStackTrace();
+                } catch (NoSuchMethodException e1) {
+                    e1.printStackTrace();
+                } catch (InvocationTargetException e1) {
+                    e1.printStackTrace();
                 }
             }
         }).start();
-        */
     }
 
     public void onAppBackgrounded(final Activity activity){
        if(null==activity)
            return;
         final Context context = activity.getApplicationContext();
-
         long currentTime = System.currentTimeMillis();
         Bundle extras = new Bundle();
         // Seinding 8105 before 8109 as 8105 is non priority logline

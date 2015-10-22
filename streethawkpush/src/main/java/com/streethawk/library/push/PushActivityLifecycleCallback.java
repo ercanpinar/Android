@@ -1,3 +1,4 @@
+
 /*
  * Copyright (c) StreetHawk, All rights reserved.
  *
@@ -31,10 +32,12 @@ import android.os.Handler;
 import com.streethawk.library.core.*;
 
 import java.util.List;
+
 @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 class PushActivityLifecycleCallback implements Application.ActivityLifecycleCallbacks {
-    private final String SHPGPREVPAGE         = "shpgprevpage";
+    private final String SHPGPREVPAGE = "shpgprevpage";
     private static PushActivityLifecycleCallback instance = null;
+
     public static PushActivityLifecycleCallback getInstance() {
         if (null == instance) {
             instance = new PushActivityLifecycleCallback();
@@ -82,9 +85,11 @@ class PushActivityLifecycleCallback implements Application.ActivityLifecycleCall
                 if (!tasks.isEmpty()) {
                     ComponentName topActivity = tasks.get(0).topActivity;
                     if (!(topActivity.getPackageName().equals(context.getPackageName()))) {
+                        Push.getInstance(context).onPause(activity);
                         Push.getInstance(context).notifyAppBackgrounded(activity);
                     }
                 } else {
+                    Push.getInstance(context).onPause(activity);
                     Push.getInstance(context).notifyAppBackgrounded(activity);
                 }
                 return;

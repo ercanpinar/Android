@@ -54,14 +54,14 @@ public class Beacons{
      * @return 0 for successful reporting
      * -1 for error, Check logcat messages for details
      */
-    public int shEnterBeacon(final Context context, String UUID, int major, int minor, double distance) {
-        if (null == context)
+    public int shEnterBeacon(String UUID, int major, int minor, double distance) {
+        if (null == mContext)
             return -1;
         if (null == UUID) {
             Log.e(Util.TAG, "UUID cannot be null");
             return -1;
         }
-        BeaconDB beaconDB = BeaconDB.getInstance(context);
+        BeaconDB beaconDB = BeaconDB.getInstance(mContext);
         String beaconId = beaconDB.getBeaconId(UUID, major, minor);
         if (null == beaconId) {
             Log.w(Util.TAG, "Beacon not found in streethawk list. Beacon is ignored from reporting");
@@ -77,7 +77,7 @@ public class Beacons{
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    Logging manager = Logging.getLoggingInstance(context);
+                    Logging manager = Logging.getLoggingInstance(mContext);
                     Bundle params = new Bundle();
                     params.putString(Util.CODE, Integer.toString(Constants.CODE_IBEACON_UPDATES));
                     params.putString(Util.SHMESSAGE_ID, null);
@@ -99,14 +99,14 @@ public class Beacons{
      * @return 0 for successful reporting
      * -1 for error, Check logcat messages for details
      */
-    public int shExitBeacon(final Context context, String UUID, int major, int minor) {
-        if (null == context)
+    public int shExitBeacon(String UUID, int major, int minor) {
+        if (null == mContext)
             return -1;
         if (null == UUID) {
             Log.e(Util.TAG, "UUID cannot be null");
             return -1;
         }
-        BeaconDB beaconDB = BeaconDB.getInstance(context);
+        BeaconDB beaconDB = BeaconDB.getInstance(mContext);
         String beaconId = beaconDB.getBeaconId(UUID, major, minor);
         if (null == beaconId) {
             Log.w(Util.TAG, "Beacon not found in streethawk list. Beacon is ignored from reporting");
@@ -122,7 +122,7 @@ public class Beacons{
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    Logging manager = Logging.getLoggingInstance(context);
+                    Logging manager = Logging.getLoggingInstance(mContext);
                     Bundle params = new Bundle();
                     params.putString(Util.CODE, Integer.toString(Constants.CODE_IBEACON_UPDATES));
                     params.putString(Util.SHMESSAGE_ID, null);

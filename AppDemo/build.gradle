@@ -27,6 +27,7 @@ dependencies {
     compile project (':streethawkpush')
     compile project (':streethawklocations')
     compile project (':streethawkbeacon')
+    compile project(':streethawkgeofence')
 
 
 

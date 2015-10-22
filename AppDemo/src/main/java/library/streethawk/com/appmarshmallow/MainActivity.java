@@ -12,14 +12,17 @@ import android.util.Log;
 import android.view.View;
 
 import com.streethawk.library.core.StreetHawk;
+import com.streethawk.library.geofence.SHGeofence;
 import com.streethawk.library.growth.Growth;
-import com.streethawk.library.locations.SHLocation;
+import com.streethawk.library.growth.IGrowth;
 import com.streethawk.library.push.ISHObserver;
 import com.streethawk.library.push.Push;
 import com.streethawk.library.push.PushDataForApplication;
 
+import org.json.JSONObject;
 
-public class MainActivity extends Activity implements ISHObserver {
+
+public class MainActivity extends Activity implements ISHObserver,IGrowth {
     private final int PERMISSIONS_LOCATION = 0;
     private final String TAG = "STREETHAWK_DEMO";
 
@@ -42,9 +45,22 @@ public class MainActivity extends Activity implements ISHObserver {
 
        Push.getInstance(this).registerSHObserver(this);  //Register this class as implementation of ISHObserver
         // Enter your project number here (https://streethawk.freshdesk.com/solution/articles/5000608997)
-        Push.getInstance(this).registerForPushMessaging("<PROJECT_NUMBER>");
+        Push.getInstance(this).registerForPushMessaging("393009194749");
         // Enter APP_KEY for your application registered with StreetHawk server
-        StreetHawk.INSTANCE.setAppKey("<APP_KEY>");
+
+        Growth.getInstance(this).getShareUrlForAppDownload("1","shsample://setparams?param1=30","facebook","medium","term","cc","www.google.com", new IGrowth() {
+                    @Override
+                    public void onReceiveShareUrl(String shareUrl) {
+
+                    }
+
+                    @Override
+                    public void onReceiveErrorForShareUrl(JSONObject errorResponse) {
+
+                    }
+                });
+
+        StreetHawk.INSTANCE.setAppKey("SHSample");
         StreetHawk.INSTANCE.init(app);
     }
 
@@ -87,7 +103,10 @@ public class MainActivity extends Activity implements ISHObserver {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    SHLocation.getInstance(this).startLocationReporting();
+                    //SHLocation.getInstance(this).startLocationReporting();
+                    SHGeofence.getInstance(this).startGeofenceMonitoring();
+
+
                 } else {
 
                     Log.e(TAG, "Permission not granted by user");
@@ -148,12 +167,27 @@ public class MainActivity extends Activity implements ISHObserver {
     @Override
     public void onReceivePushData(PushDataForApplication pushData) {
 
+        Log.e("Anurag","Received push data"+pushData);
+        pushData.displayDataForDebugging("Anurag");
+
+
     }
 
     @Override
     public void onReceiveResult(PushDataForApplication resultData, int result) {
+        Log.e("Anurag","Received push result "+result);
+        resultData.displayDataForDebugging("Anurag");
 
     }
 
 
+    @Override
+    public void onReceiveShareUrl(String shareUrl) {
+
+    }
+
+    @Override
+    public void onReceiveErrorForShareUrl(JSONObject errorResponse) {
+
+    }
 }

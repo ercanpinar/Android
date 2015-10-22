@@ -35,6 +35,7 @@ public class SHLocation{
 
     private static SHLocation mSHLocation;
     private static Context mContext;
+    private final String SUBTAG = "SHLocation ";
 
     private static int VALUE_UPDATE_INTERVAL_BG = 0;
     private static int VALUE_UPDATE_DISTANCE_BG = 0;
@@ -119,7 +120,7 @@ public class SHLocation{
             if ((coarseLocation == PackageManager.PERMISSION_GRANTED) || (fineLocation == PackageManager.PERMISSION_GRANTED)) {
                 return true;
             } else {
-                    Log.e(Util.TAG, "Missing location permissions");
+                    Log.e(Util.TAG,SUBTAG+ "Missing location permissions");
                 return false;
             }
         } else {
@@ -146,6 +147,8 @@ public class SHLocation{
         if(!checkForLocationPermission()){
             return;
         }
+        if(null==mContext)
+            return;
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
         SharedPreferences.Editor e = sharedPreferences.edit();
         e.putBoolean(Constants.SHLOCATION_FLAG, true);

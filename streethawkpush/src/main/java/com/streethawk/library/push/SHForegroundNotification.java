@@ -50,7 +50,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-class SHForegroundNotification extends NotificationBase{
+class SHForegroundNotification extends NotificationBase {
 
 
     private final String SUBTAG = "SHForegroundNotification ";
@@ -64,17 +64,23 @@ class SHForegroundNotification extends NotificationBase{
     private static Dialog MyDialog = null;
 
     private final String STREETHAWK_ERROR_NO_ISHOBSERVER = "Application has not registered ISHObserver. Please refer streethawk docs";
+
     /**
      * API to dismiss Streethawk dialog dialog
      */
     public void dismissForegroundDialog() {
         if (null != mForegroundDialog) {
-            if (mForegroundDialog.isShowing())
+            if (mForegroundDialog.isShowing()) {
                 mForegroundDialog.dismiss();
+            }
             mForegroundDialog = null;
         }
-        StreetHawkDialog.forceDismissDialog();
+        if (MyDialog == null)
+            return;
+        if (MyDialog.isShowing())
+            MyDialog.dismiss();
     }
+
 
     public static void dismissCurrentShowingDialog(){
         if(MyDialog==null)
@@ -82,7 +88,6 @@ class SHForegroundNotification extends NotificationBase{
         if(MyDialog.isShowing())
             MyDialog.dismiss();
     }
-
 
     /**
      * Pass receiver object which is required for cross platforms
@@ -95,10 +100,9 @@ class SHForegroundNotification extends NotificationBase{
 
     /**
      * @param context
-     * @param pushData
      * @return
      */
-    public static SHForegroundNotification getDialogInstance(Context context, PushNotificationData pushData) {
+    public static SHForegroundNotification getDialogInstance(Context context) {
         if (null == mInstance) {
             SHForegroundNotification Instance = new SHForegroundNotification(context);
             return Instance;
@@ -129,30 +133,33 @@ class SHForegroundNotification extends NotificationBase{
 
     /**
      * Return positive button onClickListener
+     *
      * @param pushData
      * @return
      */
-    public View.OnClickListener getPositiveButtonListenerForApplication(final Dialog dialog,PushNotificationData pushData){
+    public View.OnClickListener getPositiveButtonListenerForApplication(final Dialog dialog, PushNotificationData pushData) {
         return getPositiveOnClickListenerForApp(dialog, pushData);
 
     }
 
     /**
      * Return negative button onClickListener
+     *
      * @param pushData
      * @return
      */
-    public View.OnClickListener getNegativeButtonListenerForApplication(final Dialog dialog,PushNotificationData pushData){
+    public View.OnClickListener getNegativeButtonListenerForApplication(final Dialog dialog, PushNotificationData pushData) {
         return getNegativeOnClickListenerForApp(dialog, pushData.getMsgId());
 
     }
 
     /**
      * Return neutral button onClickListener
+     *
      * @param pushData
      * @return
      */
-    public View.OnClickListener getNeutralButtonListenerForApplication(final Dialog dialog,PushNotificationData pushData){
+    public View.OnClickListener getNeutralButtonListenerForApplication(final Dialog dialog, PushNotificationData pushData) {
         return getNeutralOnClickListenerForApp(dialog, pushData.getMsgId());
 
     }
@@ -165,23 +172,16 @@ class SHForegroundNotification extends NotificationBase{
         if (null == mForegroundDialog) {
             mForegroundDialog = new Dialog(mContext);
         }
-        /*
-        else {
-            try {
-                mForegroundDialog.dismiss();
-            }catch(IllegalStateException e){}
-
-        }
-        */
-        final Activity activity = StreetHawk.INSTANCE.getCurrentActivity();
+        Activity activity = StreetHawk.INSTANCE.getCurrentActivity();
         if (null == activity) {
-                Log.e(Util.TAG,SUBTAG+"activity is null in  display()");
+            Log.e(Util.TAG, SUBTAG + "activity is null in  display()");
             PushNotificationBroadcastReceiver obj = new PushNotificationBroadcastReceiver();
             obj.clearPendingDialogFlagAndDB(mContext, pushData.getMsgId());
             return;
         }
+        final Activity tmpActivity = activity;
         if (null == mContext) {
-                Log.e(Util.TAG,SUBTAG+"Context is null in display()");
+            Log.e(Util.TAG, SUBTAG + "Context is null in display()");
             PushNotificationBroadcastReceiver obj = new PushNotificationBroadcastReceiver();
             obj.clearPendingDialogFlagAndDB(mContext, pushData.getMsgId());
             return;
@@ -192,16 +192,16 @@ class SHForegroundNotification extends NotificationBase{
         msgStr1 = getUnicodeForEmoji(msgStr1, true);
 
         final String titleStr = titleStr1;
-        final String msgStr  = msgStr1;
+        final String msgStr = msgStr1;
 
 
         Spanned titleTmp = null;
         Spanned msgTmp = null;
-        if(titleStr!=null) {
+        if (titleStr != null) {
             if (!titleStr.isEmpty())
                 titleTmp = Html.fromHtml(titleStr/*+'\u00A9'+0x1F601*/);
         }
-        if(msgStr!=null) {
+        if (msgStr != null) {
             if (!msgStr.isEmpty())
                 msgTmp = Html.fromHtml(msgStr);
         }
@@ -209,11 +209,11 @@ class SHForegroundNotification extends NotificationBase{
         final Spanned msg = msgTmp;
         final String data = pushData.getData();
         final int code = Integer.parseInt(pushData.getCode());
-        final boolean noDialog=Boolean.parseBoolean(pushData.getNoDialog());
-        if(null==title && null==msg){
+        final boolean noDialog = Boolean.parseBoolean(pushData.getNoDialog());
+        if (null == title && null == msg) {
             PushNotificationBroadcastReceiver obj = new PushNotificationBroadcastReceiver();
             obj.clearPendingDialogFlagAndDB(mContext, pushData.getMsgId());
-            Log.w(Util.TAG,SUBTAG+"Ignoring message as title and message are null");
+            Log.w(Util.TAG, SUBTAG + "Ignoring message as title and message are null");
             return;
         }
         hideSoftKeyboard();
@@ -221,12 +221,12 @@ class SHForegroundNotification extends NotificationBase{
             Float portion;
             int orientation;
             int speed;
-            if(null==data) {
+            if (null == data) {
                 PushNotificationBroadcastReceiver obj = new PushNotificationBroadcastReceiver();
                 obj.clearPendingDialogFlagAndDB(mContext, pushData.getMsgId());
                 return;
             }
-            if(data.isEmpty()) {
+            if (data.isEmpty()) {
                 PushNotificationBroadcastReceiver obj = new PushNotificationBroadcastReceiver();
                 obj.clearPendingDialogFlagAndDB(mContext, pushData.getMsgId());
                 return;
@@ -243,7 +243,7 @@ class SHForegroundNotification extends NotificationBase{
                 orientation = -1;
             }
             try {
-                speed = (int)Float.parseFloat(pushData.getSpeed());
+                speed = (int) Float.parseFloat(pushData.getSpeed());
             } catch (Exception e) {
                 speed = -1;
             }
@@ -257,9 +257,9 @@ class SHForegroundNotification extends NotificationBase{
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+                    AlertDialog.Builder builder = new AlertDialog.Builder(tmpActivity);
                     if (null != title) {
-                        builder.setTitle(title /*"\ud83d\ude01"+"\u3dd8\u4fde"*/);
+                        builder.setTitle(title);
                     }
                     if (null != msg) {
                         builder.setMessage(msg);
@@ -311,7 +311,7 @@ class SHForegroundNotification extends NotificationBase{
                             }
                             break;
                         default:
-                                Log.e(Util.TAG,SUBTAG+ "Received Unhandled code " + code);
+                            Log.e(Util.TAG, SUBTAG + "Received Unhandled code " + code);
                             PushNotificationBroadcastReceiver obj = new PushNotificationBroadcastReceiver();
                             obj.clearPendingDialogFlagAndDB(mContext, pushData.getMsgId());
                             return;
@@ -330,11 +330,12 @@ class SHForegroundNotification extends NotificationBase{
 
     /**
      * negative button listener when actions are handled by custom dialog in application.
+     *
      * @param dialog
      * @param msgId
      * @return
      */
-    private View.OnClickListener getNegativeOnClickListenerForApp(final Dialog dialog,final String msgId) {
+    private View.OnClickListener getNegativeOnClickListenerForApp(final Dialog dialog, final String msgId) {
         View.OnClickListener negativeClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -347,11 +348,12 @@ class SHForegroundNotification extends NotificationBase{
 
     /**
      * neutral button onclick listener when actions are handled by custom dialog in application
+     *
      * @param dialog
      * @param msgId
      * @return
      */
-    private View.OnClickListener getNeutralOnClickListenerForApp(final Dialog dialog,final String msgId) {
+    private View.OnClickListener getNeutralOnClickListenerForApp(final Dialog dialog, final String msgId) {
         View.OnClickListener neutralClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -364,11 +366,12 @@ class SHForegroundNotification extends NotificationBase{
 
     /**
      * Postivive button listener when streethawk action is handled by custom dialog in application
+     *
      * @param dialog
      * @param mPushData
      * @return
      */
-    private View.OnClickListener getPositiveOnClickListenerForApp(final Dialog dialog,final PushNotificationData mPushData) {
+    private View.OnClickListener getPositiveOnClickListenerForApp(final Dialog dialog, final PushNotificationData mPushData) {
         View.OnClickListener positiveClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -385,13 +388,13 @@ class SHForegroundNotification extends NotificationBase{
                     case CODE_USER_REGISTRATION_SCREEN:
                     case CODE_USER_LOGIN_SCREEN:
                         String data = mPushData.getData();
-                        if(data.isEmpty()){
-                            if(code==CODE_USER_REGISTRATION_SCREEN)
+                        if (data.isEmpty()) {
+                            if (code == CODE_USER_REGISTRATION_SCREEN)
                                 data = Constants.REGISTER_FRIENDLY_NAME;
-                            if(code==CODE_USER_LOGIN_SCREEN)
+                            if (code == CODE_USER_LOGIN_SCREEN)
                                 data = Constants.LOGIN_FRIENDLY_NAME;
                         }
-                        handleLaunchActivity(mPushData.getMsgId(),data);
+                        handleLaunchActivity(mPushData.getMsgId(), data);
                         break;
                     case CODE_CALL_TELEPHONE_NUMBER:
                         handleCall(mPushData.getData());
@@ -434,6 +437,7 @@ class SHForegroundNotification extends NotificationBase{
 
     /**
      * Positive button listener when action is handled by default dialog by StreetHawk
+     *
      * @param mPushData
      * @return
      */
@@ -453,13 +457,13 @@ class SHForegroundNotification extends NotificationBase{
                     case CODE_USER_REGISTRATION_SCREEN:
                     case CODE_USER_LOGIN_SCREEN:
                         String data = mPushData.getData();
-                        if(data.isEmpty()){
-                            if(code==CODE_USER_REGISTRATION_SCREEN)
+                        if (data.isEmpty()) {
+                            if (code == CODE_USER_REGISTRATION_SCREEN)
                                 data = Constants.REGISTER_FRIENDLY_NAME;
-                            if(code==CODE_USER_LOGIN_SCREEN)
+                            if (code == CODE_USER_LOGIN_SCREEN)
                                 data = Constants.LOGIN_FRIENDLY_NAME;
                         }
-                        handleLaunchActivity(mPushData.getMsgId(),data);
+                        handleLaunchActivity(mPushData.getMsgId(), data);
                         break;
                     case CODE_CALL_TELEPHONE_NUMBER:
                         handleCall(mPushData.getData());
@@ -530,6 +534,7 @@ class SHForegroundNotification extends NotificationBase{
 
     /**
      * negative button listener for actions handled by StreetHawk default dialog
+     *
      * @param msgId
      * @return
      */
@@ -546,6 +551,7 @@ class SHForegroundNotification extends NotificationBase{
 
     /**
      * neutral button listener for actions handled by StreetHawk default dialog.
+     *
      * @param msgId
      * @return
      */
@@ -583,19 +589,19 @@ class SHForegroundNotification extends NotificationBase{
         Float portion;
         int orientation;
         int speed;
-        String data =pushData.getData();
-        if(null==data) {
+        String data = pushData.getData();
+        if (null == data) {
             PushNotificationBroadcastReceiver obj = new PushNotificationBroadcastReceiver();
             obj.clearPendingDialogFlagAndDB(mContext, pushData.getMsgId());
             return;
         }
-        if(data.isEmpty()) {
+        if (data.isEmpty()) {
             PushNotificationBroadcastReceiver obj = new PushNotificationBroadcastReceiver();
             obj.clearPendingDialogFlagAndDB(mContext, pushData.getMsgId());
             return;
         }
-        if (!data.startsWith("http://") && !data.startsWith("https://")){
-            data = "http://"+data;
+        if (!data.startsWith("http://") && !data.startsWith("https://")) {
+            data = "http://" + data;
         }
         try {
             portion = Float.parseFloat(pushData.getPortion());
@@ -608,7 +614,7 @@ class SHForegroundNotification extends NotificationBase{
             orientation = -1;
         }
         try {
-            speed = (int)Float.parseFloat(pushData.getSpeed());
+            speed = (int) Float.parseFloat(pushData.getSpeed());
         } catch (Exception e) {
             speed = -1;
         }
@@ -620,7 +626,7 @@ class SHForegroundNotification extends NotificationBase{
             try {
                 mContext.startActivity(nativeBrowserIntent);
             } catch (Exception e) {
-                    Log.e(Util.TAG, "Exception in handleURL" + e);
+                Log.e(Util.TAG, "Exception in handleURL" + e);
             }
         }
     }
@@ -646,7 +652,7 @@ class SHForegroundNotification extends NotificationBase{
                     deepLinkIntent.setData(Uri.parse(data));
                     mContext.startActivity(deepLinkIntent);
                 } catch (ActivityNotFoundException e) {
-                    Log.e(Util.TAG,SUBTAG+ "Incorrect link" + data);
+                    Log.e(Util.TAG, SUBTAG + "Incorrect link" + data);
                 }
             }
             // Either we have received FQName or ""
@@ -675,7 +681,7 @@ class SHForegroundNotification extends NotificationBase{
                     mContext.startActivity(intent);
                 } catch (ClassNotFoundException e) {
                     e.printStackTrace();
-                        Log.e(Util.TAG, "Invalid activity called" + activityName);
+                    Log.e(Util.TAG, "Invalid activity called" + activityName);
                 }
                 break;
 
@@ -683,8 +689,8 @@ class SHForegroundNotification extends NotificationBase{
             case Constants.PLATFORM_TITANIUM:
             case Constants.PLATFORM_UNITY:
                 if (null == mSHObserver) {
-                    Log.e(Util.TAG,STREETHAWK_ERROR_NO_ISHOBSERVER);
-                        return;
+                    Log.e(Util.TAG, STREETHAWK_ERROR_NO_ISHOBSERVER);
+                    return;
                 } else {
                     mSHObserver.shNotifyAppPage(activityName);
                 }
@@ -776,7 +782,7 @@ class SHForegroundNotification extends NotificationBase{
                 if (null == MyDialog) {
                     MyDialog = new Dialog(mContext);
                 }
-               // MyDialog.dismiss();
+                // MyDialog.dismiss();
                 MyDialog = builder.create();
                 list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override

@@ -512,10 +512,4 @@ public class Logging extends LoggingBase {
         else
             return mInstance;
     }
-
-    /*
-    public void registerPlugins(Set<PluginBase> pluginArray){
-        super.registerPlugins(pluginArray);
-    }
-    */
 }

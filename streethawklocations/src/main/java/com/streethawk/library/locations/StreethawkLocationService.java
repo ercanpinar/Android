@@ -104,10 +104,10 @@ public class StreethawkLocationService extends Service {
 
 
     public Location getLastKnownLocation(Context context){
-        LocationManager lm = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
+        locationManager = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
         String locationProvider=null;
         try {
-            if(lm.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+            if(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
                 locationProvider = LocationManager.GPS_PROVIDER;
             }
         } catch(Exception ex) {
@@ -115,7 +115,7 @@ public class StreethawkLocationService extends Service {
         }
 
         try {
-            if(lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)){
+            if(locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)){
                 locationProvider = LocationManager.NETWORK_PROVIDER;
             }
         } catch(Exception ex) {
@@ -188,7 +188,7 @@ public class StreethawkLocationService extends Service {
             return;
         try {
             if (null == locationManager) {
-                locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+                locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
             }
             if (null == locationManager) {
                 Log.e(Util.TAG, SUBTAG + "Device doesn't support locations");

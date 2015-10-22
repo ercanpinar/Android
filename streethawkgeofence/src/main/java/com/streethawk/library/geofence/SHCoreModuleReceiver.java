@@ -15,12 +15,16 @@
  * License along with this library.
  */
 package com.streethawk.library.geofence;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
 
+import com.streethawk.library.core.Logging;
 import com.streethawk.library.core.Util;
 
 import org.json.JSONArray;
@@ -39,9 +43,11 @@ import java.net.URL;
 import java.util.HashMap;
 
 import javax.net.ssl.HttpsURLConnection;
+
 public class SHCoreModuleReceiver extends BroadcastReceiver {
     private final String GEOFENCELIST = "geofences";
     private final String KEY_GEOFENCE = "shKeyGeofenceList";
+
     public SHCoreModuleReceiver() {
     }
 
@@ -91,8 +97,8 @@ public class SHCoreModuleReceiver extends BroadcastReceiver {
                             connection.setDoOutput(true);
                             connection.setRequestProperty("X-Installid", installId);
                             connection.setRequestProperty("X-App-Key", app_key);
-                            connection.setRequestProperty("X-Version",libVersion);
-                            connection.setRequestProperty("User-Agent", app_key + "(" + libversion + ")");
+                            connection.setRequestProperty("X-Version", libVersion);
+                            connection.setRequestProperty("User-Agent", app_key + "(" + libVersion + ")");
                             OutputStream os = connection.getOutputStream();
                             BufferedWriter writer = new BufferedWriter(
                                     new OutputStreamWriter(os, "UTF-8"));
@@ -119,7 +125,11 @@ public class SHCoreModuleReceiver extends BroadcastReceiver {
                                     e.putString(Constants.PARENT_GEOFENCE_ID, null);
                                     e.commit();
                                     instance.storeGeofenceList(value);
-                                    instance.startGeofenceMonitoring();
+                                    boolean status = sharedPreferences.getBoolean(Constants.IS_GEOFENCE_ENABLE, false);
+                                    if (status){
+                                        instance.startGeofenceMonitoring();
+                                    }
+
                                 } catch (JSONException e) {
                                 }
 
@@ -165,10 +175,11 @@ public class SHCoreModuleReceiver extends BroadcastReceiver {
     }
 
     @Override
-    public void onReceive(Context context, Intent intent) {
-        if (intent.getAction() == Util.BROADCAST_SH_APP_STATUS_NOTIFICATION) {
+    public void onReceive(final Context context, Intent intent) {
+        String action = intent.getAction();
+        if (action == Util.BROADCAST_SH_APP_STATUS_NOTIFICATION) {
             String installId = intent.getStringExtra(Util.INSTALL_ID);
-            if(null==installId)
+            if (null == installId)
                 return;
             if (installId.equals(Util.getInstallId(context))) {
                 String answer = intent.getStringExtra(Util.APP_STATUS_ANSWER);
@@ -190,6 +201,32 @@ public class SHCoreModuleReceiver extends BroadcastReceiver {
                 }
             }
         }
+        if (action.equals("android.location.PROVIDERS_CHANGED")) {
+            final Handler delay= new Handler();
+            delay.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+                    if (!(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))) {
+                        try {
+                            Bundle extras = new Bundle();
+                            extras.putString(Util.CODE, Integer.toString(Constants.CODE_USER_DISABLES_LOCATION));
+                            Logging.getLoggingInstance(context).addLogsForSending(extras);
+                            SHGeofence.getInstance(context).stopMonitoring();
+                            GeofenceService.notifyAllGeofenceExit(context);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        SharedPreferences sharedPreferences = context.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
+                        boolean status = sharedPreferences.getBoolean(Constants.IS_GEOFENCE_ENABLE, false);
+                        if (status){
+                            SHGeofence.getInstance(context).startGeofenceMonitoring();
+                        }
+                    }
+                }
+            },2000);
 
+        }
     }
 }

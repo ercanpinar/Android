@@ -18,6 +18,7 @@ package com.streethawk.library.core;
 
 import android.app.ActivityManager;
 import android.app.AlarmManager;
+import android.app.Application;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
@@ -32,6 +33,7 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.StatFs;
 import android.os.SystemClock;
+import android.util.Log;
 import android.view.Surface;
 import android.view.WindowManager;
 
@@ -48,6 +50,8 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
@@ -97,21 +101,78 @@ public class StreetHawkCoreService extends Service implements Thread.UncaughtExc
 
     @Override
     public IBinder onBind(Intent intent) {
+        if(null!=intent){
+            boolean flag = intent.getBooleanExtra("fromInit",false);
+            if(flag){
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+                    final Application app = getApplication();
+                    app.registerActivityLifecycleCallbacks(StreetHawkActivityLifecycleCallback.getInstance());
+                    //Register all module's activityLifecycle
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Class noParams[] = {};
+                            Class[] appParams = new Class[1];
+                            appParams[0] = Application.class;
+                            Class growth = null;
+                            try {
+                                growth = Class.forName("com.streethawk.library.growth.Growth");
+                                Method growthMethod = growth.getMethod("setActivityLifecycleCallbacks", appParams);
+                                growthMethod.invoke(null,app);
+                            } catch (ClassNotFoundException e1) {
+                                Log.w(Util.TAG, "Growth module is not  not present");
+                            } catch (IllegalAccessException e1) {
+                                e1.printStackTrace();
+                            } catch (NoSuchMethodException e1) {
+                                e1.printStackTrace();
+                            } catch (InvocationTargetException e1) {
+                                e1.printStackTrace();
+                            }
+                            Class push = null;
+                            try {
+                                push = Class.forName("com.streethawk.library.push.Push");
+                                Method pushMethod = push.getMethod("setActivityLifecycleCallbacks", appParams);
+                                pushMethod.invoke(null,app);
+                            } catch (ClassNotFoundException e1) {
+                                Log.w(Util.TAG, "Push module is not  not present");
+                            } catch (IllegalAccessException e1) {
+                                e1.printStackTrace();
+                            } catch (NoSuchMethodException e1) {
+                                e1.printStackTrace();
+                            } catch (InvocationTargetException e1) {
+                                e1.printStackTrace();
+                            }
+                            Class location = null;
+                            try {
+                                location = Class.forName("com.streethawk.library.locations.SHLocation");
+                                Method locationMethod = location.getMethod("setActivityLifecycleCallbacks", appParams);
+                                locationMethod.invoke(null,app);
+                            } catch (ClassNotFoundException e1) {
+                                Log.w(Util.TAG, "Push module is not  not present");
+                            } catch (IllegalAccessException e1) {
+                                e1.printStackTrace();
+                            } catch (NoSuchMethodException e1) {
+                                e1.printStackTrace();
+                            } catch (InvocationTargetException e1) {
+                                e1.printStackTrace();
+                            }
+
+                        }
+                    }).start();
+                }
+            }
+        }
         return null;
     }
 
     @Override
     public void onCreate() {
         this.mContext = getApplicationContext();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-            getApplication().registerActivityLifecycleCallbacks(StreetHawkActivityLifecycleCallback.getInstance());
-        }
         defaultUncaughtExceptionHandler = Thread.getDefaultUncaughtExceptionHandler();
         forceFlushCrashReportToServer(getApplicationContext());
         registerScheduledTask(mContext);
         Logging manager = Logging.getLoggingInstance(mContext);
         manager.ForceFlushLogsToServer();
-
     }
 
     @Override

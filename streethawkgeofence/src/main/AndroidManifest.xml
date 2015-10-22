@@ -18,7 +18,8 @@
             android:enabled="true"
             android:exported="true" >
             <intent-filter>
-                <action android:name="com.streethawk.intent.action.appstatus" />
+                <action android:name="com.streethawk.intent.action.APP_STATUS_NOTIFICATION" />
+                <action android:name="android.location.PROVIDERS_CHANGED" />
             </intent-filter>
         </receiver>
     </application>

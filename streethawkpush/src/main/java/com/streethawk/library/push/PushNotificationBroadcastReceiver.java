@@ -442,7 +442,7 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver {
                                     if (bluetoothAdapter != null) {
                                         boolean isEnabled = bluetoothAdapter.isEnabled();
                                         if (!isEnabled) {
-                                            SHForegroundNotification alert = SHForegroundNotification.getDialogInstance(context, pushData);
+                                            SHForegroundNotification alert = SHForegroundNotification.getDialogInstance(context);
                                             alert.display(pushData);
                                         } else {
                                             clearPendingDialogFlagAndDB(context, msgID);
@@ -453,7 +453,7 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver {
                                 case NotificationBase.CODE_ENABLE_LOCATION:
                                     LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
                                     if (!(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))) {
-                                        SHForegroundNotification alert = SHForegroundNotification.getDialogInstance(context, pushData);
+                                        SHForegroundNotification alert = SHForegroundNotification.getDialogInstance(context);
                                         alert.display(pushData);
                                     } else {
                                         //ignoring message and hence clearing
@@ -462,7 +462,7 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver {
                                     }
                                     break;
                                 default:
-                                    SHForegroundNotification alert = SHForegroundNotification.getDialogInstance(context, pushData);
+                                    SHForegroundNotification alert = SHForegroundNotification.getDialogInstance(context);
                                     alert.display(pushData);
                                     break;
                             }

@@ -181,13 +181,6 @@ class StreetHawkDialog extends NotificationBase {
         }
     }
 
-    public static void forceDismissDialog() {
-        if (null != mDialog) {
-            if (mDialog.isShowing())
-                mDialog.dismiss();
-            mDialog = null;
-        }
-    }
 
     public static final int DIRECTION_FROM_BOTTOM_TO_TOP = 0;
     public static final int DIRECTION_FROM_TOP_TO_BOTTOM = 1;

@@ -51,7 +51,7 @@ class GrowthActivityLifecycleCallback implements Application.ActivityLifecycleCa
         if(null==activity)
             return;
 
-        Growth.getInstance(activity.getApplicationContext()).setCurrentActivity(activity);
+        Growth.getInstance(activity);
         final Context context = activity.getApplicationContext();
         final Intent intent = activity.getIntent();
         new Thread(new Runnable() {
@@ -99,8 +99,8 @@ class GrowthActivityLifecycleCallback implements Application.ActivityLifecycleCa
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                            IncreaseClicks object = new IncreaseClicks(context);
-                            object.increaseClicks(finScheme, finDeepLinkUri, share_guid);
+                        IncreaseClicks object = new IncreaseClicks(context);
+                        object.increaseClicks(finScheme, finDeepLinkUri, share_guid);
                     }
                 }).start();
 

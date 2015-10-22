@@ -16,12 +16,12 @@
 #   public *;
 #}
 
--keep public interface com.streethawk.library.geofence.GeofenceService{
+-keep public class com.streethawk.library.geofence.GeofenceService{
     public *;
 }
--keep public interface com.streethawk.library.geofence.SHCoreModuleReceiver{
+-keep public class com.streethawk.library.geofence.SHCoreModuleReceiver{
     public *;
 }
--keep public interface com.streethawk.library.geofence.SHGeofence{
+-keep public class com.streethawk.library.geofence.SHGeofence{
     public *;
 }

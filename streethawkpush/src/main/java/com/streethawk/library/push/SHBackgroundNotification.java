@@ -23,6 +23,8 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -37,12 +39,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-class SHBackgroundNotification extends NotificationBase{
+class SHBackgroundNotification extends NotificationBase {
 
 
     private final String SUBTAG = "SHBackgroundNotification ";
     private Context mContext;
     private PushNotificationData pushData;
+
     public SHBackgroundNotification(Context context, PushNotificationData data) {
         this.mContext = context;
         this.pushData = data;
@@ -115,36 +118,36 @@ class SHBackgroundNotification extends NotificationBase{
         }
     }
 
-    private boolean isInAppSlide(){
+    private boolean isInAppSlide() {
         //pushData.displayMyData();
         Float portion;
         int orientation;
         int speed;
-        if(null==pushData) {
+        if (null == pushData) {
             return false;
         }
-        try{
+        try {
             portion = Float.parseFloat(pushData.getPortion());
-        }catch(NumberFormatException r){
+        } catch (NumberFormatException r) {
             portion = -1.0f;
-        }catch (NullPointerException e){
+        } catch (NullPointerException e) {
             portion = -1.0f;
         }
-        try{
+        try {
             orientation = Integer.parseInt(pushData.getOrientation());
-        }catch(NumberFormatException r){
+        } catch (NumberFormatException r) {
             orientation = -1;
-        }catch (NullPointerException e){
+        } catch (NullPointerException e) {
             orientation = -1;
         }
-        try{
+        try {
             speed = Integer.parseInt(pushData.getSpeed());
-        }catch(NumberFormatException r){
+        } catch (NumberFormatException r) {
             speed = -1;
-        }catch (NullPointerException e){
+        } catch (NullPointerException e) {
             speed = -1;
         }
-        if((portion>0.0) || (orientation>=0 && orientation <4) || (speed>=0))
+        if ((portion > 0.0) || (orientation >= 0 && orientation < 4) || (speed >= 0))
             return true;
         return false;
     }
@@ -152,7 +155,7 @@ class SHBackgroundNotification extends NotificationBase{
 
     public void display() {
         if (null == mContext) {
-            Log.e(Util.TAG,SUBTAG+"Context is null in display()");
+            Log.e(Util.TAG, SUBTAG + "Context is null in display()");
             PushNotificationBroadcastReceiver obj = new PushNotificationBroadcastReceiver();
             obj.clearPendingDialogFlagAndDB(mContext, pushData.getMsgId());
             return;
@@ -195,7 +198,7 @@ class SHBackgroundNotification extends NotificationBase{
             positiveButtonTitle = getPositiveButtonTitle(mContext, code);
         }
         if (code == CODE_OPEN_URL) {
-            if(isInAppSlide()) {
+            if (isInAppSlide()) {
                 PushNotificationDB dbObject = PushNotificationDB.getInstance(mContext);
                 dbObject.open();
                 dbObject.forceStoreNoDialog(msgId);
@@ -239,8 +242,8 @@ class SHBackgroundNotification extends NotificationBase{
             app_name = null;                      // Blank
         }
         if (null == msg && Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD_MR1) {
-            msg = title;                        // Blank
-            title = app_name;
+            //title= app_name;                        // Blank
+            msg = app_name;
             app_name = null;
         }
 
@@ -249,17 +252,15 @@ class SHBackgroundNotification extends NotificationBase{
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             if (shouldDisplayHeadsUpNotification(code))
                 builder.setPriority(Notification.PRIORITY_HIGH);
-        }
 
+        }
         builder.setStyle(new NotificationCompat.BigTextStyle().bigText(msg));
         builder.setContentTitle(title);
-        if (app_name != null)
-            builder.setSubText(app_name);
+       // if (app_name != null)
+       //     builder.setSubText(app_name);
 
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {   // For gingerbread
-            if (msg != null) {
-                builder.setContentText(msg);
-            }
+        if (msg != null) {
+            builder.setContentText(msg);
         }
 
         if (null != title)
@@ -281,11 +282,15 @@ class SHBackgroundNotification extends NotificationBase{
             else
                 builder.setSound(soundUri);
         }
+        Bitmap icon = BitmapFactory.decodeResource(mContext.getResources(),
+                Util.getAppIcon(mContext));
+        builder.setLargeIcon(icon);
+
         builder.setSmallIcon(Util.getAppIcon(mContext));
         if (code == CODE_RATE_APP) {
             neutralPendingIntent = PendingIntent.getBroadcast(mContext, code, neutralIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         }
-        switch(code){
+        switch (code) {
             case CODE_SIMPLE_PROMPT:
                 builder.setDeleteIntent(negativePendingIntent);
                 break;

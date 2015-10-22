@@ -44,12 +44,12 @@ class StreetHawkActivityLifecycleCallback implements Application.ActivityLifecyc
     }
 
     @Override
-    public void onActivityResumed(Activity activity) {
+    public void onActivityResumed(final Activity activity) {
         StreetHawk.INSTANCE.activityResumedByService(activity);
     }
 
     @Override
-    public void onActivityPaused(Activity activity) {
+    public void onActivityPaused(final Activity activity) {
         StreetHawk.INSTANCE.activityPausedByService(activity);
     }
 

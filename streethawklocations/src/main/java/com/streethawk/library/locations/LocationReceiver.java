@@ -17,14 +17,12 @@
 package com.streethawk.library.locations;
 
 import android.content.BroadcastReceiver;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.provider.Settings;
 
 import com.streethawk.library.core.Logging;
 import com.streethawk.library.core.Util;
@@ -40,9 +38,8 @@ public class LocationReceiver extends BroadcastReceiver {
             return;
         String action = intent.getAction();
         if (action.equals("android.location.PROVIDERS_CHANGED")) {
-            ContentResolver contentResolver = context.getContentResolver();
-            final boolean isGpsEnabled = Settings.Secure.isLocationProviderEnabled(contentResolver, LocationManager.GPS_PROVIDER);
-            if (!(isGpsEnabled)) {
+            LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+            if(!(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))){
                 try {
                     Bundle extras = new Bundle();
                     extras.putString(Util.CODE, Integer.toString(CODE_USER_DISABLES_LOCATION));

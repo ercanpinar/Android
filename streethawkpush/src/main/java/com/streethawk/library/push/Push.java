@@ -17,9 +17,7 @@
 
 package com.streethawk.library.push;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
-import android.app.Application;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -68,7 +66,10 @@ public class Push{
     private static final String SHGCM_SENDER_KEY_APP = "shgcmsenderkeyapp";
     private static final String SUBTAG = "PUSH ";
     private static ISHObserver mISHObserverObject = null;
+    private Activity mCurrentActivity;
     private static boolean activityLifecycleRegistered = false;
+
+
 
     private Push() {
     }
@@ -201,19 +202,6 @@ public class Push{
     }
 
     /**
-     * Core uses setActivityLifecycleCallbacks to register to activity lifecycle call backs
-     * @param application
-     */
-    @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-     public static void setActivityLifecycleCallbacks(Application application) {
-        if (!activityLifecycleRegistered) {
-            application.registerActivityLifecycleCallbacks(PushActivityLifecycleCallback.getInstance());
-            activityLifecycleRegistered = true;
-        }
-    }
-
-
-    /**
      * Call this API to register for StreetHawk push messaging service
      * @param project_number Project number as obtained for Google for your project
      * @return true is register is successful else false
@@ -264,6 +252,7 @@ public class Push{
             if(!isPushRegistered()){
                 register();
             }
+            setAppPageReceiver(mISHObserverObject);
             return;
         }
     }
@@ -373,7 +362,7 @@ public class Push{
         if (null == object)
             return;
         if (null != mContext) {
-            SHForegroundNotification instance = SHForegroundNotification.getDialogInstance(mContext, null);
+            SHForegroundNotification instance = SHForegroundNotification.getDialogInstance(mContext);
             instance.setAppPageReceiver(object);
             PushNotificationBroadcastReceiver.updateAppGcmReceiverList(object);
 
@@ -480,7 +469,7 @@ public class Push{
             }
         }
         hideSoftKeyboard();
-        SHForegroundNotification alert = SHForegroundNotification.getDialogInstance(context, pushData);
+        SHForegroundNotification alert = SHForegroundNotification.getDialogInstance(context);
         alert.display(pushData);
     }
 
@@ -489,13 +478,6 @@ public class Push{
      * @param activity
      */
     public void notifyAppForegrounded(Activity activity) {
-        final Context context = activity.getApplicationContext();
-        activity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                displayPendingDialog(context);
-            }
-        });
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -505,12 +487,22 @@ public class Push{
             }
         }).start();
     }
+
+    /**
+     * Application need not use this call. Notify observers when app is paused
+     * @param activity
+     */
+    public void onPause(Activity activity){
+        SHForegroundNotification alert = SHForegroundNotification.getDialogInstance(activity.getApplicationContext());
+        alert.dismissForegroundDialog();
+    }
+
     /**
      * Application need not use this call. Notify observers when app is backgrounded
      * @param activity
      */
     public void notifyAppBackgrounded(Activity activity) {
-        SHForegroundNotification alert = SHForegroundNotification.getDialogInstance(null, null);
+        SHForegroundNotification alert = SHForegroundNotification.getDialogInstance(activity.getApplicationContext());
         alert.dismissForegroundDialog();
     }
     /**

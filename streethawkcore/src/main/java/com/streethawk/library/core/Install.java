@@ -17,6 +17,7 @@
 
 package com.streethawk.library.core;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
@@ -295,6 +296,7 @@ class Install extends LoggingBase {
         new Thread(new Runnable() {
             @Override
             public void run() {
+                final Activity activity = StreetHawk.INSTANCE.getCurrentActivity();
                 final String app_key = Util.getAppKey(mContext);
                 String installId = Util.getInstallId(mContext);
                 BufferedReader reader = null;
@@ -335,12 +337,12 @@ class Install extends LoggingBase {
                                 public void run() {
                                     Class noParams[] = {};
                                     Class[] paramContext = new Class[1];
-                                    paramContext[0] = Context.class;
+                                    paramContext[0] = Activity.class;
                                     Class growth = null;
                                     try {
                                         growth = Class.forName("com.streethawk.library.growth.Growth");
                                         Method growthMethod = growth.getMethod("getInstance", paramContext);
-                                        Object obj = growthMethod.invoke(null, mContext);
+                                        Object obj = growthMethod.invoke(null, activity);
                                         if (null != obj) {
                                             Method addGrowthModule = growth.getDeclaredMethod("addGrowthModule", noParams);
                                             addGrowthModule.invoke(obj);
@@ -357,34 +359,6 @@ class Install extends LoggingBase {
 
                                 }
                             }).start();
-
-                            new Thread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Class noParams[] = {};
-                                    Class[] paramContext = new Class[1];
-                                    paramContext[0] = Context.class;
-                                    Class push = null;
-                                    try {
-                                        push = Class.forName("com.streethawk.library.push.Push");
-                                        Method pushMethod = push.getMethod("getInstance", paramContext);
-                                        Object obj = pushMethod.invoke(null, mContext);
-                                        if (null != obj) {
-                                            Method addPushModule = push.getDeclaredMethod("addPushModule", noParams);
-                                            addPushModule.invoke(obj);
-                                        }
-                                    } catch (ClassNotFoundException e1) {
-                                        Log.w(Util.TAG, "Push module is not  not present");
-                                    } catch (IllegalAccessException e1) {
-                                        e1.printStackTrace();
-                                    } catch (NoSuchMethodException e1) {
-                                        e1.printStackTrace();
-                                    } catch (InvocationTargetException e1) {
-                                        e1.printStackTrace();
-                                    }
-                                }
-                            }).start();
-
                             int timezone = Util.getTimeZoneOffsetInMinutes();
                             Bundle logParams = new Bundle();
                             logParams.putString(Constants.CODE, Integer.toString(Constants.CODE_DEVICE_TIMEZONE));
@@ -397,6 +371,33 @@ class Install extends LoggingBase {
                             edit.putInt(Constants.SHTIMEZONE, timezone);
                             edit.commit();
                         }
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Class noParams[] = {};
+                                Class[] paramContext = new Class[1];
+                                paramContext[0] = Context.class;
+                                Class push = null;
+                                try {
+                                    push = Class.forName("com.streethawk.library.push.Push");
+                                    Method pushMethod = push.getMethod("getInstance", paramContext);
+                                    Object obj = pushMethod.invoke(null, mContext);
+                                    if (null != obj) {
+                                        Method addPushModule = push.getDeclaredMethod("addPushModule", noParams);
+                                        addPushModule.invoke(obj);
+                                    }
+                                } catch (ClassNotFoundException e1) {
+                                    Log.w(Util.TAG, "Push module is not  not present");
+                                } catch (IllegalAccessException e1) {
+                                    e1.printStackTrace();
+                                } catch (NoSuchMethodException e1) {
+                                    e1.printStackTrace();
+                                } catch (InvocationTargetException e1) {
+                                    e1.printStackTrace();
+                                }
+                            }
+                        }).start();
+
                     } else {
                         processErrorAckFromServer(answer);
                         updateAckStatusFromCode(code, false);

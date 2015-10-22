@@ -198,58 +198,6 @@ public enum StreetHawk {
             Log.e(Util.TAG, SUBTAG + "StreetHawk is not initialised as application is null in init");
             return;
         }
-        //Register all module's activityLifecycle
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Class noParams[] = {};
-                Class[] appParams = new Class[1];
-                appParams[0] = Application.class;
-                Class growth = null;
-                try {
-                    growth = Class.forName("com.streethawk.library.growth.Growth");
-                    Method growthMethod = growth.getMethod("setActivityLifecycleCallbacks", appParams);
-                    growthMethod.invoke(null, application);
-                } catch (ClassNotFoundException e1) {
-                    Log.w(Util.TAG, "Growth module is not  not present");
-                } catch (IllegalAccessException e1) {
-                    e1.printStackTrace();
-                } catch (NoSuchMethodException e1) {
-                    e1.printStackTrace();
-                } catch (InvocationTargetException e1) {
-                    e1.printStackTrace();
-                }
-                Class push = null;
-                try {
-                    push = Class.forName("com.streethawk.library.push.Push");
-                    Method pushMethod = push.getMethod("setActivityLifecycleCallbacks", appParams);
-                    pushMethod.invoke(null, application);
-                } catch (ClassNotFoundException e1) {
-                    Log.w(Util.TAG, "Push module is not  not present");
-                } catch (IllegalAccessException e1) {
-                    e1.printStackTrace();
-                } catch (NoSuchMethodException e1) {
-                    e1.printStackTrace();
-                } catch (InvocationTargetException e1) {
-                    e1.printStackTrace();
-                }
-                Class location = null;
-                try {
-                    location = Class.forName("com.streethawk.library.locations.SHLocation");
-                    Method locationMethod = location.getMethod("setActivityLifecycleCallbacks", appParams);
-                    locationMethod.invoke(null, application);
-                } catch (ClassNotFoundException e1) {
-                    Log.w(Util.TAG, "Push module is not  not present");
-                } catch (IllegalAccessException e1) {
-                    e1.printStackTrace();
-                } catch (NoSuchMethodException e1) {
-                    e1.printStackTrace();
-                } catch (InvocationTargetException e1) {
-                    e1.printStackTrace();
-                }
-
-            }
-        }).start();
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -264,6 +212,7 @@ public enum StreetHawk {
                     Install.getInstance(mContext).registerInstall();
                 }
                 Intent coreService = new Intent(mContext, StreetHawkCoreService.class);
+                coreService.putExtra("fromInit", true);
                 mContext.startService(coreService);
             }
         }).start();
@@ -315,10 +264,56 @@ public enum StreetHawk {
 
 
     @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-    private void setActivityLifecycleCallbacks(Application application) {
+    private void setActivityLifecycleCallbacks(final Application application) {
         if (!activityLifecycleRegistered) {
             application.registerActivityLifecycleCallbacks(StreetHawkActivityLifecycleCallback.getInstance());
             activityLifecycleRegistered = true;
+        }
+        //Register all module's activityLifecycle
+        Class noParams[] = {};
+        Class[] appParams = new Class[1];
+        appParams[0] = Application.class;
+        Class growth = null;
+        try {
+            growth = Class.forName("com.streethawk.library.growth.Growth");
+            Method growthMethod = growth.getMethod("setActivityLifecycleCallbacks", appParams);
+            growthMethod.invoke(null, application);
+        } catch (ClassNotFoundException e1) {
+            Log.w(Util.TAG, "Growth module is not  not present");
+        } catch (IllegalAccessException e1) {
+            e1.printStackTrace();
+        } catch (NoSuchMethodException e1) {
+            e1.printStackTrace();
+        } catch (InvocationTargetException e1) {
+            e1.printStackTrace();
+        }
+        Class push = null;
+        try {
+            push = Class.forName("com.streethawk.library.push.Push");
+            Method pushMethod = push.getMethod("setActivityLifecycleCallbacks", appParams);
+            pushMethod.invoke(null, application);
+        } catch (ClassNotFoundException e1) {
+            Log.w(Util.TAG, "Push module is not  not present");
+        } catch (IllegalAccessException e1) {
+            e1.printStackTrace();
+        } catch (NoSuchMethodException e1) {
+            e1.printStackTrace();
+        } catch (InvocationTargetException e1) {
+            e1.printStackTrace();
+        }
+        Class location = null;
+        try {
+            location = Class.forName("com.streethawk.library.locations.SHLocation");
+            Method locationMethod = location.getMethod("setActivityLifecycleCallbacks", appParams);
+            locationMethod.invoke(null, application);
+        } catch (ClassNotFoundException e1) {
+            Log.w(Util.TAG, "Push module is not  not present");
+        } catch (IllegalAccessException e1) {
+            e1.printStackTrace();
+        } catch (NoSuchMethodException e1) {
+            e1.printStackTrace();
+        } catch (InvocationTargetException e1) {
+            e1.printStackTrace();
         }
     }
 
@@ -662,10 +657,14 @@ public enum StreetHawk {
                             e.commit();
                             appActivityTracking.notifyNewActivity(context, currentActivity, storedActivity);
                             appActivityTracking.onAppForegrounded(activity);
-                        } else if (currentActivity.equals(storedActivity)) {
-                            //appActivityTracking.notifyChangedOrientation(activity);
+                        }
+                        /*
+                        else if (currentActivity.equals(storedActivity)) {
+                                appActivityTracking.notifyChangedOrientation(activity);
                             return;
-                        } else {
+                        }
+                        */
+                        else {
                             // transact to new activity
                             SharedPreferences.Editor e = prefs.edit();
                             e.putString(Constants.SHPGPREVPAGE, currentActivity);

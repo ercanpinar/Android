@@ -70,6 +70,11 @@ class Share {
     private Context mContext;
     private Activity mActivity;
     public Share(Activity activity){
+        if(null==activity) {
+            Log.e(Util.TAG,SUBTAG+"Activity is null in Share");
+            return;
+        }
+
         this.mActivity = activity;
         this.mContext = activity.getApplicationContext();
         if(null==mActivity){

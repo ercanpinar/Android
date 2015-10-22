@@ -16,11 +16,8 @@
  */
 package com.streethawk.library.growth;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
-import android.app.Application;
 import android.content.Context;
-import android.os.Build;
 import android.util.Log;
 
 import com.streethawk.library.core.Util;
@@ -30,46 +27,22 @@ public class Growth{
     private static Activity mActivity;
     private static Context mContext;
     private final String SUBTAG = "Growth";
-    private static boolean activityLifecycleRegistered = false;
     private String REGISTERED = "flaggrowthregister";
-    public static Application mApplication;
-
     private static Growth mGrowth = null;
-
     private Growth(){}
-    /**
-     * Core uses setActivityLifecycleCallbacks to register to activity lifecycle call backs
-     * @param app
-     */
-    @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-    public static void setActivityLifecycleCallbacks(Application app) {
-        if (!activityLifecycleRegistered) {
-            app.registerActivityLifecycleCallbacks(GrowthActivityLifecycleCallback.getInstance());
-            activityLifecycleRegistered = true;
-        }
-    }
 
     /**
      * Returns instance of Growth class
-     * @param context activity context
+     * @param activity activity context
      * @return instance of Growth class
      */
-    public static Growth getInstance(Context context){
-        mContext = context;
+    public static Growth getInstance(Activity activity){
+        mActivity = activity;
+        mContext = activity.getApplicationContext();
         if(null==mGrowth)
             mGrowth = new Growth();
         return mGrowth;
     }
-
-    protected void setCurrentActivity(final Activity activity) {
-        if (null == activity) {
-            Log.e(Util.TAG, SUBTAG + "Returning from activityResumedByService as activity is null");
-            return;
-        }
-        mActivity = activity;
-    }
-
-
 
     /**
      * Use originateShareWithCampaign to get the share URL.
@@ -102,16 +75,19 @@ public class Growth{
 
     /**
      * Use getShareUrlForAppDownload to get the share URL.
-     *
-     * @param ID                      Id to be used in StreetHawk Analytics (optional)
-     * @param deeplink_uri            deeplink uri of page to be opened when referred user installs the application on his device (optional)
-     * @param IGrowth instance of     IGrowth. If null, the API automatically fires and intent with Intent.ACTION_SEND
+     * @param ID
+     * @param deeplink_uri
+     * @param utm_source
+     * @param utm_medium
+     * @param utm_term
+     * @param campaign_content
+     * @param default_url
+     * @param IGrowth
      */
     public void getShareUrlForAppDownload(String ID, String deeplink_uri,
                                                  String utm_source, String utm_medium, String utm_term, String campaign_content, String default_url,
                                                  final IGrowth IGrowth) {
         String scheme = "";
-
         int index;
         if (null == deeplink_uri)
             deeplink_uri = "";

@@ -19,6 +19,7 @@ package com.streethawk.library.geofence;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -28,7 +29,6 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationServices;
-import com.streethawk.library.core.PluginBase;
 import com.streethawk.library.core.Util;
 
 import org.json.JSONArray;
@@ -37,7 +37,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class SHGeofence extends PluginBase implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, ResultCallback<Status> {
+public class SHGeofence implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, ResultCallback<Status> {
     private final String SUBTAG = "Geofence ";
     private static Context mContext;
     private static SHGeofence mInstance;
@@ -61,22 +61,13 @@ public class SHGeofence extends PluginBase implements GoogleApiClient.Connection
         return mInstance;
     }
 
-
     protected synchronized void buildGoogleApiClient() {
-        if (null == mGoogleApiClient) {
-            mGoogleApiClient = new GoogleApiClient.Builder(mContext)
+                   mGoogleApiClient = new GoogleApiClient.Builder(mContext)
                     .addConnectionCallbacks(this)
                     .addOnConnectionFailedListener(this)
                     .addApi(LocationServices.API)
                     .build();
-        }
     }
-
-    private void connect() {
-        buildGoogleApiClient();
-        mGoogleApiClient.connect();
-    }
-
 
     private PendingIntent getGeofencePendingIntent() {
         // Reuse the PendingIntent if we already have it.
@@ -86,7 +77,8 @@ public class SHGeofence extends PluginBase implements GoogleApiClient.Connection
         Intent intent = new Intent(mContext, GeofenceService.class);
         // We use FLAG_UPDATE_CURRENT so that we get the same pending intent back when calling
         // addGeofences() and removeGeofences().
-        return PendingIntent.getService(mContext, (int) System.currentTimeMillis(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        mGeofencePendingIntent = PendingIntent.getService(mContext, (int) System.currentTimeMillis(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        return mGeofencePendingIntent;
     }
 
     private GeofencingRequest getGeofencingRequest() {
@@ -116,13 +108,16 @@ public class SHGeofence extends PluginBase implements GoogleApiClient.Connection
      * Function to stop monitoring of geofences
      */
     public void stopMonitoring() {
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
+        SharedPreferences.Editor e = sharedPreferences.edit();
+        e.putBoolean(Constants.IS_GEOFENCE_ENABLE,false);
+        e.commit();
         if (null != mGoogleApiClient) {
             LocationServices.GeofencingApi.removeGeofences(
                     mGoogleApiClient,
                     // This is the same pending intent that was used in addGeofences().
                     getGeofencePendingIntent()
             ).setResultCallback(this); // Result processed in onResult().
-            // TODO: send exit to all geofence
         } else {
             Log.e(Util.TAG, SUBTAG + "mGoogleApiClient is null in stopMonitoringExistingGeofence.Check...");
         }
@@ -143,7 +138,7 @@ public class SHGeofence extends PluginBase implements GoogleApiClient.Connection
     }
 
 
-    public void monitorGeofence() {
+    protected void monitorGeofence() {
         GeofencingRequest request = getGeofencingRequest();
         if (null == request) {
             return;
@@ -172,6 +167,7 @@ public class SHGeofence extends PluginBase implements GoogleApiClient.Connection
         for (int i = 0; i < geofenceArray.length(); i++) {
             try {
                 Object tmpObject = geofenceArray.get(i);
+
                 if (tmpObject instanceof JSONObject) {
                     GeofenceData geofenceData = new GeofenceData();
                     JSONObject tmp = (JSONObject) tmpObject;
@@ -261,12 +257,11 @@ public class SHGeofence extends PluginBase implements GoogleApiClient.Connection
     }
 
     @Override
-    public void notifyInstallRegistered(Context context) {
-
-    }
-
-    @Override
     public void onConnected(Bundle bundle) {
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
+        SharedPreferences.Editor e = sharedPreferences.edit();
+        e.putBoolean(Constants.IS_GEOFENCE_ENABLE, true);
+        e.commit();
         monitorGeofence();
     }
 

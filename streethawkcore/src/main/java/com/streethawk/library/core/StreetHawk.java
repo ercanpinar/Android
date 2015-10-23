@@ -287,34 +287,6 @@ public enum StreetHawk {
         } catch (InvocationTargetException e1) {
             e1.printStackTrace();
         }
-        Class push = null;
-        try {
-            push = Class.forName("com.streethawk.library.push.Push");
-            Method pushMethod = push.getMethod("setActivityLifecycleCallbacks", appParams);
-            pushMethod.invoke(null, application);
-        } catch (ClassNotFoundException e1) {
-            Log.w(Util.TAG, "Push module is not  not present");
-        } catch (IllegalAccessException e1) {
-            e1.printStackTrace();
-        } catch (NoSuchMethodException e1) {
-            e1.printStackTrace();
-        } catch (InvocationTargetException e1) {
-            e1.printStackTrace();
-        }
-        Class location = null;
-        try {
-            location = Class.forName("com.streethawk.library.locations.SHLocation");
-            Method locationMethod = location.getMethod("setActivityLifecycleCallbacks", appParams);
-            locationMethod.invoke(null, application);
-        } catch (ClassNotFoundException e1) {
-            Log.w(Util.TAG, "Push module is not  not present");
-        } catch (IllegalAccessException e1) {
-            e1.printStackTrace();
-        } catch (NoSuchMethodException e1) {
-            e1.printStackTrace();
-        } catch (InvocationTargetException e1) {
-            e1.printStackTrace();
-        }
     }
 
 

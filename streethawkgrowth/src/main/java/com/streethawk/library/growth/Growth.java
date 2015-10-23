@@ -16,40 +16,58 @@
  */
 package com.streethawk.library.growth;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.Application;
 import android.content.Context;
+import android.os.Build;
 import android.util.Log;
 
 import com.streethawk.library.core.Util;
 
-public class Growth{
+public class Growth {
 
     private static Activity mActivity;
     private static Context mContext;
     private final String SUBTAG = "Growth";
     private String REGISTERED = "flaggrowthregister";
     private static Growth mGrowth = null;
-    private Growth(){}
+
+    private Growth() {
+    }
 
     /**
      * Returns instance of Growth class
+     *
      * @param activity activity context
      * @return instance of Growth class
      */
-    public static Growth getInstance(Activity activity){
+    public static Growth getInstance(Activity activity) {
         mActivity = activity;
         mContext = activity.getApplicationContext();
-        if(null==mGrowth)
+        if (null == mGrowth)
             mGrowth = new Growth();
         return mGrowth;
+    }
+
+
+    /**
+     * For StreetHawk SDK use by core module set Activity Lifecycle Callbacks.
+     * @param application
+     */
+    @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+    public static void setActivityLifecycleCallbacks(Application application) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+            application.registerActivityLifecycleCallbacks(GrowthActivityLifecycleCallback.getInstance());
+        }
     }
 
     /**
      * Use originateShareWithCampaign to get the share URL.
      *
-     * @param utm_campaign            Id to be used in StreetHawk Analytics (optional)
-     * @param shareUrl                deeplink uri of page to be opened when referred user installs the application on his device (optional)
-     * @param IGrowth                 instance of IGrowth. If null, the API automatically fires and intent with Intent.ACTION_SEND
+     * @param utm_campaign Id to be used in StreetHawk Analytics (optional)
+     * @param shareUrl     deeplink uri of page to be opened when referred user installs the application on his device (optional)
+     * @param IGrowth      instance of IGrowth. If null, the API automatically fires and intent with Intent.ACTION_SEND
      */
     public void originateShareWithCampaign(String utm_campaign, String shareUrl, IGrowth IGrowth) {
         getShareUrlForAppDownload(utm_campaign, shareUrl, null, null, null, null, null, IGrowth);
@@ -68,13 +86,14 @@ public class Growth{
      * @param object           instance of IStreetHawkGrowth. If null, the API automatically fires and intent with Intent.ACTION_SEND
      */
     public void originateShareWithCampaign(String utm_campaign, String URI,
-                                                  String utm_source, String utm_medium, String utm_term, String campaign_content, String default_url,
-                                                  final IGrowth object) {
+                                           String utm_source, String utm_medium, String utm_term, String campaign_content, String default_url,
+                                           final IGrowth object) {
         getShareUrlForAppDownload(utm_campaign, URI, utm_source, utm_medium, utm_term, campaign_content, default_url, object);
     }
 
     /**
      * Use getShareUrlForAppDownload to get the share URL.
+     *
      * @param ID
      * @param deeplink_uri
      * @param utm_source
@@ -85,8 +104,8 @@ public class Growth{
      * @param IGrowth
      */
     public void getShareUrlForAppDownload(String ID, String deeplink_uri,
-                                                 String utm_source, String utm_medium, String utm_term, String campaign_content, String default_url,
-                                                 final IGrowth IGrowth) {
+                                          String utm_source, String utm_medium, String utm_term, String campaign_content, String default_url,
+                                          final IGrowth IGrowth) {
         String scheme = "";
         int index;
         if (null == deeplink_uri)
@@ -129,8 +148,13 @@ public class Growth{
             @Override
             public void run() {
                 Share share = new Share(mActivity);
-                share.originateShare(IDTmp, schemeTmp, DLUrlTmp, utm_sourceTmp, utm_mediumTmp,
-                        utm_termTmp, campaign_contentTmp, default_urlTmp, IGrowth);
+                if(null==IGrowth) {
+                    share.displaySourceChooser(IDTmp, schemeTmp, DLUrlTmp,utm_mediumTmp,
+                            utm_termTmp, campaign_contentTmp, default_urlTmp);
+                }else{
+                    share.originateShare(IDTmp, schemeTmp, DLUrlTmp, utm_sourceTmp, utm_mediumTmp,
+                            utm_termTmp, campaign_contentTmp, default_urlTmp, IGrowth);
+                }
             }
         }).start();
     }
@@ -138,20 +162,19 @@ public class Growth{
     /**
      * Call addGrowthModule() to add growth modules in installs which have already been released with StreetHawk core module.
      */
-    public void addGrowthModule(){
+    public void addGrowthModule() {
         String installId = Util.getInstallId(mContext);
-        if(null==installId) {
+        if (null == installId) {
             // For this case
             Log.e(Util.TAG, SUBTAG + " install not registered when init was called");
             return;
-        }
-        else{
+        } else {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    boolean isRegistered = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE).getBoolean(REGISTERED,false);
-                    if(!isRegistered){
-                        Register object =  new Register(mContext);
+                    boolean isRegistered = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE).getBoolean(REGISTERED, false);
+                    if (!isRegistered) {
+                        Register object = new Register(mContext);
                         object.registerStreetHawkGrowth();
                     }
                 }

@@ -11,8 +11,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
+import com.streethawk.library.beacon.Beacons;
 import com.streethawk.library.core.StreetHawk;
-import com.streethawk.library.geofence.SHGeofence;
 import com.streethawk.library.growth.Growth;
 import com.streethawk.library.growth.IGrowth;
 import com.streethawk.library.push.ISHObserver;
@@ -20,7 +20,6 @@ import com.streethawk.library.push.Push;
 import com.streethawk.library.push.PushDataForApplication;
 
 import org.json.JSONObject;
-
 
 public class MainActivity extends Activity implements ISHObserver,IGrowth {
     private final int PERMISSIONS_LOCATION = 0;
@@ -33,21 +32,10 @@ public class MainActivity extends Activity implements ISHObserver,IGrowth {
         setContentView(R.layout.activity_main);
         Application app = getApplication();
 
-        /*
-        * Register StreetHawk modules for you application
-        * registerSHPlugin call is not required if you wish to use only core module
-        * */
-
-        //StreetHawk.INSTANCE.registerSHPlugin(Growth.getInstance(app, this));
-        //StreetHawk.INSTANCE.registerSHPlugin(Push.getInstance(this));
-        //StreetHawk.INSTANCE.registerSHPlugin(SHLocation.getInstance(this));
-        //StreetHawk.INSTANCE.registerSHPlugin(Beacons.getInstance(this));
-
        Push.getInstance(this).registerSHObserver(this);  //Register this class as implementation of ISHObserver
         // Enter your project number here (https://streethawk.freshdesk.com/solution/articles/5000608997)
         Push.getInstance(this).registerForPushMessaging("393009194749");
         // Enter APP_KEY for your application registered with StreetHawk server
-
         Growth.getInstance(this).getShareUrlForAppDownload("1","shsample://setparams?param1=30","facebook","medium","term","cc","www.google.com", new IGrowth() {
                     @Override
                     public void onReceiveShareUrl(String shareUrl) {
@@ -104,7 +92,7 @@ public class MainActivity extends Activity implements ISHObserver,IGrowth {
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     //SHLocation.getInstance(this).startLocationReporting();
-                    SHGeofence.getInstance(this).startGeofenceMonitoring();
+                    //SHGeofence.getInstance(this).startGeofenceMonitoring();
 
 
                 } else {
@@ -122,8 +110,51 @@ public class MainActivity extends Activity implements ISHObserver,IGrowth {
      */
     public void Growth(View view){
         // Call originateShare API to generate and share universal link
-        Growth.getInstance(this).originateShareWithCampaign("1", "<Deeplink URL>", null);
+
+        /*
+        Growth.getInstance(this).originateShareWithCampaign("1", "shdemoapp://setparams?param1=45", new IGrowth() {
+            @Override
+            public void onReceiveShareUrl(final String shareUrl) {
+               runOnUiThread(new Runnable() {
+                   @Override
+                   public void run() {
+                       Intent intent = new Intent(Intent.ACTION_SEND);
+                       intent.setType("text/plain");
+                       intent.putExtra(Intent.EXTRA_TEXT, shareUrl);
+                       intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                       startActivity(intent);
+
+                   }
+               });
+
+            }
+
+            @Override
+            public void onReceiveErrorForShareUrl(final JSONObject errorResponse) {
+
+            }
+        });
+        */
+
+        //Growth.getInstance(this).originateShareWithCampaign("1", "shdemoapp://setparams?param1=45",null);
+
+        Growth.getInstance(this).originateShareWithCampaign("1","shdemoapp://setparams?param1=45",null,null,null,null,"http://streethawk.com",null);
     }
+
+
+
+    /**
+     * Use originateShareWithCampaign to get the share URL.
+     *
+     * @param utm_campaign     Id to be used in StreetHawk Analytics (optional)
+     * @param URI              deeplink uri of page to be opened when referred user installs the application on his device (optional)
+     * @param utm_source       Source on which url will be posted (Example facebook, twitter whatsapp etc)
+     * @param utm_medium       medium as url will be posted. (Example cpc)
+     * @param utm_term         keywords for campaing
+     * @param campaign_content contents of campaign
+     * @param default_url      Fallback url if user opens url on non mobile devices.
+     * @param object           instance of IStreetHawkGrowth. If null, the API automatically fires and intent with Intent.ACTION_SEND
+     */
 
 
     /**
@@ -154,6 +185,14 @@ public class MainActivity extends Activity implements ISHObserver,IGrowth {
     }
 
 
+    public void startBeaconMonitoring(View view){
+        Beacons.getInstance(this).startBeaconMonitoring();
+    }
+
+
+
+
+
     @Override
     public void shReceivedRawJSON(String title, String message, String json) {
 
@@ -167,16 +206,14 @@ public class MainActivity extends Activity implements ISHObserver,IGrowth {
     @Override
     public void onReceivePushData(PushDataForApplication pushData) {
 
-        Log.e("Anurag","Received push data"+pushData);
-        pushData.displayDataForDebugging("Anurag");
+
 
 
     }
 
     @Override
     public void onReceiveResult(PushDataForApplication resultData, int result) {
-        Log.e("Anurag","Received push result "+result);
-        resultData.displayDataForDebugging("Anurag");
+
 
     }
 

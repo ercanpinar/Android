@@ -24,7 +24,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
-import android.os.Bundle;
 import android.util.Log;
 
 import com.streethawk.library.core.Logging;
@@ -115,7 +114,6 @@ public class SHBeaconModuleBC extends BroadcastReceiver {
                             return;
                         }
                         String app_key = Util.getAppKey(context);
-                        Bundle query = new Bundle();
                         HashMap<String, String> logMap = new HashMap<String, String>();
                         logMap.put(Util.INSTALL_ID, installId);
                         BufferedReader reader = null;

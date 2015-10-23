@@ -15,7 +15,6 @@
  * License along with this library.
  */
 package com.streethawk.library.beacon;
-import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -23,7 +22,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.streethawk.library.core.*;
+import com.streethawk.library.core.Logging;
+import com.streethawk.library.core.Util;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -190,10 +190,9 @@ public class Beacons{
 
     /**
      * StartBeaconMonitoring by application
-     * @param app
      * @return
      */
-    public boolean startBeaconMonitoring(Application app){
+    public boolean startBeaconMonitoring(){
         if (!isDeviceSupportBLE()) {
             Log.e(Util.TAG, SUBTAG + "Device doesn't support BLE");
             return false;

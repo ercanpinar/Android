@@ -13,7 +13,9 @@ android {
     task clearJar(type: Delete) {
         delete 'build/outputs/streethawkfeeds.jar'
     }
-
+    dexOptions {
+        javaMaxHeapSize "4g"
+    }
 
     task makeJar(type: Copy) {
         from('build/intermediates/bundles/release/')
@@ -34,8 +36,8 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    //compile 'com.streethawk:core:1.7.3'
     compile project(':streethawkcore')
+    //compile 'com.streethawk:core:1.7.5'
 }
 
 //apply from: '../sh_maven_push.gradle'

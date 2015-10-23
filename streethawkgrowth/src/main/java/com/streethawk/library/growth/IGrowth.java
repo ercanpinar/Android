@@ -24,11 +24,11 @@ public interface IGrowth{
      * Returns shareUrl for user to share with friends
      * @param shareUrl
      */
-    public void onReceiveShareUrl(String shareUrl);
+    public void onReceiveShareUrl(final String shareUrl);
 
     /**
      * returns error response
      * @param errorResponse
      */
-    public void onReceiveErrorForShareUrl(JSONObject errorResponse);
+    public void onReceiveErrorForShareUrl(final JSONObject errorResponse);
 }

@@ -59,13 +59,17 @@ public class SHFeedItem{
     private final String SHFEEDID       = "feed_id";
     private final String SHRESULT       = "result";
 
-    public static final String BROADCAST_NEW_FEED ="com.streethawk.intent.action.newfeed";
+    protected static final String BROADCAST_NEW_FEED ="com.streethawk.intent.action.newfeed";
     private static ISHFeedItemObserver mObserver = null;
     private static SHFeedItem mSHFeedItem;
 
-    public static SHFeedItem getInstance(Context context,ISHFeedItemObserver observer) {
-        mContext = context;
+
+    public void registerFeedItemObserver(ISHFeedItemObserver observer){
         mObserver = observer;
+    }
+
+    public static SHFeedItem getInstance(Context context) {
+        mContext = context;
         if(null==mSHFeedItem){
             mSHFeedItem = new SHFeedItem();
         }

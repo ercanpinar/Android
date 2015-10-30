@@ -334,6 +334,9 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver {
                 if (sharedPreferences.getString(Constants.PENDING_DIALOG, null) != null) {
                     forceToBg = true;
                 }
+                if (sharedPreferences.getBoolean(Constants.SHUSECUSTOMDIALOG_FLAG, false)) {
+                    forceToBg = false;
+                }
                 PushNotificationDB database = PushNotificationDB.getInstance(context);
                 database.open();
                 PushNotificationData pushData = new PushNotificationData();

@@ -60,9 +60,6 @@ class Constants {
     public static final String TYPE_NUMERIC         = "numeric";
     public static final String TYPE_DATETIME        = "datetime";
     public static final String SH_KEY               = "key";
-    public static final String SHPAUSETIME          = "shPauseTime";
-    public static final String SHSAVEDTIME          = "shSavedTime";
-    public static final String PAUSE_MINUTES        = "pause_minutes";
     public static final String KEY_STREETHAWK       = "shKeyStreethawk";
     public static final String SESSIONIDCNT         = "session_id_cnt";
     public static final String SHAPPVERSION         = "shappversion";
@@ -74,6 +71,9 @@ class Constants {
     public static final String SHLOG_ALLOWED        = "shlogallowed";
     public static final String SHPACKAGENAME        = "shpackagename";
     public static final String SHTASKTIME           = "shTaskTime";
+    public static final String FEEDBACK_TITLE       = "shStaggedFBTitle";
+    public static final String FEEDBACK_CONTENT     = "shStaggedFBContent";
+    public static final String FEEDBACK_TYPE        = "shfeedbacktype";
 
 
     //Release type
@@ -90,7 +90,7 @@ class Constants {
     /*Library version*/
     public final static String SELLING_ARGUMENT    = "1";
     public final static String FEATURE_NUMBER      = "7";
-    public final static String BUGFIX_NUMBER       = "6";
+    public final static String BUGFIX_NUMBER       = "7";
 
     /*Release parameters */
     public static final String SHLIBRARY_VERSION = SELLING_ARGUMENT + "." + FEATURE_NUMBER + "." + BUGFIX_NUMBER;

@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">StreetHawkGeofence</string>
+    <string name="sh_geo_permission">Okay</string>
 </resources>

@@ -7,3 +7,6 @@
 -keep public class com.streethawk.library.locations.SHLocation{
     public *;
 }
+-keep public class com.streethawk.library.locations.AskLocPermission{
+    public *;
+}

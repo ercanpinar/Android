@@ -136,6 +136,15 @@ public class Util {
         }
     }
 
+    public static URL getAlertSettingUrl(Context context){
+        try {
+            return new URL(Logging.buildUri(context, LoggingBase.ApiMethod.USER_ALERT_SETTINGS, null));
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     public static URL getFeedbackUrl(Context context) {
         try {
             return new URL(Logging.buildUri(context, LoggingBase.ApiMethod.USER_FEEDBACK, null));

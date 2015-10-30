@@ -31,6 +31,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.streethawk.library.core.Logging;
 import com.streethawk.library.core.StreetHawk;
 import com.streethawk.library.core.Util;
 
@@ -223,8 +224,7 @@ public class SHFeedbackActivity extends Activity {
             if(title.isEmpty() && content.isEmpty()){
                 Toast.makeText(getApplicationContext(), NotificationBase.getStringtoDisplay(getApplicationContext(), NotificationBase.TYPE_FEEDBACK_TOAST_ERROR), Toast.LENGTH_LONG).show();
             }else{
-                shFeedbackDialog feedbackDialog = shFeedbackDialog.getIntance(getApplicationContext());
-                feedbackDialog.sendFeedbackToServer(title,content,0);
+                Logging.getLoggingInstance(getApplicationContext()).sendFeedbackToServer(title,content,0);
                 sendPushResult(Constants.STREETHAWK_ACCEPTED);
                 Toast.makeText(getApplicationContext(),NotificationBase.getStringtoDisplay(getApplicationContext(),NotificationBase.TYPE_FEEDBACK_TOAST_SUCCESS),Toast.LENGTH_LONG).show();
                 finish();

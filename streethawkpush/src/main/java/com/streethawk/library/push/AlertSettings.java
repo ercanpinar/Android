@@ -14,12 +14,14 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library.
  */
-package com.streethawk.library.core;
+package com.streethawk.library.push;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
+
+import com.streethawk.library.core.Util;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -45,7 +47,7 @@ import javax.net.ssl.HttpsURLConnection;
 /**
  * Class hosts function for alert settings. Alert settings can be used to disable and re enable push messaging on user's device.
  */
-class AlertSettings extends LoggingBase{
+class AlertSettings{
     public static class AlertSettingsInfo {
 
         public Long pause_minutes;
@@ -117,7 +119,6 @@ class AlertSettings extends LoggingBase{
 
     private static AlertSettings mUserManager=null;
     private AlertSettings(Context context) {
-        super(context);
         mContext = context;
     }
 
@@ -138,10 +139,10 @@ class AlertSettings extends LoggingBase{
         Bundle query = new Bundle();
         String installId = Util.getInstallId(mContext);
         String app_key = Util.getAppKey(mContext);
-        query.putString(Constants.INSTALLID,installId);
+        query.putString(Util.INSTALL_ID,installId);
         BufferedReader reader = null;
         try {
-            URL url = new URL(buildUri(mContext, ApiMethod.USER_ALERT_SETTINGS, query));
+            URL url = Util.getAlertSettingUrl(mContext);
             HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
             connection.setReadTimeout(10000);
             connection.setConnectTimeout(15000);
@@ -203,7 +204,7 @@ class AlertSettings extends LoggingBase{
             HashMap<String, String> logMap = new HashMap<String, String>();
             logMap.put(INSTALL_ID, installId);
             logMap.put(PAUSE_MINUTES, Integer.toString(pauseMinutes));
-            URL url = new URL(buildUri(mContext, ApiMethod.USER_ALERT_SETTINGS, null));
+            URL url = Util.getAlertSettingUrl(mContext);
             HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
             connection.setReadTimeout(10000);
             connection.setConnectTimeout(15000);

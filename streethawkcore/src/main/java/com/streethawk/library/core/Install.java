@@ -278,20 +278,6 @@ class Install extends LoggingBase {
 
     }
 
-    public void setAlertSettings(int pauseMinutes, int code) {
-        String installId = Util.getInstallId(mContext);
-        HashMap<String, String> logMap = new HashMap<String, String>();
-        logMap.put(Constants.INSTALL_ID, installId);
-        logMap.put(Constants.PAUSE_MINUTES, Integer.toString(pauseMinutes));
-        try {
-            URL url = new URL(buildUri(mContext, ApiMethod.USER_ALERT_SETTINGS, null));
-            flushInstallParamsToServer(url, logMap, code);
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-            return;
-        }
-    }
-
     private void flushInstallParamsToServer(final URL url, final HashMap<String, String> logMap, final int code) {
         new Thread(new Runnable() {
             @Override

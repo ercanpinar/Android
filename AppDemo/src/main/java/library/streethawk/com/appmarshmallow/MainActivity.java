@@ -10,11 +10,13 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 
 import com.streethawk.library.beacon.Beacons;
 import com.streethawk.library.core.StreetHawk;
 import com.streethawk.library.growth.Growth;
 import com.streethawk.library.growth.IGrowth;
+import com.streethawk.library.locations.SHLocation;
 import com.streethawk.library.push.ISHObserver;
 import com.streethawk.library.push.Push;
 import com.streethawk.library.push.PushDataForApplication;
@@ -29,26 +31,29 @@ public class MainActivity extends Activity implements ISHObserver,IGrowth {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
         Application app = getApplication();
+        Push.getInstance(this).shAlertSetting(30);
 
        Push.getInstance(this).registerSHObserver(this);  //Register this class as implementation of ISHObserver
         // Enter your project number here (https://streethawk.freshdesk.com/solution/articles/5000608997)
         Push.getInstance(this).registerForPushMessaging("393009194749");
         // Enter APP_KEY for your application registered with StreetHawk server
-        Growth.getInstance(this).getShareUrlForAppDownload("1","shsample://setparams?param1=30","facebook","medium","term","cc","www.google.com", new IGrowth() {
-                    @Override
-                    public void onReceiveShareUrl(String shareUrl) {
+        Growth.getInstance(this).getShareUrlForAppDownload("1", "shsample://setparams?param1=30", "facebook", "medium", "term", "cc", "www.google.com", new IGrowth() {
+            @Override
+            public void onReceiveShareUrl(String shareUrl) {
 
-                    }
+            }
 
-                    @Override
-                    public void onReceiveErrorForShareUrl(JSONObject errorResponse) {
+            @Override
+            public void onReceiveErrorForShareUrl(JSONObject errorResponse) {
 
-                    }
-                });
+            }
+        });
 
         StreetHawk.INSTANCE.setAppKey("SHSample");
+        Push.getInstance(this).setUseCustomDialog(true);
         StreetHawk.INSTANCE.init(app);
     }
 
@@ -91,7 +96,7 @@ public class MainActivity extends Activity implements ISHObserver,IGrowth {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    //SHLocation.getInstance(this).startLocationReporting();
+                    SHLocation.getInstance(this).startLocationReporting();
                     //SHGeofence.getInstance(this).startGeofenceMonitoring();
 
 
@@ -138,7 +143,7 @@ public class MainActivity extends Activity implements ISHObserver,IGrowth {
 
         //Growth.getInstance(this).originateShareWithCampaign("1", "shdemoapp://setparams?param1=45",null);
 
-        Growth.getInstance(this).originateShareWithCampaign("1","shdemoapp://setparams?param1=45",null,null,null,null,"http://streethawk.com",null);
+        Growth.getInstance(this).originateShareWithCampaign("1", "shdemoapp://setparams?param1=45", null, null, null, null, "http://streethawk.com", null);
     }
 
 
@@ -162,6 +167,9 @@ public class MainActivity extends Activity implements ISHObserver,IGrowth {
      * @param v
      */
     public void StartLocationReporting(View v) {
+
+        SHLocation.getInstance(this).startLocationWithPermissionDialog("Please give us the permisison we are good people and wont harm you :)");
+        /*
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             Log.e(TAG, "Requesting permission");
             if(!checkForLocationPermission(this)) {
@@ -171,6 +179,7 @@ public class MainActivity extends Activity implements ISHObserver,IGrowth {
         } else {
             Log.e(TAG,"Not requesting permission "+Build.VERSION.SDK_INT+" "+Build.VERSION_CODES.M);
         }
+        */
     }
 
 

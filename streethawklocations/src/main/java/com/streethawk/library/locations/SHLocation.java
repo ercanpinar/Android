@@ -27,6 +27,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.os.Bundle;
 import android.util.Log;
 
 import com.streethawk.library.core.Util;
@@ -162,6 +163,25 @@ public class SHLocation{
             locationIntent.putExtra(Constants.KEY_UPDATE_DISTANCE_FG, VALUE_UPDATE_DISTANCE_FG);
             mContext.startService(locationIntent);
             StreethawkLocationService.getInstance().startLocationReporting(mContext);
+        }
+    }
+
+    /**
+     * use StartLocationWithPermissionDialog to make SDK ask for location permission from user.
+     * @param message String to explain user about the location permission
+     */
+    public void startLocationWithPermissionDialog(String message){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            Intent intent = new Intent(mContext, AskLocPermission.class);
+            Bundle extras = new Bundle();
+            if (null != message)
+                extras.putString(Constants.PERMISSION_MSG, message);
+            extras.putBoolean(Constants.PERMISSION_BOOL, true);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.putExtras(extras);
+            mContext.startActivity(intent);
+        }else{
+            startLocationReporting();
         }
     }
 

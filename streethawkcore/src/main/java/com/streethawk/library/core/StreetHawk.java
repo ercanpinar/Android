@@ -242,6 +242,21 @@ public enum StreetHawk {
     }
 
     /**
+     * Send simple feedback to server
+     * @param title
+     * @param message
+     */
+    public void sendSimpleFeedback(final String title, final String message){
+        Log.e("Anurag","SendSimplefeedback"+title+message);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Logging.getLoggingInstance(mContext).sendFeedbackToServer(title,message,0);
+            }
+        }).start();
+    }
+
+    /**
      * Call notifyEnterView when user exits a view or fragment
      *
      * @param viewName
@@ -630,12 +645,10 @@ public enum StreetHawk {
                             appActivityTracking.notifyNewActivity(context, currentActivity, storedActivity);
                             appActivityTracking.onAppForegrounded(activity);
                         }
-                        /*
                         else if (currentActivity.equals(storedActivity)) {
                                 appActivityTracking.notifyChangedOrientation(activity);
                             return;
                         }
-                        */
                         else {
                             // transact to new activity
                             SharedPreferences.Editor e = prefs.edit();
@@ -884,52 +897,4 @@ public enum StreetHawk {
         return Util.getInstallId(context);
     }
 
-    /**
-     * shGetAlertSettings returns the time remaining in minutes before pause minutes set in {@link #shAlertSetting(int)} expires
-     *
-     * @return time remaining before alerts will be enabled again
-     */
-    public int shGetAlertSettings() {
-        if (null == mContext) {
-            Log.e(Util.TAG, SUBTAG + "Streethawk is not initialized properly in your app.Possible reason is calling this function before Streethawk.init()");
-            return 0;
-        } else {
-            SharedPreferences sharedPreferences = mContext.getApplicationContext().getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
-            long currentMins = (System.currentTimeMillis() / 60000);
-            long savedMins = sharedPreferences.getLong(Constants.SHSAVEDTIME, -1);
-            long pauseMins = sharedPreferences.getInt(Constants.SHPAUSETIME, -1);
-            long remainingMins = (pauseMins - (currentMins - savedMins));
-            if (0 >= remainingMins) {
-                SharedPreferences.Editor e = sharedPreferences.edit();
-                e.putLong(Constants.SHSAVEDTIME, 0);
-                e.putInt(Constants.SHPAUSETIME, 0);
-                e.apply();
-                return 0;
-            } else {
-                return (int) remainingMins;
-            }
-        }
-    }
-
-    /**
-     * call shAlertSetting() for pausing push messages for given duration of time in minutes.
-     *
-     * @param pauseMinutes minutes to be paused
-     */
-    public void shAlertSetting(final int pauseMinutes) {
-        if (null == mContext) {
-            Log.e(Util.TAG, SUBTAG + "Streethawk is not initialized properly in your app");
-            return;
-        }
-        try {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    AlertSettings.getInstance(mContext).setAlertSettings(pauseMinutes);
-                }
-            }).start();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 }

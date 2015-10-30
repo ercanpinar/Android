@@ -70,26 +70,26 @@ class NotificationBase {
     public static final int TYPE_LOGIN_NEGATIVE = TYPE_LOGIN_POSITIVE + 1;
     public static final int TYPE_BT_ENABLE_TOAST = TYPE_LOGIN_NEGATIVE + 1;
 
-    public static final int CODE_ERROR                      = -1;
-    public static final int CODE_OPEN_URL                   = 8000;
-    public static final int CODE_REQUEST_THE_APP_STATUS     = 8003;
-    public static final int CODE_LAUNCH_ACTIVITY            = 8004;
-    public static final int CODE_RATE_APP                   = 8005;
-    public static final int CODE_USER_REGISTRATION_SCREEN   = 8006;
-    public static final int CODE_USER_LOGIN_SCREEN          = 8007;
-    public static final int CODE_UPDATE_APP                 = 8008;
-    public static final int CODE_CALL_TELEPHONE_NUMBER      = 8009;
-    public static final int CODE_SIMPLE_PROMPT              = 8010;
-    public static final int CODE_FEEDBACK                   = 8011;
-    public static final int CODE_IBEACON                    = 8012;
-    public static final int CODE_ACCEPT_PUSHMSG             = 8013;
-    public static final int CODE_ENABLE_LOCATION            = 8014;
-    public static final int CODE_CUSTOM_JSON_FROM_SERVER    = 8049;
-    public static final int CODE_CUSTOM_ACTIONS             = 8100;
-    public static final int CODE_FEED_ACK                   = 8200;
-    public static final int CODE_FEED_RESULT                = 8201;
-    public static final int CODE_PUSH_ACK                   = 8202; // Added in v2
-    public static final int CODE_PUSH_RESULT                = 8203; // Added in v2
+    public static final int CODE_ERROR = -1;
+    public static final int CODE_OPEN_URL = 8000;
+    public static final int CODE_REQUEST_THE_APP_STATUS = 8003;
+    public static final int CODE_LAUNCH_ACTIVITY = 8004;
+    public static final int CODE_RATE_APP = 8005;
+    public static final int CODE_USER_REGISTRATION_SCREEN = 8006;
+    public static final int CODE_USER_LOGIN_SCREEN = 8007;
+    public static final int CODE_UPDATE_APP = 8008;
+    public static final int CODE_CALL_TELEPHONE_NUMBER = 8009;
+    public static final int CODE_SIMPLE_PROMPT = 8010;
+    public static final int CODE_FEEDBACK = 8011;
+    public static final int CODE_IBEACON = 8012;
+    public static final int CODE_ACCEPT_PUSHMSG = 8013;
+    public static final int CODE_ENABLE_LOCATION = 8014;
+    public static final int CODE_CUSTOM_JSON_FROM_SERVER = 8049;
+    public static final int CODE_CUSTOM_ACTIONS = 8100;
+    public static final int CODE_FEED_ACK = 8200;
+    public static final int CODE_FEED_RESULT = 8201;
+    public static final int CODE_PUSH_ACK = 8202; // Added in v2
+    public static final int CODE_PUSH_RESULT = 8203; // Added in v2
 
     private static final String STREETHAWK_SHOW_URL_POSITIVE = "Show";
     private static final String STREETHAWK_SHOW_URL_NEGATIVE = "Cancel";
@@ -134,8 +134,7 @@ class NotificationBase {
     private final String ICON_CANCEL = "shcancel";              // generic cancelcancels
     private final String ICON_LATER = "shlater";               // 8005 later
 
-    public static final String SHRESULT             = "result";
-
+    public static final String SHRESULT = "result";
 
     /**
      * @param code   received by server

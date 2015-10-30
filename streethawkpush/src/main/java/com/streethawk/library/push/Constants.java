@@ -40,6 +40,10 @@ class Constants {
     public static final String PROPERTY_APP_VERSION     = "app_version";
     public static final String IS_PUSH_FIRST_RUN        = "ispushfirstrun";
     public static final String PUSH_ACCESS_DATA         = "pushaccessData";
+    public static final String SHPAUSETIME          = "shPauseTime";
+    public static final String SHSAVEDTIME          = "shSavedTime";
+    public static final String PAUSE_MINUTES        = "pause_minutes";
+
 
 
     //Results

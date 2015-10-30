@@ -15,6 +15,7 @@
  * License along with this library.
  */
 package com.streethawk.library.core;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -37,7 +38,7 @@ public class StreethawkBroadcastReceiver extends BroadcastReceiver {
         int DURATION_SIX_HRS = 21600000;                    // 6 hrs in milliseconds
         String action = intent.getAction();
         // Start streethawk core service when device reboots
-        if(action.equals(Intent.ACTION_BOOT_COMPLETED)) {
+        if (action.equals(Intent.ACTION_BOOT_COMPLETED)) {
             if (Util.getStreethawkState(context)) {
                 if (Util.getStreethawkState(context)) {
                     Intent bootIntent = new Intent(context, StreetHawkCoreService.class);
@@ -78,10 +79,11 @@ public class StreethawkBroadcastReceiver extends BroadcastReceiver {
                         logParams.putString(Constants.TYPE_NUMERIC, Integer.toString(Util.getTimeZoneOffsetInMinutes()));
                         Logging manager = Logging.getLoggingInstance(context);
                         manager.addLogsForSending(logParams);
-                    } else {
-                        Logging manager = Logging.getLoggingInstance(context);
-                        manager.ForceFlushLogsToServer();
                     }
+                    Logging manager = Logging.getLoggingInstance(context);
+                    manager.flushPendingFeedback();
+                    manager.ForceFlushLogsToServer();
+
                 }
             }
         }
@@ -110,7 +112,7 @@ public class StreethawkBroadcastReceiver extends BroadcastReceiver {
                 }
             }
             // send heartbeat every 6 hrs
-            if (difference >= DURATION_SIX_HRS){
+            if (difference >= DURATION_SIX_HRS) {
                 Bundle extras = new Bundle();
                 extras.putString(Util.CODE, Integer.toString(Constants.CODE_HEARTBEAT));
                 extras.putString(Util.SHMESSAGE_ID, null);

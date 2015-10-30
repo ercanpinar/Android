@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">StreetHawkLocations</string>
+    <string name="sh_loc_permission">Okay</string>
 </resources>

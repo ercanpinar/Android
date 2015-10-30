@@ -52,9 +52,7 @@ public class Push{
     private static Context mContext;
     private static String mSenderID;
     private static Push mPush;
-    private final String PROPERTY_REG_ID = "registration_id";
-    private final String PREFS_KEY = "gcm_util";
-    private final String PROPERTY_APP_VERSION = "app_version";
+
 
     private final String GSF_PACKAGE = "com.google.android.gsf";
     private final String PERMISSION_GCM_INTENTS = "com.google.android.c2dm.permission.SEND";
@@ -66,8 +64,7 @@ public class Push{
     private static final String SHGCM_SENDER_KEY_APP = "shgcmsenderkeyapp";
     private static final String SUBTAG = "PUSH ";
     private static ISHObserver mISHObserverObject = null;
-    private Activity mCurrentActivity;
-    private static boolean activityLifecycleRegistered = false;
+
 
 
 
@@ -84,6 +81,22 @@ public class Push{
             mPush = new Push();
         mContext = context;
         return mPush;
+    }
+
+    /**
+     * Use forcePushToNotificationBar if you want to forcefully display push notifications in notification bar in spite of your application
+     * running in foreground. A typical use case will be for gaming applications, where user is playing the game and you may not want to interrupt the user
+     * by displaying a dialog inside application's context. Remember to reset status to avoid all messages from being displayed in notification bar only.
+     *
+     * @param status true to force notification to notification bar. False to reset the setting
+     */
+    public void forcePushToNotificationBar(boolean status) {
+        if(null==mContext)
+            return;
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
+        SharedPreferences.Editor e = sharedPreferences.edit();
+        e.putBoolean(Constants.SHFORCEPUSHTOBG, status);
+        e.commit();
     }
 
     /**
@@ -403,7 +416,6 @@ public class Push{
             e.commit();
             return;
         }
-
         if (isCustomDialog) {
             if (null == mISHObserverObject) {
                 Log.e(Util.TAG,SUBTAG+ "mISHObserverObject cannot be null if implementing pending dialog");
@@ -418,8 +430,6 @@ public class Push{
             // return if user has opted for custom dialogs.
             return;
         }
-
-
         int code = Integer.parseInt(pushData.getCode());
         if (code == NotificationBase.CODE_OPEN_URL) {
             Float p = -1.0f;
@@ -486,6 +496,7 @@ public class Push{
                 }
             }
         }).start();
+        displayPendingDialog(activity.getApplicationContext());
     }
 
     /**
@@ -526,4 +537,70 @@ public class Push{
         InputMethodManager manager = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
         manager.hideSoftInputFromWindow((IBinder) activity.getWindow().getDecorView().getWindowToken(), 0);
     }
+    /**
+     * shGetAlertSettings returns the time remaining in minutes before pause minutes set in {@link #shAlertSetting(int)} expires
+     *
+     * @return time remaining before alerts will be enabled again
+     */
+    public int shGetAlertSettings() {
+        if (null == mContext) {
+            Log.e(Util.TAG, SUBTAG + "Streethawk is not initialized properly in your app.Possible reason is calling this function before Streethawk.init()");
+            return 0;
+        } else {
+            SharedPreferences sharedPreferences = mContext.getApplicationContext().getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
+            long currentMins = (System.currentTimeMillis() / 60000);
+            long savedMins = sharedPreferences.getLong(Constants.SHSAVEDTIME, -1);
+            long pauseMins = sharedPreferences.getInt(Constants.SHPAUSETIME, -1);
+            long remainingMins = (pauseMins - (currentMins - savedMins));
+            if (0 >= remainingMins) {
+                SharedPreferences.Editor e = sharedPreferences.edit();
+                e.putLong(Constants.SHSAVEDTIME, 0);
+                e.putInt(Constants.SHPAUSETIME, 0);
+                e.apply();
+                return 0;
+            } else {
+                return (int) remainingMins;
+            }
+        }
+    }
+
+    /**
+     * call shAlertSetting() for pausing push messages for given duration of time in minutes.
+     *
+     * @param pauseMinutes minutes to be paused
+     */
+    public void shAlertSetting(final int pauseMinutes) {
+        if (null == mContext) {
+            Log.e(Util.TAG, SUBTAG + "Streethawk is not initialized properly in your app");
+            return;
+        }
+        try {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    AlertSettings.getInstance(mContext).setAlertSettings(pauseMinutes);
+                }
+            }).start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Use this API only for Cross platform apps
+     * returns name of the page if any requested by streethawk server when app is in BG
+     * Use this API to check for page to be displayed. Returns null is streethawk has not requested any page
+     *
+     * @return app page to be displayed else returns null
+     */
+    private String getAppPage() {
+            SharedPreferences frnd = mContext.getSharedPreferences(Constants.SHSHARED_PREF_FRNDLST, Context.MODE_PRIVATE);
+            String url = frnd.getString(Constants.PHONEGAP_URL, null);
+            SharedPreferences.Editor e = frnd.edit();
+            e.remove(Constants.PHONEGAP_URL);
+            e.commit();
+            return url;
+    }
+
+
 }

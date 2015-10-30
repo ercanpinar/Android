@@ -20,6 +20,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -137,6 +138,24 @@ public class SHGeofence implements GoogleApiClient.ConnectionCallbacks, GoogleAp
 
     }
 
+    /**
+     * use StartLocationWithPermissionDialog to make SDK ask for location permission from user.
+     * @param message String to explain user about the location permission
+     */
+    public void startGeofenceWithPermissionDialog(String message){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            Intent intent = new Intent(mContext, AskGeoPermission.class);
+            Bundle extras = new Bundle();
+            if (null != message)
+                extras.putString(Constants.PERMISSION_MSG, message);
+            extras.putBoolean(Constants.PERMISSION_BOOL, true);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.putExtras(extras);
+            mContext.startActivity(intent);
+        }else{
+            startGeofenceMonitoring();
+        }
+    }
 
     protected void monitorGeofence() {
         GeofencingRequest request = getGeofencingRequest();

@@ -46,8 +46,8 @@ class PushNotificationData{
     public void setOrientation(String orientation){this.mOrientation=orientation;}
     public void setSpeed(String speed){this.mSpeed=speed;}
     public void setNoDialog(String NoDialog){this.mNoDialog = NoDialog;}
-    public void setBadge(String badge){this.mSound=badge;}
-    public void setSound(String sound){this.mBadge=sound;}
+    public void setBadge(String badge){this.mBadge=badge;}
+    public void setSound(String sound){this.mSound=sound;}
 
     public String getMsgId(){return this.mMsgId;}
     public String getCode(){return this.mCode;}
@@ -58,8 +58,8 @@ class PushNotificationData{
     public String getOrientation(){return this.mOrientation;}
     public String getSpeed(){return this.mSpeed;}
     public String getNoDialog(){return this.mNoDialog;}
-    public String getBadge(){return this.mSound;}
-    public String getSound(){return this.mBadge;}
+    public String getBadge(){return this.mBadge;}
+    public String getSound(){return this.mSound;}
 
     public void displayMyData(){
         String NEWLINE = "\n";

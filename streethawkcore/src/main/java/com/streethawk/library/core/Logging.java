@@ -35,6 +35,8 @@ import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.Map;
@@ -397,6 +399,10 @@ public class Logging extends LoggingBase {
                         HashMap<String, String> logMap = new HashMap<String, String>();
                         logMap.put(RECORDS, records);
                         logMap.put(BUNDLE_ID, bundle_id);
+
+                        Log.i("Anurag","Logs "+records.toString());
+
+
                         BufferedReader reader = null;
                         try {
                             URL url = new URL(buildUri(mContext, ApiMethod.INSTALL_LOG, null));
@@ -512,4 +518,99 @@ public class Logging extends LoggingBase {
         else
             return mInstance;
     }
+
+    public void flushPendingFeedback() {
+        String title = null;
+        String content = null;
+        int type =0;
+        if (null != mContext) {
+            SharedPreferences prefs = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
+            title = prefs.getString(Constants.FEEDBACK_TITLE, null);
+            content = prefs.getString(Constants.FEEDBACK_CONTENT, null);
+            type = prefs.getInt(Constants.FEEDBACK_TYPE,0);
+            if (null == title && null == content)
+                return;
+            else {
+                Logging.getLoggingInstance(mContext).sendFeedbackToServer(title, content,type);
+            }
+        }
+    }
+
+    public void sendFeedbackToServer(final String title, final String content, final int feedbacktype) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final String CONTENTS = "contents";
+                final String TITLE = "title";
+                final String BUILT_AT = "built_at";
+                final String FEEDBACK_TYPE = "feedback_type";
+                Calendar calender = Calendar.getInstance();
+                SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                String formattedDate = df.format(calender.getTime());
+
+                HashMap<String, String> logMap = new HashMap<String, String>();
+                logMap.put(BUILT_AT, formattedDate);
+                logMap.put(Util.INSTALL_ID, Util.getInstallId(mContext));
+                if (content != null)
+                    logMap.put(CONTENTS, content);
+                if (title != null)
+                    logMap.put(TITLE, title);
+                String type;
+                try{
+                    type = Integer.toString(feedbacktype);
+                }catch(NumberFormatException e){
+                    type = null;
+                }
+                if(null!=type)
+                    logMap.put(FEEDBACK_TYPE,Integer.toString(feedbacktype));
+
+                BufferedReader reader = null;
+                try {
+                    String app_key = Util.getAppKey(mContext);
+                    URL url = (Util.getFeedbackUrl(mContext));
+                    HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+                    connection.setReadTimeout(10000);
+                    connection.setConnectTimeout(15000);
+                    connection.setRequestMethod("POST");
+                    connection.setDoInput(true);
+                    connection.setDoOutput(true);
+                    connection.setRequestProperty("X-Installid", Util.getInstallId(mContext));
+                    connection.setRequestProperty("X-App-Key", app_key);
+                    String libVersion = Util.getLibraryVersion();
+                    connection.setRequestProperty("X-Version",libVersion);
+                    connection.setRequestProperty("User-Agent", app_key + "(" + libVersion + ")");
+                    OutputStream os = connection.getOutputStream();
+                    BufferedWriter writer = new BufferedWriter(
+                            new OutputStreamWriter(os, "UTF-8"));
+                    String logs = Util.getPostDataString(logMap);
+                    writer.write(logs);
+                    writer.flush();
+                    writer.close();
+                    os.close();
+                    reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                    String answer = reader.readLine();
+                    Log.e("Anurag","response feedback"+connection.getResponseCode());
+                    if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                        if (null == answer)
+                            return;
+                        if (answer.isEmpty())
+                            return;
+                        processAppStatusCall(answer);
+                    } else {
+                        SharedPreferences prefs = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
+                        SharedPreferences.Editor e = prefs.edit();
+                        e.putString(Constants.FEEDBACK_TITLE, title);
+                        e.putString(Constants.FEEDBACK_CONTENT,content);
+                        e.putString(Constants.FEEDBACK_TYPE,type);
+                        e.commit();
+                        processErrorAckFromServer(answer);
+                    }
+                    connection.disconnect();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
 }

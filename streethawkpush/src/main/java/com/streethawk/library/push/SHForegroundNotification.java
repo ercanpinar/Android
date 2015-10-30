@@ -169,9 +169,6 @@ class SHForegroundNotification extends NotificationBase {
      * Call display to show alert dialog box
      */
     public void display(final PushNotificationData pushData) {
-        if (null == mForegroundDialog) {
-            mForegroundDialog = new Dialog(mContext);
-        }
         Activity activity = StreetHawk.INSTANCE.getCurrentActivity();
         if (null == activity) {
             Log.e(Util.TAG, SUBTAG + "activity is null in  display()");
@@ -317,6 +314,9 @@ class SHForegroundNotification extends NotificationBase {
                             return;
                     }
                     builder.setCancelable(false); // Adding as dismiss is causing side effects
+                    if (null == mForegroundDialog) {
+                        mForegroundDialog = new Dialog(mContext);
+                    }
                     mForegroundDialog = builder.create();
                     //storeShowDialogStatus(true);
                     if (!isDialogHandled) {
@@ -802,7 +802,6 @@ class SHForegroundNotification extends NotificationBase {
                                         activity.startActivity(intent);
                                         break;
                                     case FEEDBACK_WITHOUT_INPUT_TEXT:
-                                        shFeedbackDialog sendFeedback = shFeedbackDialog.getIntance(mContext);
                                         String tempTitle = "";
                                         if (null == title) {
                                             if (null != msg) {
@@ -811,7 +810,7 @@ class SHForegroundNotification extends NotificationBase {
                                         } else {
                                             tempTitle = title;
                                         }
-                                        sendFeedback.sendFeedbackToServer(tempTitle, listoptions.get(position).getOption().toString(), 0);
+                                        Logging.getLoggingInstance(mContext).sendFeedbackToServer(tempTitle, listoptions.get(position).getOption().toString(), 0);
                                         sendResultBroadcast(mContext, msgId, Constants.STREETHAWK_ACCEPTED);
                                         Toast.makeText(mContext, "Feedback submitted", Toast.LENGTH_LONG).show();
                                         break;

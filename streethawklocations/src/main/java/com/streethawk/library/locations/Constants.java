@@ -32,5 +32,7 @@ class Constants {
     public static final int CODE_LOCATION_UPDATES           = 20;
     public static final int WORK_HOME_TIME_INTERVAL         = 3480000;  // 58 minutes so that we dont have sync problems
     public static final int CODE_PERIODIC_LOCATION_UPDATE   = 19;
+    public static final String PERMISSION_MSG               = "msg";
+    public static final String PERMISSION_BOOL              = "permission_bool";
 
 }

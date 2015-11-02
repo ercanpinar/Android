@@ -117,10 +117,9 @@ public class GeofenceService extends IntentService{
         if ((geofenceTransition == com.google.android.gms.location.Geofence.GEOFENCE_TRANSITION_ENTER)) {
             // Get the geofences that were triggered. A single event can trigger multiple geofences.
             List<com.google.android.gms.location.Geofence> triggeringGeofences = geofencingEvent.getTriggeringGeofences();
-            GeofenceDB database = new GeofenceDB(context);  //TODO replace getApplicationContext with context of application in SDK
+            GeofenceDB database = new GeofenceDB(context);
             database.open();
             SharedPreferences sharedPreferences = context.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
-            //TODO: Store and check for parent geofence ID
             for (com.google.android.gms.location.Geofence geofence : triggeringGeofences) {
                 final GeofenceData object = new GeofenceData();
                 String geofenceID = geofence.getRequestId();
@@ -151,7 +150,6 @@ public class GeofenceService extends IntentService{
                     SharedPreferences.Editor e = sharedPreferences.edit();
                     e.putString(Constants.PARENT_GEOFENCE_ID,null);
                     e.commit();
-                    // TODO, place this logic outside of forloop to bundle geofences
                     try {
                         Logging manager = Logging.getLoggingInstance(context);
                         Bundle params = new Bundle();
@@ -173,7 +171,7 @@ public class GeofenceService extends IntentService{
         } if (geofenceTransition == com.google.android.gms.location.Geofence.GEOFENCE_TRANSITION_EXIT) {
             // Get the geofences that were triggered. A single event can trigger multiple geofences.
             List<com.google.android.gms.location.Geofence> triggeringGeofences = geofencingEvent.getTriggeringGeofences();
-            GeofenceDB database = new GeofenceDB(getApplicationContext());  //TODO replace getApplicationContext with context of application in SDK
+            GeofenceDB database = new GeofenceDB(getApplicationContext());
             database.open();
             for (com.google.android.gms.location.Geofence geofence : triggeringGeofences) {
                 final GeofenceData object = new GeofenceData();

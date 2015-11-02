@@ -484,6 +484,16 @@ public class Push{
     }
 
     /**
+     * Send push result if you are not extending streetHawk's onclicklistener
+     * @param msgID msgID of the push message
+     * @param pushResult 1 = accepted | 0 = postponed | -1=decline
+     */
+    public void sendPushResult(String msgID,int pushResult){
+        NotificationBase.sendResultBroadcast(mContext, msgID,pushResult);
+    }
+
+
+    /**
      * Application need not use this call. Notify observers when app is foregrounded
      * @param activity
      */

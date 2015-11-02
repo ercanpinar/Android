@@ -160,6 +160,7 @@ public class SHGeofence implements GoogleApiClient.ConnectionCallbacks, GoogleAp
     protected void monitorGeofence() {
         GeofencingRequest request = getGeofencingRequest();
         if (null == request) {
+            Log.e(Util.TAG,SUBTAG+"getGeofencingRequest returned null");
             return;
         }
         if (mGoogleApiClient.isConnected()) {

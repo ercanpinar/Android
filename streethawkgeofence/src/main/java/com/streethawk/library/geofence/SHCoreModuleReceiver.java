@@ -132,12 +132,13 @@ public class SHCoreModuleReceiver extends BroadcastReceiver {
 
                                 } catch (JSONException e) {
                                 }
-
+                                Logging.getLoggingInstance(context).processAppStatusCall(answer);
                             } else {
                                 SharedPreferences sharedPreferences = context.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
                                 SharedPreferences.Editor e = sharedPreferences.edit();
                                 e.putString(KEY_GEOFENCE, null);
                                 e.commit();
+                                Logging.getLoggingInstance(context).processErrorAckFromServer(answer);
                             }
                             connection.disconnect();
                         } catch (UnsupportedEncodingException e) {

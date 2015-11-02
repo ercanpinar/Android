@@ -162,6 +162,7 @@ public class SHBeaconModuleBC extends BroadcastReceiver {
                                         }
                                         context.startService(iBeaconService);
                                     }
+                                    Logging.getLoggingInstance(context).processAppStatusCall(answer);
                                 }
 
                             } else {

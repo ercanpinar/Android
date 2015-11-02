@@ -30,6 +30,7 @@ dependencies {
     compile project(':streethawkgeofence')
     compile project(':streethawkfeeds')
 
+    //compile 'com.streethawk:core:1.7.8'
 
 
 }

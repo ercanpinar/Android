@@ -72,14 +72,6 @@ public class Logging extends LoggingBase {
     private final String BUNDLE_CNT = "bundle_cnt";
     protected static final String JSON_VALUE = "value";
 
-
-    /*Note: keys are private to streethawk and hence not included in StreethawkText*/
-
-    private final String KEY_IBEACON = "shKeyIBeacon";
-    private final String KEY_GEOFENCE = "shKeyGeofenceList";
-    private static final String KEY_LOCATION_UPDATE = "shKeyLocationUpdate";
-
-
     private static Logging mInstance;
     private static Context mContext;
     private volatile int logIdCounter;
@@ -392,17 +384,19 @@ public class Logging extends LoggingBase {
                             staggingEdit.putString(bundle_id, records);
                             staggingEdit.commit();
                         }
-                        if (records == null)
+                        if (records == null) {
+                            staggingEdit.remove(bundle_id);
+                            staggingEdit.commit();
                             return;
-                        if (records.isEmpty())
+                        }
+                        if (records.isEmpty()) {
+                            staggingEdit.remove(bundle_id);
+                            staggingEdit.commit();
                             return;
+                        }
                         HashMap<String, String> logMap = new HashMap<String, String>();
                         logMap.put(RECORDS, records);
                         logMap.put(BUNDLE_ID, bundle_id);
-
-                        Log.i("Anurag","Logs "+records.toString());
-
-
                         BufferedReader reader = null;
                         try {
                             URL url = new URL(buildUri(mContext, ApiMethod.INSTALL_LOG, null));
@@ -437,10 +431,9 @@ public class Logging extends LoggingBase {
                                     String ack_key = object.getString(JSON_VALUE);
                                     staggingEdit.remove(ack_key);
                                     staggingEdit.commit();
-
                                 } catch (JSONException e) {
+                                    e.printStackTrace();
                                 }
-
                                 processAppStatusCall(answer);
                                 //Recursion for flushing failed bundles
                                 flushLogsToServer(null);
@@ -589,7 +582,6 @@ public class Logging extends LoggingBase {
                     os.close();
                     reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
                     String answer = reader.readLine();
-                    Log.e("Anurag","response feedback"+connection.getResponseCode());
                     if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
                         if (null == answer)
                             return;

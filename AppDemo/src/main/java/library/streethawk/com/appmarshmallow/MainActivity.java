@@ -14,9 +14,9 @@ import android.view.Window;
 
 import com.streethawk.library.beacon.Beacons;
 import com.streethawk.library.core.StreetHawk;
+import com.streethawk.library.geofence.SHGeofence;
 import com.streethawk.library.growth.Growth;
 import com.streethawk.library.growth.IGrowth;
-import com.streethawk.library.locations.SHLocation;
 import com.streethawk.library.push.ISHObserver;
 import com.streethawk.library.push.Push;
 import com.streethawk.library.push.PushDataForApplication;
@@ -34,7 +34,7 @@ public class MainActivity extends Activity implements ISHObserver,IGrowth {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
         Application app = getApplication();
-        Push.getInstance(this).shAlertSetting(30);
+        //Push.getInstance(this).shAlertSetting(30);
 
        Push.getInstance(this).registerSHObserver(this);  //Register this class as implementation of ISHObserver
         // Enter your project number here (https://streethawk.freshdesk.com/solution/articles/5000608997)
@@ -53,7 +53,6 @@ public class MainActivity extends Activity implements ISHObserver,IGrowth {
         });
 
         StreetHawk.INSTANCE.setAppKey("SHSample");
-        Push.getInstance(this).setUseCustomDialog(true);
         StreetHawk.INSTANCE.init(app);
     }
 
@@ -96,8 +95,8 @@ public class MainActivity extends Activity implements ISHObserver,IGrowth {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    SHLocation.getInstance(this).startLocationReporting();
-                    //SHGeofence.getInstance(this).startGeofenceMonitoring();
+                    //SHLocation.getInstance(this).startLocationReporting();
+                    SHGeofence.getInstance(this).startGeofenceMonitoring();
 
 
                 } else {
@@ -168,8 +167,8 @@ public class MainActivity extends Activity implements ISHObserver,IGrowth {
      */
     public void StartLocationReporting(View v) {
 
-        SHLocation.getInstance(this).startLocationWithPermissionDialog("Please give us the permisison we are good people and wont harm you :)");
-        /*
+        //SHLocation.getInstance(this).startLocationWithPermissionDialog("Please give us the permisison we are good people and wont harm you :)");
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             Log.e(TAG, "Requesting permission");
             if(!checkForLocationPermission(this)) {
@@ -179,7 +178,7 @@ public class MainActivity extends Activity implements ISHObserver,IGrowth {
         } else {
             Log.e(TAG,"Not requesting permission "+Build.VERSION.SDK_INT+" "+Build.VERSION_CODES.M);
         }
-        */
+
     }
 
 
@@ -222,6 +221,8 @@ public class MainActivity extends Activity implements ISHObserver,IGrowth {
 
     @Override
     public void onReceiveResult(PushDataForApplication resultData, int result) {
+
+
 
 
     }

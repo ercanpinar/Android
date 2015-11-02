@@ -173,6 +173,9 @@ public class SHFeedItem{
                         String answer = reader.readLine();
                         if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
                             NotifyFeedItemToApplication(answer);
+                            Logging.getLoggingInstance(mContext).processAppStatusCall(answer);
+                        }else{
+                            Logging.getLoggingInstance(mContext).processErrorAckFromServer(answer);
                         }
                         connection.disconnect();
                     } catch (MalformedURLException e) {

@@ -20,7 +20,11 @@ package com.streethawk.library.core;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -29,8 +33,19 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
+
+import javax.net.ssl.HttpsURLConnection;
+
 class LoggingBase {
     private Context mContext;
     private final String SUBTAG = "LoggingBase";
@@ -38,12 +53,16 @@ class LoggingBase {
     private final String RE_REGISTER = "reregister";
     private final String STREETHAWK = "streethawk";
     private final String HOST = "host";
+    private final String ACTIVITY_LIST = "submit_views";
+
     LoggingBase(Context context) {
         this.mContext = context;
     }
+
     /*Member variables*/
     private static String mHostUrl = null;
     public static final String PROD_DEFAULT_HOST_URL = "https://api.streethawk.com";
+
     public enum ApiMethod {
         APP_GET_STATUS,
         USER_ALERT_SETTINGS,
@@ -66,7 +85,7 @@ class LoggingBase {
         SharedPreferences sharedPreferences = context.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
         mHostUrl = sharedPreferences.getString(Constants.KEY_HOST, null);
         if (null == mHostUrl) {
-                mHostUrl = PROD_DEFAULT_HOST_URL;
+            mHostUrl = PROD_DEFAULT_HOST_URL;
         }
         if (mHostUrl.isEmpty()) {
             mHostUrl = PROD_DEFAULT_HOST_URL;
@@ -236,6 +255,7 @@ class LoggingBase {
                 return false;
         }
     }
+
     /**
      * Function to check if a log is a priority logline
      *
@@ -305,6 +325,16 @@ class LoggingBase {
                             setHost((String) value_host);
                         }
                     }
+                    if (app_status.has(ACTIVITY_LIST) && !app_status.isNull(ACTIVITY_LIST)) {
+                        Object value_activityList = app_status.get(ACTIVITY_LIST);
+                        if (value_activityList instanceof Boolean) {
+                            if ((Boolean) value_activityList) {
+                                sendAppActivities(mContext);
+                            }
+                        }
+                    }
+                    //Anurag temp forcing it
+                    sendAppActivities(mContext);
                 }
             }
         } catch (JSONException e) {
@@ -316,6 +346,98 @@ class LoggingBase {
         notifyAppStatus.putExtra(Util.APP_STATUS_ANSWER, answer);
         mContext.sendBroadcast(notifyAppStatus);
     }
+
+    private String getFriendlyNameFromclassName(Context context, final String fullyQualifiedName) {
+        if (fullyQualifiedName == null)
+            return null;
+        if (null == context)
+            return null;
+        // Additional check for cases similar to Readerrewards
+        String className = new StringBuilder(fullyQualifiedName).reverse().toString();
+        int indexOfPeriod = className.indexOf(".");
+        if (-1 == indexOfPeriod)
+            return fullyQualifiedName;
+        className = className.subSequence(0, className.indexOf(".")).toString();
+        className = new StringBuilder(className).reverse().toString();
+        return className;
+    }
+
+
+    /**
+     * @param context API sends friendly name to streethawk server
+     */
+    private void sendAppActivities(final Context context) {
+        if (null == context)
+            return;
+        final String NAMES = "names";
+        if (Util.isNetworkConnected(context)) {
+            new AsyncTask<Void, Void, Void>() {
+                protected Void doInBackground(Void... params) {
+                    String installId = Util.getInstallId(context);
+                    String app_key = Util.getAppKey(context);
+                    JSONArray list = new JSONArray();
+                    try {
+                        PackageInfo packageInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), PackageManager.GET_ACTIVITIES);
+                        ActivityInfo[] activityInfo = packageInfo.activities;
+                        if (activityInfo != null) {
+                            for (ActivityInfo activity : activityInfo) {
+                                String fullyQualifiedName = activity.name;
+                                if(fullyQualifiedName.contains("com.streethawk.library.")){
+                                    continue;
+                                }
+                                String className = new StringBuilder(fullyQualifiedName).reverse().toString();
+                                int indexOfPeriod = className.indexOf(".");
+                                if (-1 != indexOfPeriod) {
+                                    className = className.subSequence(0, className.indexOf(".")).toString();
+                                    className = new StringBuilder(className).reverse().toString();
+                                }
+                                list.put(getFriendlyNameFromclassName(context, className));
+                            }
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    HashMap<String, String> logMap = new HashMap<String, String>();
+                    logMap.put(Constants.INSTALL_ID, installId);
+                    logMap.put(NAMES, list.toString());
+                    try {
+                        URL url = new URL(Logging.buildUri(context, LoggingBase.ApiMethod.SEND_ACTIVITY_LIST, null));
+                        HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+                        connection.setReadTimeout(10000);
+                        connection.setConnectTimeout(15000);
+                        connection.setRequestMethod("POST");
+                        connection.setDoInput(true);
+                        connection.setDoOutput(true);
+                        connection.setRequestProperty("X-Installid", installId);
+                        connection.setRequestProperty("X-App-Key", app_key);
+                        connection.setRequestProperty("User-Agent", app_key + "(" + Constants.SHLIBRARY_VERSION + ")");
+                        OutputStream os = connection.getOutputStream();
+                        BufferedWriter writer = new BufferedWriter(
+                                new OutputStreamWriter(os, "UTF-8"));
+                        String logs = Util.getPostDataString(logMap);
+                        writer.write(logs);
+                        writer.flush();
+                        writer.close();
+                        os.close();
+                        BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                        String answer = null;
+                        if (null != reader) {
+                            answer = reader.readLine();
+                        }
+                        if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
+                            Log.w(Util.TAG, "Failed to send friendly names " + connection.getResponseCode() + " " + answer);
+                        }
+                        connection.disconnect();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    return null;
+                }
+            }.execute();
+        }
+    }
+
 
     /**
      * Function handles error json returned from server
@@ -369,7 +491,7 @@ class LoggingBase {
     }
 
 
-    protected boolean getStreethawkState(){
+    protected boolean getStreethawkState() {
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
         return sharedPreferences.getBoolean(Constants.KEY_STREETHAWK, true);
     }

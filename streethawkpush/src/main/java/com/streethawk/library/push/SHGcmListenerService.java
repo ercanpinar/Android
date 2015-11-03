@@ -18,6 +18,10 @@ public class SHGcmListenerService extends GcmListenerService {
     public void onMessageReceived(String from,Bundle data){
         SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
         String storedSenderId = sharedPreferences.getString(SHGCM_SENDER_KEY_APP,null);
+        if(null==storedSenderId){
+            Log.e(Util.TAG,"Project number is null returning..");
+            return;
+        }
         if(!from.endsWith(storedSenderId)){
             Log.e(Util.TAG,"Mismatched stored and from project number in push");
             return;

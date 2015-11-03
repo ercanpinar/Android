@@ -50,7 +50,6 @@ import java.util.Set;
 
 public class Push{
     private static Context mContext;
-    private static String mSenderID;
     private static Push mPush;
 
 
@@ -315,7 +314,6 @@ public class Push{
             Log.e(Util.TAG, SUBTAG + "Error in google play services.. returning");
             return;
         }
-        saveSenderId(mSenderID);
         new Thread(new Runnable() {
             @Override
             public void run() {

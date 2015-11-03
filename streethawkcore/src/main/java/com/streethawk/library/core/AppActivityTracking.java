@@ -37,16 +37,6 @@ class AppActivityTracking{
     private String BG = "bg";
     private String SHARED_PREF_ACTIVITY = "sharedprefactivity";  // shared preference to keep a note of activity start time
 
-    /*
-    private static Set<PluginBase> mPluginArray=null;
-
-    public void registerPlugins(Set<PluginBase> pluginArray){
-        if(null==this.mPluginArray) {
-            this.mPluginArray = pluginArray;
-        }
-    }
-    */
-
     private void SaveSessionTime(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
         SharedPreferences.Editor e = sharedPreferences.edit();
@@ -236,7 +226,6 @@ class AppActivityTracking{
             return null;
         if (null == context)
             return null;
-        // Additional check for cases similar to Readerrewards
         String className = new StringBuilder(fullyQualifiedName).reverse().toString();
         int indexOfPeriod = className.indexOf(".");
         if (-1 == indexOfPeriod)

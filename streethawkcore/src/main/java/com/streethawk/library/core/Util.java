@@ -16,7 +16,6 @@
  */
 package com.streethawk.library.core;
 
-import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.ComponentName;
 import android.content.Context;
@@ -68,7 +67,7 @@ public class Util {
     private static final String ACCESS_DATA = "access_data";
     public static final String SHGCMREGISTERED = "shgcmregistered";
 
-    public static Activity mActivity;
+    //public static Activity mActivity;
 
     public static final String INSTALL_ID = "installid";
 

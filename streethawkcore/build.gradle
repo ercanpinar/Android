@@ -40,4 +40,4 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 }
 
-//apply from: '../sh_maven_push.gradle'
+apply from: '../sh_maven_push.gradle'

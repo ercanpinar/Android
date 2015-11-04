@@ -24,7 +24,6 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -40,8 +39,10 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -333,8 +334,6 @@ class LoggingBase {
                             }
                         }
                     }
-                    //Anurag temp forcing it
-                    sendAppActivities(mContext);
                 }
             }
         } catch (JSONException e) {
@@ -371,11 +370,13 @@ class LoggingBase {
             return;
         final String NAMES = "names";
         if (Util.isNetworkConnected(context)) {
-            new AsyncTask<Void, Void, Void>() {
-                protected Void doInBackground(Void... params) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
                     String installId = Util.getInstallId(context);
                     String app_key = Util.getAppKey(context);
-                    JSONArray list = new JSONArray();
+                    //JSONArray list = new JSONArray();
+                    String list="[";
                     try {
                         PackageInfo packageInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), PackageManager.GET_ACTIVITIES);
                         ActivityInfo[] activityInfo = packageInfo.activities;
@@ -391,15 +392,25 @@ class LoggingBase {
                                     className = className.subSequence(0, className.indexOf(".")).toString();
                                     className = new StringBuilder(className).reverse().toString();
                                 }
-                                list.put(getFriendlyNameFromclassName(context, className));
+                                //list.put(getFriendlyNameFromclassName(context, className));
+                                list+="\""+getFriendlyNameFromclassName(context, className)+"\""+",";
                             }
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
+                    int size = list.length();
+                    if(size>1) {
+                        list = list.substring(0,size-1);
+                    }
+                    list+="]";
+                    if(list.equals("[]")) {
+                        Log.i(Util.TAG,SUBTAG+"Returning due to empty logs");
+                        return;
+                    }
                     HashMap<String, String> logMap = new HashMap<String, String>();
                     logMap.put(Constants.INSTALL_ID, installId);
-                    logMap.put(NAMES, list.toString());
+                    logMap.put(NAMES,list);
                     try {
                         URL url = new URL(Logging.buildUri(context, LoggingBase.ApiMethod.SEND_ACTIVITY_LIST, null));
                         HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
@@ -414,7 +425,29 @@ class LoggingBase {
                         OutputStream os = connection.getOutputStream();
                         BufferedWriter writer = new BufferedWriter(
                                 new OutputStreamWriter(os, "UTF-8"));
-                        String logs = Util.getPostDataString(logMap);
+                        //String logs = Util.getPostDataString(logMap);
+                        String logs="";
+                        boolean first = true;
+                        for (Map.Entry<String, String> entry : logMap.entrySet()) {
+                            StringBuilder result = new StringBuilder();
+                            if (first)
+                                first = false;
+                            else
+                                result.append("&");
+                            String key      = entry.getKey();
+                            String value    = entry.getValue();
+                            if(null!=key) {
+                                result.append(URLEncoder.encode(entry.getKey(), "UTF-8"));
+                                result.append("=");
+                                if(null!=value) {
+                                    result.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
+                                }else{
+                                    result.append(URLEncoder.encode("", "UTF-8"));
+                                }
+                            }
+                            logs+=result.toString();
+                            result = null; //Force GC
+                        }
                         writer.write(logs);
                         writer.flush();
                         writer.close();
@@ -432,9 +465,9 @@ class LoggingBase {
                         e.printStackTrace();
                     }
 
-                    return null;
+                    return;
                 }
-            }.execute();
+            }).start();
         }
     }
 

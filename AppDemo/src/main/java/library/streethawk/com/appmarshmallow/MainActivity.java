@@ -38,7 +38,7 @@ public class MainActivity extends Activity implements ISHObserver,IGrowth {
 
        Push.getInstance(this).registerSHObserver(this);  //Register this class as implementation of ISHObserver
         // Enter your project number here (https://streethawk.freshdesk.com/solution/articles/5000608997)
-       Push.getInstance(this).registerForPushMessaging("666472741872");
+       Push.getInstance(this).registerForPushMessaging("393009194749");
         // Enter APP_KEY for your application registered with StreetHawk server
         Growth.getInstance(this).getShareUrlForAppDownload("1", "shsample://setparams?param1=30", "facebook", "medium", "term", "cc", "www.google.com", new IGrowth() {
             @Override

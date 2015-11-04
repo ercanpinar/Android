@@ -35,6 +35,7 @@ import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.ConcurrentModificationException;
@@ -301,9 +302,9 @@ public class Logging extends LoggingBase {
             public void run() {
                 SharedPreferences sourceBuffer = mContext.getSharedPreferences(SHSHARED_PREF_LOGGING, Context.MODE_PRIVATE);
                 SharedPreferences.Editor sourceEdit = sourceBuffer.edit();
-                JSONArray array = new JSONArray();
+                String logs="[";
                 int keyCount = 1 + sourceBuffer.getInt(KEY_COUNT, 0);
-                String str = null;
+                String str;
                 for (int i = 0; i < keyCount; i++) {
                     JSONObject dictionary = null;
                     str = sourceBuffer.getString(Integer.toString(i), null);
@@ -313,15 +314,26 @@ public class Logging extends LoggingBase {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    if (null != dictionary)
-                        array.put(dictionary);
+                    if (null != dictionary) {
+                        logs+=dictionary.toString()+",";
+                    }
                 }
+                //remove last comma
+                int size = logs.length();
+                if(size>1) {
+                    logs = logs.substring(0,size-1);
+                }
+                logs+="]";
                 sourceEdit.clear();
                 sourceEdit.commit();
+                if(logs.equals("[]")) {
+                    Log.i(Util.TAG,SUBTAG+"Returning due to empty logs");
+                    return;
+                }
                 SharedPreferences DestinationBuffer = mContext.getSharedPreferences(SHSHARED_PREF_STAGGING, Context.MODE_PRIVATE);
                 SharedPreferences.Editor destinationEdit = DestinationBuffer.edit();
                 String key = getBundleId();
-                destinationEdit.putString(key, array.toString());
+                destinationEdit.putString(key,logs);
                 destinationEdit.commit();
                 flushLogsToServer(key);
                 semHeld = false;
@@ -356,7 +368,8 @@ public class Logging extends LoggingBase {
                             records = prefs.getString(key, null);
                             bundle_id = key;
                         } else {
-                            JSONArray mainArray = new JSONArray();
+                            //JSONArray mainArray = new JSONArray();
+                            String mainLogs="[";
                             Map<String, ?> keysPrefs = prefs.getAll();
                             if (keysPrefs == null) {
                                 return;
@@ -372,14 +385,25 @@ public class Logging extends LoggingBase {
                                     subArray = new JSONArray(arryStr);
                                     for (int i = 0; i < subArray.length(); i++) {
                                         JSONObject subobject = subArray.getJSONObject(i);
-                                        mainArray.put(subobject);
+                                        //mainArray.put(subobject);
+                                        mainLogs+=subobject.toString()+",";
                                     }
                                     staggingEdit.remove(inUsekey);
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
                             }
-                            records = mainArray.length() == 0 ? null : mainArray.toString();
+                            int size = mainLogs.length();
+                            if(size>1) {
+                                mainLogs = mainLogs.substring(0,size-1);
+                            }
+                            mainLogs+="]";
+                            if(mainLogs.equals("[]")) {
+                                Log.i(Util.TAG,SUBTAG+"Returning due to empty logs");
+                                return;
+                            }
+
+                            records = mainLogs;
                             bundle_id = getBundleId();
                             staggingEdit.putString(bundle_id, records);
                             staggingEdit.commit();
@@ -414,7 +438,29 @@ public class Logging extends LoggingBase {
                             OutputStream os = connection.getOutputStream();
                             BufferedWriter writer = new BufferedWriter(
                                     new OutputStreamWriter(os, "UTF-8"));
-                            String logs = Util.getPostDataString(logMap);
+                            //String logs = Util.getPostDataString(logMap);
+                            String logs="";
+                            boolean first = true;
+                            for (Map.Entry<String, String> entry : logMap.entrySet()) {
+                                StringBuilder result = new StringBuilder();
+                                if (first)
+                                    first = false;
+                                else
+                                    result.append("&");
+                                String key      = entry.getKey();
+                                String value    = entry.getValue();
+                                if(null!=key) {
+                                    result.append(URLEncoder.encode(entry.getKey(), "UTF-8"));
+                                    result.append("=");
+                                    if(null!=value) {
+                                        result.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
+                                    }else{
+                                        result.append(URLEncoder.encode("", "UTF-8"));
+                                    }
+                                }
+                                logs+=result.toString();
+                                result = null; //Force GC
+                            }
                             writer.write(logs);
                             writer.flush();
                             writer.close();
@@ -575,7 +621,29 @@ public class Logging extends LoggingBase {
                     OutputStream os = connection.getOutputStream();
                     BufferedWriter writer = new BufferedWriter(
                             new OutputStreamWriter(os, "UTF-8"));
-                    String logs = Util.getPostDataString(logMap);
+                    //String logs = Util.getPostDataString(logMap);
+                    String logs="";
+                    boolean first = true;
+                    for (Map.Entry<String, String> entry : logMap.entrySet()) {
+                        StringBuilder result = new StringBuilder();
+                        if (first)
+                            first = false;
+                        else
+                            result.append("&");
+                        String key      = entry.getKey();
+                        String value    = entry.getValue();
+                        if(null!=key) {
+                            result.append(URLEncoder.encode(entry.getKey(), "UTF-8"));
+                            result.append("=");
+                            if(null!=value) {
+                                result.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
+                            }else{
+                                result.append(URLEncoder.encode("", "UTF-8"));
+                            }
+                        }
+                        logs+=result.toString();
+                        result = null; //Force GC
+                    }
                     writer.write(logs);
                     writer.flush();
                     writer.close();

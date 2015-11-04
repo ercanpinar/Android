@@ -484,13 +484,13 @@ public class Util {
         return sharedPreferences.getString(Constants.SHADVERTISEMENTID,null);
     }
 
-    /**
+    /** Commented due to OOM issues
      * Formats data in http post call
      *
      * @param params
      * @return
      * @throws UnsupportedEncodingException
-     */
+
     public static String getPostDataString(HashMap<String, String> params) throws UnsupportedEncodingException {
         StringBuilder result = new StringBuilder();
         boolean first = true;
@@ -513,6 +513,7 @@ public class Util {
         }
         return result.toString();
     }
+    /*
     /**
      * Function to get StreetHawk state
      *

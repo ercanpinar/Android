@@ -41,10 +41,12 @@ import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -133,16 +135,35 @@ public class SHBeaconModuleBC extends BroadcastReceiver {
                             OutputStream os = connection.getOutputStream();
                             BufferedWriter writer = new BufferedWriter(
                                     new OutputStreamWriter(os, "UTF-8"));
-                            String logs = Util.getPostDataString(logMap);
+                            String logs="";
+                            boolean first = true;
+                            for (Map.Entry<String, String> entry : logMap.entrySet()) {
+                                StringBuilder result = new StringBuilder();
+                                if (first)
+                                    first = false;
+                                else
+                                    result.append("&");
+                                String key      = entry.getKey();
+                                String value    = entry.getValue();
+                                if(null!=key) {
+                                    result.append(URLEncoder.encode(entry.getKey(), "UTF-8"));
+                                    result.append("=");
+                                    if(null!=value) {
+                                        result.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
+                                    }else{
+                                        result.append(URLEncoder.encode("", "UTF-8"));
+                                    }
+                                }
+                                logs+=result.toString();
+                                result = null; //Force GC
+                            }
                             writer.write(logs);
                             writer.flush();
                             writer.close();
                             os.close();
                             reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
                             String answer = reader.readLine();
-
                             if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
-
                                 storeBeaconList(context, answer);
                                 final BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
                                 if (isBeaconsSuppoted(context)) {

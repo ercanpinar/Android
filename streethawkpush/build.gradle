@@ -44,8 +44,8 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.google.android.gms:play-services-gcm:8.1.0'
-    //compile project(':streethawkcore')
-    compile 'com.streethawk:core:1.7.9'
+    compile project(':streethawkcore')
+    //compile 'com.streethawk:core:1.7.9'
 }
 
-apply from: '../sh_maven_push.gradle'
+//apply from: '../sh_maven_push.gradle'

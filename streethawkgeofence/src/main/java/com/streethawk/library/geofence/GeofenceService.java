@@ -28,7 +28,6 @@ import com.google.android.gms.location.GeofencingEvent;
 import com.streethawk.library.core.Logging;
 import com.streethawk.library.core.Util;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -71,19 +70,27 @@ public class GeofenceService extends IntentService{
             if (null == tmp) {
                 return;
             } else {
-                JSONArray array = new JSONArray();
+                String logs="[";
                 for (String str : tmp) {
                     try {
-                        array.put(new JSONObject().put(str, "-1"));
+                        logs+=((new JSONObject().put(str, "-1")).toString())+",";
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
+                }
+                int size = logs.length();
+                if(size>1) {
+                    logs = logs.substring(0,size-1);
+                }
+                logs+="]";
+                if(logs.equals("[]")) {
+                    return;
                 }
                 Logging manager = Logging.getLoggingInstance(context);
                 Bundle params = new Bundle();
                 params.putString(Util.CODE, Integer.toString(Constants.CODE_GEOFENCE_UPDATES));
                 params.putString(Util.SHMESSAGE_ID, null);
-                params.putString("json", array.toString());
+                params.putString("json",logs);
                 manager.addLogsForSending(params);
             }
         }

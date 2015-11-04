@@ -247,7 +247,6 @@ public enum StreetHawk {
      * @param message
      */
     public void sendSimpleFeedback(final String title, final String message){
-        Log.e("Anurag","SendSimplefeedback"+title+message);
         new Thread(new Runnable() {
             @Override
             public void run() {

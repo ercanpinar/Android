@@ -206,18 +206,15 @@ public class SHGeofence implements GoogleApiClient.ConnectionCallbacks, GoogleAp
                     if (null != nodeObject) {
                         if (nodeObject instanceof JSONArray) {
                             geofenceData.setChildNodes(true);
-                            geofenceData.displayMyData(); //Remove call
                             storeGeofenceDB.storeGeofenceData(geofenceData);
                             // Calling function recursively
                             parseAndStoreGeofences(geofenceId, storeGeofenceDB, (JSONArray) nodeObject);
                         } else {
                             geofenceData.setChildNodes(false);
-                            geofenceData.displayMyData();  //Remove call
                             storeGeofenceDB.storeGeofenceData(geofenceData);
                         }
                     } else {
                         geofenceData.setChildNodes(false);
-                        geofenceData.displayMyData();  //Remove call
                         storeGeofenceDB.storeGeofenceData(geofenceData);
                     }
                 }

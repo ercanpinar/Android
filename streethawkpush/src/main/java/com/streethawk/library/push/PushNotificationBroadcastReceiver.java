@@ -16,7 +16,6 @@
  */
 package com.streethawk.library.push;
 
-import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.ActivityManager;
 import android.app.NotificationManager;
@@ -34,6 +33,7 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.PowerManager;
 import android.provider.Settings;
 import android.util.Log;
@@ -57,13 +57,13 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver {
 
     private final String SUBTAG = "PushNotificationBroadcastReceiver";
     public PushNotificationBroadcastReceiver() {}
-    private static ISHObserver appGcmReceiverList;
+    private static ISHObserver mISHObserver;
     private final String PROJECT_NUMBER = "project_number";
     private final String PUSH = "push";
 
 
     public static void updateAppGcmReceiverList(ISHObserver object) {
-        appGcmReceiverList = object;
+        mISHObserver = object;
     }
 
 
@@ -375,7 +375,7 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver {
                     String data = pushData.getData();
                     sendAcknowledgement(context, msgID);
                     if (code == NotificationBase.CODE_CUSTOM_JSON_FROM_SERVER) {
-                        if (null == appGcmReceiverList) {
+                        if (null == mISHObserver) {
                             Log.e(Util.TAG, "No object registered for class implementing ISHObserver. Use registerSHObserver");
                             NotificationBase.sendResultBroadcast(context, msgID, Constants.STREETHAWK_DECLINED);
                             return;
@@ -428,12 +428,12 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver {
                                     break;
                             }
                         } else {
-                            if (null == appGcmReceiverList) {
+                            if (null == mISHObserver) {
                                 Log.w(Util.TAG, "No object registered for class implementing ISHObserver. Use registerSHObserver");
                             }else {
                                 PushDataForApplication pushDataForApplication = new PushDataForApplication();
                                 pushDataForApplication.convertPushDataToPushDataForApp(pushData, pushDataForApplication);
-                                appGcmReceiverList.onReceivePushData(pushDataForApplication);
+                                mISHObserver.onReceivePushData(pushDataForApplication);
                                 if(isCustomDialog) {
                                     Log.i(Util.TAG, "Developer choose to handle push using custom dialog");
                                     return;
@@ -584,12 +584,12 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver {
             }
             // schedule sending of queued broadcast only if we have sent result of previous one.
             if (sendResult) {
-                if (null == appGcmReceiverList) {
+                if (null == mISHObserver) {
                     Log.w(Util.TAG, "No object registered for class implementing ISHObserver. Use registerSHObserver");
                 } else {
                     PushDataForApplication pushDataForApplication = new PushDataForApplication();
                     pushDataForApplication.convertPushDataToPushDataForApp(dataObject, pushDataForApplication);
-                    appGcmReceiverList.onReceiveResult(pushDataForApplication,result);
+                    mISHObserver.onReceiveResult(pushDataForApplication, result);
                 }
                 sendResultLog(context, msgId, result, code);
             }
@@ -740,72 +740,92 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver {
         return null;
     }
 
-    // Implemented deeplink here
-    private void launchActivity(Context mContext, String friendlyName) {
+    /**
+     * Just launch application in error condition
+     * @param context
+     */
+    private void startLauncherActivity(Context context){
+        Intent LauncherIntent = context.getPackageManager().getLaunchIntentForPackage(context.getApplicationContext().getPackageName());
+        LauncherIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK );
+        LauncherIntent.putExtra(Constants.SHOW_PENDING_DIALOG, true);
+        context.startActivity(LauncherIntent);
+
+    }
+
+    private void launchActivity(final Context mContext,String friendlyName) {
         if (null == friendlyName)
             friendlyName = mContext.getApplicationContext().getPackageName();
-        final SharedPreferences activityPrefs = mContext.getSharedPreferences(Constants.SHSHARED_PREF_FRNDLST, Context.MODE_PRIVATE);
+        final SharedPreferences activityPrefs = mContext.getSharedPreferences(Util.SHSHARED_PREF_FRNDLST, Context.MODE_PRIVATE);
         String tempActivityName = activityPrefs.getString(friendlyName, null);
         if (null == tempActivityName) {
             if (friendlyName.contains("://")) {
-                try {
-                    Intent deepLinkIntent = new Intent();
-                    deepLinkIntent.setAction("android.intent.action.VIEW");
-                    deepLinkIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    deepLinkIntent.setData(Uri.parse(friendlyName));
-                    mContext.startActivity(deepLinkIntent);
-                } catch (ActivityNotFoundException e) {
-                    Log.e(Util.TAG,SUBTAG+ "Incorrect link" + friendlyName);
-                    tempActivityName = " ";
-                }
-            }
-            // Either we have received activityName or ""
-            tempActivityName = friendlyName;
-        }
-        final String activityName = tempActivityName;
-        final PackageManager pm = mContext.getPackageManager();
-        Intent LauncherIntent = null;
-        if (activityName.isEmpty()) {
-            // application needs to launched
-            //1. check if application is running in BG
-            String packageName = getRunningPackage(mContext);
-            if (null == packageName) {
-                LauncherIntent = pm.getLaunchIntentForPackage(mContext.getPackageName());
-            } else {
-                try {
-                    final Class<?> classname = Class.forName(packageName);
-                    LauncherIntent = new Intent(mContext.getApplicationContext(), classname);
-                } catch (ClassNotFoundException e1) {
-                    LauncherIntent = pm.getLaunchIntentForPackage(mContext.getApplicationContext().getPackageName());
-                    e1.printStackTrace();
-                }
+                final String tmpName = friendlyName;
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            Intent deepLinkIntent = new Intent();
+                            deepLinkIntent.setAction("android.intent.action.VIEW");
+                            deepLinkIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            deepLinkIntent.setData(Uri.parse(tmpName));
+                            mContext.startActivity(deepLinkIntent);
+                        } catch (ActivityNotFoundException e) {
+                            startLauncherActivity(mContext);
+                        }
+                    }
+                },100);
+
+                // Either we have received FQName or ""
+                tempActivityName = friendlyName;
+            }else{
+                startLauncherActivity(mContext);
             }
         } else {
-            //Here we have a qualified name for we will try to launch it
-            try {
-                final Class<?> classname = Class.forName(activityName);
-                LauncherIntent = new Intent(mContext.getApplicationContext(), classname);
-            } catch (ClassNotFoundException e) {
+            final String activityName = tempActivityName;
+            final PackageManager pm = mContext.getPackageManager();
+            Intent LauncherIntent = null;
+            if (null == activityName) {
+                // application needs to launched
+                //1. check if application is running in BG
                 String packageName = getRunningPackage(mContext);
                 if (null == packageName) {
-                    //SendErrorLog(mContext.getApplicationContext(), extras, StreethawkText.STREETHAWK_ERROR_INVALID_ACTIVITY + activityName);
-                    LauncherIntent = pm.getLaunchIntentForPackage(mContext.getApplicationContext().getPackageName());
+                    LauncherIntent = pm.getLaunchIntentForPackage(mContext.getPackageName());
                 } else {
                     try {
                         final Class<?> classname = Class.forName(packageName);
                         LauncherIntent = new Intent(mContext.getApplicationContext(), classname);
                     } catch (ClassNotFoundException e1) {
+                        LauncherIntent = pm.getLaunchIntentForPackage(mContext.getApplicationContext().getPackageName());
+                        e1.printStackTrace();
+                    }
+                }
+            } else {
+                //Here we have a qualified name for we will try to launch it
+                try {
+                    final Class<?> classname = Class.forName(activityName);
+                    LauncherIntent = new Intent(mContext.getApplicationContext(), classname);
+                } catch (ClassNotFoundException e) {
+                    String packageName = getRunningPackage(mContext);
+                    if (null == packageName) {
                         //SendErrorLog(mContext.getApplicationContext(), extras, StreethawkText.STREETHAWK_ERROR_INVALID_ACTIVITY + activityName);
                         LauncherIntent = pm.getLaunchIntentForPackage(mContext.getApplicationContext().getPackageName());
+                    } else {
+                        try {
+                            final Class<?> classname = Class.forName(packageName);
+                            LauncherIntent = new Intent(mContext.getApplicationContext(), classname);
+                        } catch (ClassNotFoundException e1) {
+                            //SendErrorLog(mContext.getApplicationContext(), extras, StreethawkText.STREETHAWK_ERROR_INVALID_ACTIVITY + activityName);
+                            LauncherIntent = pm.getLaunchIntentForPackage(mContext.getApplicationContext().getPackageName());
+                        }
                     }
                 }
             }
+            LauncherIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            LauncherIntent.putExtra(Constants.SHOW_PENDING_DIALOG, true);
+            mContext.startActivity(LauncherIntent);
         }
-        LauncherIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        LauncherIntent.putExtra(Constants.SHOW_PENDING_DIALOG, true);
-        mContext.startActivity(LauncherIntent);
     }
-
 
     private void handleRateUpdate(Context mContext) {
         try {
@@ -839,7 +859,7 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver {
     }
 
     private void launchActivityPG(Context context, String data) {
-        final SharedPreferences activityPrefs = context.getSharedPreferences(Constants.SHSHARED_PREF_FRNDLST, Context.MODE_PRIVATE);
+        final SharedPreferences activityPrefs = context.getSharedPreferences(Util.SHSHARED_PREF_FRNDLST, Context.MODE_PRIVATE);
         String tempactivityName = activityPrefs.getString(data, null);
         if (null == tempactivityName) {
             // Either we have received activityName or ""
@@ -848,6 +868,8 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver {
         SharedPreferences.Editor e = activityPrefs.edit();
         e.putString(Constants.PHONEGAP_URL, tempactivityName);
         e.commit();
+        if(null!=mISHObserver)
+            mISHObserver.shNotifyAppPage(tempactivityName);;
         startApp(context);
     }
 
@@ -886,8 +908,10 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver {
     }
 
     private void handleCustomJsonFromServer(String title, String msg, String json) {
-        if (null == appGcmReceiverList) {
-            appGcmReceiverList.shReceivedRawJSON(title, msg, json);
+        if (null != mISHObserver) {
+            mISHObserver.shReceivedRawJSON(title, msg, json);
+        }else{
+            Log.e(Util.TAG,SUBTAG+"no ISHObserver registered");
         }
     }
 

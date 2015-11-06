@@ -30,7 +30,6 @@ class Constants {
     public static final String PICKER_PENDING           = "pickerPendingDialog";
     public static final String SHUSECUSTOMDIALOG_FLAG   = "usecustomdialogFlag";
     public static final String SHPACKAGENAME            = "shpackagename";
-    public static final String SHSHARED_PREF_FRNDLST    = "shstorefrndlist";
     public static final String SHOW_PENDING_DIALOG      = "shShowPendingDialog";
     public static final String SHFORCEPUSHTOBG          = "shforcepushtobg";            // if true, push message will always be displayed in notification bar
     public static final String PHONEGAP_URL             = "shphonegapurl";

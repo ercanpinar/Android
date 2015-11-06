@@ -39,7 +39,7 @@ android {
 dependencies {
     //compile fileTree(dir: 'libs', include: ['*.jar'])
     compile project(':streethawkcore')
-    //compile 'com.streethawk:core:1.7.9'
+    //compile 'com.streethawk:core:1.7.10'
 }
 
 //apply from: '../sh_maven_push.gradle'

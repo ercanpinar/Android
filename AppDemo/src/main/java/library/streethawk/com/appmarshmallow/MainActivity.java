@@ -12,18 +12,9 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 
-import com.streethawk.library.beacon.Beacons;
 import com.streethawk.library.core.StreetHawk;
-import com.streethawk.library.geofence.SHGeofence;
-import com.streethawk.library.growth.Growth;
-import com.streethawk.library.growth.IGrowth;
-import com.streethawk.library.push.ISHObserver;
-import com.streethawk.library.push.Push;
-import com.streethawk.library.push.PushDataForApplication;
 
-import org.json.JSONObject;
-
-public class MainActivity extends Activity implements ISHObserver,IGrowth {
+public class MainActivity extends Activity /*implements ISHObserver,IGrowth*/ {
     private final int PERMISSIONS_LOCATION = 0;
     private final String TAG = "STREETHAWK_DEMO";
 
@@ -36,10 +27,11 @@ public class MainActivity extends Activity implements ISHObserver,IGrowth {
         Application app = getApplication();
         //Push.getInstance(this).shAlertSetting(30);
 
-       Push.getInstance(this).registerSHObserver(this);  //Register this class as implementation of ISHObserver
+       //Push.getInstance(this).registerSHObserver(this);  //Register this class as implementation of ISHObserver
         // Enter your project number here (https://streethawk.freshdesk.com/solution/articles/5000608997)
-       Push.getInstance(this).registerForPushMessaging("393009194749");
+       //Push.getInstance(this).registerForPushMessaging("393009194749");
         // Enter APP_KEY for your application registered with StreetHawk server
+        /*
         Growth.getInstance(this).getShareUrlForAppDownload("1", "shsample://setparams?param1=30", "facebook", "medium", "term", "cc", "www.google.com", new IGrowth() {
             @Override
             public void onReceiveShareUrl(String shareUrl) {
@@ -51,7 +43,7 @@ public class MainActivity extends Activity implements ISHObserver,IGrowth {
 
             }
         });
-
+*/
         StreetHawk.INSTANCE.setAppKey("SHSample");
         StreetHawk.INSTANCE.init(app);
 
@@ -97,7 +89,7 @@ public class MainActivity extends Activity implements ISHObserver,IGrowth {
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     //SHLocation.getInstance(this).startLocationReporting();
-                    SHGeofence.getInstance(this).startGeofenceMonitoring();
+                  //  SHGeofence.getInstance(this).startGeofenceMonitoring();
 
 
                 } else {
@@ -143,7 +135,7 @@ public class MainActivity extends Activity implements ISHObserver,IGrowth {
 
         //Growth.getInstance(this).originateShareWithCampaign("1", "shdemoapp://setparams?param1=45",null);
 
-        Growth.getInstance(this).originateShareWithCampaign("1", "shdemoapp://setparams?param1=45", null, null, null, null, "http://streethawk.com", null);
+        //Growth.getInstance(this).originateShareWithCampaign("1", "shdemoapp://setparams?param1=45", null, null, null, null, "http://streethawk.com", null);
     }
 
 
@@ -193,17 +185,28 @@ public class MainActivity extends Activity implements ISHObserver,IGrowth {
         startActivity(intent);
     }
 
+    public void ThirdActivity(View view){
+        //Intent intent = new Intent(getApplicationContext(),AppService.class);
+        //startService(intent);
+        //finish();
 
-    public void startBeaconMonitoring(View view){
-        Beacons.getInstance(this).startBeaconMonitoring();
     }
 
 
 
+    public void startBeaconMonitoring(View view){
+//        Beacons.getInstance(this).startBeaconMonitoring();
+    }
 
+
+
+/*
 
     @Override
     public void shReceivedRawJSON(String title, String message, String json) {
+
+        Log.e("Anurag","RAWJSON"+title+message+json);
+
 
     }
 
@@ -238,4 +241,5 @@ public class MainActivity extends Activity implements ISHObserver,IGrowth {
     public void onReceiveErrorForShareUrl(JSONObject errorResponse) {
 
     }
+    */
 }

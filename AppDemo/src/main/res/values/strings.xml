@@ -7,6 +7,7 @@
 
     <string name="STREETHAWK_SIMPLE_MESSAGE_POSITIVE">AppOkay</string>
     <string name="STREETHAWK_SIMPLE_MESSAGE_NOTIFICATION_POSITIVE">AppOkay</string>
+    <string name="title_activity_third">ThirdActivity</string>
 
 
 </resources>

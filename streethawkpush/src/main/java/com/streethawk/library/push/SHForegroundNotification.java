@@ -640,7 +640,7 @@ class SHForegroundNotification extends NotificationBase {
     private void handleLaunchActivity(String msgId, String data) {
         if (null == data)
             data = mContext.getApplicationContext().getPackageName();
-        final SharedPreferences activityPrefs = mContext.getSharedPreferences(Constants.SHSHARED_PREF_FRNDLST, Context.MODE_PRIVATE);
+        final SharedPreferences activityPrefs = mContext.getSharedPreferences(Util.SHSHARED_PREF_FRNDLST, Context.MODE_PRIVATE);
         String tempActivityName = activityPrefs.getString(data, null);
         if (null == tempActivityName) {
             // Check for deeplink url

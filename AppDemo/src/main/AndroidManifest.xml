@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="library.streethawk.com.appmarshmallow" >
+    package="library.streethawk.com.appmarshmallow">
 
     <!-- Start copying from below -->
     <permission
@@ -11,51 +11,64 @@
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
 
-
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme">
         <activity
             android:name=".MainActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".SecondActivity"
-            android:label="@string/title_activity_second" >
-            <intent-filter android:label="secondPage" >
+            android:label="@string/title_activity_second">
+            <intent-filter android:label="secondPage">
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.BROWSABLE" />
                 <category android:name="android.intent.category.DEFAULT" />
 
-                <data
-                    android:scheme="shdemoapp" />
+                <data android:scheme="shsample" />
             </intent-filter>
         </activity>
 
-
         <receiver
             android:name="com.google.android.gms.gcm.GcmReceiver"
-            android:permission="com.google.android.c2dm.permission.SEND" >
+            android:permission="com.google.android.c2dm.permission.SEND">
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+
                 <category android:name="library.streethawk.com.appmarshmallow" />
             </intent-filter>
         </receiver>
 
-
         <service
             android:name=".AppService"
             android:enabled="true"
-            android:exported="true" >
-        </service>
+            android:exported="true"></service>
+
+        <activity
+            android:name=".ThirdActivity"
+            android:label="@string/title_activity_third">
+            <intent-filter android:label="secondPage">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:scheme="thirdactivity"
+                    android:host="setparams"/>
+            </intent-filter>
+
+
+        </activity>
     </application>
 
 </manifest>

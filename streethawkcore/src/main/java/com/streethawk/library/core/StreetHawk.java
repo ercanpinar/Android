@@ -198,10 +198,10 @@ public enum StreetHawk {
             Log.e(Util.TAG, SUBTAG + "StreetHawk is not initialised as application is null in init");
             return;
         }
+        mContext = application.getApplicationContext();
         new Thread(new Runnable() {
             @Override
             public void run() {
-                mContext = application.getApplicationContext();
                 if (Util.getInstallId(mContext) == null) {
                     if (null != mAppKey) {
                         SharedPreferences sharedPreferences = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
@@ -214,10 +214,10 @@ public enum StreetHawk {
                 Intent coreService = new Intent(mContext, StreetHawkCoreService.class);
                 coreService.putExtra("fromInit", true);
                 mContext.startService(coreService);
+                Logging.getLoggingInstance(mContext).saveActivityNames();
             }
         }).start();
     }
-
 
     /**
      * Call notifyEnterView when a view or fragment is visible to user

@@ -601,8 +601,8 @@ public class Push{
      *
      * @return app page to be displayed else returns null
      */
-    private String getAppPage() {
-            SharedPreferences frnd = mContext.getSharedPreferences(Constants.SHSHARED_PREF_FRNDLST, Context.MODE_PRIVATE);
+    public String getAppPage() {
+            SharedPreferences frnd = mContext.getSharedPreferences(Util.SHSHARED_PREF_FRNDLST, Context.MODE_PRIVATE);
             String url = frnd.getString(Constants.PHONEGAP_URL, null);
             SharedPreferences.Editor e = frnd.edit();
             e.remove(Constants.PHONEGAP_URL);

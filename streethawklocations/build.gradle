@@ -39,7 +39,7 @@ dependencies {
     compile 'com.google.android.gms:play-services-location:8.1.0'
     compile 'com.android.support:design:23.0.0'
     compile project(':streethawkcore')
-    //compile 'com.streethawk:core:1.7.9'
+    //compile 'com.streethawk:core:1.7.10'
 }
 
 //apply from: '../sh_maven_push.gradle'

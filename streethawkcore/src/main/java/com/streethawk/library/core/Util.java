@@ -76,7 +76,8 @@ public class Util {
 
 
     /*Shared preferences*/
-    public static final String SHSHARED_PREF_PERM = "shstoreperm";      // stores data associated with install permanently
+    public static final String SHSHARED_PREF_PERM       = "shstoreperm";      // stores data associated with install permanently
+    public static final String SHSHARED_PREF_FRNDLST    = "shstorefrndlist";  // Stores names of activity in an application
 
     public static final String BROADCAST_SH_APP_STATUS_NOTIFICATION = "com.streethawk.intent.action.APP_STATUS_NOTIFICATION";
 

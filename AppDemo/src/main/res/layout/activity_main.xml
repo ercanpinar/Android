@@ -33,6 +33,12 @@
           android:text="Second Activity"
           android:id="@+id/secondActivity"
           android:onClick="NextActivity" />
+      <Button
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="Third Activity"
+          android:id="@+id/thirdactivity"
+          android:onClick="ThirdActivity" />
 
   </LinearLayout>
 

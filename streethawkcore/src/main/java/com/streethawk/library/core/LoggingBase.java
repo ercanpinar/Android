@@ -361,6 +361,33 @@ class LoggingBase {
         return className;
     }
 
+    protected void saveActivityNames(){
+        try {
+            PackageInfo packageInfo = mContext.getPackageManager().getPackageInfo(mContext.getPackageName(), PackageManager.GET_ACTIVITIES);
+            ActivityInfo[] activityInfo = packageInfo.activities;
+            if (activityInfo != null) {
+                SharedPreferences sharedPreferences = mContext.getSharedPreferences(Util.SHSHARED_PREF_FRNDLST, Context.MODE_PRIVATE);
+                SharedPreferences.Editor e = sharedPreferences.edit();
+                for (ActivityInfo activity : activityInfo) {
+                    String fullyQualifiedName = activity.name;
+                    String className = new StringBuilder(fullyQualifiedName).reverse().toString();
+                    int indexOfPeriod = className.indexOf(".");
+                    if (-1 != indexOfPeriod) {
+                        className = className.subSequence(0, className.indexOf(".")).toString();
+                        className = new StringBuilder(className).reverse().toString();
+                    }
+                    String friendlyName = getFriendlyNameFromclassName(mContext, className);
+                    e.putString(friendlyName,fullyQualifiedName);
+                }
+                e.commit();
+                e = null;
+                sharedPreferences = null;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 
     /**
      * @param context API sends friendly name to streethawk server
@@ -392,8 +419,9 @@ class LoggingBase {
                                     className = className.subSequence(0, className.indexOf(".")).toString();
                                     className = new StringBuilder(className).reverse().toString();
                                 }
+                                String friendlyName = getFriendlyNameFromclassName(context, className);
                                 //list.put(getFriendlyNameFromclassName(context, className));
-                                list+="\""+getFriendlyNameFromclassName(context, className)+"\""+",";
+                                list+="\""+friendlyName+"\""+",";
                             }
                         }
                     } catch (Exception e) {

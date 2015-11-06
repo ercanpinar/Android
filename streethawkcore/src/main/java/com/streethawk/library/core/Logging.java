@@ -343,6 +343,11 @@ public class Logging extends LoggingBase {
         return true;
     }
 
+    public void saveActivityNames(){
+        super.saveActivityNames();
+    }
+
+
     /**
      * Flush cached logs to server
      * @param key

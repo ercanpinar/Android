@@ -23,26 +23,18 @@ import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.graphics.Point;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.Build;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
 import android.util.Log;
-import android.view.Display;
-import android.view.WindowManager;
 
-import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.TimeZone;
 
 public class Util {
@@ -349,38 +341,6 @@ public class Util {
     }
 
     /**
-     * Function to get screen resolution of the device
-     *
-     * @param context
-     * @return
-     */
-    public static String getScreenResolution(Context context) {
-        if (null == context) {
-            Log.e(TAG, SUBTAG + "Context is null in getScreenResolution. returning");
-            return null;
-        }
-        StringBuilder result = new StringBuilder();
-        if (context != null) {
-            final WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-            Display display = windowManager.getDefaultDisplay();
-
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                result.append(display.getWidth()).append('x').append(display.getHeight());
-            } else {
-                try {
-                    Point size = new Point();
-                    display.getRealSize(size);
-                    result.append(size.x).append('x').append(size.y);
-                } catch (Exception e) {
-                    return "";
-                }
-            }
-            return result.toString();
-        }
-        return null;
-    }
-
-    /**
      * Function to get name of development platform
      *
      * @return name of development platform
@@ -485,35 +445,6 @@ public class Util {
         return sharedPreferences.getString(Constants.SHADVERTISEMENTID,null);
     }
 
-    /** Commented due to OOM issues
-     * Formats data in http post call
-     *
-     * @param params
-     * @return
-     * @throws UnsupportedEncodingException
-
-    public static String getPostDataString(HashMap<String, String> params) throws UnsupportedEncodingException {
-        StringBuilder result = new StringBuilder();
-        boolean first = true;
-        for (Map.Entry<String, String> entry : params.entrySet()) {
-            if (first)
-                first = false;
-            else
-                result.append("&");
-            String key      = entry.getKey();
-            String value    = entry.getValue();
-            if(null!=key) {
-                result.append(URLEncoder.encode(entry.getKey(), "UTF-8"));
-                result.append("=");
-                if(null!=value) {
-                    result.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
-                }else{
-                    result.append(URLEncoder.encode("", "UTF-8"));
-                }
-            }
-        }
-        return result.toString();
-    }
     /*
     /**
      * Function to get StreetHawk state

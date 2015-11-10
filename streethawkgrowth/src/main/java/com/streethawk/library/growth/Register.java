@@ -19,10 +19,13 @@ package com.streethawk.library.growth;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Point;
 import android.net.Uri;
 import android.os.Build;
 import android.telephony.TelephonyManager;
 import android.util.Log;
+import android.view.Display;
+import android.view.WindowManager;
 
 import com.streethawk.library.core.Util;
 
@@ -93,10 +96,34 @@ public class Register extends BroadcastReceiver{
             Log.w(Util.TAG,SUBTAG+ "App is not registered with StreetHawk server");
             return;
         }
+        int mWidth = 0;
+        int mHeight = 0;
+        final WindowManager windowManager = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
+        Display display = windowManager.getDefaultDisplay();
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            mWidth = display.getWidth();
+            mHeight = display.getHeight();
 
-        String resolution = Util.getScreenResolution(mContext);
-        String width = resolution.substring(0, resolution.indexOf('x'));
-        String height = resolution.substring(resolution.indexOf('x') + 1);
+        } else {
+            try {
+                Point size = new Point();
+                display.getRealSize(size);
+                mWidth = size.x;
+                mHeight = size.y;
+            } catch (Exception e) {
+                mWidth = 0;
+                mHeight = 0;
+            }
+        }
+        String width;
+        String height;
+        try {
+            width = Integer.toString(mWidth);
+            height = Integer.toString(mHeight);
+        } catch (NumberFormatException e) {
+            width = Integer.toString(0);
+            height = Integer.toString(0);
+        }
         String imei; // try fetching imei, if not then advertisementid and if not then emptystring
         try {
             TelephonyManager telephonyManager = (TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE);

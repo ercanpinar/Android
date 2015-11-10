@@ -20,11 +20,14 @@ package com.streethawk.library.core;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Display;
+import android.view.WindowManager;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -196,6 +199,8 @@ class Install extends LoggingBase {
     private final String ADVERTISING_IDENTIFIER = "advertising_identifier";
     private final String UTC_OFFSET = "utc_offset";
     private final String IDENTIFIER_FOR_VENDOR = "identifier_for_vendor";
+    private final String WIDTH = "width";
+    private final String HEIGHT = "height";
 
 
     private Install(Context context) {
@@ -455,7 +460,36 @@ class Install extends LoggingBase {
                 logMap.put(OPERATING_SYSTEM, OPERATING_SYSTEM_ANDROID);
                 logMap.put(OS_VERSION, Build.VERSION.RELEASE);
                 logMap.put(CARRIER_NAME, Util.getCarrierName(mContext));
-                logMap.put(RESOLUTION, Util.getScreenResolution(mContext));
+                int mWidth = 0;
+                int mHeight = 0;
+                final WindowManager windowManager = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
+                Display display = windowManager.getDefaultDisplay();
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                    mWidth = display.getWidth();
+                    mHeight = display.getHeight();
+
+                } else {
+                    try {
+                        Point size = new Point();
+                        display.getRealSize(size);
+                        mWidth = size.x;
+                        mHeight = size.y;
+                    } catch (Exception e) {
+                        mWidth = 0;
+                        mHeight = 0;
+                    }
+                }
+                String width;
+                String height;
+                try {
+                    width = Integer.toString(mWidth);
+                    height = Integer.toString(mHeight);
+                } catch (NumberFormatException e) {
+                    width = Integer.toString(0);
+                    height = Integer.toString(0);
+                }
+                logMap.put(WIDTH, width);
+                logMap.put(HEIGHT, height);
                 logMap.put(DEVELOPMENT_PLATFORM, Util.getPlatformName());
                 logMap.put(LIVE, Boolean.toString(Util.isAppInstalledFromPlayStore(mContext)));
                 logMap.put(UTC_OFFSET, Integer.toString(Util.getTimeZoneOffsetInMinutes()));
@@ -465,9 +499,7 @@ class Install extends LoggingBase {
                     if (null != telephonyManager) {
                         logMap.put(IDENTIFIER_FOR_VENDOR, telephonyManager.getDeviceId());
                     }
-                } catch (SecurityException e) {
-                }
-
+                } catch (SecurityException e) {}
                 try {
                     URL url = new URL(buildUri(mContext, ApiMethod.INSTALL_REGISTER, null));
                     flushInstallParamsToServer(url, logMap, INSTALL_CODE_REGISTER);

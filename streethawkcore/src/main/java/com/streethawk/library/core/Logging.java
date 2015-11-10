@@ -51,7 +51,7 @@ import javax.net.ssl.HttpsURLConnection;
 
 public class Logging extends LoggingBase {
 
-    private static final String SUBTAG = "Logging";
+    private static final String SUBTAG = "Logging ";
 
 
     private final int MAX_LOG_CNT = 50;            //Size of log buffer
@@ -327,7 +327,6 @@ public class Logging extends LoggingBase {
                 sourceEdit.clear();
                 sourceEdit.commit();
                 if(logs.equals("[]")) {
-                    Log.i(Util.TAG,SUBTAG+"Returning due to empty logs");
                     return;
                 }
                 SharedPreferences DestinationBuffer = mContext.getSharedPreferences(SHSHARED_PREF_STAGGING, Context.MODE_PRIVATE);

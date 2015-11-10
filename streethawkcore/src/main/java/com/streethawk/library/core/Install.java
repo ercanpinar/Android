@@ -60,7 +60,6 @@ class Install extends LoggingBase {
         public String longitude;
         public String negative_feedback;
         public String revoked;
-
         public String operating_system;
         public String os_version;
         public String model;
@@ -253,26 +252,27 @@ class Install extends LoggingBase {
      *
      * @param logMap HashMap< params,value >
      */
-    public void updateInstall(final HashMap<String, String> logMap, int code) {
+    public void updateInstall(HashMap<String, String> logMap, int code) {
         if (!Util.isNetworkConnected(mContext)) {
             Log.e(Util.TAG, SUBTAG + "Failed to Update install No network connection");
             return;
         }
+        if (null == logMap) {
+            logMap = new HashMap<String, String>();
+        }
         try {
             URL url = new URL(buildUri(mContext, ApiMethod.INSTALL_UPDATE, null));
-            if (null != logMap) {
-                String installId = Util.getInstallId(mContext);
-                if (null == installId) {
-                    return;
-                }
-                logMap.put(Constants.INSTALL_ID, installId);
-                logMap.put(APP_KEY, Util.getAppKey(mContext));
-                logMap.put(SH_LIBRARY_VERSION, Util.getLibraryVersion());
-                logMap.put(CLIENT_VERSION, Util.getAppVersionName(mContext));
-                logMap.put(MODEL, getModelString());
-                logMap.put(OPERATING_SYSTEM, OPERATING_SYSTEM_ANDROID);
-                logMap.put(OS_VERSION, Build.VERSION.RELEASE);
+            String installId = Util.getInstallId(mContext);
+            if (null == installId) {
+                return;
             }
+            logMap.put(Constants.INSTALL_ID, installId);
+            logMap.put(APP_KEY, Util.getAppKey(mContext));
+            logMap.put(SH_LIBRARY_VERSION, Util.getLibraryVersion());
+            logMap.put(CLIENT_VERSION, Util.getAppVersionName(mContext));
+            logMap.put(MODEL, getModelString());
+            logMap.put(OPERATING_SYSTEM, OPERATING_SYSTEM_ANDROID);
+            logMap.put(OS_VERSION, Build.VERSION.RELEASE);
             flushInstallParamsToServer(url, logMap, code);
         } catch (Exception e) {
             e.printStackTrace();
@@ -303,8 +303,7 @@ class Install extends LoggingBase {
                     BufferedWriter writer = new BufferedWriter(
                             new OutputStreamWriter(os, "UTF-8"));
                     //String logs = Util.getPostDataString(logMap);
-
-                    String logs="";
+                    String logs = "";
                     boolean first = true;
                     for (Map.Entry<String, String> entry : logMap.entrySet()) {
                         StringBuilder result = new StringBuilder();
@@ -312,18 +311,18 @@ class Install extends LoggingBase {
                             first = false;
                         else
                             result.append("&");
-                        String key      = entry.getKey();
-                        String value    = entry.getValue();
-                        if(null!=key) {
+                        String key = entry.getKey();
+                        String value = entry.getValue();
+                        if (null != key) {
                             result.append(URLEncoder.encode(entry.getKey(), "UTF-8"));
                             result.append("=");
-                            if(null!=value) {
+                            if (null != value) {
                                 result.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
-                            }else{
+                            } else {
                                 result.append(URLEncoder.encode("", "UTF-8"));
                             }
                         }
-                        logs+=result.toString();
+                        logs += result.toString();
                         result = null; //Force GC
                     }
 
@@ -466,7 +465,8 @@ class Install extends LoggingBase {
                     if (null != telephonyManager) {
                         logMap.put(IDENTIFIER_FOR_VENDOR, telephonyManager.getDeviceId());
                     }
-                } catch (SecurityException e) {}
+                } catch (SecurityException e) {
+                }
 
                 try {
                     URL url = new URL(buildUri(mContext, ApiMethod.INSTALL_REGISTER, null));

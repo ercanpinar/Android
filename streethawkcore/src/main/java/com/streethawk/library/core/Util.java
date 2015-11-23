@@ -37,7 +37,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
-public class Util {
+public class Util extends LoggingBase {
 
 
     public static final String TAG = "StreetHawk";
@@ -59,6 +59,17 @@ public class Util {
     private static final String ACCESS_DATA = "access_data";
     public static final String SHGCMREGISTERED = "shgcmregistered";
 
+
+    //Platform types
+    public static final int PLATFORM_ANDROID_NATIVE = 0;
+    public static final int PLATFORM_PHONEGAP       = 1;
+    public static final int PLATFORM_TITANIUM       = 2;
+    public static final int PLATFORM_XAMARIN        = 3;
+    public static final int PLATFORM_UNITY          = 4;
+
+    public static final int RELEASE_PLATFORM = PLATFORM_ANDROID_NATIVE;
+
+
     //public static Activity mActivity;
 
     public static final String INSTALL_ID = "installid";
@@ -72,6 +83,10 @@ public class Util {
     public static final String SHSHARED_PREF_FRNDLST    = "shstorefrndlist";  // Stores names of activity in an application
 
     public static final String BROADCAST_SH_APP_STATUS_NOTIFICATION = "com.streethawk.intent.action.APP_STATUS_NOTIFICATION";
+
+    Util(Context context) {
+        super(context);
+    }
 
     /**
      * Function returns network status of the device
@@ -130,7 +145,7 @@ public class Util {
 
     public static URL getAlertSettingUrl(Context context){
         try {
-            return new URL(Logging.buildUri(context, LoggingBase.ApiMethod.USER_ALERT_SETTINGS, null));
+            return new URL(buildUri(context, ApiMethod.USER_ALERT_SETTINGS, null));
         } catch (MalformedURLException e) {
             e.printStackTrace();
             return null;
@@ -139,7 +154,7 @@ public class Util {
 
     public static URL getFeedbackUrl(Context context) {
         try {
-            return new URL(Logging.buildUri(context, LoggingBase.ApiMethod.USER_FEEDBACK, null));
+            return new URL(buildUri(context, ApiMethod.USER_FEEDBACK, null));
         } catch (MalformedURLException e) {
             e.printStackTrace();
             return null;
@@ -149,7 +164,7 @@ public class Util {
 
     public static URL getGeofenceUrl(Context context) {
         try {
-            return new URL(Logging.buildUri(context, LoggingBase.ApiMethod.FETCH_GEOFENCE_TREE, null));
+            return new URL(buildUri(context, ApiMethod.FETCH_GEOFENCE_TREE, null));
         } catch (MalformedURLException e) {
             e.printStackTrace();
             return null;
@@ -158,7 +173,7 @@ public class Util {
 
     public static URL getBeaconUrl(Context context) {
         try {
-            return new URL(Logging.buildUri(context, LoggingBase.ApiMethod.FETCH_IBEACON_LIST, null));
+            return new URL(buildUri(context, ApiMethod.FETCH_IBEACON_LIST, null));
         } catch (MalformedURLException e) {
             e.printStackTrace();
             return null;
@@ -178,7 +193,7 @@ public class Util {
 
     public static URL getFeedUrl(Context context){
         try {
-            return new URL(Logging.buildUri(context, LoggingBase.ApiMethod.FETCH_FEED_ITEMS, null));
+            return new URL(buildUri(context, ApiMethod.FETCH_FEED_ITEMS, null));
         } catch (MalformedURLException e) {
             e.printStackTrace();
             return null;
@@ -187,7 +202,7 @@ public class Util {
 
     public static URL getCrashReportingUrl(Context context) {
         try {
-            return new URL(Logging.buildUri(context, LoggingBase.ApiMethod.INSTALL_REPORT_CRASH, null));
+            return new URL(buildUri(context, ApiMethod.INSTALL_REPORT_CRASH, null));
         } catch (MalformedURLException e) {
             e.printStackTrace();
             return null;
@@ -212,7 +227,7 @@ public class Util {
      * @return returns library function
      */
     public static String getLibraryVersion() {
-        return Constants.SHLIBRARY_VERSION;
+        return SHLIBRARY_VERSION;
     }
 
 
@@ -226,12 +241,12 @@ public class Util {
      */
     public static String getInstallId(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
-        String id = prefs.getString(Constants.INSTALL_ID, null);
+        String id = prefs.getString(INSTALL_ID, null);
         return id;
     }
 
     public static final String getDistributionType() {
-        return Constants.DISTRIBUTION_TYPE;
+        return DISTRIBUTION_TYPE;
     }
 
 
@@ -347,15 +362,15 @@ public class Util {
      */
     public static String getPlatformName() {
         switch (getPlatformType()) {
-            case Constants.PLATFORM_ANDROID_NATIVE:
+            case PLATFORM_ANDROID_NATIVE:
                 return "native";
-            case Constants.PLATFORM_XAMARIN:
+            case PLATFORM_XAMARIN:
                 return "xamarin";
-            case Constants.PLATFORM_TITANIUM:
+            case PLATFORM_TITANIUM:
                 return "titanium";
-            case Constants.PLATFORM_PHONEGAP:
+            case PLATFORM_PHONEGAP:
                 return "phonegap";
-            case Constants.PLATFORM_UNITY:
+            case PLATFORM_UNITY:
                 return "unity";
             default:
                 return "native";
@@ -373,7 +388,7 @@ public class Util {
      * @return integer representating platform type for development platform.
      */
     public static int getPlatformType() {
-        return Constants.RELEASE_PLATFORM;
+        return RELEASE_PLATFORM;
     }
 
 
@@ -442,7 +457,7 @@ public class Util {
 
     public static String getAdvertisingIdentifier(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
-        return sharedPreferences.getString(Constants.SHADVERTISEMENTID,null);
+        return sharedPreferences.getString(SHADVERTISEMENTID,null);
     }
 
     /*
@@ -454,7 +469,7 @@ public class Util {
      */
     public static boolean getStreethawkState(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
-        boolean current_state = sharedPreferences.getBoolean(Constants.KEY_STREETHAWK, true);
+        boolean current_state = sharedPreferences.getBoolean(KEY_STREETHAWK, true);
         return current_state;
     }
 
@@ -466,7 +481,7 @@ public class Util {
      */
     public static String getSessionId(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
-        int sessionId = sharedPreferences.getInt(Constants.SESSIONIDCNT, 1);
+        int sessionId = sharedPreferences.getInt(SESSIONIDCNT, 1);
         return Integer.toString(sessionId);
     }
 

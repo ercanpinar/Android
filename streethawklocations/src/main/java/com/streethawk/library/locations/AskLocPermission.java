@@ -15,7 +15,7 @@ import android.view.View;
 
 import com.streethawk.library.core.Util;
 
-public class AskLocPermission extends AppCompatActivity {
+public class AskLocPermission extends AppCompatActivity implements Constants {
     Activity mActivity;
     boolean showDialog = false;
     private final String SUBTAG = "AskLocPermission ";
@@ -25,13 +25,13 @@ public class AskLocPermission extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ask_loc_permission);
-        showDialog = getIntent().getBooleanExtra(Constants.PERMISSION_BOOL,false);
+        showDialog = getIntent().getBooleanExtra(PERMISSION_BOOL,false);
     }
 
     public void onResume(){
         super.onResume();
         if(showDialog) {
-            String msg = getIntent().getStringExtra(Constants.PERMISSION_MSG);
+            String msg = getIntent().getStringExtra(PERMISSION_MSG);
             displayPermissionDialog(msg);
         }
         mActivity = this;

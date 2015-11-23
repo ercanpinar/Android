@@ -53,7 +53,7 @@ import java.io.IOException;
 import java.util.List;
 
 
-public class PushNotificationBroadcastReceiver extends BroadcastReceiver {
+public class PushNotificationBroadcastReceiver extends BroadcastReceiver implements Constants{
 
     private final String SUBTAG = "PushNotificationBroadcastReceiver";
     public PushNotificationBroadcastReceiver() {}
@@ -164,14 +164,14 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver {
      */
     public static boolean isPermissionAvailable(Context context, int code) {
         switch (code) {
-            case NotificationBase.CODE_IBEACON:
+            case CODE_IBEACON:
                 if ((Util.isPermissionAvailable(context, android.Manifest.permission.BLUETOOTH) == -1) &&
                         (Util.isPermissionAvailable(context, android.Manifest.permission.BLUETOOTH) == -1)) {
                     Log.w(Util.TAG, "App is missing Bluetooth permissions in AndroidManifest.xml");
                     return false;
                 }
                 break;
-            case NotificationBase.CODE_CALL_TELEPHONE_NUMBER:
+            case CODE_CALL_TELEPHONE_NUMBER:
                 if ((Util.isPermissionAvailable(context, android.Manifest.permission.CALL_PHONE) == -1)) {
                     Log.w(Util.TAG, "Please add CALL_PHONE permission in AndroidManifest.xml");
                     return false;
@@ -210,17 +210,17 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver {
                                         @Override
                                         public void run() {
                                             SharedPreferences sharedPreferences = context.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
-                                            String stored_sender_key = sharedPreferences.getString(Constants.SHGCM_SENDER_KEY_APP, null);
+                                            String stored_sender_key = sharedPreferences.getString(SHGCM_SENDER_KEY_APP, null);
                                             if(null==stored_sender_key){
                                                 SharedPreferences.Editor e = sharedPreferences.edit();
-                                                e.putString(Constants.SHGCM_SENDER_KEY_APP, newSenderID);
+                                                e.putString(SHGCM_SENDER_KEY_APP, newSenderID);
                                                 InstanceID instanceID = InstanceID.getInstance(context);
                                                 String token=null;
                                                 try {
                                                     token = instanceID.getToken(newSenderID,
                                                             GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
                                                     if(null!=token){
-                                                        e.putString(Constants.PUSH_ACCESS_DATA, token);
+                                                        e.putString(PUSH_ACCESS_DATA, token);
                                                         Push.getInstance(context).addPushModule();
                                                     }
                                                 } catch (IOException ex) {
@@ -231,14 +231,14 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver {
                                             }else{
                                                 if(!(stored_sender_key.equals(value_project_number))){
                                                     SharedPreferences.Editor e = sharedPreferences.edit();
-                                                    e.putString(Constants.SHGCM_SENDER_KEY_APP, newSenderID);
+                                                    e.putString(SHGCM_SENDER_KEY_APP, newSenderID);
                                                     InstanceID instanceID = InstanceID.getInstance(context);
                                                     String token=null;
                                                     try {
                                                         token = instanceID.getToken(newSenderID,
                                                                 GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
                                                         if(null!=token){
-                                                            e.putString(Constants.PUSH_ACCESS_DATA, token);
+                                                            e.putString(PUSH_ACCESS_DATA, token);
                                                             Push.getInstance(context).addPushModule();
                                                         }
                                                     } catch (IOException ex) {
@@ -267,51 +267,51 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver {
                                 String titleLength = null;
                                 if (object.get(PUSH) instanceof JSONObject) {
                                     JSONObject push = object.getJSONObject(PUSH);
-                                    if (push.has(Constants.PUSH_CODE) && !push.isNull(Constants.PUSH_CODE)) {
-                                        code = push.get(Constants.PUSH_CODE).toString();
+                                    if (push.has(PUSH_CODE) && !push.isNull(PUSH_CODE)) {
+                                        code = push.get(PUSH_CODE).toString();
                                     }
-                                    if (push.has(Constants.PUSH_MSG_ID) && !push.isNull(Constants.PUSH_MSG_ID)) {
-                                        messageId = push.get(Constants.PUSH_MSG_ID).toString();
+                                    if (push.has(PUSH_MSG_ID) && !push.isNull(PUSH_MSG_ID)) {
+                                        messageId = push.get(PUSH_MSG_ID).toString();
                                     }
-                                    if (push.has(Constants.PUSH_DATA) && !push.isNull(Constants.PUSH_DATA)) {
-                                        data = push.get(Constants.PUSH_DATA).toString();
+                                    if (push.has(PUSH_DATA) && !push.isNull(PUSH_DATA)) {
+                                        data = push.get(PUSH_DATA).toString();
                                     }
-                                    if (push.has(Constants.PUSH_TITLE_LENGTH) && !push.isNull(Constants.PUSH_TITLE_LENGTH)) {
-                                        titleLength = push.get(Constants.PUSH_TITLE_LENGTH).toString();
+                                    if (push.has(PUSH_TITLE_LENGTH) && !push.isNull(PUSH_TITLE_LENGTH)) {
+                                        titleLength = push.get(PUSH_TITLE_LENGTH).toString();
                                     }
-                                    if (push.has(Constants.PUSH_SHOW_DIALOG) && !push.isNull(Constants.PUSH_SHOW_DIALOG)) {
-                                        noConfirm = push.get(Constants.PUSH_SHOW_DIALOG).toString();
+                                    if (push.has(PUSH_SHOW_DIALOG) && !push.isNull(PUSH_SHOW_DIALOG)) {
+                                        noConfirm = push.get(PUSH_SHOW_DIALOG).toString();
                                     }
-                                    if (push.has(Constants.PUSH_ORIENTATION) && !push.isNull(Constants.PUSH_ORIENTATION)) {
-                                        orientation = push.get(Constants.PUSH_ORIENTATION).toString();
+                                    if (push.has(PUSH_ORIENTATION) && !push.isNull(PUSH_ORIENTATION)) {
+                                        orientation = push.get(PUSH_ORIENTATION).toString();
                                     }
-                                    if (push.has(Constants.PUSH_PORTION) && !push.isNull(Constants.PUSH_PORTION)) {
-                                        portion = push.get(Constants.PUSH_PORTION).toString();
+                                    if (push.has(PUSH_PORTION) && !push.isNull(PUSH_PORTION)) {
+                                        portion = push.get(PUSH_PORTION).toString();
                                     }
-                                    if (push.has(Constants.PUSH_SPEED) && !push.isNull(Constants.PUSH_SPEED)) {
-                                        speed = push.get(Constants.PUSH_SPEED).toString();
+                                    if (push.has(PUSH_SPEED) && !push.isNull(PUSH_SPEED)) {
+                                        speed = push.get(PUSH_SPEED).toString();
                                     }
-                                    if (push.has(Constants.PUSH_INSTALLID) && !push.isNull(Constants.PUSH_INSTALLID)) {
-                                        installid = push.get(Constants.PUSH_INSTALLID).toString();
+                                    if (push.has(PUSH_INSTALLID) && !push.isNull(PUSH_INSTALLID)) {
+                                        installid = push.get(PUSH_INSTALLID).toString();
                                     }
-                                    if (push.has(Constants.PUSH_APS) && !push.isNull(Constants.PUSH_APS)) {
-                                        aps = push.get(Constants.PUSH_APS).toString();
+                                    if (push.has(PUSH_APS) && !push.isNull(PUSH_APS)) {
+                                        aps = push.get(PUSH_APS).toString();
                                     }
 
                                     final Intent broadcastIntent = new Intent();
                                     broadcastIntent.setAction("com.google.android.c2dm.intent.RECEIVE");
-                                    broadcastIntent.putExtra(Constants.PUSH_CODE, code);
-                                    broadcastIntent.putExtra(Constants.PUSH_MSG_ID, messageId);
-                                    broadcastIntent.putExtra(Constants.PUSH_APS, aps);
-                                    broadcastIntent.putExtra(Constants.PUSH_DATA, data);
-                                    broadcastIntent.putExtra(Constants.PUSH_ORIENTATION, orientation);
-                                    broadcastIntent.putExtra(Constants.PUSH_PORTION, portion);
-                                    broadcastIntent.putExtra(Constants.PUSH_SPEED, speed);
-                                    broadcastIntent.putExtra(Constants.PUSH_SHOW_DIALOG, noConfirm);
-                                    broadcastIntent.putExtra(Constants.PUSH_TITLE_LENGTH, titleLength);
+                                    broadcastIntent.putExtra(PUSH_CODE, code);
+                                    broadcastIntent.putExtra(PUSH_MSG_ID, messageId);
+                                    broadcastIntent.putExtra(PUSH_APS, aps);
+                                    broadcastIntent.putExtra(PUSH_DATA, data);
+                                    broadcastIntent.putExtra(PUSH_ORIENTATION, orientation);
+                                    broadcastIntent.putExtra(PUSH_PORTION, portion);
+                                    broadcastIntent.putExtra(PUSH_SPEED, speed);
+                                    broadcastIntent.putExtra(PUSH_SHOW_DIALOG, noConfirm);
+                                    broadcastIntent.putExtra(PUSH_TITLE_LENGTH, titleLength);
                                     if (null == installid || installid.isEmpty())
                                         installid = Util.getInstallId(context);
-                                    broadcastIntent.putExtra(Constants.PUSH_INSTALLID, installid);
+                                    broadcastIntent.putExtra(PUSH_INSTALLID, installid);
                                     context.sendBroadcast(broadcastIntent);
                                 }
                             }
@@ -322,7 +322,7 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver {
                 }
             }
         }
-        if (intent.getAction().equals(Constants.BROADCAST_SH_PUSH_NOTIFICATION)) {
+        if (intent.getAction().equals(BROADCAST_SH_PUSH_NOTIFICATION)) {
             final Bundle extras = intent.getExtras();
             boolean forceToBg = false;
             String msgID = extras.getString(Util.MSGID);
@@ -330,11 +330,11 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver {
                 return;
             } else {
                 SharedPreferences sharedPreferences = context.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
-                boolean isCustomDialog = sharedPreferences.getBoolean(Constants.SHUSECUSTOMDIALOG_FLAG, false);
-                if (sharedPreferences.getString(Constants.PENDING_DIALOG, null) != null) {
+                boolean isCustomDialog = sharedPreferences.getBoolean(SHUSECUSTOMDIALOG_FLAG, false);
+                if (sharedPreferences.getString(PENDING_DIALOG, null) != null) {
                     forceToBg = true;
                 }
-                if (sharedPreferences.getBoolean(Constants.SHUSECUSTOMDIALOG_FLAG, false)) {
+                if (sharedPreferences.getBoolean(SHUSECUSTOMDIALOG_FLAG, false)) {
                     forceToBg = false;
                 }
                 PushNotificationDB database = PushNotificationDB.getInstance(context);
@@ -360,7 +360,7 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver {
                 } catch (NumberFormatException e) {
                     return;
                 }
-                if (code == NotificationBase.CODE_REQUEST_THE_APP_STATUS){
+                if (code == CODE_REQUEST_THE_APP_STATUS){
                     Logging.getLoggingInstance(context).checkAppState();
                     return;
                 }
@@ -368,22 +368,22 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver {
                     Log.i(Util.TAG, "GCM is disabled in code.Developer has called shSetGcmSupport(false)");
                     return;
                 }
-                boolean enable_push = sharedPreferences.getBoolean(Constants.SHGCM_FLAG, true);
+                boolean enable_push = sharedPreferences.getBoolean(SHGCM_FLAG, true);
                 if (enable_push) {
                     String title = pushData.getTitle();
                     String msg = pushData.getMsg();
                     String data = pushData.getData();
                     sendAcknowledgement(context, msgID);
-                    if (code == NotificationBase.CODE_CUSTOM_JSON_FROM_SERVER) {
+                    if (code == CODE_CUSTOM_JSON_FROM_SERVER) {
                         if (null == mISHObserver) {
                             Log.e(Util.TAG, "No object registered for class implementing ISHObserver. Use registerSHObserver");
-                            NotificationBase.sendResultBroadcast(context, msgID, Constants.STREETHAWK_DECLINED);
+                            NotificationBase.sendResultBroadcast(context, msgID, STREETHAWK_DECLINED);
                             return;
                         } else {
-                            NotificationBase.sendResultBroadcast(context, msgID, Constants.STREETHAWK_ACCEPTED);
+                            NotificationBase.sendResultBroadcast(context, msgID, STREETHAWK_ACCEPTED);
                             handleCustomJsonFromServer(title, msg, data);
                         }
-                    } else if (code == NotificationBase.CODE_REQUEST_THE_APP_STATUS) {
+                    } else if (code == CODE_REQUEST_THE_APP_STATUS) {
                         Logging.getLoggingInstance(context).checkAppState();
                     } else {
                         // return if permission is missing
@@ -393,13 +393,13 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver {
                         }
                         // Storing msgid for pending dialog
                         SharedPreferences.Editor e = sharedPreferences.edit();
-                        e.putString(Constants.PENDING_DIALOG, pushData.getMsgId());
+                        e.putString(PENDING_DIALOG, pushData.getMsgId());
                         e.commit();
                         if (forceToBg || checkIfBG(context)) {
                             // storing package name to distinguish between broadcast received
-                            extras.putString(Constants.SHPACKAGENAME, context.getPackageName());
+                            extras.putString(SHPACKAGENAME, context.getPackageName());
                             switch (code) {
-                                case NotificationBase.CODE_IBEACON:
+                                case CODE_IBEACON:
                                     BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
                                     if (bluetoothAdapter != null) {
                                         boolean isEnabled = bluetoothAdapter.isEnabled();
@@ -408,18 +408,18 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver {
                                             notificationBeacon.display();
                                         } else {
                                             clearPendingDialogFlagAndDB(context, msgID);
-                                            NotificationBase.sendResultBroadcast(context, msgID, Constants.STREETHAWK_ACCEPTED);
+                                            NotificationBase.sendResultBroadcast(context, msgID, STREETHAWK_ACCEPTED);
                                         }
                                     }
                                     break;
-                                case NotificationBase.CODE_ENABLE_LOCATION:
+                                case CODE_ENABLE_LOCATION:
                                     LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
                                     if (!(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))) {
                                         SHBackgroundNotification notificationBeacon = new SHBackgroundNotification(context, pushData);
                                         notificationBeacon.display();
                                     } else {
                                         clearPendingDialogFlagAndDB(context, msgID);
-                                        NotificationBase.sendResultBroadcast(context, msgID, Constants.STREETHAWK_ACCEPTED);
+                                        NotificationBase.sendResultBroadcast(context, msgID, STREETHAWK_ACCEPTED);
                                     }
                                     break;
                                 default:
@@ -440,7 +440,7 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver {
                                 }
                             }
                             switch (code) {
-                                case NotificationBase.CODE_IBEACON:
+                                case CODE_IBEACON:
                                     BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
                                     if (bluetoothAdapter != null) {
                                         boolean isEnabled = bluetoothAdapter.isEnabled();
@@ -449,11 +449,11 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver {
                                             alert.display(pushData);
                                         } else {
                                             clearPendingDialogFlagAndDB(context, msgID);
-                                            NotificationBase.sendResultBroadcast(context, msgID, Constants.STREETHAWK_ACCEPTED);
+                                            NotificationBase.sendResultBroadcast(context, msgID, STREETHAWK_ACCEPTED);
                                         }
                                     }
                                     break;
-                                case NotificationBase.CODE_ENABLE_LOCATION:
+                                case CODE_ENABLE_LOCATION:
                                     LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
                                     if (!(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))) {
                                         SHForegroundNotification alert = SHForegroundNotification.getDialogInstance(context);
@@ -461,7 +461,7 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver {
                                     } else {
                                         //ignoring message and hence clearing
                                         clearPendingDialogFlagAndDB(context, msgID);
-                                        NotificationBase.sendResultBroadcast(context, msgID, Constants.STREETHAWK_ACCEPTED);
+                                        NotificationBase.sendResultBroadcast(context, msgID, STREETHAWK_ACCEPTED);
                                     }
                                     break;
                                 default:
@@ -481,13 +481,13 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver {
             int code = 0;
             boolean sendResult = true;
             Bundle extras = intent.getExtras();
-            String msgId = extras.getString(Constants.PENDING_DIALOG);
-            String packageName = intent.getStringExtra(Constants.SHPACKAGENAME);
+            String msgId = extras.getString(PENDING_DIALOG);
+            String packageName = intent.getStringExtra(SHPACKAGENAME);
             if (!(context.getPackageName().equals(packageName)))
                 return;
             if (msgId == null)
                 return;
-            boolean fromBG = extras.getBoolean(Constants.FROMBG, false);
+            boolean fromBG = extras.getBoolean(FROMBG, false);
             PushNotificationDB dbObject = PushNotificationDB.getInstance(context);
             dbObject.open();
             PushNotificationData dataObject = new PushNotificationData();
@@ -511,8 +511,8 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver {
                 e.printStackTrace();
                 code = 0;
             }
-            if (intent.getAction().equals(Constants.BROADCAST_STREETHAWK_ACCEPTED)) {
-                result = Constants.STREETHAWK_ACCEPTED;
+            if (intent.getAction().equals(BROADCAST_STREETHAWK_ACCEPTED)) {
+                result = STREETHAWK_ACCEPTED;
                 displayBadge(context, DISMISS_BADGE);
                 if (fromBG) {
                     bgActionPositive(context, packageName, dataObject);
@@ -523,11 +523,11 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver {
                     } catch (NumberFormatException e) {
                         return;
                     }
-                    if (tempCode == NotificationBase.CODE_OPEN_URL || tempCode == NotificationBase.CODE_SIMPLE_PROMPT)
+                    if (tempCode == CODE_OPEN_URL || tempCode == CODE_SIMPLE_PROMPT)
                         sendResult = false;
                 } else {
                     switch (code) {
-                        case NotificationBase.CODE_OPEN_URL:
+                        case CODE_OPEN_URL:
                             float p = 0.0f;
                             int o = -1;
                             int s = -1;
@@ -552,7 +552,7 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver {
 
                             } else {
                                 SharedPreferences sharedPreferences = context.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
-                                if (null == sharedPreferences.getString(Constants.PENDING_DIALOG, null)) {
+                                if (null == sharedPreferences.getString(PENDING_DIALOG, null)) {
                                     clearPendingDialogFlagAndDB(context, msgId);
                                 } else {
                                     // this is to prevent sending of two push result in 8000 in app with confirmation
@@ -561,7 +561,7 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver {
                                 }
                             }
                             break;
-                        case NotificationBase.CODE_SIMPLE_PROMPT:
+                        case CODE_SIMPLE_PROMPT:
                             if (fromBG)
                                 return;
                         default:
@@ -569,16 +569,16 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver {
                     }
                 }
             }
-            if (intent.getAction().equals(Constants.BROADCAST_STREETHAWK_DECLINED)) {
+            if (intent.getAction().equals(BROADCAST_STREETHAWK_DECLINED)) {
                 displayBadge(context, DISMISS_BADGE);
                 clearPendingDialogFlagAndDB(context, msgId);
-                result = Constants.STREETHAWK_DECLINED;
+                result = STREETHAWK_DECLINED;
                 sendResult = true;
 
             }
-            if (intent.getAction().equals(Constants.BROADCAST_STREETHAWK_POSTPONED)) {
+            if (intent.getAction().equals(BROADCAST_STREETHAWK_POSTPONED)) {
                 displayBadge(context, DISMISS_BADGE);
-                result = Constants.STREETHAWK_POSTPONED;
+                result = STREETHAWK_POSTPONED;
                 clearPendingDialogFlagAndDB(context, msgId);
                 sendResult = true;
             }
@@ -621,7 +621,7 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver {
         dbObject.close();
         SharedPreferences sharedPreferences = context.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
         SharedPreferences.Editor e = sharedPreferences.edit();
-        e.putString(Constants.PENDING_DIALOG, null);
+        e.putString(PENDING_DIALOG, null);
         e.commit();
     }
 
@@ -644,34 +644,34 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver {
             return;
         }
         switch (code) {
-            case NotificationBase.CODE_LAUNCH_ACTIVITY:
-            case NotificationBase.CODE_USER_REGISTRATION_SCREEN:
-            case NotificationBase.CODE_USER_LOGIN_SCREEN:
+            case CODE_LAUNCH_ACTIVITY:
+            case CODE_USER_REGISTRATION_SCREEN:
+            case CODE_USER_LOGIN_SCREEN:
                 clearPendingDialogFlagAndDB(context, msgId);
                 if (data.isEmpty()) {
-                    if (code == NotificationBase.CODE_USER_REGISTRATION_SCREEN)
-                        data = Constants.REGISTER_FRIENDLY_NAME;
-                    if (code == NotificationBase.CODE_USER_LOGIN_SCREEN)
-                        data = Constants.LOGIN_FRIENDLY_NAME;
+                    if (code == CODE_USER_REGISTRATION_SCREEN)
+                        data = REGISTER_FRIENDLY_NAME;
+                    if (code == CODE_USER_LOGIN_SCREEN)
+                        data = LOGIN_FRIENDLY_NAME;
                 }
-                if (Util.getPlatformType() == Constants.PLATFORM_PHONEGAP ||
-                        Util.getPlatformType() == Constants.PLATFORM_TITANIUM ||
-                        Util.getPlatformType() == Constants.PLATFORM_UNITY) {
+                if (Util.getPlatformType() == PLATFORM_PHONEGAP ||
+                        Util.getPlatformType() == PLATFORM_TITANIUM ||
+                        Util.getPlatformType() == PLATFORM_UNITY) {
                     launchActivityPG(context, data);
                 } else {
                     launchActivity(context, data);
                 }
                 break;
-            case NotificationBase.CODE_RATE_APP:
-            case NotificationBase.CODE_UPDATE_APP:
+            case CODE_RATE_APP:
+            case CODE_UPDATE_APP:
                 clearPendingDialogFlagAndDB(context, msgId);
                 handleRateUpdate(context);
                 break;
-            case NotificationBase.CODE_CALL_TELEPHONE_NUMBER:
+            case CODE_CALL_TELEPHONE_NUMBER:
                 clearPendingDialogFlagAndDB(context, msgId);
                 handleCall(context, data);
                 break;
-            case NotificationBase.CODE_IBEACON:
+            case CODE_IBEACON:
                 clearPendingDialogFlagAndDB(context, msgId);
                 final BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
                 if (bluetoothAdapter != null) {
@@ -683,16 +683,16 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver {
 
                 }
                 break;
-            case NotificationBase.CODE_OPEN_URL:
+            case CODE_OPEN_URL:
                 startApp(context);
                 break;
-            case NotificationBase.CODE_ENABLE_LOCATION:
+            case CODE_ENABLE_LOCATION:
                 clearPendingDialogFlagAndDB(context, msgId);
                 Intent locintent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                 locintent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(locintent);
                 break;
-            case NotificationBase.CODE_FEEDBACK:
+            case CODE_FEEDBACK:
                 String fbdata = data;
                 if (null == fbdata) {
                     if (fbdata.isEmpty()) {
@@ -718,7 +718,7 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver {
                     }
                 }
                 break;
-            case NotificationBase.CODE_SIMPLE_PROMPT:
+            case CODE_SIMPLE_PROMPT:
                 startApp(context);
                 break;
             default:
@@ -747,7 +747,7 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver {
     private void startLauncherActivity(Context context){
         Intent LauncherIntent = context.getPackageManager().getLaunchIntentForPackage(context.getApplicationContext().getPackageName());
         LauncherIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK );
-        LauncherIntent.putExtra(Constants.SHOW_PENDING_DIALOG, true);
+        LauncherIntent.putExtra(SHOW_PENDING_DIALOG, true);
         context.startActivity(LauncherIntent);
 
     }
@@ -822,7 +822,7 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver {
                 }
             }
             LauncherIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-            LauncherIntent.putExtra(Constants.SHOW_PENDING_DIALOG, true);
+            LauncherIntent.putExtra(SHOW_PENDING_DIALOG, true);
             mContext.startActivity(LauncherIntent);
         }
     }
@@ -854,7 +854,7 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver {
             }
         }
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.putExtra(Constants.SHOW_PENDING_DIALOG, true);
+        intent.putExtra(SHOW_PENDING_DIALOG, true);
         mContext.startActivity(intent);
     }
 
@@ -866,7 +866,7 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver {
             tempactivityName = data;
         }
         SharedPreferences.Editor e = activityPrefs.edit();
-        e.putString(Constants.PHONEGAP_URL, tempactivityName);
+        e.putString(PHONEGAP_URL, tempactivityName);
         e.commit();
         if(null!=mISHObserver)
             mISHObserver.shNotifyAppPage(tempactivityName);;
@@ -899,7 +899,7 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver {
         try {
             Bundle params = new Bundle();
             params.putString(Util.SHMESSAGE_ID, msgId);
-            params.putString(Util.CODE, Integer.toString(NotificationBase.CODE_PUSH_ACK));
+            params.putString(Util.CODE, Integer.toString(CODE_PUSH_ACK));
             Logging manager = Logging.getLoggingInstance(context);
             manager.addLogsForSending(params);
         } catch (Exception e) {
@@ -921,7 +921,7 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver {
             params.putString(Util.SHMESSAGE_ID, msgId);
             params.putString(Util.TYPE_NUMERIC, Integer.toString(code));
             params.putString(NotificationBase.SHRESULT, Integer.toString(result));
-            params.putString(Util.CODE, Integer.toString(NotificationBase.CODE_PUSH_RESULT));
+            params.putString(Util.CODE, Integer.toString(CODE_PUSH_RESULT));
             Logging manager = Logging.getLoggingInstance(context);
             manager.addLogsForSending(params);
         } catch (Exception e) {
@@ -938,7 +938,7 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver {
     @TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
     private boolean checkIfBG(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
-        if (sharedPreferences.getBoolean(Constants.SHFORCEPUSHTOBG, false))
+        if (sharedPreferences.getBoolean(SHFORCEPUSHTOBG, false))
             return true;
         ActivityManager activitymanager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
         List<ActivityManager.RunningTaskInfo> services = activitymanager.getRunningTasks(Integer.MAX_VALUE);

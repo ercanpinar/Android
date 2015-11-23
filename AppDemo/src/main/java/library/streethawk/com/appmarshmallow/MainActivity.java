@@ -12,9 +12,17 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 
+import com.streethawk.library.core.ISHEventObserver;
 import com.streethawk.library.core.StreetHawk;
+import com.streethawk.library.growth.Growth;
+import com.streethawk.library.growth.IGrowth;
+import com.streethawk.library.push.ISHObserver;
+import com.streethawk.library.push.Push;
+import com.streethawk.library.push.PushDataForApplication;
 
-public class MainActivity extends Activity /*implements ISHObserver,IGrowth*/ {
+import org.json.JSONObject;
+
+public class MainActivity extends Activity implements ISHObserver,ISHEventObserver{
     private final int PERMISSIONS_LOCATION = 0;
     private final String TAG = "STREETHAWK_DEMO";
 
@@ -25,13 +33,14 @@ public class MainActivity extends Activity /*implements ISHObserver,IGrowth*/ {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
         Application app = getApplication();
-        //Push.getInstance(this).shAlertSetting(30);
+        Push.getInstance(this).shAlertSetting(30);
 
-       //Push.getInstance(this).registerSHObserver(this);  //Register this class as implementation of ISHObserver
+
+       Push.getInstance(this).registerSHObserver(this);  //Register this class as implementation of ISHObserver
         // Enter your project number here (https://streethawk.freshdesk.com/solution/articles/5000608997)
-       //Push.getInstance(this).registerForPushMessaging("393009194749");
+       Push.getInstance(this).registerForPushMessaging("393009194749");
         // Enter APP_KEY for your application registered with StreetHawk server
-        /*
+
         Growth.getInstance(this).getShareUrlForAppDownload("1", "shsample://setparams?param1=30", "facebook", "medium", "term", "cc", "www.google.com", new IGrowth() {
             @Override
             public void onReceiveShareUrl(String shareUrl) {
@@ -43,7 +52,8 @@ public class MainActivity extends Activity /*implements ISHObserver,IGrowth*/ {
 
             }
         });
-*/
+
+        StreetHawk.INSTANCE.registerEventObserver(this);
         StreetHawk.INSTANCE.setAppKey("SHSample");
         StreetHawk.INSTANCE.init(app);
 
@@ -200,7 +210,7 @@ public class MainActivity extends Activity /*implements ISHObserver,IGrowth*/ {
 
 
 
-/*
+
 
     @Override
     public void shReceivedRawJSON(String title, String message, String json) {
@@ -233,13 +243,7 @@ public class MainActivity extends Activity /*implements ISHObserver,IGrowth*/ {
 
 
     @Override
-    public void onReceiveShareUrl(String shareUrl) {
-
+    public void onInstallRegistered(String installId) {
+        Log.e("Anurag","InstallID "+installId);
     }
-
-    @Override
-    public void onReceiveErrorForShareUrl(JSONObject errorResponse) {
-
-    }
-    */
 }

@@ -13,7 +13,7 @@ import com.streethawk.library.core.Util;
 
 import java.io.IOException;
 
-public class SHInstanceIDListenerService extends InstanceIDListenerService {
+public class SHInstanceIDListenerService extends InstanceIDListenerService implements Constants{
     public SHInstanceIDListenerService() {
     }
 
@@ -28,7 +28,7 @@ public class SHInstanceIDListenerService extends InstanceIDListenerService {
             public void run() {
                 Context context = getApplicationContext();
                 SharedPreferences sharedPreferences = context.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
-                String projectNumber = sharedPreferences.getString(Constants.SHGCM_SENDER_KEY_APP, null);
+                String projectNumber = sharedPreferences.getString(SHGCM_SENDER_KEY_APP, null);
                 if(null==projectNumber) {
                     Log.e(Util.TAG, "Project number is missing");
                     return;
@@ -50,7 +50,7 @@ public class SHInstanceIDListenerService extends InstanceIDListenerService {
                 // Save Registration id
                 SharedPreferences prefs = context.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
                 final SharedPreferences.Editor e = prefs.edit();
-                e.putString(Constants.PUSH_ACCESS_DATA, token);
+                e.putString(PUSH_ACCESS_DATA, token);
                 e.commit();
                 Push.getInstance(context).addPushModule();
                 return;

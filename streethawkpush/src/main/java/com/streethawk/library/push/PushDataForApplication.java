@@ -25,11 +25,15 @@ import android.view.View;
 import com.streethawk.library.core.Util;
 
 /**
- * Created by anuragkondeya on 6/08/15.
+ * For push handling at by applications
  */
 public class PushDataForApplication extends NotificationBase{
 
     private final String SUBTAG = "PushDataForApplication ";
+
+    public PushDataForApplication(){
+        super();
+    }
 
     /**
      * ACTION_OPEN_URL = 1;
@@ -156,40 +160,40 @@ public class PushDataForApplication extends NotificationBase{
             }
 
             switch (tmpCode) {
-                case NotificationBase.CODE_OPEN_URL:
+                case CODE_OPEN_URL:
                     dataForApplication.setAction(PushDataForApplication.ACTION_OPEN_URL);
                     break;
-                case NotificationBase.CODE_LAUNCH_ACTIVITY:
+                case CODE_LAUNCH_ACTIVITY:
                     dataForApplication.setAction(PushDataForApplication.ACTION_LAUNCH_ACTIVITY);
                     break;
-                case NotificationBase.CODE_RATE_APP:
+                case CODE_RATE_APP:
                     dataForApplication.setAction(PushDataForApplication.ACTION_RATE_APP);
                     break;
-                case NotificationBase.CODE_USER_REGISTRATION_SCREEN:
+                case CODE_USER_REGISTRATION_SCREEN:
                     dataForApplication.setAction(PushDataForApplication.ACTION_USER_REGISTRATION_SCREEN);
                     break;
-                case NotificationBase.CODE_USER_LOGIN_SCREEN:
+                case CODE_USER_LOGIN_SCREEN:
                     dataForApplication.setAction(PushDataForApplication.ACTION_USER_LOGIN_SCREEN);
                     break;
-                case NotificationBase.CODE_UPDATE_APP:
+                case CODE_UPDATE_APP:
                     dataForApplication.setAction(PushDataForApplication.ACTION_UPDATE_APP);
                     break;
-                case NotificationBase.CODE_CALL_TELEPHONE_NUMBER:
+                case CODE_CALL_TELEPHONE_NUMBER:
                     dataForApplication.setAction(PushDataForApplication.ACTION_CALL_TELEPHONE_NUMBER);
                     break;
-                case NotificationBase.CODE_SIMPLE_PROMPT:
+                case CODE_SIMPLE_PROMPT:
                     dataForApplication.setAction(PushDataForApplication.ACTION_SIMPLE_PROMPT);
                     break;
-                case NotificationBase.CODE_FEEDBACK:
+                case CODE_FEEDBACK:
                     dataForApplication.setAction(PushDataForApplication.ACTION_FEEDBACK);
                     break;
-                case NotificationBase.CODE_IBEACON:
+                case CODE_IBEACON:
                     dataForApplication.setAction(PushDataForApplication.ACTION_ENABLE_BLUETOOTH);
                     break;
-                case NotificationBase.CODE_ACCEPT_PUSHMSG:
+                case CODE_ACCEPT_PUSHMSG:
                     dataForApplication.setAction(PushDataForApplication.ACTION_ENABLE_PUSH_MSG);
                     break;
-                case NotificationBase.CODE_ENABLE_LOCATION:
+                case CODE_ENABLE_LOCATION:
                     dataForApplication.setAction(PushDataForApplication.ACTION_ENABLE_LOCATION);
                     break;
                 default:

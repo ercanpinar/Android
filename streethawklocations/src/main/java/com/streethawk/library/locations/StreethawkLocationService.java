@@ -34,7 +34,7 @@ import android.util.Log;
 import com.streethawk.library.core.Logging;
 import com.streethawk.library.core.Util;
 
-public class StreethawkLocationService extends Service {
+public class StreethawkLocationService extends Service implements Constants{
     private final int DEFAULT_UPDATE_DISTANCE_BG = 500;                // 	500 meters in background
     private final int DEFAULT_UPDATE_INTERVAL_FG = 2 * 60 * 1000;        // 2 minute in Foreground
     private final int DEFAULT_UPDATE_DISTANCE_FG = 100;                // 	100 meters in background
@@ -81,7 +81,7 @@ public class StreethawkLocationService extends Service {
     private boolean getUseLocation(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
         if (sharedPreferences != null)
-            return sharedPreferences.getBoolean(Constants.SHLOCATION_FLAG, false);
+            return sharedPreferences.getBoolean(SHLOCATION_FLAG, false);
         else
             return false;
     }
@@ -137,11 +137,11 @@ public class StreethawkLocationService extends Service {
                     Bundle extras = new Bundle();
                     double lat = location.getLatitude();
                     double lng = location.getLongitude();
-                    extras.putString(Util.CODE, Integer.toString(Constants.CODE_LOCATION_UPDATES));
+                    extras.putString(Util.CODE, Integer.toString(CODE_LOCATION_UPDATES));
                     extras.putString(Util.SHMESSAGE_ID, null);
-                    extras.putString(Constants.LOCAL_TIME, Util.getFormattedDateTime(System.currentTimeMillis(), false));
-                    extras.putString(Constants.SHLATTITUDE, Double.toString(lat));
-                    extras.putString(Constants.SHLONGITUDE, Double.toString(lng));
+                    extras.putString(LOCAL_TIME, Util.getFormattedDateTime(System.currentTimeMillis(), false));
+                    extras.putString(SHLATTITUDE, Double.toString(lat));
+                    extras.putString(SHLONGITUDE, Double.toString(lng));
                     Logging manager = Logging.getLoggingInstance(mContext);
                     manager.addLogsForSending(extras);
                 }
@@ -225,10 +225,10 @@ public class StreethawkLocationService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         if (null != intent) {
-            VALUE_UPDATE_INTERVAL_BG = intent.getIntExtra(Constants.KEY_UPDATE_INTERVAL_BG, 0);
-            VALUE_UPDATE_DISTANCE_BG = intent.getIntExtra(Constants.KEY_UPDATE_DISTANCE_BG, 0);
-            VALUE_UPDATE_INTERVAL_FG = intent.getIntExtra(Constants.KEY_UPDATE_INTERVAL_FG, 0);
-            VALUE_UPDATE_DISTANCE_FG = intent.getIntExtra(Constants.KEY_UPDATE_DISTANCE_FG, 0);
+            VALUE_UPDATE_INTERVAL_BG = intent.getIntExtra(KEY_UPDATE_INTERVAL_BG, 0);
+            VALUE_UPDATE_DISTANCE_BG = intent.getIntExtra(KEY_UPDATE_DISTANCE_BG, 0);
+            VALUE_UPDATE_INTERVAL_FG = intent.getIntExtra(KEY_UPDATE_INTERVAL_FG, 0);
+            VALUE_UPDATE_DISTANCE_FG = intent.getIntExtra(KEY_UPDATE_DISTANCE_FG, 0);
         }
         return null;
     }

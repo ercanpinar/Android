@@ -65,7 +65,7 @@ import java.util.UUID;
 
 import javax.net.ssl.HttpsURLConnection;
 
-public class StreetHawkCoreService extends Service implements Thread.UncaughtExceptionHandler{
+public class StreetHawkCoreService extends Service implements Thread.UncaughtExceptionHandler,Constants{
 
     private Context mContext;
     private final String SHTASKTIME  = "shTaskTime";
@@ -76,7 +76,7 @@ public class StreetHawkCoreService extends Service implements Thread.UncaughtExc
             @Override
             public void run() {
                 boolean taskRegistered = (PendingIntent.getBroadcast(context, 0,
-                        new Intent(Constants.BROADCAST_APP_STATUS_CHK),
+                        new Intent(BROADCAST_APP_STATUS_CHK),
                         PendingIntent.FLAG_NO_CREATE) != null);
                 if (taskRegistered) {
                     return;
@@ -88,8 +88,8 @@ public class StreetHawkCoreService extends Service implements Thread.UncaughtExc
 
                 AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
                 Intent intent = new Intent(context, StreethawkBroadcastReceiver.class);
-                intent.setAction(Constants.BROADCAST_APP_STATUS_CHK);
-                intent.putExtra(Constants.SHPACKAGENAME,context.getPackageName());
+                intent.setAction(BROADCAST_APP_STATUS_CHK);
+                intent.putExtra(SHPACKAGENAME,context.getPackageName());
                 PendingIntent appStatusIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
                 alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), AlarmManager.INTERVAL_HOUR/*60000*/, appStatusIntent);
             }

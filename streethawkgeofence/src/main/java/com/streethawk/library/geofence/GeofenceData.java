@@ -20,7 +20,7 @@ import android.util.Log;
 
 import com.streethawk.library.core.Util;
 
-class GeofenceData {
+public class GeofenceData {
     private final String SUBTAG = "GeofenceData ";
     private String  mGeofenceID;        // Unique identifier of geofence
     private double  mLatitude;          // Latitude of geofence

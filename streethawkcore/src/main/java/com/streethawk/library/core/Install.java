@@ -196,11 +196,12 @@ class Install extends LoggingBase {
     private final String FEATURE_LOCATIONS = "feature_locations";
     private final String FEATURE_PUSH = "feature_push";
     private final String FEATURE_BEACONS = "feature_ibeacons";
-    private final String ADVERTISING_IDENTIFIER = "advertising_identifier";
     private final String UTC_OFFSET = "utc_offset";
     private final String IDENTIFIER_FOR_VENDOR = "identifier_for_vendor";
     private final String WIDTH = "width";
     private final String HEIGHT = "height";
+
+    private ISHEventObserver mEventObserver=null;
 
 
     private Install(Context context) {
@@ -222,6 +223,12 @@ class Install extends LoggingBase {
         }
         return modelStr;
     }
+
+    public void registerInstallEventObserver(ISHEventObserver obj){
+        mEventObserver = obj;
+    }
+
+
 
 
     /**
@@ -271,7 +278,7 @@ class Install extends LoggingBase {
             if (null == installId) {
                 return;
             }
-            logMap.put(Constants.INSTALL_ID, installId);
+            logMap.put(INSTALL_ID, installId);
             logMap.put(APP_KEY, Util.getAppKey(mContext));
             logMap.put(SH_LIBRARY_VERSION, Util.getLibraryVersion());
             logMap.put(CLIENT_VERSION, Util.getAppVersionName(mContext));
@@ -344,47 +351,70 @@ class Install extends LoggingBase {
                         if (installInfo != null && !TextUtils.isEmpty(installInfo.installid)) {
                             SharedPreferences prefs = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
                             SharedPreferences.Editor e = prefs.edit();
-                            e.putBoolean(Constants.SHINSTALL_STATE, true);
-                            e.putString(Constants.INSTALL_ID, installInfo.installid);       //App received installid here
+                            e.putBoolean(SHINSTALL_STATE, true);
+                            e.putString(INSTALL_ID, installInfo.installid);       //App received installid here
                             e.commit();
-                            //Init modules available
-                            new Thread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Class noParams[] = {};
-                                    Class[] paramContext = new Class[1];
-                                    paramContext[0] = Activity.class;
-                                    Class growth = null;
-                                    try {
-                                        growth = Class.forName("com.streethawk.library.growth.Growth");
-                                        Method growthMethod = growth.getMethod("getInstance", paramContext);
-                                        Object obj = growthMethod.invoke(null, activity);
-                                        if (null != obj) {
-                                            Method addGrowthModule = growth.getDeclaredMethod("addGrowthModule", noParams);
-                                            addGrowthModule.invoke(obj);
-                                        }
-                                    } catch (ClassNotFoundException e1) {
-                                        Log.w(Util.TAG, "Growth module is not  not present");
-                                    } catch (IllegalAccessException e1) {
-                                        e1.printStackTrace();
-                                    } catch (NoSuchMethodException e1) {
-                                        e1.printStackTrace();
-                                    } catch (InvocationTargetException e1) {
-                                        e1.printStackTrace();
-                                    }
+                            try {
+                                AdvertisingId.AdInfo adInfo = AdvertisingId.getAdvertisingIdInfo(mContext);
+                                String advId = adInfo.getId();
+                                SharedPreferences sharedPreferences = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
+                                SharedPreferences.Editor ed = sharedPreferences.edit();
+                                ed.putString(SHADVERTISEMENTID, advId);
+                                ed.commit();
+                                StreetHawk.INSTANCE.tagString(KEY_ADV_ID, advId);
+                                Bundle extras  = new Bundle();
+                                extras.putString(CODE, Integer.toString(CODE_UPDATE_CUSTOM_TAG));
+                                extras.putString(SHMESSAGE_ID, null);
+                                extras.putString(SH_KEY, KEY_ADV_ID);
+                                extras.putString(TYPE_STRING, advId);
+                                Logging manager = Logging.getLoggingInstance(mContext);
+                                manager.addLogsForSending(extras);
+                            }catch(Exception ex){
+                                Log.e(Util.TAG,"Cannot process tagging adv id");
+                            }
 
-                                }
-                            }).start();
+                            if(null!=mEventObserver)
+                                mEventObserver.onInstallRegistered(installInfo.installid);
+                            if(RELEASE_PLATFORM!=PLATFORM_XAMARIN) {
+                                //Init modules available
+                                new Thread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Class noParams[] = {};
+                                        Class[] paramContext = new Class[1];
+                                        paramContext[0] = Activity.class;
+                                        Class growth = null;
+                                        try {
+                                            growth = Class.forName("com.streethawk.library.growth.Growth");
+                                            Method growthMethod = growth.getMethod("getInstance", paramContext);
+                                            Object obj = growthMethod.invoke(null, activity);
+                                            if (null != obj) {
+                                                Method addGrowthModule = growth.getDeclaredMethod("addGrowthModule", noParams);
+                                                addGrowthModule.invoke(obj);
+                                            }
+                                        } catch (ClassNotFoundException e1) {
+                                            Log.w(Util.TAG, "Growth module is not  not present");
+                                        } catch (IllegalAccessException e1) {
+                                            e1.printStackTrace();
+                                        } catch (NoSuchMethodException e1) {
+                                            e1.printStackTrace();
+                                        } catch (InvocationTargetException e1) {
+                                            e1.printStackTrace();
+                                        }
+
+                                    }
+                                }).start();
+                            }
                             int timezone = Util.getTimeZoneOffsetInMinutes();
                             Bundle logParams = new Bundle();
-                            logParams.putString(Constants.CODE, Integer.toString(Constants.CODE_DEVICE_TIMEZONE));
-                            logParams.putString(Constants.SHMESSAGE_ID, null);
-                            logParams.putString(Constants.TYPE_NUMERIC, Integer.toString(Util.getTimeZoneOffsetInMinutes()));
+                            logParams.putString(CODE, Integer.toString(CODE_DEVICE_TIMEZONE));
+                            logParams.putString(SHMESSAGE_ID, null);
+                            logParams.putString(TYPE_NUMERIC, Integer.toString(Util.getTimeZoneOffsetInMinutes()));
                             Logging manager = Logging.getLoggingInstance(mContext);
                             manager.addLogsForSending(logParams);
                             SharedPreferences sharedPreferences = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
                             SharedPreferences.Editor edit = sharedPreferences.edit();
-                            edit.putInt(Constants.SHTIMEZONE, timezone);
+                            edit.putInt(SHTIMEZONE, timezone);
                             edit.commit();
                         }
                         new Thread(new Runnable() {
@@ -493,7 +523,6 @@ class Install extends LoggingBase {
                 logMap.put(DEVELOPMENT_PLATFORM, Util.getPlatformName());
                 logMap.put(LIVE, Boolean.toString(Util.isAppInstalledFromPlayStore(mContext)));
                 logMap.put(UTC_OFFSET, Integer.toString(Util.getTimeZoneOffsetInMinutes()));
-                logMap.put(ADVERTISING_IDENTIFIER, Util.getAdvertisingIdentifier(mContext));
                 try {
                     TelephonyManager telephonyManager = (TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE);
                     if (null != telephonyManager) {

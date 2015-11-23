@@ -53,7 +53,7 @@ import javax.net.ssl.HttpsURLConnection;
  * 3. App to call StreetHawk.INSTANCE.shGetFeedDataFromServer(context) for fetching feed data from server. This is the place where he can start displaying progress bar
  * 4. App to notify result with feedID
  */
-public class SHFeedItem{
+public class SHFeedItem implements Constants{
     private static Context mContext;
     private final String OFFSET         = "offset";
     private final int CODE_FEED_ACK     = 8200;
@@ -80,7 +80,7 @@ public class SHFeedItem{
 
     private String getFeedTimeStamp() {
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
-        return sharedPreferences.getString(Constants.SHFEEDTIMESTAMP, null);
+        return sharedPreferences.getString(SHFEEDTIMESTAMP, null);
     }
 
     private boolean NotifyFeedItemToApplication(String answer) {

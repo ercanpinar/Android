@@ -41,7 +41,7 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Created by anuragkondeya on 6/08/15.
+ * Beacon service for devices running on Android L and above
  */
 public class BeaconServiceL extends BeaconServiceBase {
     private final String SUBTAG = "BeaconServiceL ";
@@ -52,11 +52,9 @@ public class BeaconServiceL extends BeaconServiceBase {
         super(context);
         this.mContext = context;
     }
-
-    @Override
     public IBinder onBind(Intent intent) {
-        return null;
-    }
+        return super.onBind(intent);
+    };
     @Override
     public void onDestroy() { super.onDestroy();}
 
@@ -113,7 +111,7 @@ public class BeaconServiceL extends BeaconServiceBase {
 
     @Override
     public void initiateFirstScan() {
-        final int scanInterval = (Util.isAppBG(mContext) ? Constants.BLE_SCAN_INTERVAL_BG : Constants.BLE_SCAN_INTERVAL_FG);
+        final int scanInterval = (Util.isAppBG(mContext) ? BLE_SCAN_INTERVAL_BG : BLE_SCAN_INTERVAL_FG);
         registerBeaconTask(mContext, scanInterval);
         new Thread(new Runnable() {
             @Override

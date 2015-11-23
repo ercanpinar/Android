@@ -32,7 +32,7 @@ import android.widget.TextView;
 
 import com.streethawk.library.core.Util;
 
-class SHFeedbackListModelView extends View {
+class SHFeedbackListModelView extends View implements Constants{
     private Context context;
     private TextView textView;
     private LinearLayout linearLayout;
@@ -70,7 +70,7 @@ class SHFeedbackListModelView extends View {
         float density = context.getResources().getDisplayMetrics().density;
         int padding = (int)(padding_value*density);
         textView.setPadding(0,padding,0,padding);
-        if ((Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) || (Util.getPlatformType()==Constants.PLATFORM_PHONEGAP)){
+        if ((Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) || (Util.getPlatformType()==PLATFORM_PHONEGAP)){
             textView.setBackgroundColor(Color.WHITE);
         }
         textView.setTextAppearance(context,android.R.style.TextAppearance_DeviceDefault_Medium);

@@ -25,7 +25,7 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 
-public class StreethawkBroadcastReceiver extends BroadcastReceiver {
+public class StreethawkBroadcastReceiver extends BroadcastReceiver implements Constants {
 
     private final String SUBTAG = "StreethawkBroadcastReceiver ";
 
@@ -56,7 +56,7 @@ public class StreethawkBroadcastReceiver extends BroadcastReceiver {
             if (null != networkInfo) {
                 // Check for app first run task
                 SharedPreferences prefs = context.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
-                if (!prefs.getBoolean(Constants.SHINSTALL_STATE, false)) {
+                if (!prefs.getBoolean(SHINSTALL_STATE, false)) {
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
@@ -66,17 +66,17 @@ public class StreethawkBroadcastReceiver extends BroadcastReceiver {
                     }).start();
                 } else {
                     SharedPreferences sharedPreferences = context.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
-                    int timezonelast = sharedPreferences.getInt(Constants.SHTIMEZONE, -1);
+                    int timezonelast = sharedPreferences.getInt(SHTIMEZONE, -1);
                     int timezoneNow = Util.getTimeZoneOffsetInMinutes();
                     if ((timezonelast != timezoneNow)) {
                         SharedPreferences.Editor edit = sharedPreferences.edit();
-                        edit.putInt(Constants.SHTIMEZONE, timezoneNow);
+                        edit.putInt(SHTIMEZONE, timezoneNow);
                         edit.commit();
                         // 8050 is a priority log hence logs will flush
                         Bundle logParams = new Bundle();
-                        logParams.putString(Util.CODE, Integer.toString(Constants.CODE_DEVICE_TIMEZONE));
+                        logParams.putString(Util.CODE, Integer.toString(CODE_DEVICE_TIMEZONE));
                         logParams.putString(Util.SHMESSAGE_ID, null);
-                        logParams.putString(Constants.TYPE_NUMERIC, Integer.toString(Util.getTimeZoneOffsetInMinutes()));
+                        logParams.putString(TYPE_NUMERIC, Integer.toString(Util.getTimeZoneOffsetInMinutes()));
                         Logging manager = Logging.getLoggingInstance(context);
                         manager.addLogsForSending(logParams);
                     }
@@ -88,10 +88,10 @@ public class StreethawkBroadcastReceiver extends BroadcastReceiver {
             }
         }
         // App status and heartbeat
-        if (action.equals(Constants.BROADCAST_APP_STATUS_CHK)) {
+        if (action.equals(BROADCAST_APP_STATUS_CHK)) {
             Bundle receivedParams = intent.getExtras();
             if (null != receivedParams) {
-                if (!(receivedParams.getString(Constants.SHPACKAGENAME).equals(context.getPackageName()))) {
+                if (!(receivedParams.getString(SHPACKAGENAME).equals(context.getPackageName()))) {
                     return;
                 }
             } else {
@@ -99,13 +99,13 @@ public class StreethawkBroadcastReceiver extends BroadcastReceiver {
             }
             long currentTime = System.currentTimeMillis();
             SharedPreferences pref = context.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
-            long storedTime = pref.getLong(Constants.SHTASKTIME, currentTime);
+            long storedTime = pref.getLong(SHTASKTIME, currentTime);
             int difference = (int) (currentTime - storedTime);
             if (!Util.getStreethawkState(context)) {
                 if (difference >= DURATION_APP_STATUS_LOG) {
                     //Store current time for next task
                     SharedPreferences.Editor e = pref.edit();
-                    e.putLong(Constants.SHTASKTIME, currentTime);
+                    e.putLong(SHTASKTIME, currentTime);
                     e.commit();
                     Log.e(Util.TAG, SUBTAG + "Checking app status for the day");
                     Logging.getLoggingInstance(context).checkAppState();
@@ -114,12 +114,12 @@ public class StreethawkBroadcastReceiver extends BroadcastReceiver {
             // send heartbeat every 6 hrs
             if (difference >= DURATION_SIX_HRS) {
                 Bundle extras = new Bundle();
-                extras.putString(Util.CODE, Integer.toString(Constants.CODE_HEARTBEAT));
+                extras.putString(Util.CODE, Integer.toString(CODE_HEARTBEAT));
                 extras.putString(Util.SHMESSAGE_ID, null);
                 Logging manager = Logging.getLoggingInstance(context);
                 manager.addLogsForSending(extras);
                 SharedPreferences.Editor e = pref.edit();
-                e.putLong(Constants.SHTASKTIME, currentTime);
+                e.putLong(SHTASKTIME, currentTime);
                 e.commit();
             }
         }

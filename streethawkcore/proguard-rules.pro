@@ -31,3 +31,6 @@
 -keep public class com.streethawk.library.core.Util {
      public *;
 }
+-keep public interface com.streethawk.library.core.ISHEventObserver {
+     public *;
+}

@@ -11,12 +11,14 @@ android {
         versionCode 3
         versionName "3.0"
     }
+/*
     buildTypes {
         release {
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    */
 }
 
 dependencies {

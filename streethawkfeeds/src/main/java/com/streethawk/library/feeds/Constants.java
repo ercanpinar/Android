@@ -15,6 +15,6 @@
  * License along with this library.
  */
 package com.streethawk.library.feeds;
-class Constants {
-    public static final String SHFEEDTIMESTAMP        = "shfeedtimestamp";
+interface Constants {
+    String SHFEEDTIMESTAMP        = "shfeedtimestamp";
 }

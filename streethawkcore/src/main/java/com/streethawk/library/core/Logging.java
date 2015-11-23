@@ -16,6 +16,7 @@
  */
 package com.streethawk.library.core;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -121,6 +122,19 @@ public class Logging extends LoggingBase {
     }
 
     /**
+     * Add logs in queue with forced priority
+     * @param params
+     * @param forcedPriority
+     * @return
+     */
+    public boolean addLogsForSending(Bundle params,boolean forcedPriority){
+        if(!getStreethawkState())  // Return if StreetHawk is disabled
+            return false;
+        return addLogstoBuffer(params,forcedPriority);
+    }
+
+
+    /**
      * Add logs in the queue for sending to server
      * @param params
      */
@@ -129,7 +143,7 @@ public class Logging extends LoggingBase {
             return false;
         int code = 0;
         try {
-            code = Integer.parseInt(params.getString(Constants.CODE));
+            code = Integer.parseInt(params.getString(CODE));
         } catch (NumberFormatException e) {
             code = 0;
         }
@@ -184,6 +198,111 @@ public class Logging extends LoggingBase {
         }
     }
 
+    public void processAppStatusCall(String answer){
+        super.processAppStatusCall(answer);
+    }
+
+    public void processErrorAckFromServer(String answer){
+        super.processErrorAckFromServer(answer);
+    }
+
+
+    public void sendModuleList(){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final String PUSH     = "sh_module_push";
+                final String BEACON   = "sh_module_beacon";
+                final String GEOFENCE = "sh_module_geofence";
+                final String LOCATION = "sh_module_location";
+                final String FEEDS    = "sh_module_feeds";
+                final String GROWTH   = "sh_module_growth";
+                final String TRUE     = "true";
+
+                Class[] paramContext = new Class[1];
+                paramContext[0] = Activity.class;
+                //Growth Module
+                try {
+                    Class.forName("com.streethawk.library.growth.Growth");
+                    Bundle extras = new Bundle();
+                    extras.putString(CODE, Integer.toString(Constants.CODE_UPDATE_CUSTOM_TAG));
+                    extras.putString(SHMESSAGE_ID, null);
+                    extras.putString(SHMESSAGE_ID, null);
+                    extras.putString(SH_KEY, GROWTH);
+                    extras.putString(TYPE_STRING,TRUE);
+                    addLogsForSending(extras,false);
+                } catch (ClassNotFoundException e1) {
+                    Log.w(Util.TAG, "Growth module is not  not present");
+                }
+                //Push Module
+                try {
+                    Class.forName("com.streethawk.library.push.Push");
+                    Bundle extras = new Bundle();
+                    extras.putString(CODE, Integer.toString(Constants.CODE_UPDATE_CUSTOM_TAG));
+                    extras.putString(SHMESSAGE_ID, null);
+                    extras.putString(SHMESSAGE_ID, null);
+                    extras.putString(SH_KEY, PUSH);
+                    extras.putString(TYPE_STRING,TRUE);
+                    addLogsForSending(extras,false);
+                } catch (ClassNotFoundException e1) {
+                    Log.w(Util.TAG, "Growth module is not  not present");
+                }
+                // Beacon Module
+                try {
+                    Class.forName("com.streethawk.library.beacon.Beacons");
+                    Bundle extras = new Bundle();
+                    extras.putString(CODE, Integer.toString(Constants.CODE_UPDATE_CUSTOM_TAG));
+                    extras.putString(SHMESSAGE_ID, null);
+                    extras.putString(SHMESSAGE_ID, null);
+                    extras.putString(SH_KEY, BEACON);
+                    extras.putString(TYPE_STRING,TRUE);
+                    addLogsForSending(extras,false);
+                } catch (ClassNotFoundException e1) {
+                    Log.w(Util.TAG, "Growth module is not  not present");
+                }
+                // Geofence Module
+                try {
+                    Class.forName("com.streethawk.library.geofence.SHGeofence");
+                    Bundle extras = new Bundle();
+                    extras.putString(CODE, Integer.toString(Constants.CODE_UPDATE_CUSTOM_TAG));
+                    extras.putString(SHMESSAGE_ID, null);
+                    extras.putString(SHMESSAGE_ID, null);
+                    extras.putString(SH_KEY, GEOFENCE);
+                    extras.putString(TYPE_STRING,TRUE);
+                    addLogsForSending(extras,false);
+                } catch (ClassNotFoundException e1) {
+                    Log.w(Util.TAG, "Growth module is not  not present");
+                }
+                //Location Module
+                try {
+                    Class.forName("com.streethawk.library.locations.SHLocation");
+                    Bundle extras = new Bundle();
+                    extras.putString(CODE, Integer.toString(Constants.CODE_UPDATE_CUSTOM_TAG));
+                    extras.putString(SHMESSAGE_ID, null);
+                    extras.putString(SHMESSAGE_ID, null);
+                    extras.putString(SH_KEY, LOCATION);
+                    extras.putString(TYPE_STRING,TRUE);
+                    addLogsForSending(extras,false);
+                } catch (ClassNotFoundException e1) {
+                    Log.w(Util.TAG, "Growth module is not  not present");
+                }
+                //Feed module
+                try {
+                    Class.forName("com.streethawk.library.feeds.SHFeedItem");
+                    Bundle extras = new Bundle();
+                    extras.putString(CODE, Integer.toString(Constants.CODE_UPDATE_CUSTOM_TAG));
+                    extras.putString(SHMESSAGE_ID, null);
+                    extras.putString(SHMESSAGE_ID, null);
+                    extras.putString(SH_KEY, FEEDS);
+                    extras.putString(TYPE_STRING,TRUE);
+                    addLogsForSending(extras,false);
+                } catch (ClassNotFoundException e1) {
+                    Log.w(Util.TAG, "Growth module is not  not present");
+                }
+
+            }
+        }).start();
+    }
 
     /**
      * Function returns key count which acts as key for logs in logbuffer shared pref.
@@ -216,17 +335,17 @@ public class Logging extends LoggingBase {
         int code = 0;
         if (Util.isAppBG(mContext)) {
             try {
-                code = Integer.parseInt(params.getString(Constants.CODE));
+                code = Integer.parseInt(params.getString(CODE));
             } catch (NumberFormatException e) {
                 code = 0;
             }
             switch (code) {
-                case Constants.CODE_APP_OPENED_FROM_BG:
-                case Constants.CODE_APP_TO_BG:
-                case Constants.CODE_SESSIONS:
-                case Constants.CODE_USER_ENTER_ACTIVITY:
-                case Constants.CODE_USER_LEAVE_ACTIVITY:
-                case Constants.CODE_COMPLETE_ACTIVITY:
+                case CODE_APP_OPENED_FROM_BG:
+                case CODE_APP_TO_BG:
+                case CODE_SESSIONS:
+                case CODE_USER_ENTER_ACTIVITY:
+                case CODE_USER_LEAVE_ACTIVITY:
+                case CODE_COMPLETE_ACTIVITY:
                     break;
                 default:
                     sessionId = null;
@@ -345,7 +464,6 @@ public class Logging extends LoggingBase {
     public void saveActivityNames(){
         super.saveActivityNames();
     }
-
 
     /**
      * Flush cached logs to server

@@ -26,7 +26,7 @@ import com.streethawk.library.core.Util;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-class GcmMessage extends NotificationBase{
+class GcmMessage extends NotificationBase implements Constants{
     static class Aps {
         public String alert;
         public Integer badge;
@@ -159,7 +159,7 @@ class GcmMessage extends NotificationBase{
         String appString;
         int lengthTitle = 0;
         // boolean isShowConfirm = true;
-        installID = bundle.getString(Constants.PUSH_INSTALLID);
+        installID = bundle.getString(PUSH_INSTALLID);
         String storedInstallId = Util.getInstallId(context);
         if (installID == null) {
             return;
@@ -170,10 +170,10 @@ class GcmMessage extends NotificationBase{
         if (!(installID.equals(storedInstallId))) {
             return;
         }
-        code = bundle.getString(Constants.PUSH_CODE);
-        msgId = bundle.getString(Constants.PUSH_MSG_ID);
-        data = bundle.getString(Constants.PUSH_DATA);
-        String tempTitlelength = bundle.getString(Constants.PUSH_TITLE_LENGTH);
+        code = bundle.getString(PUSH_CODE);
+        msgId = bundle.getString(PUSH_MSG_ID);
+        data = bundle.getString(PUSH_DATA);
+        String tempTitlelength = bundle.getString(PUSH_TITLE_LENGTH);
         if (null != tempTitlelength) {
             try {
                 lengthTitle = Integer.parseInt(tempTitlelength);
@@ -184,10 +184,10 @@ class GcmMessage extends NotificationBase{
                 msg = null;
             }
         }
-        portion = bundle.getString(Constants.PUSH_PORTION);
-        orientation = bundle.getString(Constants.PUSH_ORIENTATION);
-        speed = bundle.getString(Constants.PUSH_SPEED);
-        String tempConfirm = bundle.getString(Constants.PUSH_SHOW_DIALOG);
+        portion = bundle.getString(PUSH_PORTION);
+        orientation = bundle.getString(PUSH_ORIENTATION);
+        speed = bundle.getString(PUSH_SPEED);
+        String tempConfirm = bundle.getString(PUSH_SHOW_DIALOG);
         if (null != tempConfirm) {
             if(tempConfirm.isEmpty())
                 NoConfirm = "false";
@@ -196,13 +196,13 @@ class GcmMessage extends NotificationBase{
         }else{
             NoConfirm = "false";
         }
-        appString = bundle.getString(Constants.PUSH_APS);
+        appString = bundle.getString(PUSH_APS);
         if (!TextUtils.isEmpty(appString)) {
             mAps = new Aps();
             try {
                 JSONObject apsJson = new JSONObject(appString);
                 try {
-                    alert = apsJson.getString(Constants.PUSH_ALERT);
+                    alert = apsJson.getString(PUSH_ALERT);
                     if (null != alert) {
                         int tmpLength = lengthTitle;
                         title = alert.substring(0, Math.min(alert.length(), lengthTitle));
@@ -225,12 +225,12 @@ class GcmMessage extends NotificationBase{
                     msg = null;
                 }
                 try {
-                    badge = apsJson.getString(Constants.PUSH_BADGE);
+                    badge = apsJson.getString(PUSH_BADGE);
                 } catch (JSONException e) {
                     badge ="-1";
                 }
                 try {
-                    sound = apsJson.getString(Constants.PUSH_SOUND);
+                    sound = apsJson.getString(PUSH_SOUND);
                 } catch (JSONException e) {
                     sound = "DEFAULT";
                 }

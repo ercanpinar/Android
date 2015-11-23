@@ -30,6 +30,9 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Beacon service for devices running Android KK
+ */
 public class BeaconServiceKK extends BeaconServiceBase {
 
     private Context mContext;
@@ -39,10 +42,9 @@ public class BeaconServiceKK extends BeaconServiceBase {
         this.mContext = context;
     }
 
-    @Override
     public IBinder onBind(Intent intent) {
-        return null;
-    }
+        return super.onBind(intent);
+    };
     @Override
     public void onDestroy() { super.onDestroy();}
 
@@ -53,7 +55,7 @@ public class BeaconServiceKK extends BeaconServiceBase {
 
     @Override
     public  void initiateFirstScan(){
-        final int scanInterval = (Util.isAppBG(mContext) ? Constants.BLE_SCAN_INTERVAL_BG : Constants.BLE_SCAN_INTERVAL_FG);
+        final int scanInterval = (Util.isAppBG(mContext) ? BLE_SCAN_INTERVAL_BG : BLE_SCAN_INTERVAL_FG);
         registerBeaconTask(mContext, scanInterval);
         new Thread(new Runnable() {
             @Override

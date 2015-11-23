@@ -25,7 +25,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.google.android.gms.location.GeofencingEvent;
-import com.streethawk.library.core.Logging;
+//import com.streethawk.library.core.Logging;
 import com.streethawk.library.core.Util;
 
 import org.json.JSONException;
@@ -86,12 +86,17 @@ public class GeofenceService extends IntentService{
                 if(logs.equals("[]")) {
                     return;
                 }
-                Logging manager = Logging.getLoggingInstance(context);
+
+
                 Bundle params = new Bundle();
                 params.putString(Util.CODE, Integer.toString(Constants.CODE_GEOFENCE_UPDATES));
                 params.putString(Util.SHMESSAGE_ID, null);
                 params.putString("json",logs);
+                /*
+                Logging manager = Logging.getLoggingInstance(context);
                 manager.addLogsForSending(params);
+                */
+                GeofenceLogging.getInstance().sendLogs(context, params);
             }
         }
         SharedPreferences sharedPreferences = context.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
@@ -158,7 +163,7 @@ public class GeofenceService extends IntentService{
                     e.putString(Constants.PARENT_GEOFENCE_ID,null);
                     e.commit();
                     try {
-                        Logging manager = Logging.getLoggingInstance(context);
+
                         Bundle params = new Bundle();
                         params.putString(Util.CODE, Integer.toString(Constants.CODE_GEOFENCE_UPDATES));
                         params.putString(Util.SHMESSAGE_ID, null);
@@ -166,8 +171,12 @@ public class GeofenceService extends IntentService{
                         geofenceID = spitGeofenceId(geofenceID);
                         matchGeofence.put(geofenceID, object.getRadius());
                         params.putString("json", matchGeofence.toString());
-                        updateVisibleGeofence(context,geofenceID);
+                        updateVisibleGeofence(context, geofenceID);
+                        /*
+                        Logging manager = Logging.getLoggingInstance(context);
                         manager.addLogsForSending(params);
+                        */
+                        GeofenceLogging.getInstance().sendLogs(context, params);
                     }catch(JSONException jsonException){
                         jsonException.printStackTrace();
                     }
@@ -194,15 +203,18 @@ public class GeofenceService extends IntentService{
                     client.startGeofenceMonitoring();
                 }else{
                     try {
-                        Logging manager = Logging.getLoggingInstance(context);
                         Bundle params = new Bundle();
                         params.putString(Util.CODE, Integer.toString(Constants.CODE_GEOFENCE_UPDATES));
                         params.putString(Util.SHMESSAGE_ID, null);
                         JSONObject matchGeofence = new JSONObject();
                         geofenceID = spitGeofenceId(geofenceID);
                         matchGeofence.put(geofenceID,"-1");
-                        params.putString("json",matchGeofence.toString());
+                        params.putString("json", matchGeofence.toString());
+                        /*
+                        Logging manager = Logging.getLoggingInstance(context);
                         manager.addLogsForSending(params);
+                        */
+                        GeofenceLogging.getInstance().sendLogs(context, params);
                     }catch(JSONException jsonException){
                         jsonException.printStackTrace();
                     }

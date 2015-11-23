@@ -25,44 +25,27 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
-import com.streethawk.library.core.SHSqliteBase;
 import com.streethawk.library.core.Util;
 
-class PushNotificationDB {
-    // Start push notification helper
-    class PushNotificationHelper extends SHSqliteBase {
-
-        private static final String PUSH_NOTIFICATION_TABLE_NAME = "pushnotification";
-        private static final String COLUMN_MSGID = "MsgID";
-        private static final String COLUMN_CODE = "code";
-        private static final String COLUMN_TITLE = "title";
-        private static final String COLUMN_MSG = "msg";
-        private static final String COLUMN_DATA = "data";
-        private static final String COLUMN_P = "p";
-        private static final String COLUMN_O = "o";
-        private static final String COLUMN_S = "s";
-        private static final String COLUMN_N = "n";
-        private static final String COLUMN_SOUND = "sound";
-        private static final String COLUMN_BADGE = "badge";
-
-        public PushNotificationHelper(Context context) {
-            super(context);
-        }
-        @Override
-        public void onCreate(SQLiteDatabase database) {
-           super.onCreate(database);
-        }
-
-        @Override
-        public void onUpgrade(SQLiteDatabase database, int oldVersion, int newVersion) {
-           super.onUpgrade(database,oldVersion,newVersion);
-        }
-    }// End class push notification helper
-
+class PushNotificationDB implements Constants{
     private SQLiteDatabase mDatabase;
     private PushNotificationHelper mDbHelper;
     private Context mContext;
     private static PushNotificationDB instance = null;
+
+    private static final String PUSH_NOTIFICATION_TABLE_NAME = "pushnotification";
+    private static final String COLUMN_MSGID = "MsgID";
+    private static final String COLUMN_CODE = "code";
+    private static final String COLUMN_TITLE = "title";
+    private static final String COLUMN_MSG = "msg";
+    private static final String COLUMN_DATA = "data";
+    private static final String COLUMN_P = "p";
+    private static final String COLUMN_O = "o";
+    private static final String COLUMN_S = "s";
+    private static final String COLUMN_N = "n";
+    private static final String COLUMN_SOUND = "sound";
+    private static final String COLUMN_BADGE = "badge";
+
 
     public static PushNotificationDB getInstance(Context context){
         if(null==instance){
@@ -88,17 +71,17 @@ class PushNotificationDB {
 
     public void storeGcmMessageDatabase(PushNotificationData object) throws IllegalStateException {
         ContentValues values = new ContentValues();
-        values.put(PushNotificationHelper.COLUMN_MSGID, object.getMsgId());
-        values.put(PushNotificationHelper.COLUMN_CODE, object.getCode());
-        values.put(PushNotificationHelper.COLUMN_TITLE, object.getTitle());
-        values.put(PushNotificationHelper.COLUMN_MSG, object.getMsg());
-        values.put(PushNotificationHelper.COLUMN_DATA, object.getData());
-        values.put(PushNotificationHelper.COLUMN_P, object.getPortion());
-        values.put(PushNotificationHelper.COLUMN_O, object.getOrientation());
-        values.put(PushNotificationHelper.COLUMN_S, object.getSpeed());
-        values.put(PushNotificationHelper.COLUMN_N, object.getNoDialog());
-        values.put(PushNotificationHelper.COLUMN_SOUND, object.getSound());
-        values.put(PushNotificationHelper.COLUMN_BADGE, object.getBadge());
+        values.put(COLUMN_MSGID, object.getMsgId());
+        values.put(COLUMN_CODE, object.getCode());
+        values.put(COLUMN_TITLE, object.getTitle());
+        values.put(COLUMN_MSG, object.getMsg());
+        values.put(COLUMN_DATA, object.getData());
+        values.put(COLUMN_P, object.getPortion());
+        values.put(COLUMN_O, object.getOrientation());
+        values.put(COLUMN_S, object.getSpeed());
+        values.put(COLUMN_N, object.getNoDialog());
+        values.put(COLUMN_SOUND, object.getSound());
+        values.put(COLUMN_BADGE, object.getBadge());
         // Checking agian as it crashed once due to sync issue.
 
         if(!mDatabase.isOpen()){
@@ -116,19 +99,19 @@ class PushNotificationDB {
     public void forceDeleteAllRecords(){
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
         SharedPreferences.Editor e = sharedPreferences.edit();
-        e.putString(Constants.PENDING_DIALOG, null);
+        e.putString(PENDING_DIALOG, null);
         e.commit();
         mDatabase.execSQL("delete from " + PushNotificationHelper.PUSH_NOTIFICATION_TABLE_NAME);
     }
 
     public void forceStoreNoDialog(String MsgID){
         ContentValues values=new ContentValues();
-        values.put(PushNotificationHelper.COLUMN_N,"true");
-        mDatabase.update(PushNotificationHelper.PUSH_NOTIFICATION_TABLE_NAME,values,PushNotificationHelper.COLUMN_MSGID+" = "+MsgID,null);
+        values.put(COLUMN_N,"true");
+        mDatabase.update(PushNotificationHelper.PUSH_NOTIFICATION_TABLE_NAME,values,COLUMN_MSGID+" = "+MsgID,null);
     }
 
     public void deleteEntry(String MsgID) {
-        mDatabase.delete(PushNotificationHelper.PUSH_NOTIFICATION_TABLE_NAME, PushNotificationHelper.COLUMN_MSGID
+        mDatabase.delete(PushNotificationHelper.PUSH_NOTIFICATION_TABLE_NAME,COLUMN_MSGID
                 + " = " + MsgID, null);
     }
 
@@ -141,19 +124,19 @@ class PushNotificationDB {
             return false;
         } else {
             String query = "select * from " + PushNotificationHelper.PUSH_NOTIFICATION_TABLE_NAME +
-                    " where " + PushNotificationHelper.COLUMN_MSGID + " = " + MsgId;
+                    " where " + COLUMN_MSGID + " = " + MsgId;
             Cursor cursor = database.rawQuery(query, null);
             if (cursor != null && cursor.moveToFirst()) {
-                String Code = cursor.getString(cursor.getColumnIndex(PushNotificationHelper.COLUMN_CODE));
-                String Title = cursor.getString(cursor.getColumnIndex(PushNotificationHelper.COLUMN_TITLE));
-                String Msg = cursor.getString(cursor.getColumnIndex(PushNotificationHelper.COLUMN_MSG));
-                String Data = cursor.getString(cursor.getColumnIndex(PushNotificationHelper.COLUMN_DATA));
-                String Portion = cursor.getString(cursor.getColumnIndex(PushNotificationHelper.COLUMN_P));
-                String Orientation = cursor.getString(cursor.getColumnIndex(PushNotificationHelper.COLUMN_O));
-                String Speed = cursor.getString(cursor.getColumnIndex(PushNotificationHelper.COLUMN_S));
-                String NoDialog = cursor.getString(cursor.getColumnIndex(PushNotificationHelper.COLUMN_N));
-                String Sound = cursor.getString(cursor.getColumnIndex(PushNotificationHelper.COLUMN_SOUND));
-                String Badge = cursor.getString(cursor.getColumnIndex(PushNotificationHelper.COLUMN_BADGE));
+                String Code = cursor.getString(cursor.getColumnIndex(COLUMN_CODE));
+                String Title = cursor.getString(cursor.getColumnIndex(COLUMN_TITLE));
+                String Msg = cursor.getString(cursor.getColumnIndex(COLUMN_MSG));
+                String Data = cursor.getString(cursor.getColumnIndex(COLUMN_DATA));
+                String Portion = cursor.getString(cursor.getColumnIndex(COLUMN_P));
+                String Orientation = cursor.getString(cursor.getColumnIndex(COLUMN_O));
+                String Speed = cursor.getString(cursor.getColumnIndex(COLUMN_S));
+                String NoDialog = cursor.getString(cursor.getColumnIndex(COLUMN_N));
+                String Sound = cursor.getString(cursor.getColumnIndex(COLUMN_SOUND));
+                String Badge = cursor.getString(cursor.getColumnIndex(COLUMN_BADGE));
 
                 cursor.close();
                 database.close();

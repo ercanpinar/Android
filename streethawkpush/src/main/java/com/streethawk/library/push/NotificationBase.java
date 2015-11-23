@@ -22,74 +22,54 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 
-import com.streethawk.library.core.Util;
-
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-class NotificationBase {
+public class NotificationBase implements Constants{
+    protected NotificationBase(){}
     private static final HashMap<String, String> _shortNameToUnicode = new HashMap<String, String>();
     private static final Pattern SHORTNAME_PATTERN = Pattern.compile(":([-+\\w]+):");
 
-    public static final int TYPE_DEFAULT_POSITIVE = 0;
-    public static final int TYPE_DEFAULT_NEGATIVE = TYPE_DEFAULT_POSITIVE + 1;
-    public static final int TYPE_DEFAULT_NEUTRAL = TYPE_DEFAULT_NEGATIVE + 1;
-    public static final int TYPE_SHOW_URL_POSITIVE = TYPE_DEFAULT_NEUTRAL + 1;
-    public static final int TYPE_SHOW_URL_NEGATIVE = TYPE_SHOW_URL_POSITIVE + 1;
-    public static final int TYPE_SHOW_URL_CLOSE = TYPE_SHOW_URL_NEGATIVE + 1;
-    public static final int TYPE_OPEN_APP_POSITIVE = TYPE_SHOW_URL_CLOSE + 1;
-    public static final int TYPE_OPEN_APP_NEGATIVE = TYPE_OPEN_APP_POSITIVE + 1;
-    public static final int TYPE_RATE_POSITIVE = TYPE_OPEN_APP_NEGATIVE + 1;
-    public static final int TYPE_RATE_NEGATIVE = TYPE_RATE_POSITIVE + 1;
-    public static final int TYPE_UPDATE_POSITIVE = TYPE_RATE_NEGATIVE + 1;
-    public static final int TYPE_UPDATE_NEGATIVE = TYPE_UPDATE_POSITIVE + 1;
-    public static final int TYPE_CALL_POSITIVE = TYPE_UPDATE_NEGATIVE + 1;
-    public static final int TYPE_CALL_NEGATIVE = TYPE_CALL_POSITIVE + 1;
-    public static final int TYPE_SIMPLE_PUSH_POSITIVE = TYPE_CALL_NEGATIVE + 1;
-    public static final int TYPE_SIMPLE_PUSH_NOTIFICATION_POSITIVE = TYPE_SIMPLE_PUSH_POSITIVE + 1;
-    public static final int TYPE_PUSH_POSITIVE = TYPE_SIMPLE_PUSH_NOTIFICATION_POSITIVE + 1;
-    public static final int TYPE_PUSH_NEGATIVE = TYPE_PUSH_POSITIVE + 1;
-    public static final int TYPE_LOCATION_POSITIVE = TYPE_PUSH_NEGATIVE + 1;
-    public static final int TYPE_LOCATION_NEGATIVE = TYPE_LOCATION_POSITIVE + 1;
-    public static final int TYPE_BLUETOOTH_POSITIVE = TYPE_LOCATION_NEGATIVE + 1;
-    public static final int TYPE_BLUETOOTH_NEGATIVE = TYPE_BLUETOOTH_POSITIVE + 1;
-    public static final int TYPE_FEEDBACK_POSITIVE = TYPE_BLUETOOTH_NEGATIVE + 1;
-    public static final int TYPE_FEEDBACK_NEGATIVE = TYPE_FEEDBACK_POSITIVE + 1;
-    public static final int TYPE_FEEDBACK_SUBMIT = TYPE_FEEDBACK_NEGATIVE + 1;
-    public static final int TYPE_FEEDBACK_CANCEL = TYPE_FEEDBACK_SUBMIT + 1;
-    public static final int TYPE_FEEDBACK_TXT_TITLE = TYPE_FEEDBACK_CANCEL + 1;
-    public static final int TYPE_FEEDBACK_TXT_CONTENT = TYPE_FEEDBACK_TXT_TITLE + 1;
-    public static final int TYPE_FEEDBACK_HINT_TITLE = TYPE_FEEDBACK_TXT_CONTENT + 1;
-    public static final int TYPE_FEEDBACK_HINT_CONTENT = TYPE_FEEDBACK_HINT_TITLE + 1;
-    public static final int TYPE_FEEDBACK_TOAST_SUCCESS = TYPE_FEEDBACK_HINT_CONTENT + 1;
-    public static final int TYPE_FEEDBACK_TOAST_ERROR = TYPE_FEEDBACK_TOAST_SUCCESS + 1;
-    public static final int TYPE_REGISTER_POSITIVE = TYPE_FEEDBACK_TOAST_ERROR + 1;
-    public static final int TYPE_REGISTER_NEGATIVE = TYPE_REGISTER_POSITIVE + 1;
-    public static final int TYPE_LOGIN_POSITIVE = TYPE_REGISTER_NEGATIVE + 1;
-    public static final int TYPE_LOGIN_NEGATIVE = TYPE_LOGIN_POSITIVE + 1;
+    private static final int TYPE_DEFAULT_POSITIVE = 0;
+    private static final int TYPE_DEFAULT_NEGATIVE = TYPE_DEFAULT_POSITIVE + 1;
+    private static final int TYPE_DEFAULT_NEUTRAL = TYPE_DEFAULT_NEGATIVE + 1;
+    private static final int TYPE_SHOW_URL_POSITIVE = TYPE_DEFAULT_NEUTRAL + 1;
+    protected static final int TYPE_SHOW_URL_NEGATIVE = TYPE_SHOW_URL_POSITIVE + 1;
+    protected static final int TYPE_SHOW_URL_CLOSE = TYPE_SHOW_URL_NEGATIVE + 1;
+    private static final int TYPE_OPEN_APP_POSITIVE = TYPE_SHOW_URL_CLOSE + 1;
+    private static final int TYPE_OPEN_APP_NEGATIVE = TYPE_OPEN_APP_POSITIVE + 1;
+    private static final int TYPE_RATE_POSITIVE = TYPE_OPEN_APP_NEGATIVE + 1;
+    private static final int TYPE_RATE_NEGATIVE = TYPE_RATE_POSITIVE + 1;
+    private static final int TYPE_UPDATE_POSITIVE = TYPE_RATE_NEGATIVE + 1;
+    private static final int TYPE_UPDATE_NEGATIVE = TYPE_UPDATE_POSITIVE + 1;
+    private static final int TYPE_CALL_POSITIVE = TYPE_UPDATE_NEGATIVE + 1;
+    private static final int TYPE_CALL_NEGATIVE = TYPE_CALL_POSITIVE + 1;
+    protected static final int TYPE_SIMPLE_PUSH_POSITIVE = TYPE_CALL_NEGATIVE + 1;
+    protected static final int TYPE_SIMPLE_PUSH_NOTIFICATION_POSITIVE = TYPE_SIMPLE_PUSH_POSITIVE + 1;
+    private static final int TYPE_PUSH_POSITIVE = TYPE_SIMPLE_PUSH_NOTIFICATION_POSITIVE + 1;
+    private static final int TYPE_PUSH_NEGATIVE = TYPE_PUSH_POSITIVE + 1;
+    private static final int TYPE_LOCATION_POSITIVE = TYPE_PUSH_NEGATIVE + 1;
+    private static final int TYPE_LOCATION_NEGATIVE = TYPE_LOCATION_POSITIVE + 1;
+    private static final int TYPE_BLUETOOTH_POSITIVE = TYPE_LOCATION_NEGATIVE + 1;
+    private static final int TYPE_BLUETOOTH_NEGATIVE = TYPE_BLUETOOTH_POSITIVE + 1;
+    private static final int TYPE_FEEDBACK_POSITIVE = TYPE_BLUETOOTH_NEGATIVE + 1;
+    protected static final int TYPE_FEEDBACK_NEGATIVE = TYPE_FEEDBACK_POSITIVE + 1;
+    protected static final int TYPE_FEEDBACK_SUBMIT = TYPE_FEEDBACK_NEGATIVE + 1;
+    protected static final int TYPE_FEEDBACK_CANCEL = TYPE_FEEDBACK_SUBMIT + 1;
+    private static final int TYPE_FEEDBACK_TXT_TITLE = TYPE_FEEDBACK_CANCEL + 1;
+    private static final int TYPE_FEEDBACK_TXT_CONTENT = TYPE_FEEDBACK_TXT_TITLE + 1;
+    protected static final int TYPE_FEEDBACK_HINT_TITLE = TYPE_FEEDBACK_TXT_CONTENT + 1;
+    protected static final int TYPE_FEEDBACK_HINT_CONTENT = TYPE_FEEDBACK_HINT_TITLE + 1;
+    protected static final int TYPE_FEEDBACK_TOAST_SUCCESS = TYPE_FEEDBACK_HINT_CONTENT + 1;
+    protected static final int TYPE_FEEDBACK_TOAST_ERROR = TYPE_FEEDBACK_TOAST_SUCCESS + 1;
+    private static final int TYPE_REGISTER_POSITIVE = TYPE_FEEDBACK_TOAST_ERROR + 1;
+    private static final int TYPE_REGISTER_NEGATIVE = TYPE_REGISTER_POSITIVE + 1;
+    private static final int TYPE_LOGIN_POSITIVE = TYPE_REGISTER_NEGATIVE + 1;
+    private static final int TYPE_LOGIN_NEGATIVE = TYPE_LOGIN_POSITIVE + 1;
     public static final int TYPE_BT_ENABLE_TOAST = TYPE_LOGIN_NEGATIVE + 1;
 
-    public static final int CODE_ERROR = -1;
-    public static final int CODE_OPEN_URL = 8000;
-    public static final int CODE_REQUEST_THE_APP_STATUS = 8003;
-    public static final int CODE_LAUNCH_ACTIVITY = 8004;
-    public static final int CODE_RATE_APP = 8005;
-    public static final int CODE_USER_REGISTRATION_SCREEN = 8006;
-    public static final int CODE_USER_LOGIN_SCREEN = 8007;
-    public static final int CODE_UPDATE_APP = 8008;
-    public static final int CODE_CALL_TELEPHONE_NUMBER = 8009;
-    public static final int CODE_SIMPLE_PROMPT = 8010;
-    public static final int CODE_FEEDBACK = 8011;
-    public static final int CODE_IBEACON = 8012;
-    public static final int CODE_ACCEPT_PUSHMSG = 8013;
-    public static final int CODE_ENABLE_LOCATION = 8014;
-    public static final int CODE_CUSTOM_JSON_FROM_SERVER = 8049;
-    public static final int CODE_CUSTOM_ACTIONS = 8100;
-    public static final int CODE_FEED_ACK = 8200;
-    public static final int CODE_FEED_RESULT = 8201;
-    public static final int CODE_PUSH_ACK = 8202; // Added in v2
-    public static final int CODE_PUSH_RESULT = 8203; // Added in v2
+
 
     private static final String STREETHAWK_SHOW_URL_POSITIVE = "Show";
     private static final String STREETHAWK_SHOW_URL_NEGATIVE = "Cancel";
@@ -134,16 +114,16 @@ class NotificationBase {
     private final String ICON_CANCEL = "shcancel";              // generic cancelcancels
     private final String ICON_LATER = "shlater";               // 8005 later
 
-    public static final String SHRESULT = "result";
+    protected static final String SHRESULT = "result";
 
     /**
      * @param code   received by server
      * @param action 1-positive 0-neutral -1 =negative
      * @return resource id icon
      */
-    public int getIcon(Context context, int code, int action) {
+    protected int getIcon(Context context, int code, int action) {
         String packageName = context.getPackageName();
-        if (action == Constants.STREETHAWK_ACCEPTED) {
+        if (action == STREETHAWK_ACCEPTED) {
             switch (code) {
                 case CODE_OPEN_URL:
                     return (context.getResources().getIdentifier(ICON_WEBSITE, "drawable", packageName));         //8000
@@ -171,7 +151,7 @@ class NotificationBase {
                     return (context.getResources().getIdentifier(ICON_ACCEPT, "drawable", packageName));
             }
         }
-        if (action == Constants.STREETHAWK_DECLINED) {
+        if (action == STREETHAWK_DECLINED) {
             switch (code) {
                 case CODE_RATE_APP:
                     return (context.getResources().getIdentifier(ICON_LATER, "drawable", packageName));
@@ -212,7 +192,7 @@ class NotificationBase {
      * @param String_type
      * @return
      */
-    public static String getStringtoDisplay(Context context, int String_type) {
+    protected static String getStringtoDisplay(Context context, int String_type) {
         String packageName = context.getPackageName();
         int id = 0;
         switch (String_type) {
@@ -359,7 +339,8 @@ class NotificationBase {
                 break;
 
             default:
-                return new String("*****************************");  // just to get attention
+                String str = "********************************";
+                return str;
         }
         return context.getString(id);
     }
@@ -428,22 +409,22 @@ class NotificationBase {
     public static void sendResultBroadcast(Context context, String msgId, int result) {
         Intent broadcastIntent = new Intent();
         Bundle extras = new Bundle();
-        extras.putString(Constants.MSGID, msgId);
-        String installId = Util.getInstallId(context);
-        broadcastIntent.putExtra(Constants.PENDING_DIALOG, msgId);
+        extras.putString(MSGID, msgId);
+        //String installId = Util.getInstallId(context);
+        broadcastIntent.putExtra(PENDING_DIALOG, msgId);
         // send package name to prevent app to respond to broadcast from other apps integrated with Streethawk SDK
-        broadcastIntent.putExtra(Constants.SHPACKAGENAME, context.getPackageName());
+        broadcastIntent.putExtra(SHPACKAGENAME, context.getPackageName());
         broadcastIntent.putExtras(extras);
         switch (result) {
-            case Constants.STREETHAWK_ACCEPTED:
-                broadcastIntent.setAction(Constants.BROADCAST_STREETHAWK_ACCEPTED);
+            case STREETHAWK_ACCEPTED:
+                broadcastIntent.setAction(BROADCAST_STREETHAWK_ACCEPTED);
                 break;
             default:
-            case Constants.STREETHAWK_DECLINED:
-                broadcastIntent.setAction(Constants.BROADCAST_STREETHAWK_DECLINED);
+            case STREETHAWK_DECLINED:
+                broadcastIntent.setAction(BROADCAST_STREETHAWK_DECLINED);
                 break;
-            case Constants.STREETHAWK_POSTPONED:
-                broadcastIntent.setAction(Constants.BROADCAST_STREETHAWK_POSTPONED);
+            case STREETHAWK_POSTPONED:
+                broadcastIntent.setAction(BROADCAST_STREETHAWK_POSTPONED);
                 break;
         }
         context.sendBroadcast(broadcastIntent);

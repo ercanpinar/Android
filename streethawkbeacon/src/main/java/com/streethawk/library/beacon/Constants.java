@@ -20,17 +20,16 @@ package com.streethawk.library.beacon;
 /**
  * String constants
  */
-class Constants {
+interface Constants {
 
-   public static final String TAG = "StreetHawk";
-   public static final String SUBTAG = "Beacon ";
-
-   public static final String BROADCAST_BEACON_SCAN_TRIGGER = "com.streethawk.intent.action.gcm.STREETHAWK_APP_BEACON_WIFI_MODE";
-   public static final  int ONE_SECOND = 1000;
-   public static final  int ONE_MINUTE = 60 * ONE_SECOND;
-   public static final  int BLE_SCAN_INTERVAL_BG = 2 * ONE_MINUTE;         // 2 minutes
-   public static final  int BLE_SCAN_INTERVAL_FG = 1 * ONE_MINUTE;         // 1 minute
-   public static final String BEACON_MONITOR_FLAG = "beaconmonitorflag";
-   public static final int CODE_IBEACON_UPDATES = 21;
+    String TAG = "StreetHawk";
+    String SUBTAG = "Beacon ";
+    String BROADCAST_BEACON_SCAN_TRIGGER = "com.streethawk.intent.action.gcm.STREETHAWK_APP_BEACON_WIFI_MODE";
+    int ONE_SECOND = 1000;
+    int ONE_MINUTE = 60 * ONE_SECOND;
+    int BLE_SCAN_INTERVAL_BG = 2 * ONE_MINUTE;         // 2 minutes
+    int BLE_SCAN_INTERVAL_FG = 1 * ONE_MINUTE;         // 1 minute
+    String BEACON_MONITOR_FLAG = "beaconmonitorflag";
+    int CODE_IBEACON_UPDATES = 21;
 
 }

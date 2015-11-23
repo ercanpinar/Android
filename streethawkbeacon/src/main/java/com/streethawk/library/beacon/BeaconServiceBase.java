@@ -45,7 +45,7 @@ import java.util.Set;
 /**
  * Base class for service to detect beacons in proxmity
  */
-public abstract class BeaconServiceBase extends Service {
+public abstract class BeaconServiceBase extends Service implements Constants{
     public BeaconServiceBase() {
     }
 
@@ -68,7 +68,7 @@ public abstract class BeaconServiceBase extends Service {
 
     public abstract void scanForBeacon();
 
-    public abstract IBinder onBind(Intent intent);
+    public IBinder onBind(Intent intent){return null;}
 
     public void onDestroy() {
         super.onDestroy();
@@ -100,7 +100,7 @@ public abstract class BeaconServiceBase extends Service {
             mOldBeacons.clear();
             return;
         }
-        params.putString(Util.CODE, Integer.toString(Constants.CODE_IBEACON_UPDATES));
+        params.putString(Util.CODE, Integer.toString(CODE_IBEACON_UPDATES));
         params.putString(Util.SHMESSAGE_ID, null);
         params.putString("json", object.toString());
         manager.addLogsForSending(params);
@@ -189,7 +189,7 @@ public abstract class BeaconServiceBase extends Service {
      */
     protected void unRegisterBeconTask(Context context) {
         Intent mBeaconTask = new Intent(context, SHBeaconModuleBC.class);
-        mBeaconTask.setAction(Constants.BROADCAST_BEACON_SCAN_TRIGGER);
+        mBeaconTask.setAction(BROADCAST_BEACON_SCAN_TRIGGER);
         PendingIntent appStatusIntent = PendingIntent.getBroadcast(context, 0, mBeaconTask, PendingIntent.FLAG_UPDATE_CURRENT);
         if (null != appStatusIntent) {
             AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
@@ -206,7 +206,7 @@ public abstract class BeaconServiceBase extends Service {
     protected void registerBeaconTask(final Context context, int scanInterval) {
         Intent schedule = new Intent();
         schedule.putExtra(Util.INSTALL_ID, Util.getInstallId(context));
-        schedule.setAction(Constants.BROADCAST_BEACON_SCAN_TRIGGER);
+        schedule.setAction(BROADCAST_BEACON_SCAN_TRIGGER);
         boolean taskRegistered = (PendingIntent.getBroadcast(context, 0,
                 schedule,
                 PendingIntent.FLAG_NO_CREATE) != null);
@@ -316,7 +316,7 @@ public abstract class BeaconServiceBase extends Service {
             if (object.toString().equals("{ }")) {
                 return;
             }
-            params.putString(Util.CODE, Integer.toString(Constants.CODE_IBEACON_UPDATES));
+            params.putString(Util.CODE, Integer.toString(CODE_IBEACON_UPDATES));
             params.putString(Util.SHMESSAGE_ID, null);
             params.putString("json", object.toString());
             Log.i(Util.TAG, SUBTAG + "Notifying beacons detected" + object.toString());

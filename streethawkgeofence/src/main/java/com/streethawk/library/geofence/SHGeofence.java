@@ -38,7 +38,8 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class SHGeofence implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, ResultCallback<Status> {
+public class SHGeofence implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener
+        ,ResultCallback<Status>,Constants {
     private final String SUBTAG = "Geofence ";
     private static Context mContext;
     private static SHGeofence mInstance;
@@ -111,14 +112,14 @@ public class SHGeofence implements GoogleApiClient.ConnectionCallbacks, GoogleAp
     public void stopMonitoring() {
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
         SharedPreferences.Editor e = sharedPreferences.edit();
-        e.putBoolean(Constants.IS_GEOFENCE_ENABLE,false);
+        e.putBoolean(IS_GEOFENCE_ENABLE,false);
         e.commit();
         if (null != mGoogleApiClient) {
             LocationServices.GeofencingApi.removeGeofences(
                     mGoogleApiClient,
                     // This is the same pending intent that was used in addGeofences().
                     getGeofencePendingIntent()
-            ).setResultCallback(this); // Result processed in onResult().
+            )/*.setResultCallback(this)*/; // Result processed in onResult().
         } else {
             Log.e(Util.TAG, SUBTAG + "mGoogleApiClient is null in stopMonitoringExistingGeofence.Check...");
         }
@@ -143,12 +144,16 @@ public class SHGeofence implements GoogleApiClient.ConnectionCallbacks, GoogleAp
      * @param message String to explain user about the location permission
      */
     public void startGeofenceWithPermissionDialog(String message){
+        if(Util.PLATFORM_XAMARIN==Util.RELEASE_PLATFORM){
+            Log.i(Util.TAG,"startGeofenceWithPermissionDialog is not supported on Xamarin");
+            return;
+        }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             Intent intent = new Intent(mContext, AskGeoPermission.class);
             Bundle extras = new Bundle();
             if (null != message)
-                extras.putString(Constants.PERMISSION_MSG, message);
-            extras.putBoolean(Constants.PERMISSION_BOOL, true);
+                extras.putString(PERMISSION_MSG, message);
+            extras.putBoolean(PERMISSION_BOOL, true);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.putExtras(extras);
             mContext.startActivity(intent);
@@ -173,7 +178,7 @@ public class SHGeofence implements GoogleApiClient.ConnectionCallbacks, GoogleAp
                         // pending intent is used to generate an intent when a matched geofence
                         // transition is observed.
                         getGeofencePendingIntent()
-                ).setResultCallback(this); // Result processed in onResult().
+                )/*.setResultCallback(this)*/; // Result processed in onResult().
             } catch (SecurityException securityException) {
                 // Catch exception generated if the app does not use ACCESS_FINE_LOCATION permission.
                 securityException.printStackTrace();
@@ -277,7 +282,7 @@ public class SHGeofence implements GoogleApiClient.ConnectionCallbacks, GoogleAp
     public void onConnected(Bundle bundle) {
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
         SharedPreferences.Editor e = sharedPreferences.edit();
-        e.putBoolean(Constants.IS_GEOFENCE_ENABLE, true);
+        e.putBoolean(IS_GEOFENCE_ENABLE, true);
         e.commit();
         monitorGeofence();
     }
@@ -292,6 +297,7 @@ public class SHGeofence implements GoogleApiClient.ConnectionCallbacks, GoogleAp
 
     }
 
+    // Comment this for Xamarin
     @Override
     public void onResult(Status status) {
 

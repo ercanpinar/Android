@@ -49,7 +49,7 @@ import javax.net.ssl.HttpsURLConnection;
 /**
  * Class hosts function for alert settings. Alert settings can be used to disable and re enable push messaging on user's device.
  */
-class AlertSettings{
+class AlertSettings implements Constants{
     public static class AlertSettingsInfo {
 
         public Long pause_minutes;
@@ -255,9 +255,9 @@ class AlertSettings{
             if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
                 SharedPreferences sharedPreferences = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM,Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putInt(Constants.SHPAUSETIME, pauseMinutes);
+                editor.putInt(SHPAUSETIME, pauseMinutes);
                 long savedMins  = (long)(System.currentTimeMillis() / 60000);
-                editor.putLong(Constants.SHSAVEDTIME,savedMins);
+                editor.putLong(SHSAVEDTIME,savedMins);
                 editor.apply();
                 return true;
             }

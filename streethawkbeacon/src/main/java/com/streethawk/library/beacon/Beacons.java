@@ -28,7 +28,7 @@ import com.streethawk.library.core.Util;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class Beacons{
+public class Beacons implements Constants{
     private final String SUBTAG = "Beacons ";
     private static Beacons mInstance = null;
     private static Context mContext;
@@ -41,6 +41,7 @@ public class Beacons{
             mInstance = new Beacons();
         return mInstance;
     }
+
 
     /**
      * API to notify streethawk server when device enters a beacon region.
@@ -79,7 +80,7 @@ public class Beacons{
                 public void run() {
                     Logging manager = Logging.getLoggingInstance(mContext);
                     Bundle params = new Bundle();
-                    params.putString(Util.CODE, Integer.toString(Constants.CODE_IBEACON_UPDATES));
+                    params.putString(Util.CODE, Integer.toString(CODE_IBEACON_UPDATES));
                     params.putString(Util.SHMESSAGE_ID, null);
                     params.putString("json", object.toString());
                     manager.addLogsForSending(params);
@@ -124,7 +125,7 @@ public class Beacons{
                 public void run() {
                     Logging manager = Logging.getLoggingInstance(mContext);
                     Bundle params = new Bundle();
-                    params.putString(Util.CODE, Integer.toString(Constants.CODE_IBEACON_UPDATES));
+                    params.putString(Util.CODE, Integer.toString(CODE_IBEACON_UPDATES));
                     params.putString(Util.SHMESSAGE_ID, null);
                     params.putString("json", object.toString());
                     manager.addLogsForSending(params);
@@ -148,7 +149,7 @@ public class Beacons{
     public void stopBeaconMonitoring(){
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
         SharedPreferences.Editor e = sharedPreferences.edit();
-        e.putBoolean(Constants.BEACON_MONITOR_FLAG,false);
+        e.putBoolean(BEACON_MONITOR_FLAG,false);
         e.commit();
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             Intent beaconService = new Intent(mContext, BeaconServiceKK.class);
@@ -170,7 +171,7 @@ public class Beacons{
     public boolean startBeaconService() {
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
         SharedPreferences.Editor e = sharedPreferences.edit();
-        e.putBoolean(Constants.BEACON_MONITOR_FLAG, true);
+        e.putBoolean(BEACON_MONITOR_FLAG, true);
         e.commit();
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             Log.e(Util.TAG,SUBTAG +" Starting beacon monitoring service");

@@ -47,7 +47,7 @@ import java.util.Set;
 
 import javax.net.ssl.HttpsURLConnection;
 
-class LoggingBase {
+public class LoggingBase implements Constants {
     private Context mContext;
     private final String SUBTAG = "LoggingBase";
     private final String PRIORITY = "priority";
@@ -56,15 +56,15 @@ class LoggingBase {
     private final String HOST = "host";
     private final String ACTIVITY_LIST = "submit_views";
 
-    LoggingBase(Context context) {
+    protected LoggingBase(Context context) {
         this.mContext = context;
     }
 
     /*Member variables*/
     private static String mHostUrl = null;
-    public static final String PROD_DEFAULT_HOST_URL = "https://api.streethawk.com";
+    private  static final String PROD_DEFAULT_HOST_URL = "https://api.streethawk.com";
 
-    public enum ApiMethod {
+    protected enum ApiMethod {
         APP_GET_STATUS,
         USER_ALERT_SETTINGS,
         INSTALL_LIST,
@@ -84,7 +84,7 @@ class LoggingBase {
 
     private static String getHostUrl(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
-        mHostUrl = sharedPreferences.getString(Constants.KEY_HOST, null);
+        mHostUrl = sharedPreferences.getString(KEY_HOST, null);
         if (null == mHostUrl) {
             mHostUrl = PROD_DEFAULT_HOST_URL;
         }
@@ -117,7 +117,7 @@ class LoggingBase {
      * @param query   query parameters
      * @return
      */
-    public static String buildUri(Context context, ApiMethod method, Bundle query) {
+    protected  static String buildUri(Context context, ApiMethod method, Bundle query) {
         Uri.Builder uriBuilder = getHostUri(context, method).buildUpon();
         switch (method) {
             case APP_GET_STATUS: {
@@ -149,7 +149,7 @@ class LoggingBase {
             case INSTALL_LOG: {
                 uriBuilder.appendPath("installs");
                 uriBuilder.appendPath("log");
-                uriBuilder.appendQueryParameter(Constants.INSTALLID, Util.getInstallId(context));
+                uriBuilder.appendQueryParameter(INSTALLID, Util.getInstallId(context));
                 break;
             }
             case INSTALL_REPORT_CRASH: {
@@ -169,7 +169,7 @@ class LoggingBase {
             case CHECK_LIBRARY_VERSION:
                 uriBuilder.appendPath("core");
                 uriBuilder.appendPath("library");
-                uriBuilder.appendQueryParameter(Constants.OPERATING_SYSTEM, "android");
+                uriBuilder.appendQueryParameter(OPERATING_SYSTEM, "android");
                 break;
             case FETCH_IBEACON_LIST:
                 uriBuilder.appendPath("ibeacons");
@@ -211,8 +211,8 @@ class LoggingBase {
             public void run() {
                 SharedPreferences prefs = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
                 SharedPreferences.Editor e = prefs.edit();
-                e.putBoolean(Constants.SHINSTALL_STATE, false);
-                e.putString(Constants.INSTALL_ID, null);
+                e.putBoolean(SHINSTALL_STATE, false);
+                e.putString(INSTALL_ID, null);
                 e.commit();
                 Install.getInstance(mContext).registerInstall();
             }
@@ -223,9 +223,9 @@ class LoggingBase {
         SharedPreferences prefs = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
         SharedPreferences.Editor e = prefs.edit();
         if (null == array)
-            e.putString(Constants.SHLOGPRIORITY, null);
+            e.putString(SHLOGPRIORITY, null);
         else
-            e.putString(Constants.SHLOGPRIORITY, array.toString());
+            e.putString(SHLOGPRIORITY, array.toString());
         e.commit();
     }
 
@@ -238,19 +238,19 @@ class LoggingBase {
 
     private boolean getDefaultPriority(int code) {
         switch (code) {
-            case Constants.CODE_LOCATION_UPDATES:         // 20
-            case Constants.CODE_IBEACON_UPDATES:          // 21
-            case Constants.CODE_GEOFENCE_UPDATES:         // 22
-            case Constants.CODE_DEVICE_TIMEZONE:          // 8050
-            case Constants.CODE_HEARTBEAT:                // 8051
-            case Constants.CODE_APP_OPENED_FROM_BG:       // 8103
-            case Constants.CODE_APP_TO_BG:                // 8104
-            case Constants.CODE_USER_DISABLES_LOCATION:   // 8112
-            case Constants.CODE_PUSH_ACK:                 // 8202  // Making 8202 priority logline as we have bundle logline now
-            case Constants.CODE_PUSH_RESULT:              // 8203
-            case Constants.CODE_INCREMENT_TAG:            // 8997
-            case Constants.CODE_UPDATE_CUSTOM_TAG:        // 8999
-            case Constants.CODE_DELETE_CUSTOM_TAG:        // 8998
+            case CODE_LOCATION_UPDATES:         // 20
+            case CODE_IBEACON_UPDATES:          // 21
+            case CODE_GEOFENCE_UPDATES:         // 22
+            case CODE_DEVICE_TIMEZONE:          // 8050
+            case CODE_HEARTBEAT:                // 8051
+            case CODE_APP_OPENED_FROM_BG:       // 8103
+            case CODE_APP_TO_BG:                // 8104
+            case CODE_USER_DISABLES_LOCATION:   // 8112
+            case CODE_PUSH_ACK:                 // 8202  // Making 8202 priority logline as we have bundle logline now
+            case CODE_PUSH_RESULT:              // 8203
+            case CODE_INCREMENT_TAG:            // 8997
+            case CODE_UPDATE_CUSTOM_TAG:        // 8999
+            case CODE_DELETE_CUSTOM_TAG:        // 8998
                 return true;
             default:
                 return false;
@@ -265,7 +265,7 @@ class LoggingBase {
      */
     protected boolean isPriorityLogLine(int code) {
         SharedPreferences prefs = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
-        String priority = prefs.getString(Constants.SHLOGPRIORITY, null);
+        String priority = prefs.getString(SHLOGPRIORITY, null);
         if (null == priority) {
             return getDefaultPriority(code);
         } else {
@@ -294,7 +294,7 @@ class LoggingBase {
      * @param answer
      */
 
-    public void processAppStatusCall(String answer) {
+    protected void processAppStatusCall(String answer) {
         try {
             JSONObject object = new JSONObject(answer);
             if (object.has(Util.APP_STATUS)) {
@@ -388,7 +388,6 @@ class LoggingBase {
         }
     }
 
-
     /**
      * @param context API sends friendly name to streethawk server
      */
@@ -437,10 +436,10 @@ class LoggingBase {
                         return;
                     }
                     HashMap<String, String> logMap = new HashMap<String, String>();
-                    logMap.put(Constants.INSTALL_ID, installId);
+                    logMap.put(INSTALL_ID, installId);
                     logMap.put(NAMES,list);
                     try {
-                        URL url = new URL(Logging.buildUri(context, LoggingBase.ApiMethod.SEND_ACTIVITY_LIST, null));
+                        URL url = new URL(buildUri(context, LoggingBase.ApiMethod.SEND_ACTIVITY_LIST, null));
                         HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
                         connection.setReadTimeout(10000);
                         connection.setConnectTimeout(15000);
@@ -449,7 +448,7 @@ class LoggingBase {
                         connection.setDoOutput(true);
                         connection.setRequestProperty("X-Installid", installId);
                         connection.setRequestProperty("X-App-Key", app_key);
-                        connection.setRequestProperty("User-Agent", app_key + "(" + Constants.SHLIBRARY_VERSION + ")");
+                        connection.setRequestProperty("User-Agent", app_key + "(" + SHLIBRARY_VERSION + ")");
                         OutputStream os = connection.getOutputStream();
                         BufferedWriter writer = new BufferedWriter(
                                 new OutputStreamWriter(os, "UTF-8"));
@@ -505,7 +504,7 @@ class LoggingBase {
      *
      * @param answer
      */
-    public void processErrorAckFromServer(String answer) {
+    protected void processErrorAckFromServer(String answer) {
         try {
             String code = null;
             String value = null;
@@ -515,11 +514,11 @@ class LoggingBase {
                 String key = (String) keys.next();
                 if (key instanceof String) {
                     switch (key) {
-                        case Constants.CODE:
-                            code = object.getString(Constants.CODE);
+                        case CODE:
+                            code = object.getString(CODE);
                             break;
-                        case Constants.JSON_VALUE:
-                            value = object.getString(Constants.JSON_VALUE);
+                        case JSON_VALUE:
+                            value = object.getString(JSON_VALUE);
                             break;
                     }
                 }
@@ -541,12 +540,12 @@ class LoggingBase {
         if (value_host == null)
             return;
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
-        String currentHost = sharedPreferences.getString(Constants.KEY_HOST, null);
+        String currentHost = sharedPreferences.getString(KEY_HOST, null);
         if (null != currentHost && value_host.equals(currentHost))
             return;
         else {
             SharedPreferences.Editor edit = sharedPreferences.edit();
-            edit.putString(Constants.KEY_HOST, value_host);
+            edit.putString(KEY_HOST, value_host);
             edit.commit();
         }
     }
@@ -554,7 +553,7 @@ class LoggingBase {
 
     protected boolean getStreethawkState() {
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
-        return sharedPreferences.getBoolean(Constants.KEY_STREETHAWK, true);
+        return sharedPreferences.getBoolean(KEY_STREETHAWK, true);
     }
 
 
@@ -566,12 +565,12 @@ class LoggingBase {
     private void setStreethawkState(boolean value_streethawk) {
 
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
-        boolean current_state = sharedPreferences.getBoolean(Constants.KEY_STREETHAWK, true);
+        boolean current_state = sharedPreferences.getBoolean(KEY_STREETHAWK, true);
         if (current_state == value_streethawk)
             return;
         else {
             SharedPreferences.Editor edit = sharedPreferences.edit();
-            edit.putBoolean(Constants.KEY_STREETHAWK, value_streethawk);
+            edit.putBoolean(KEY_STREETHAWK, value_streethawk);
             edit.apply();
         }
     }

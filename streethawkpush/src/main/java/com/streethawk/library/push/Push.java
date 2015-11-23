@@ -48,7 +48,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-public class Push{
+public class Push implements Constants{
     private static Context mContext;
     private static Push mPush;
 
@@ -94,7 +94,7 @@ public class Push{
             return;
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
         SharedPreferences.Editor e = sharedPreferences.edit();
-        e.putBoolean(Constants.SHFORCEPUSHTOBG, status);
+        e.putBoolean(SHFORCEPUSHTOBG, status);
         e.commit();
     }
 
@@ -241,7 +241,7 @@ public class Push{
                 // Save Registration id
                 SharedPreferences prefs = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
                 final SharedPreferences.Editor e = prefs.edit();
-                e.putString(Constants.PUSH_ACCESS_DATA, token);
+                e.putString(PUSH_ACCESS_DATA, token);
                 e.putString(SHGCM_SENDER_KEY_APP, project_number);
                 e.commit();
                 addPushModule();
@@ -320,7 +320,7 @@ public class Push{
                 long backoff = BACKOFF_MILLI_SECONDS + new Random().nextInt(1000);
                 for (int i = 1; i <= MAX_ATTEMPTS; i++) {
                         SharedPreferences prefs = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
-                        String token  = prefs.getString(Constants.PUSH_ACCESS_DATA,null);
+                        String token  = prefs.getString(PUSH_ACCESS_DATA,null);
                         if(null!=token) {
                             updateInstallWithGcmIdIfNeeded(token);
                             return;
@@ -345,7 +345,7 @@ public class Push{
     public boolean isUsePush() {
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
         if (sharedPreferences != null)
-            return sharedPreferences.getBoolean(Constants.SHGCM_FLAG, true);
+            return sharedPreferences.getBoolean(SHGCM_FLAG, true);
         else
             return true;
     }
@@ -357,7 +357,7 @@ public class Push{
     public void setUseCustomDialog(boolean answer){
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
         SharedPreferences.Editor e = sharedPreferences.edit();
-        e.putBoolean(Constants.SHUSECUSTOMDIALOG_FLAG, answer);
+        e.putBoolean(SHUSECUSTOMDIALOG_FLAG, answer);
         e.commit();
     }
 
@@ -391,8 +391,8 @@ public class Push{
 
     private void displayPendingDialog(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
-        String msgId = sharedPreferences.getString(Constants.PENDING_DIALOG, null);
-        boolean isCustomDialog = sharedPreferences.getBoolean(Constants.SHUSECUSTOMDIALOG_FLAG, false);
+        String msgId = sharedPreferences.getString(PENDING_DIALOG, null);
+        boolean isCustomDialog = sharedPreferences.getBoolean(SHUSECUSTOMDIALOG_FLAG, false);
         if (null == msgId)
             return;
         if (msgId.isEmpty())
@@ -410,7 +410,7 @@ public class Push{
         dbObject.close();
         if (null == pushData) {
             SharedPreferences.Editor e = sharedPreferences.edit();
-            e.putString(Constants.PENDING_DIALOG, null);
+            e.putString(PENDING_DIALOG, null);
             e.commit();
             return;
         }
@@ -418,7 +418,7 @@ public class Push{
             if (null == mISHObserverObject) {
                 Log.e(Util.TAG,SUBTAG+ "mISHObserverObject cannot be null if implementing pending dialog");
                 SharedPreferences.Editor e = sharedPreferences.edit();
-                e.putString(Constants.PENDING_DIALOG, null);
+                e.putString(PENDING_DIALOG, null);
                 e.commit();
             } else {
                 PushDataForApplication pushDataForApplication = new PushDataForApplication();
@@ -429,7 +429,7 @@ public class Push{
             return;
         }
         int code = Integer.parseInt(pushData.getCode());
-        if (code == NotificationBase.CODE_OPEN_URL) {
+        if (code == CODE_OPEN_URL) {
             Float p = -1.0f;
             int o = -1;
             int s = -1;
@@ -463,13 +463,13 @@ public class Push{
                     dbObject.deleteEntry(msgId);
                     dbObject.close();
                     SharedPreferences.Editor e = sharedPreferences.edit();
-                    e.putString(Constants.PENDING_DIALOG, null);
+                    e.putString(PENDING_DIALOG, null);
                     e.commit();
                     try {
-                        NotificationBase.sendResultBroadcast(context, msgId, Constants.STREETHAWK_ACCEPTED);
+                        NotificationBase.sendResultBroadcast(context, msgId, STREETHAWK_ACCEPTED);
                         context.startActivity(nativeBrowserIntent);
                     } catch (Exception ex) {
-                        NotificationBase.sendResultBroadcast(context, msgId, Constants.STREETHAWK_DECLINED);
+                        NotificationBase.sendResultBroadcast(context, msgId, STREETHAWK_DECLINED);
                         ex.printStackTrace();
                     }
                 }
@@ -557,13 +557,13 @@ public class Push{
         } else {
             SharedPreferences sharedPreferences = mContext.getApplicationContext().getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
             long currentMins = (System.currentTimeMillis() / 60000);
-            long savedMins = sharedPreferences.getLong(Constants.SHSAVEDTIME, -1);
-            long pauseMins = sharedPreferences.getInt(Constants.SHPAUSETIME, -1);
+            long savedMins = sharedPreferences.getLong(SHSAVEDTIME, -1);
+            long pauseMins = sharedPreferences.getInt(SHPAUSETIME, -1);
             long remainingMins = (pauseMins - (currentMins - savedMins));
             if (0 >= remainingMins) {
                 SharedPreferences.Editor e = sharedPreferences.edit();
-                e.putLong(Constants.SHSAVEDTIME, 0);
-                e.putInt(Constants.SHPAUSETIME, 0);
+                e.putLong(SHSAVEDTIME, 0);
+                e.putInt(SHPAUSETIME, 0);
                 e.apply();
                 return 0;
             } else {
@@ -603,9 +603,9 @@ public class Push{
      */
     public String getAppPage() {
             SharedPreferences frnd = mContext.getSharedPreferences(Util.SHSHARED_PREF_FRNDLST, Context.MODE_PRIVATE);
-            String url = frnd.getString(Constants.PHONEGAP_URL, null);
+            String url = frnd.getString(PHONEGAP_URL, null);
             SharedPreferences.Editor e = frnd.edit();
-            e.remove(Constants.PHONEGAP_URL);
+            e.remove(PHONEGAP_URL);
             e.commit();
             return url;
     }

@@ -26,7 +26,7 @@ import com.streethawk.library.core.Util;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class SHCoreModuleReceiver extends BroadcastReceiver {
+public class SHCoreModuleReceiver extends BroadcastReceiver implements Constants {
     private final String FEED = "feed";
     public SHCoreModuleReceiver() {}
     @Override
@@ -47,25 +47,25 @@ public class SHCoreModuleReceiver extends BroadcastReceiver {
                                 if (value_feed instanceof String) {
                                     String receivedTime = (String) value_feed;
                                     SharedPreferences sharedPreferences = context.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
-                                    String storedFeedTime = sharedPreferences.getString(Constants.SHFEEDTIMESTAMP, null);
+                                    String storedFeedTime = sharedPreferences.getString(SHFEEDTIMESTAMP, null);
                                     SharedPreferences.Editor editor = sharedPreferences.edit();
                                     if (null == receivedTime) {
-                                        editor.putString(Constants.SHFEEDTIMESTAMP, null);
+                                        editor.putString(SHFEEDTIMESTAMP, null);
                                         editor.commit();
                                         return;
                                     } else {
                                         if (receivedTime.isEmpty()) {
-                                            editor.putString(Constants.SHFEEDTIMESTAMP, null);
+                                            editor.putString(SHFEEDTIMESTAMP, null);
                                             editor.commit();
                                             return;
                                         }if (null == storedFeedTime) {
-                                            editor.putString(Constants.SHFEEDTIMESTAMP, receivedTime);
+                                            editor.putString(SHFEEDTIMESTAMP, receivedTime);
                                             editor.commit();
                                         } else {
                                             if (receivedTime.equals(storedFeedTime)) {
                                                 return;
                                             } else {
-                                                editor.putString(Constants.SHFEEDTIMESTAMP, receivedTime);
+                                                editor.putString(SHFEEDTIMESTAMP, receivedTime);
                                                 editor.commit();
                                             }
                                         }

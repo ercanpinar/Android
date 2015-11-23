@@ -27,13 +27,13 @@ import android.os.Bundle;
 import com.streethawk.library.core.Logging;
 import com.streethawk.library.core.Util;
 
-public class LocationReceiver extends BroadcastReceiver {
+public class LocationReceiver extends BroadcastReceiver implements Constants{
     private final int CODE_USER_DISABLES_LOCATION 		= 8112;
     public LocationReceiver() {}
     @Override
     public void onReceive(Context context, Intent intent) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
-        boolean status = sharedPreferences.getBoolean(Constants.SHLOCATION_FLAG, false);
+        boolean status = sharedPreferences.getBoolean(SHLOCATION_FLAG, false);
         if(!status)
             return;
         String action = intent.getAction();
@@ -55,11 +55,11 @@ public class LocationReceiver extends BroadcastReceiver {
                     if (lat == 0 && lng == 0)
                         return;
                     Bundle extras = new Bundle();
-                    extras.putString(Util.CODE, Integer.toString(Constants.CODE_LOCATION_UPDATES));
+                    extras.putString(Util.CODE, Integer.toString(CODE_LOCATION_UPDATES));
                     extras.putString(Util.SHMESSAGE_ID, null);
-                    extras.putString(Constants.LOCAL_TIME, Util.getFormattedDateTime(System.currentTimeMillis(), false));
-                    extras.putString(Constants.SHLATTITUDE, Double.toString(location.getLatitude()));
-                    extras.putString(Constants.SHLONGITUDE, Double.toString(location.getLongitude()));
+                    extras.putString(LOCAL_TIME, Util.getFormattedDateTime(System.currentTimeMillis(), false));
+                    extras.putString(SHLATTITUDE, Double.toString(location.getLatitude()));
+                    extras.putString(SHLONGITUDE, Double.toString(location.getLongitude()));
                     Logging.getLoggingInstance(context).addLogsForSending(extras);
                 }
             }
@@ -67,7 +67,7 @@ public class LocationReceiver extends BroadcastReceiver {
         if (action.equals("com.streethawk.intent.action.gcm.STREETHAWK_LOCATIONS")) {
                 if (null != intent) {
                     try {
-                        String packageName = intent.getStringExtra(Constants.SHPACKAGENAME);
+                        String packageName = intent.getStringExtra(SHPACKAGENAME);
                         if (!packageName.equals(context.getPackageName())) {
                             return;
                         }
@@ -81,11 +81,11 @@ public class LocationReceiver extends BroadcastReceiver {
                         if (lat == 0 && lng == 0)
                             return;
                         Bundle extras = new Bundle();
-                        extras.putString(Util.CODE, Integer.toString(Constants.CODE_PERIODIC_LOCATION_UPDATE));
+                        extras.putString(Util.CODE, Integer.toString(CODE_PERIODIC_LOCATION_UPDATE));
                         extras.putString(Util.SHMESSAGE_ID, null);
-                        extras.putString(Constants.LOCAL_TIME, Util.getFormattedDateTime(System.currentTimeMillis(), false));
-                        extras.putString(Constants.SHLATTITUDE, Double.toString(location.getLatitude()));
-                        extras.putString(Constants.SHLONGITUDE, Double.toString(location.getLongitude()));
+                        extras.putString(LOCAL_TIME, Util.getFormattedDateTime(System.currentTimeMillis(), false));
+                        extras.putString(SHLATTITUDE, Double.toString(location.getLatitude()));
+                        extras.putString(SHLONGITUDE, Double.toString(location.getLongitude()));
                         Logging.getLoggingInstance(context).addLogsForSending(extras);
                     }
                 }

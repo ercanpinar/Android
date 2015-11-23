@@ -46,7 +46,7 @@ import java.util.Map;
 
 import javax.net.ssl.HttpsURLConnection;
 
-public class SHCoreModuleReceiver extends BroadcastReceiver {
+public class SHCoreModuleReceiver extends BroadcastReceiver implements Constants{
     private final String GEOFENCELIST = "geofences";
     private final String KEY_GEOFENCE = "shKeyGeofenceList";
 
@@ -146,10 +146,10 @@ public class SHCoreModuleReceiver extends BroadcastReceiver {
                                     forceClearGeofenceData(context);
                                     SharedPreferences sharedPreferences = context.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
                                     SharedPreferences.Editor e = sharedPreferences.edit();
-                                    e.putString(Constants.PARENT_GEOFENCE_ID, null);
+                                    e.putString(PARENT_GEOFENCE_ID, null);
                                     e.commit();
                                     instance.storeGeofenceList(value);
-                                    boolean status = sharedPreferences.getBoolean(Constants.IS_GEOFENCE_ENABLE, false);
+                                    boolean status = sharedPreferences.getBoolean(IS_GEOFENCE_ENABLE, false);
                                     if (status){
                                         instance.startGeofenceMonitoring();
                                     }
@@ -193,7 +193,7 @@ public class SHCoreModuleReceiver extends BroadcastReceiver {
                 // Force clear geofence list if server sends null as timestamp
                 forceClearGeofenceData(context);
                 SharedPreferences.Editor e = sharedPreferences.edit();
-                e.putString(Constants.PARENT_GEOFENCE_ID, null);
+                e.putString(PARENT_GEOFENCE_ID, null);
                 e.commit();
             }
         }
@@ -235,7 +235,7 @@ public class SHCoreModuleReceiver extends BroadcastReceiver {
                     if (!(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))) {
                         try {
                             Bundle extras = new Bundle();
-                            extras.putString(Util.CODE, Integer.toString(Constants.CODE_USER_DISABLES_LOCATION));
+                            extras.putString(Util.CODE, Integer.toString(CODE_USER_DISABLES_LOCATION));
                             Logging.getLoggingInstance(context).addLogsForSending(extras);
                             SHGeofence.getInstance(context).stopMonitoring();
                             GeofenceService.notifyAllGeofenceExit(context);
@@ -244,7 +244,7 @@ public class SHCoreModuleReceiver extends BroadcastReceiver {
                         }
                     } else {
                         SharedPreferences sharedPreferences = context.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
-                        boolean status = sharedPreferences.getBoolean(Constants.IS_GEOFENCE_ENABLE, false);
+                        boolean status = sharedPreferences.getBoolean(IS_GEOFENCE_ENABLE, false);
                         if (status){
                             SHGeofence.getInstance(context).startGeofenceMonitoring();
                         }

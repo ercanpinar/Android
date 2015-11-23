@@ -9,10 +9,7 @@ import android.util.Log;
 import com.google.android.gms.gcm.GcmListenerService;
 import com.streethawk.library.core.Util;
 
-/**
- * Created by anuragkondeya on 13/10/15.
- */
-public class SHGcmListenerService extends GcmListenerService {
+public class SHGcmListenerService extends GcmListenerService implements Constants{
     private static final String SHGCM_SENDER_KEY_APP = "shgcmsenderkeyapp";
     @Override
     public void onMessageReceived(String from,Bundle data){
@@ -26,7 +23,7 @@ public class SHGcmListenerService extends GcmListenerService {
             Log.e(Util.TAG,"Mismatched stored and from project number in push");
             return;
         }
-        String msgId = data.getString(Constants.PUSH_MSG_ID);
+        String msgId = data.getString(PUSH_MSG_ID);
         if(null==msgId){
             Log.e(Util.TAG,"Invalid messageId " + msgId);
             return;
@@ -36,8 +33,8 @@ public class SHGcmListenerService extends GcmListenerService {
             return;
         }
         Intent pushNotificationIntent = new Intent();
-        pushNotificationIntent.setAction(Constants.BROADCAST_SH_PUSH_NOTIFICATION);
-        pushNotificationIntent.putExtra(Constants.MSGID, msgId);
+        pushNotificationIntent.setAction(BROADCAST_SH_PUSH_NOTIFICATION);
+        pushNotificationIntent.putExtra(MSGID, msgId);
         sendBroadcast(pushNotificationIntent);
     }
 }

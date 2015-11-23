@@ -39,7 +39,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-public enum StreetHawk {
+public enum StreetHawk implements Constants{
     INSTANCE;
 
     private Activity currentActivity;
@@ -78,7 +78,7 @@ public enum StreetHawk {
 
 
     private String mAppKey = null;
-    private String mAdvertisementId = null;
+    private ISHEventObserver mEventObserver=null;
 
 
     /**
@@ -100,54 +100,39 @@ public enum StreetHawk {
         return this.currentActivity;
     }
 
-    //HashMap<String, PluginBase> pluginMap;
-
-
-    /**
-     * Use registerSHPlugin to register StreetHawk modules to be used in your application
-     * @param pluginObject
-
-    public void registerSHPlugin(PluginBase pluginObject) {
-
-    // This means all plugin class should be singleton in nature. non singleton will not work here
-    if (null == pluginMap) {
-    pluginMap = new HashMap<String, PluginBase>();
-    }
-    pluginMap.put(pluginObject.getClass().toString(), pluginObject);
-
-    }
-     */
-
     /**
      * API to get version of StreetHawk Library
      *
      * @return version
      */
     public String getSHLibraryVersion() {
-        return Constants.SHLIBRARY_VERSION;
+        return SHLIBRARY_VERSION;
     }
 
     /**
+     * @deprecated
      * Set device's Advertisement ID into StreetHawk SDK
-     *
-     * @param context
-     * @param advertisementId
+     * @param context application contect
+     * @param advertisementId advertisement id
      */
+
     public void setAdvertisementId(final Context context, final String advertisementId) {
         new Thread(new Runnable() {
             @Override
             public void run() {
                 SharedPreferences sharedPreferences = context.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
-                String old = sharedPreferences.getString(Constants.SHADVERTISEMENTID, null);
+                String old = sharedPreferences.getString(SHADVERTISEMENTID, null);
                 if (null != old) {
                     if (old.equals(advertisementId))
                         return;
                 }
                 SharedPreferences.Editor e = sharedPreferences.edit();
-                e.putString(Constants.SHADVERTISEMENTID, advertisementId);
+                e.putString(SHADVERTISEMENTID, advertisementId);
                 e.commit();
                 if (null != getInstallId(context)) {
-                    Install.getInstance(context).updateInstall("advertising_identifier", advertisementId, 0);
+                    if(null!=advertisementId) {
+                        tagString(KEY_ADV_ID, advertisementId);
+                    }
                 }
             }
         }).start();
@@ -163,6 +148,17 @@ public enum StreetHawk {
         notifyAppStateResumed(activity);
         StreetHawkCoreService obj = new StreetHawkCoreService();
         obj.forceFlushCrashReportToServer(activity);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    String advId = AdvertisingId.getAdvertisingIdInfo(mContext).getId();
+                    setAdvertisementId(mContext, advId);
+                } catch (Exception e) {
+                    Log.e(Util.TAG, "Excpetion in setting adv id");
+                }
+            }
+        }).start();
     }
 
     protected void activityPausedByService(final Activity activity) {
@@ -177,7 +173,6 @@ public enum StreetHawk {
 
     private static final String SUBTAG = "StreetHawk ";
     private static Context mContext;
-    private static String mSenderID;
     private boolean activityLifecycleRegistered = false;
 
 
@@ -209,6 +204,9 @@ public enum StreetHawk {
                         e.putString(Util.SHAPP_KEY, mAppKey);
                         e.commit();
                     }
+                    if(null!=mEventObserver){
+                        Install.getInstance(mContext).registerInstallEventObserver(mEventObserver);
+                    }
                     Install.getInstance(mContext).registerInstall();
                 }
                 Intent coreService = new Intent(mContext, StreetHawkCoreService.class);
@@ -231,9 +229,9 @@ public enum StreetHawk {
             @Override
             public void run() {
                 Bundle extras = new Bundle();
-                extras.putString(Constants.CODE, Integer.toString(Constants.CODE_USER_ENTER_ACTIVITY));
-                extras.putString(Constants.SHMESSAGE_ID, null);
-                extras.putString(Constants.TYPE_STRING, viewName);
+                extras.putString(CODE, Integer.toString(CODE_USER_ENTER_ACTIVITY));
+                extras.putString(SHMESSAGE_ID, null);
+                extras.putString(TYPE_STRING, viewName);
                 final Logging shManager = Logging.getLoggingInstance(mContext);
                 shManager.addLogsForSending(extras);
             }
@@ -250,7 +248,7 @@ public enum StreetHawk {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                Logging.getLoggingInstance(mContext).sendFeedbackToServer(title,message,0);
+                Logging.getLoggingInstance(mContext).sendFeedbackToServer(title, message, 0);
             }
         }).start();
     }
@@ -267,9 +265,9 @@ public enum StreetHawk {
             @Override
             public void run() {
                 Bundle extras = new Bundle();
-                extras.putString(Constants.CODE, Integer.toString(Constants.CODE_USER_LEAVE_ACTIVITY));
-                extras.putString(Constants.SHMESSAGE_ID, null);
-                extras.putString(Constants.TYPE_STRING, viewName);
+                extras.putString(CODE, Integer.toString(CODE_USER_LEAVE_ACTIVITY));
+                extras.putString(SHMESSAGE_ID, null);
+                extras.putString(TYPE_STRING, viewName);
                 final Logging shManager = Logging.getLoggingInstance(mContext);
                 shManager.addLogsForSending(extras);
             }
@@ -317,8 +315,8 @@ public enum StreetHawk {
     /**
      * API to numeric tag a profile
      *
-     * @param key
-     * @param numeric_value
+     * @param key key
+     * @param numeric_value value
      * @return true for success false if failed
      */
     public boolean tagNumeric(String key, double numeric_value) {
@@ -346,11 +344,11 @@ public enum StreetHawk {
         Future<Boolean> result = executorservice.submit(new Callable<Boolean>() {
             public Boolean call() throws Exception {
                 Bundle extras = new Bundle();
-                extras.putString(Constants.CODE, Integer.toString(Constants.CODE_UPDATE_CUSTOM_TAG));
-                extras.putString(Constants.SHMESSAGE_ID, null);
-                extras.putString(Constants.SHMESSAGE_ID, null);
-                extras.putString(Constants.SH_KEY, checkKey);
-                extras.putString(Constants.TYPE_NUMERIC, Double.toString(checkValue));
+                extras.putString(CODE, Integer.toString(CODE_UPDATE_CUSTOM_TAG));
+                extras.putString(SHMESSAGE_ID, null);
+                extras.putString(SHMESSAGE_ID, null);
+                extras.putString(SH_KEY, checkKey);
+                extras.putString(TYPE_NUMERIC, Double.toString(checkValue));
                 Logging manager = Logging.getLoggingInstance(mContext);
                 return manager.addLogsForSending(extras);
             }
@@ -422,10 +420,10 @@ public enum StreetHawk {
         Future<Boolean> result = executorservice.submit(new Callable<Boolean>() {
             public Boolean call() throws Exception {
                 Bundle extras = new Bundle();
-                extras.putString(Constants.CODE, Integer.toString(Constants.CODE_UPDATE_CUSTOM_TAG));
-                extras.putString(Constants.SHMESSAGE_ID, null);
-                extras.putString(Constants.SH_KEY, checkKey);
-                extras.putString(Constants.TYPE_STRING, checkValue);
+                extras.putString(CODE, Integer.toString(CODE_UPDATE_CUSTOM_TAG));
+                extras.putString(SHMESSAGE_ID, null);
+                extras.putString(SH_KEY, checkKey);
+                extras.putString(TYPE_STRING, checkValue);
                 Logging manager = Logging.getLoggingInstance(mContext);
                 return manager.addLogsForSending(extras);
             }
@@ -636,10 +634,10 @@ public enum StreetHawk {
                         SharedPreferences prefs = context.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
                         String currentActivity = null;
                         currentActivity = activity.getPackageName() + '.' + activity.getLocalClassName();
-                        String storedActivity = prefs.getString(Constants.SHPGPREVPAGE, null);
+                        String storedActivity = prefs.getString(SHPGPREVPAGE, null);
                         if (null == storedActivity) {
                             SharedPreferences.Editor e = prefs.edit();
-                            e.putString(Constants.SHPGPREVPAGE, currentActivity);
+                            e.putString(SHPGPREVPAGE, currentActivity);
                             e.commit();
                             appActivityTracking.notifyNewActivity(context, currentActivity, storedActivity);
                             appActivityTracking.onAppForegrounded(activity);
@@ -651,7 +649,7 @@ public enum StreetHawk {
                         else {
                             // transact to new activity
                             SharedPreferences.Editor e = prefs.edit();
-                            e.putString(Constants.SHPGPREVPAGE, currentActivity);
+                            e.putString(SHPGPREVPAGE, currentActivity);
                             e.apply();
                             appActivityTracking.notifyNewActivity(context, currentActivity, storedActivity);
                         }
@@ -675,18 +673,18 @@ public enum StreetHawk {
                     ComponentName topActivity = tasks.get(0).topActivity;
                     if (!(topActivity.getPackageName().equals(context.getPackageName()))) {
                         SharedPreferences prefs = context.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
-                        String storedActivity = prefs.getString(Constants.SHPGPREVPAGE, null);
+                        String storedActivity = prefs.getString(SHPGPREVPAGE, null);
                         SharedPreferences.Editor e = prefs.edit();
-                        e.putString(Constants.SHPGPREVPAGE, null);
+                        e.putString(SHPGPREVPAGE, null);
                         e.commit();
                         appActivityTracking.notifyNewActivity(context, null, storedActivity);
                         appActivityTracking.onAppBackgrounded(activity);
                     }
                 } else {
                     SharedPreferences prefs = context.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
-                    String storedActivity = prefs.getString(Constants.SHPGPREVPAGE, null);
+                    String storedActivity = prefs.getString(SHPGPREVPAGE, null);
                     SharedPreferences.Editor e = prefs.edit();
-                    e.putString(Constants.SHPGPREVPAGE, null);
+                    e.putString(SHPGPREVPAGE, null);
                     e.commit();
                     appActivityTracking.notifyNewActivity(context, null, storedActivity);
                     appActivityTracking.onAppBackgrounded(activity);
@@ -797,11 +795,11 @@ public enum StreetHawk {
         Future<Boolean> result = executorservice.submit(new Callable<Boolean>() {
             public Boolean call() throws Exception {
                 Bundle extras = new Bundle();
-                extras.putString(Constants.CODE, Integer.toString(Constants.CODE_UPDATE_CUSTOM_TAG));
-                extras.putString(Constants.CODE, Integer.toString(Constants.CODE_UPDATE_CUSTOM_TAG));
-                extras.putString(Constants.SHMESSAGE_ID, null);
-                extras.putString(Constants.SH_KEY, checkKey);
-                extras.putString(Constants.TYPE_DATETIME, checkValue);
+                extras.putString(CODE, Integer.toString(CODE_UPDATE_CUSTOM_TAG));
+                extras.putString(CODE, Integer.toString(CODE_UPDATE_CUSTOM_TAG));
+                extras.putString(SHMESSAGE_ID, null);
+                extras.putString(SH_KEY, checkKey);
+                extras.putString(TYPE_DATETIME, checkValue);
                 Logging manager = Logging.getLoggingInstance(mContext);
                 return manager.addLogsForSending(extras);
             }
@@ -827,8 +825,8 @@ public enum StreetHawk {
     /**
      * API to increment or decrement value of given tag by the given value
      *
-     * @param key
-     * @param value
+     * @param key key
+     * @param value value
      */
     public void incrementTag(String key, int value) {
         if (null == key) {
@@ -847,17 +845,29 @@ public enum StreetHawk {
         JSONObject object = new JSONObject();
         Bundle extras = new Bundle();
         Logging manager = Logging.getLoggingInstance(mContext);
-        extras.putString(Constants.CODE, Integer.toString(Constants.CODE_INCREMENT_TAG));
-        extras.putString(Constants.SHMESSAGE_ID, null);
-        extras.putString(Constants.SH_KEY, key);
-        extras.putString(Constants.TYPE_NUMERIC, Integer.toString(value));
+        extras.putString(CODE, Integer.toString(CODE_INCREMENT_TAG));
+        extras.putString(SHMESSAGE_ID, null);
+        extras.putString(SH_KEY, key);
+        extras.putString(TYPE_NUMERIC, Integer.toString(value));
         manager.addLogsForSending(extras);
+    }
+
+
+    /**
+     * Use registerEventObserver to register
+     * @param instance
+     */
+    public void registerEventObserver(ISHEventObserver instance){
+        this.mEventObserver = instance;
+        if(null!=mContext){
+            Install.getInstance(mContext).registerInstallEventObserver(mEventObserver);
+        }
     }
 
     /**
      * Api to delete a custom profile tag
      *
-     * @param key
+     * @param key Key
      */
     public void removeTag(String key) {
         if (null == key) {
@@ -879,9 +889,9 @@ public enum StreetHawk {
         }
         Bundle extras = new Bundle();
         Logging manager = Logging.getLoggingInstance(mContext);
-        extras.putString(Constants.CODE, Integer.toString(Constants.CODE_DELETE_CUSTOM_TAG));
-        extras.putString(Constants.SHMESSAGE_ID, null);
-        extras.putString(Constants.SH_KEY, key);
+        extras.putString(CODE, Integer.toString(CODE_DELETE_CUSTOM_TAG));
+        extras.putString(SHMESSAGE_ID, null);
+        extras.putString(SH_KEY, key);
         manager.addLogsForSending(extras);
     }
 
@@ -889,8 +899,8 @@ public enum StreetHawk {
      * getInstallId returns StreetHawk's unique identifier for the given install.
      * StreetHawk discourages use of this API.
      *
-     * @param context
-     * @return
+     * @param context application context
+     * @return installid
      */
     public String getInstallId(Context context) {
         return Util.getInstallId(context);

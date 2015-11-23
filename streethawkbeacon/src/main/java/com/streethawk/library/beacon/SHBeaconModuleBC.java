@@ -50,7 +50,7 @@ import java.util.Map;
 
 import javax.net.ssl.HttpsURLConnection;
 
-public class SHBeaconModuleBC extends BroadcastReceiver {
+public class SHBeaconModuleBC extends BroadcastReceiver implements Constants {
     private final String IBEACON = "ibeacon";
     private final String KEY_IBEACON = "shKeyIBeacon";
     private final String SHBEACON_FLAG = "iBeaconFlag";
@@ -280,7 +280,7 @@ public class SHBeaconModuleBC extends BroadcastReceiver {
         if (action.equals(BluetoothAdapter.ACTION_STATE_CHANGED)) {
             final BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
             SharedPreferences sharedPreferences = context.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
-            boolean beaconMonitor = sharedPreferences.getBoolean(Constants.BEACON_MONITOR_FLAG,false);
+            boolean beaconMonitor = sharedPreferences.getBoolean(BEACON_MONITOR_FLAG,false);
             if(!beaconMonitor)
                 return;
             if (bluetoothAdapter.isEnabled()) {
@@ -343,7 +343,7 @@ public class SHBeaconModuleBC extends BroadcastReceiver {
                 e.printStackTrace();
             }
         }
-        if (action.equals(Constants.BROADCAST_BEACON_SCAN_TRIGGER)) {
+        if (action.equals(BROADCAST_BEACON_SCAN_TRIGGER)) {
             BeaconServiceBase obj;
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
                 obj = new BeaconServiceKK(context);
@@ -353,7 +353,7 @@ public class SHBeaconModuleBC extends BroadcastReceiver {
             if (obj.isBTEnable(context)) {
                 obj.unRegisterBeconTask(context);
                 boolean bg = Util.isAppBG(context);
-                int scanInterval = bg ? Constants.BLE_SCAN_INTERVAL_BG : Constants.BLE_SCAN_INTERVAL_FG;
+                int scanInterval = bg ? BLE_SCAN_INTERVAL_BG : BLE_SCAN_INTERVAL_FG;
                 obj.registerBeaconTask(context, scanInterval);
                 obj.scanForBeacon();
             }

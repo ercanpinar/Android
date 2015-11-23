@@ -340,7 +340,7 @@ class SHForegroundNotification extends NotificationBase {
             @Override
             public void onClick(View view) {
                 dialog.dismiss();
-                sendResultBroadcast(mContext, msgId, Constants.STREETHAWK_DECLINED);
+                sendResultBroadcast(mContext, msgId, STREETHAWK_DECLINED);
             }
         };
         return negativeClickListener;
@@ -358,7 +358,7 @@ class SHForegroundNotification extends NotificationBase {
             @Override
             public void onClick(View view) {
                 dialog.dismiss();
-                sendResultBroadcast(mContext, msgId, Constants.STREETHAWK_POSTPONED);
+                sendResultBroadcast(mContext, msgId, STREETHAWK_POSTPONED);
             }
         };
         return neutralClickListener;
@@ -378,7 +378,7 @@ class SHForegroundNotification extends NotificationBase {
                 dialog.dismiss();
                 int code = Integer.parseInt(mPushData.getCode());
                 if (code != CODE_FEEDBACK) {
-                    sendResultBroadcast(mContext, mPushData.getMsgId(), Constants.STREETHAWK_ACCEPTED);
+                    sendResultBroadcast(mContext, mPushData.getMsgId(), STREETHAWK_ACCEPTED);
                 }
                 switch (code) {
                     case CODE_OPEN_URL:
@@ -390,9 +390,9 @@ class SHForegroundNotification extends NotificationBase {
                         String data = mPushData.getData();
                         if (data.isEmpty()) {
                             if (code == CODE_USER_REGISTRATION_SCREEN)
-                                data = Constants.REGISTER_FRIENDLY_NAME;
+                                data = REGISTER_FRIENDLY_NAME;
                             if (code == CODE_USER_LOGIN_SCREEN)
-                                data = Constants.LOGIN_FRIENDLY_NAME;
+                                data = LOGIN_FRIENDLY_NAME;
                         }
                         handleLaunchActivity(mPushData.getMsgId(), data);
                         break;
@@ -425,7 +425,7 @@ class SHForegroundNotification extends NotificationBase {
                         break;
                     default:
                         // Wrong code so dismiss dialog
-                        sendResultBroadcast(mContext, mPushData.getMsgId(), Constants.STREETHAWK_DECLINED);
+                        sendResultBroadcast(mContext, mPushData.getMsgId(), STREETHAWK_DECLINED);
                         break;
                 }
 
@@ -447,7 +447,7 @@ class SHForegroundNotification extends NotificationBase {
             public void onClick(DialogInterface dialog, int which) {
                 int code = Integer.parseInt(mPushData.getCode());
                 if (code != CODE_FEEDBACK) {
-                    sendResultBroadcast(mContext, mPushData.getMsgId(), Constants.STREETHAWK_ACCEPTED);
+                    sendResultBroadcast(mContext, mPushData.getMsgId(), STREETHAWK_ACCEPTED);
                 }
                 switch (code) {
                     case CODE_OPEN_URL:
@@ -459,9 +459,9 @@ class SHForegroundNotification extends NotificationBase {
                         String data = mPushData.getData();
                         if (data.isEmpty()) {
                             if (code == CODE_USER_REGISTRATION_SCREEN)
-                                data = Constants.REGISTER_FRIENDLY_NAME;
+                                data = REGISTER_FRIENDLY_NAME;
                             if (code == CODE_USER_LOGIN_SCREEN)
-                                data = Constants.LOGIN_FRIENDLY_NAME;
+                                data = LOGIN_FRIENDLY_NAME;
                         }
                         handleLaunchActivity(mPushData.getMsgId(), data);
                         break;
@@ -493,7 +493,7 @@ class SHForegroundNotification extends NotificationBase {
                         break;
                     default:
                         // Wrong code so dismiss dialog
-                        sendResultBroadcast(mContext, mPushData.getMsgId(), Constants.STREETHAWK_DECLINED);
+                        sendResultBroadcast(mContext, mPushData.getMsgId(), STREETHAWK_DECLINED);
                         break;
                 }
 
@@ -526,7 +526,7 @@ class SHForegroundNotification extends NotificationBase {
         Bundle extras = new Bundle();
         extras.putString(Util.SHMESSAGE_ID, msgId);
         Intent intent = new Intent(mContext, SHFeedbackActivity.class);
-        extras.putString(Constants.MSGID, msgId);
+        extras.putString(MSGID, msgId);
         intent.putExtras(extras);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         mContext.startActivity(intent);
@@ -543,7 +543,7 @@ class SHForegroundNotification extends NotificationBase {
 
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                sendResultBroadcast(mContext, msgId, Constants.STREETHAWK_DECLINED);
+                sendResultBroadcast(mContext, msgId, STREETHAWK_DECLINED);
             }
         };
         return negativeClickListener;
@@ -560,7 +560,7 @@ class SHForegroundNotification extends NotificationBase {
 
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                sendResultBroadcast(mContext, msgId, Constants.STREETHAWK_POSTPONED);
+                sendResultBroadcast(mContext, msgId, STREETHAWK_POSTPONED);
             }
         };
         return neutralClickListener;
@@ -660,8 +660,8 @@ class SHForegroundNotification extends NotificationBase {
         }
         final String activityName = tempActivityName;
         switch (Util.getPlatformType()) {
-            case Constants.PLATFORM_ANDROID_NATIVE:
-            case Constants.PLATFORM_XAMARIN:
+            case PLATFORM_ANDROID_NATIVE:
+            case PLATFORM_XAMARIN:
             default:
                 try {
                     final Class<?> classname = Class.forName(activityName);
@@ -674,7 +674,7 @@ class SHForegroundNotification extends NotificationBase {
                     /*Clearing pending dialog so as to prevent showing of dialog when again when activity is launched*/
                     SharedPreferences sharedPreferences = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
                     SharedPreferences.Editor e = sharedPreferences.edit();
-                    e.putString(Constants.PENDING_DIALOG, null);
+                    e.putString(PENDING_DIALOG, null);
                     e.commit();
                     Intent intent = new Intent(mContext, classname);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -685,9 +685,9 @@ class SHForegroundNotification extends NotificationBase {
                 }
                 break;
 
-            case Constants.PLATFORM_PHONEGAP:
-            case Constants.PLATFORM_TITANIUM:
-            case Constants.PLATFORM_UNITY:
+            case PLATFORM_PHONEGAP:
+            case PLATFORM_TITANIUM:
+            case PLATFORM_UNITY:
                 if (null == mSHObserver) {
                     Log.e(Util.TAG, STREETHAWK_ERROR_NO_ISHOBSERVER);
                     return;
@@ -772,7 +772,7 @@ class SHForegroundNotification extends NotificationBase {
                 builder.setNegativeButton(Html.fromHtml("<b><i>" + cancel), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        sendResultBroadcast(mContext, msgId, Constants.STREETHAWK_DECLINED);
+                        sendResultBroadcast(mContext, msgId, STREETHAWK_DECLINED);
                     }
                 });
                 final ListView list = new ListView(activity);
@@ -796,7 +796,7 @@ class SHForegroundNotification extends NotificationBase {
                                         Intent intent = new Intent(mContext, SHFeedbackActivity.class);
                                         intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                                         Bundle extras = new Bundle();
-                                        extras.putString(Constants.MSGID, msgId);
+                                        extras.putString(MSGID, msgId);
                                         intent.putExtras(extras);
                                         intent.putExtra("SHFeedbackActyTitle", listoptions.get(position).getOption().toString());
                                         activity.startActivity(intent);
@@ -811,7 +811,7 @@ class SHForegroundNotification extends NotificationBase {
                                             tempTitle = title;
                                         }
                                         Logging.getLoggingInstance(mContext).sendFeedbackToServer(tempTitle, listoptions.get(position).getOption().toString(), 0);
-                                        sendResultBroadcast(mContext, msgId, Constants.STREETHAWK_ACCEPTED);
+                                        sendResultBroadcast(mContext, msgId, STREETHAWK_ACCEPTED);
                                         Toast.makeText(mContext, "Feedback submitted", Toast.LENGTH_LONG).show();
                                         break;
                                 }

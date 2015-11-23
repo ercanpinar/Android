@@ -76,7 +76,7 @@ class SHBackgroundNotification extends NotificationBase {
     }
 
     /**
-     * For android Lolipop, code decides to display headsup notifcation
+     * For android Lollipop, code decides to display heads up notification
      *
      * @param code
      * @return
@@ -211,27 +211,27 @@ class SHBackgroundNotification extends NotificationBase {
         Bundle extras = new Bundle();
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
         SharedPreferences.Editor e = sharedPreferences.edit();
-        e.putString(Constants.PENDING_DIALOG, msgId);
+        e.putString(PENDING_DIALOG, msgId);
         e.commit();
-        extras.putString(Constants.PENDING_DIALOG, msgId);
-        extras.putBoolean(Constants.FROMBG, true);
-        extras.putString(Constants.SHPACKAGENAME, mContext.getPackageName());
+        extras.putString(PENDING_DIALOG, msgId);
+        extras.putBoolean(FROMBG, true);
+        extras.putString(SHPACKAGENAME, mContext.getPackageName());
 
 
         Intent positiveIntent = new Intent();
         positiveIntent.putExtras(extras);
-        positiveIntent.setAction(Constants.BROADCAST_STREETHAWK_ACCEPTED);
+        positiveIntent.setAction(BROADCAST_STREETHAWK_ACCEPTED);
 
         Intent negativeIntent = new Intent();
         negativeIntent.putExtras(extras);
         if (code == CODE_RATE_APP)
-            negativeIntent.setAction(Constants.BROADCAST_STREETHAWK_POSTPONED);
+            negativeIntent.setAction(BROADCAST_STREETHAWK_POSTPONED);
         else
-            negativeIntent.setAction(Constants.BROADCAST_STREETHAWK_DECLINED);
+            negativeIntent.setAction(BROADCAST_STREETHAWK_DECLINED);
 
         Intent neutralIntent = new Intent();
         neutralIntent.putExtras(extras);
-        neutralIntent.setAction(Constants.BROADCAST_STREETHAWK_POSTPONED);
+        neutralIntent.setAction(BROADCAST_STREETHAWK_POSTPONED);
 
         PendingIntent neutralPendingIntent = null;
         PendingIntent positivePendingIntent = PendingIntent.getBroadcast(mContext, code, positiveIntent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -295,14 +295,14 @@ class SHBackgroundNotification extends NotificationBase {
                 builder.setDeleteIntent(negativePendingIntent);
                 break;
             case CODE_RATE_APP:
-                builder.addAction(getIcon(mContext, code, Constants.STREETHAWK_DECLINED), negativeButtonTitle, neutralPendingIntent);
+                builder.addAction(getIcon(mContext, code, STREETHAWK_DECLINED), negativeButtonTitle, neutralPendingIntent);
                 builder.setDeleteIntent(neutralPendingIntent);
                 break;
             default:
-                builder.addAction(getIcon(mContext, code, Constants.STREETHAWK_DECLINED), negativeButtonTitle, negativePendingIntent);
+                builder.addAction(getIcon(mContext, code, STREETHAWK_DECLINED), negativeButtonTitle, negativePendingIntent);
                 builder.setDeleteIntent(negativePendingIntent);
         }
-        builder.addAction(getIcon(mContext, code, Constants.STREETHAWK_ACCEPTED), positiveButtonTitle, positivePendingIntent);
+        builder.addAction(getIcon(mContext, code, STREETHAWK_ACCEPTED), positiveButtonTitle, positivePendingIntent);
 
         NotificationManager notificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
         Notification notification = builder.build();
@@ -310,11 +310,11 @@ class SHBackgroundNotification extends NotificationBase {
         if (Integer.parseInt(pushData.getCode()) == CODE_FEEDBACK) {
             String data = pushData.getData();
             if (null == data) {
-                e.putString(Constants.PENDING_DIALOG, null);
+                e.putString(PENDING_DIALOG, null);
                 e.commit();
             } else {
                 if (data.isEmpty()) {
-                    e.putString(Constants.PENDING_DIALOG, null);
+                    e.putString(PENDING_DIALOG, null);
                     e.commit();
                 } else {
                     try {
@@ -324,11 +324,11 @@ class SHBackgroundNotification extends NotificationBase {
                         array = json.getJSONArray(FEEDBACK_LIST_CONTENT);
                         // Check if list is empty. if so then launch feedbackactivity
                         if (null == array || 0 == array.length()) {
-                            e.putString(Constants.PENDING_DIALOG, null);
+                            e.putString(PENDING_DIALOG, null);
                             e.commit();
                         }
                     } catch (JSONException exception) {
-                        e.putString(Constants.PENDING_DIALOG, null);
+                        e.putString(PENDING_DIALOG, null);
                         e.commit();
                     }
                 }

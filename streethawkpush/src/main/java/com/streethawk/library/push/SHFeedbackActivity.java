@@ -35,7 +35,7 @@ import com.streethawk.library.core.Logging;
 import com.streethawk.library.core.StreetHawk;
 import com.streethawk.library.core.Util;
 
-public class SHFeedbackActivity extends Activity {
+public class SHFeedbackActivity extends Activity implements Constants{
 
     private EditText mTitleEt;
     private EditText mFeedbackEt;
@@ -56,11 +56,11 @@ public class SHFeedbackActivity extends Activity {
         super.onCreate(savedInstanceState);
         mExtras = getIntent().getExtras();
         mTitleText = mExtras.getString("SHFeedbackActyTitle");
-        mMessageId = mExtras.getString(Constants.MSGID);
+        mMessageId = mExtras.getString(MSGID);
         setContentView(getFeedbackView());
         SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
         SharedPreferences.Editor e = sharedPreferences.edit();
-        e.putString(Constants.PENDING_DIALOG,null);
+        e.putString(PENDING_DIALOG,null);
         e.commit();
     }
 
@@ -124,7 +124,7 @@ public class SHFeedbackActivity extends Activity {
 
     @Override
     public void onBackPressed() {
-        sendPushResult(Constants.STREETHAWK_DECLINED);
+        sendPushResult(STREETHAWK_DECLINED);
         super.onBackPressed();
     }
 
@@ -225,7 +225,7 @@ public class SHFeedbackActivity extends Activity {
                 Toast.makeText(getApplicationContext(), NotificationBase.getStringtoDisplay(getApplicationContext(), NotificationBase.TYPE_FEEDBACK_TOAST_ERROR), Toast.LENGTH_LONG).show();
             }else{
                 Logging.getLoggingInstance(getApplicationContext()).sendFeedbackToServer(title,content,0);
-                sendPushResult(Constants.STREETHAWK_ACCEPTED);
+                sendPushResult(STREETHAWK_ACCEPTED);
                 Toast.makeText(getApplicationContext(),NotificationBase.getStringtoDisplay(getApplicationContext(),NotificationBase.TYPE_FEEDBACK_TOAST_SUCCESS),Toast.LENGTH_LONG).show();
                 finish();
             }
@@ -235,7 +235,7 @@ public class SHFeedbackActivity extends Activity {
     private View.OnClickListener cancelButtonListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            sendPushResult(Constants.STREETHAWK_DECLINED);
+            sendPushResult(STREETHAWK_DECLINED);
             finish();
         }
     };

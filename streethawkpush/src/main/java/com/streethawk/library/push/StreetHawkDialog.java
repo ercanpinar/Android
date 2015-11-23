@@ -133,9 +133,9 @@ class StreetHawkDialog extends NotificationBase {
                 mDialog.dismiss();
                 SharedPreferences sharedPreferences = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
                 SharedPreferences.Editor e = sharedPreferences.edit();
-                e.putString(Constants.PENDING_DIALOG, null);
+                e.putString(PENDING_DIALOG, null);
                 e.commit();
-                sendResultBroadcast(mContext, mPushData.getMsgId(), Constants.STREETHAWK_ACCEPTED);
+                sendResultBroadcast(mContext, mPushData.getMsgId(),STREETHAWK_ACCEPTED);
                 builder.stopWebview();
                 builder.clearCache();
             }

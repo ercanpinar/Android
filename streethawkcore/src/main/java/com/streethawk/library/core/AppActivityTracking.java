@@ -26,7 +26,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 
-class AppActivityTracking{
+class AppActivityTracking implements Constants{
 
     private static AppActivityTracking mActivityTracking = null;
     private static final String SESSIONIDCNT = "session_id_cnt";
@@ -90,52 +90,53 @@ class AppActivityTracking{
         final Context context = activity.getApplicationContext();
         SaveSessionTime(context);
         Bundle extras = new Bundle();
-        extras.putString(Constants.CODE, Integer.toString(Constants.CODE_APP_OPENED_FROM_BG));  //Sending 8103
-        extras.putString(Constants.LOCAL_TIME, Util.getFormattedDateTime(System.currentTimeMillis(), false));
+        extras.putString(CODE, Integer.toString(CODE_APP_OPENED_FROM_BG));  //Sending 8103
+        extras.putString(LOCAL_TIME, Util.getFormattedDateTime(System.currentTimeMillis(), false));
         final Logging shManager = Logging.getLoggingInstance(context);
         shManager.addLogsForSending(extras);
         extras.clear();
-
         new Thread(new Runnable() {
             @Override
             public void run() {
                 boolean runInstallUpdate = false;
                 SharedPreferences sharedPreferences = context.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
-                String storedVersion = sharedPreferences.getString(Constants.SHAPPVERSION, null);
+                String storedVersion = sharedPreferences.getString(SHAPPVERSION, null);
                 String currentAppVersion = Util.getAppVersionName(context);
-                //String storedAdvertisementId = sharedPreferences.getString(Constants.SHADVERTISEMENTID, null);
+                //String storedAdvertisementId = sharedPreferences.getString(SHADVERTISEMENTID, null);
                 //String currentAdvertisementId = Util.getAdvertisingIdentifier(context);
                 if (null != storedVersion) {
                     if (!storedVersion.equals(currentAppVersion)) {
                         Bundle extras = new Bundle();
-                        extras.putString(Constants.CODE, Integer.toString(Constants.CODE_CLIENT_UPGRADE));
-                        extras.putString(Constants.TYPE_STRING, currentAppVersion);
+                        extras.putString(CODE, Integer.toString(CODE_CLIENT_UPGRADE));
+                        extras.putString(TYPE_STRING, currentAppVersion);
                         final Logging shManager = Logging.getLoggingInstance(context);
                         shManager.addLogsForSending(extras);
                         SharedPreferences.Editor e = sharedPreferences.edit();
-                        e.putString(Constants.SHAPPVERSION, currentAppVersion);
+                        e.putString(SHAPPVERSION, currentAppVersion);
                         e.commit();
+                        shManager.sendModuleList();
                         runInstallUpdate = true;
                     }
 
                 } else {
                     // First run
                     SharedPreferences.Editor e = sharedPreferences.edit();
-                    e.putString(Constants.SHAPPVERSION, currentAppVersion);
+                    e.putString(SHAPPVERSION, currentAppVersion);
                     e.commit();
+                    shManager.sendModuleList();
                 }
                 /*
                 if (null != storedAdvertisementId) {
                     if (!storedAdvertisementId.equals(currentAdvertisementId)) {
                         SharedPreferences.Editor e = sharedPreferences.edit();
-                        e.putString(Constants.SHADVERTISEMENTID, currentAdvertisementId);
+                        e.putString(SHADVERTISEMENTID, currentAdvertisementId);
                         e.commit();
                         runInstallUpdate = true;
                     }
                 } else {
                     // First run
                     SharedPreferences.Editor e = sharedPreferences.edit();
-                    e.putString(Constants.SHADVERTISEMENTID, currentAdvertisementId);
+                    e.putString(SHADVERTISEMENTID, currentAdvertisementId);
                     e.commit();
                 }
                 */
@@ -190,15 +191,15 @@ class AppActivityTracking{
         if (-1 == startSessionTime) {
             return;
         }
-        extras.putString(Constants.CODE, Integer.toString(Constants.CODE_SESSIONS));                // Sending 8105
+        extras.putString(CODE, Integer.toString(CODE_SESSIONS));                // Sending 8105
         extras.putString(SESSION_START, Util.getFormattedDateTime(startSessionTime, true));
         extras.putString(SESSION_END, Util.getFormattedDateTime(currentTime, true));
         extras.putString(SESSION_LENGTH, Long.toString(Math.round((currentTime - startSessionTime) / 1000.0)));  // length in seconds
         final Logging shManager = Logging.getLoggingInstance(context);
         shManager.addLogsForSending(extras);
         extras.clear();
-        extras.putString(Constants.CODE, Integer.toString(Constants.CODE_APP_TO_BG));                // Sending 8104
-        extras.putString(Constants.LOCAL_TIME, Util.getFormattedDateTime(currentTime, false));
+        extras.putString(CODE, Integer.toString(CODE_APP_TO_BG));                // Sending 8104
+        extras.putString(LOCAL_TIME, Util.getFormattedDateTime(currentTime, false));
         shManager.addLogsForSending(extras);
         incrementSessionId(context);
     }
@@ -237,18 +238,18 @@ class AppActivityTracking{
 
 
     public void notifyNewActivity(Context context, String newActivity, String oldActivity) {
-        if (Util.getPlatformType() == Constants.PLATFORM_ANDROID_NATIVE || Util.getPlatformType() == Constants.PLATFORM_XAMARIN) {
+        if (Util.getPlatformType() == PLATFORM_ANDROID_NATIVE || Util.getPlatformType() == PLATFORM_XAMARIN) {
             SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREF_ACTIVITY, Context.MODE_PRIVATE);
             boolean bg = false;
             if (null != newActivity) { //send 8108
                 String friendlyName = getFriendlyNameFromclassName(context.getApplicationContext(), newActivity);
                 Bundle extras = new Bundle();
-                extras.putString(Constants.CODE, Integer.toString(Constants.CODE_USER_ENTER_ACTIVITY));
-                extras.putString(Constants.SHMESSAGE_ID, null);
+                extras.putString(CODE, Integer.toString(CODE_USER_ENTER_ACTIVITY));
+                extras.putString(SHMESSAGE_ID, null);
                 SharedPreferences.Editor e = sharedPreferences.edit();
                 e.putLong(newActivity, System.currentTimeMillis());      // Store start time of this activity
                 e.commit();
-                extras.putString(Constants.TYPE_STRING, friendlyName);
+                extras.putString(TYPE_STRING, friendlyName);
                 final Logging shManager = Logging.getLoggingInstance(context);
                 shManager.addLogsForSending(extras);
             } else {
@@ -257,17 +258,17 @@ class AppActivityTracking{
             if (null != oldActivity) { //send 8109
                 String friendlyName = getFriendlyNameFromclassName(context.getApplicationContext(), oldActivity);
                 Bundle extras = new Bundle();
-                extras.putString(Constants.CODE, Integer.toString(Constants.CODE_USER_LEAVE_ACTIVITY));
-                extras.putString(Constants.SHMESSAGE_ID, null);
+                extras.putString(CODE, Integer.toString(CODE_USER_LEAVE_ACTIVITY));
+                extras.putString(SHMESSAGE_ID, null);
                 if (null == friendlyName) {
                     friendlyName = oldActivity;
                 }
-                extras.putString(Constants.TYPE_STRING, friendlyName);
+                extras.putString(TYPE_STRING, friendlyName);
                 final Logging shManager = Logging.getLoggingInstance(context);
                 shManager.addLogsForSending(extras);
                 extras.clear();
-                extras.putString(Constants.CODE, Integer.toString(Constants.CODE_COMPLETE_ACTIVITY));
-                extras.putString(Constants.TYPE_STRING, friendlyName);
+                extras.putString(CODE, Integer.toString(CODE_COMPLETE_ACTIVITY));
+                extras.putString(TYPE_STRING, friendlyName);
                 Long storedTime = sharedPreferences.getLong(friendlyName, -1);
                 extras.putString(SESSION_START, Util.getFormattedDateTime(storedTime, true));
                 long currentTime = System.currentTimeMillis();

@@ -25,6 +25,13 @@ android {
         rename('classes.jar', 'streethawkcore.jar')
     }
 
+    task makeDebugJar(type: Copy) {
+        from('build/intermediates/bundles/release/')
+        into('build/outputs/jar')
+        include('classes.jar')
+        rename('classes.jar', 'streethawkpush.jar')
+    }
+
     makeJar.dependsOn(clearJar, build)
 
     buildTypes {
@@ -33,6 +40,9 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             proguardFile '/Users/anuragkondeya/AndroidStudioWorkspace/opensourceSDK/Android/streethawkcore/proguard-rules.pro'
         }
+        debug {
+            minifyEnabled true
+        }
     }
 }
 
@@ -40,4 +50,4 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 }
 
-apply from: '../sh_maven_push.gradle'
+//apply from: '../sh_maven_push.gradle'

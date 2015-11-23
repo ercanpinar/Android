@@ -16,11 +16,11 @@
  */
 package com.streethawk.library.geofence;
 
-class Constants {
-    public static final String PARENT_GEOFENCE_ID           = "parentgeofenceid";
-    public static final int CODE_USER_DISABLES_LOCATION 	= 8112;
-    public static final int CODE_GEOFENCE_UPDATES			= 22;       // place in geofence modules
-    public static final String IS_GEOFENCE_ENABLE           = "shgeofenceenable";
-    public static final String PERMISSION_MSG               = "msg";
-    public static final String PERMISSION_BOOL              = "permission_bool";
+interface Constants {
+    String PARENT_GEOFENCE_ID = "parentgeofenceid";
+    String IS_GEOFENCE_ENABLE = "shgeofenceenable";
+    String PERMISSION_MSG = "msg";
+    String PERMISSION_BOOL = "permission_bool";
+    int CODE_USER_DISABLES_LOCATION = 8112;
+    int CODE_GEOFENCE_UPDATES = 22;       // place in geofence modules
 }

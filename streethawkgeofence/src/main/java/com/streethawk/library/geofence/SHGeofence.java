@@ -30,6 +30,7 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationServices;
+import com.streethawk.library.core.StreetHawk;
 import com.streethawk.library.core.Util;
 
 import org.json.JSONArray;
@@ -38,8 +39,9 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class SHGeofence implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener
-        ,ResultCallback<Status>,Constants {
+public class SHGeofence implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,Constants
+        //Comemnt for Xamarin
+        ,ResultCallback<Status> {
     private final String SUBTAG = "Geofence ";
     private static Context mContext;
     private static SHGeofence mInstance;
@@ -134,6 +136,9 @@ public class SHGeofence implements GoogleApiClient.ConnectionCallbacks, GoogleAp
             public void run() {
                 buildGoogleApiClient();
                 mGoogleApiClient.connect();
+                if(Util.getPlatformType()== PLATFORM_XAMARIN){
+                    StreetHawk.INSTANCE.tagString("sh_module_geofence","true");
+                }
             }
         }).start();
 
@@ -143,6 +148,7 @@ public class SHGeofence implements GoogleApiClient.ConnectionCallbacks, GoogleAp
      * use StartLocationWithPermissionDialog to make SDK ask for location permission from user.
      * @param message String to explain user about the location permission
      */
+
     public void startGeofenceWithPermissionDialog(String message){
         if(Util.PLATFORM_XAMARIN==Util.RELEASE_PLATFORM){
             Log.i(Util.TAG,"startGeofenceWithPermissionDialog is not supported on Xamarin");
@@ -161,6 +167,7 @@ public class SHGeofence implements GoogleApiClient.ConnectionCallbacks, GoogleAp
             startGeofenceMonitoring();
         }
     }
+
 
     protected void monitorGeofence() {
         GeofencingRequest request = getGeofencingRequest();
@@ -297,9 +304,11 @@ public class SHGeofence implements GoogleApiClient.ConnectionCallbacks, GoogleAp
 
     }
 
+
     // Comment this for Xamarin
     @Override
     public void onResult(Status status) {
 
     }
+
 }

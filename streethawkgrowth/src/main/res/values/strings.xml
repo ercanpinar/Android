@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">StreetHawkGrowth</string>
+    <string name="SHARE_PICKER_TITLE">Share using..</string>
 </resources>

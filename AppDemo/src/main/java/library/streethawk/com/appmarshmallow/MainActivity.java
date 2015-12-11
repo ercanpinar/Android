@@ -11,16 +11,15 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import com.streethawk.library.core.ISHEventObserver;
 import com.streethawk.library.core.StreetHawk;
 import com.streethawk.library.growth.Growth;
-import com.streethawk.library.growth.IGrowth;
 import com.streethawk.library.push.ISHObserver;
 import com.streethawk.library.push.Push;
 import com.streethawk.library.push.PushDataForApplication;
-
-import org.json.JSONObject;
 
 public class MainActivity extends Activity implements ISHObserver,ISHEventObserver{
     private final int PERMISSIONS_LOCATION = 0;
@@ -33,31 +32,49 @@ public class MainActivity extends Activity implements ISHObserver,ISHEventObserv
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
         Application app = getApplication();
-        Push.getInstance(this).shAlertSetting(30);
+       // Push.getInstance(this).shAlertSetting(30);
 
 
        Push.getInstance(this).registerSHObserver(this);  //Register this class as implementation of ISHObserver
         // Enter your project number here (https://streethawk.freshdesk.com/solution/articles/5000608997)
-       Push.getInstance(this).registerForPushMessaging("393009194749");
+       Push.getInstance(this).registerForPushMessaging("223814131914");
         // Enter APP_KEY for your application registered with StreetHawk server
 
-        Growth.getInstance(this).getShareUrlForAppDownload("1", "shsample://setparams?param1=30", "facebook", "medium", "term", "cc", "www.google.com", new IGrowth() {
-            @Override
-            public void onReceiveShareUrl(String shareUrl) {
-
-            }
-
-            @Override
-            public void onReceiveErrorForShareUrl(JSONObject errorResponse) {
-
-            }
-        });
 
         StreetHawk.INSTANCE.registerEventObserver(this);
-        StreetHawk.INSTANCE.setAppKey("SHSample");
+        StreetHawk.INSTANCE.setAppKey("MyFirstApp");
         StreetHawk.INSTANCE.init(app);
+    }
+
+
+    public void SendTag(View view){
+
+        EditText keyEt = (EditText)findViewById(R.id.key);
+        String key = keyEt.getText().toString();
+        EditText ValueEt = (EditText)findViewById(R.id.value);
+        String value = ValueEt.getText().toString();
+
+        if(key!=null && value!=null){
+            if((!key.isEmpty()) && (!value.isEmpty()) ){
+
+                double dval;
+                try{
+                    dval = Double.parseDouble(value);
+                    StreetHawk.INSTANCE.tagNumeric(key,dval);
+                    Toast.makeText(this,"Tagged Numeric "+key+" "+dval,Toast.LENGTH_LONG).show();
+                    return;
+                }catch(NumberFormatException e){
+                    Log.e(TAG,"Value is a string");
+                }
+                StreetHawk.INSTANCE.tagString(key,value);
+                Toast.makeText(this,"Tagged String "+key+" "+value,Toast.LENGTH_LONG).show();
+            }
+        }
+
+
 
     }
+
 
     @Override
     public void onResume() {
@@ -117,9 +134,10 @@ public class MainActivity extends Activity implements ISHObserver,ISHEventObserv
      */
     public void Growth(View view){
         // Call originateShare API to generate and share universal link
-
+        Log.e("Anurag","Growth clicked");
+        Growth.getInstance(this).originateShareWithCampaign("1", "shdemoapp://setparams?param1=45", null);
         /*
-        Growth.getInstance(this).originateShareWithCampaign("1", "shdemoapp://setparams?param1=45", new IGrowth() {
+        {
             @Override
             public void onReceiveShareUrl(final String shareUrl) {
                runOnUiThread(new Runnable() {
@@ -142,9 +160,7 @@ public class MainActivity extends Activity implements ISHObserver,ISHEventObserv
             }
         });
         */
-
         //Growth.getInstance(this).originateShareWithCampaign("1", "shdemoapp://setparams?param1=45",null);
-
         //Growth.getInstance(this).originateShareWithCampaign("1", "shdemoapp://setparams?param1=45", null, null, null, null, "http://streethawk.com", null);
     }
 
@@ -196,9 +212,9 @@ public class MainActivity extends Activity implements ISHObserver,ISHEventObserv
     }
 
     public void ThirdActivity(View view){
-        //Intent intent = new Intent(getApplicationContext(),AppService.class);
-        //startService(intent);
-        //finish();
+        Intent intent = new Intent(getApplicationContext(),ThirdActivity.class);
+        startActivity(intent);
+
 
     }
 

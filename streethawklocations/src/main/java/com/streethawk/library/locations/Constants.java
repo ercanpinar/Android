@@ -33,4 +33,12 @@ interface Constants {
     int CODE_PERIODIC_LOCATION_UPDATE   = 19;
     String PERMISSION_MSG               = "msg";
     String PERMISSION_BOOL              = "permission_bool";
+
+    //Platform types
+    int PLATFORM_ANDROID_NATIVE = 0;
+    int PLATFORM_PHONEGAP       = 1;
+    int PLATFORM_TITANIUM       = 2;
+    int PLATFORM_XAMARIN        = 3;
+    int PLATFORM_UNITY          = 4;
+
 }

@@ -11,7 +11,7 @@
         android:allowBackup="true"
         android:label="@string/app_name" >
         <receiver
-            android:name=".StreethawkBroadcastReceiver"
+            android:name="com.streethawk.library.core.StreethawkBroadcastReceiver"
             android:enabled="true"
             android:exported="true" >
             <intent-filter>
@@ -24,7 +24,7 @@
         </receiver>
 
         <service
-            android:name=".StreetHawkCoreService"
+            android:name="com.streethawk.library.core.StreetHawkCoreService"
             android:enabled="true"
             android:exported="true" >
         </service>

@@ -23,6 +23,7 @@ import android.content.Context;
 import android.os.Build;
 import android.util.Log;
 
+import com.streethawk.library.core.StreetHawk;
 import com.streethawk.library.core.Util;
 
 public class Growth {
@@ -32,6 +33,15 @@ public class Growth {
     private final String SUBTAG = "Growth";
     private String REGISTERED = "flaggrowthregister";
     private static Growth mGrowth = null;
+
+    //Platform types
+    int PLATFORM_ANDROID_NATIVE = 0;
+    int PLATFORM_PHONEGAP       = 1;
+    int PLATFORM_TITANIUM       = 2;
+    static int PLATFORM_XAMARIN        = 3;
+    int PLATFORM_UNITY          = 4;
+
+
 
     private Growth() {
     }
@@ -47,7 +57,13 @@ public class Growth {
         mContext = activity.getApplicationContext();
         if (null == mGrowth)
             mGrowth = new Growth();
+
+        if(Util.getPlatformType()== PLATFORM_XAMARIN){
+            StreetHawk.INSTANCE.tagString("sh_module_growth","true");
+        }
+
         return mGrowth;
+
     }
 
 

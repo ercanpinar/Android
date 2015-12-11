@@ -1,3 +1,4 @@
+
 package com.streethawk.library.geofence;
 
 import android.Manifest;
@@ -38,11 +39,7 @@ public class AskGeoPermission extends AppCompatActivity implements Constants {
         mActivity = this;
     }
 
-    /**
-     * Check for location permission for Android MarshMallow
-     * @param context
-     * @return
-     */
+
     private boolean checkForLocationPermission(Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             int coarseLocation = context.checkSelfPermission(android.Manifest.permission.ACCESS_COARSE_LOCATION);
@@ -112,4 +109,7 @@ public class AskGeoPermission extends AppCompatActivity implements Constants {
         finish();
     }
 
+
 }
+
+

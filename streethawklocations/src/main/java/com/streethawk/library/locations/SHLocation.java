@@ -30,6 +30,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.streethawk.library.core.StreetHawk;
 import com.streethawk.library.core.Util;
 
 public class SHLocation implements Constants{
@@ -138,6 +139,10 @@ public class SHLocation implements Constants{
             return;
         registerScheduledTask();
         restartLocationReporting();
+        if(Util.getPlatformType()== PLATFORM_XAMARIN){
+            StreetHawk.INSTANCE.tagString("sh_module_location","true");
+        }
+
     }
 
     /**

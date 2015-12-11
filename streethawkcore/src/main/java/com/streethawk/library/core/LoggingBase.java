@@ -49,12 +49,13 @@ import javax.net.ssl.HttpsURLConnection;
 
 public class LoggingBase implements Constants {
     private Context mContext;
-    private final String SUBTAG = "LoggingBase";
-    private final String PRIORITY = "priority";
-    private final String RE_REGISTER = "reregister";
-    private final String STREETHAWK = "streethawk";
-    private final String HOST = "host";
-    private final String ACTIVITY_LIST = "submit_views";
+    private final String SUBTAG         = "LoggingBase";
+    private final String PRIORITY       = "priority";
+    private final String RE_REGISTER    = "reregister";
+    private final String STREETHAWK     = "streethawk";
+    private final String HOST           = "host";
+    private final String ACTIVITY_LIST  = "submit_views";
+    private final String DISABLE_LOGS   = "disable_logs";
 
     protected LoggingBase(Context context) {
         this.mContext = context;
@@ -219,6 +220,10 @@ public class LoggingBase implements Constants {
         }).start();
     }
 
+    /**
+     * Set list of codes for priority log lines
+     * @param array
+     */
     private void setPriority(JSONArray array) {
         SharedPreferences prefs = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
         SharedPreferences.Editor e = prefs.edit();
@@ -228,6 +233,21 @@ public class LoggingBase implements Constants {
             e.putString(SHLOGPRIORITY, array.toString());
         e.commit();
     }
+
+    /**
+     * Set list of codes for disabled log line
+     * @param array
+     */
+    private void setDisableLogs(JSONArray array) {
+        SharedPreferences prefs = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
+        SharedPreferences.Editor e = prefs.edit();
+        if (null == array)
+            e.putString(SHDISABLELOG, null);
+        else
+            e.putString(SHDISABLELOG, array.toString());
+        e.commit();
+    }
+
 
     /**
      * Returns true if code is in default priority list
@@ -287,6 +307,36 @@ public class LoggingBase implements Constants {
         }
     }
 
+    /**
+     * Function checks logline code with list of disabled codes
+     * @param code
+     * @return
+     */
+    protected boolean isDisabledCode(int code){
+        SharedPreferences prefs = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
+        String disabledLogs = prefs.getString(SHDISABLELOG, null);
+        if (null == disabledLogs) {
+            return false;  // All logs are enabled
+        } else {
+            try {
+                JSONArray array = new JSONArray(disabledLogs);
+                for (int i = 0; i < array.length(); i++) {
+                    try {
+                        if (code == array.get(i)) {
+                            return true;  // disabled code return true
+                        }
+                    } catch (JSONException e) {
+                        continue;
+                    }
+                }
+            } catch (JSONException e) {
+                return false;         // Not a disabled code, return false;
+            }
+            return false; // Nothing works then return false
+        }
+    }
+
+
 
     /**
      * Function process app status calls returns from server
@@ -332,6 +382,12 @@ public class LoggingBase implements Constants {
                             if ((Boolean) value_activityList) {
                                 sendAppActivities(mContext);
                             }
+                        }
+                    }
+                    if (app_status.has(DISABLE_LOGS) && !app_status.isNull(DISABLE_LOGS)) {
+                        Object value_disable_logs = app_status.get(DISABLE_LOGS);
+                        if (value_disable_logs instanceof JSONArray) {
+                            setDisableLogs((JSONArray) value_disable_logs);
                         }
                     }
                 }

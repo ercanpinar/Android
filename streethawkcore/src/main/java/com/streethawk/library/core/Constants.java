@@ -65,6 +65,7 @@ interface Constants {
     String SHAPPVERSION         = "shappversion";
     String SHADVERTISEMENTID    = "advertisementid";
     String SHLOGPRIORITY        = "logpriority";
+    String SHDISABLELOG         = "disablelog";
     String SHPGPREVPAGE         = "shpgprevpage";
     String OPERATING_SYSTEM     = "operating_system";
     String INSTALLID            = "installid";
@@ -90,11 +91,11 @@ interface Constants {
     /*Library version*/
     String SELLING_ARGUMENT    = "1";
     String FEATURE_NUMBER      = "7";
-    String BUGFIX_NUMBER       = "13";
+    String BUGFIX_NUMBER       = "14";
 
     /*Release parameters */
     String SHLIBRARY_VERSION = SELLING_ARGUMENT + "." + FEATURE_NUMBER + "." + BUGFIX_NUMBER;
-    int RELEASE_PLATFORM = PLATFORM_ANDROID_NATIVE;
+   // int RELEASE_PLATFORM = PLATFORM_XAMARIN;
     String DISTRIBUTION_TYPE = DISTRIBUTION_AAR;
     String BROADCAST_APP_STATUS_CHK = "com.streethawk.intent.action.gcm.STREETHAWK_APP_STATUS_CHK";
     String KEY_ADV_ID= "sh_advertising_identifier";

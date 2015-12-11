@@ -23,6 +23,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.streethawk.library.core.Logging;
+import com.streethawk.library.core.StreetHawk;
 import com.streethawk.library.core.Util;
 
 import org.json.JSONArray;
@@ -74,6 +75,9 @@ public class SHFeedItem implements Constants{
         mContext = context;
         if(null==mSHFeedItem){
             mSHFeedItem = new SHFeedItem();
+        }
+        if(Util.getPlatformType()== PLATFORM_XAMARIN){
+            StreetHawk.INSTANCE.tagString("sh_module_feeds","true");
         }
         return mSHFeedItem;
     }

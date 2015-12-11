@@ -9,12 +9,12 @@
         android:allowBackup="true"
         android:label="@string/app_name">
         <service
-            android:name=".StreethawkLocationService"
+            android:name="com.streethawk.library.locations.StreethawkLocationService"
             android:enabled="true"
             android:exported="true" />
 
         <receiver
-            android:name=".LocationReceiver"
+            android:name="com.streethawk.library.locations.LocationReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
@@ -23,9 +23,10 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".AskLocPermission"
+        <activity android:name="com.streethawk.library.locations.AskLocPermission" />
+        <!--
             android:theme="@style/Theme.AppCompat.Streethawk_Translucent"/>
-
+        -->
 
     </application>
 

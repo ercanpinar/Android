@@ -375,7 +375,7 @@ class Install extends LoggingBase {
 
                             if(null!=mEventObserver)
                                 mEventObserver.onInstallRegistered(installInfo.installid);
-                            if(RELEASE_PLATFORM!=PLATFORM_XAMARIN) {
+                            if(Util.getPlatformType()!=PLATFORM_XAMARIN) {
                                 //Init modules available
                                 new Thread(new Runnable() {
                                     @Override

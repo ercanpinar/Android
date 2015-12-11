@@ -10,11 +10,11 @@
         <uses-library android:name="com.google.android.maps" />
 
         <service
-            android:name=".GeofenceService"
+            android:name="com.streethawk.library.geofence.GeofenceService"
             android:exported="false"></service>
 
         <receiver
-            android:name=".SHCoreModuleReceiver"
+            android:name="com.streethawk.library.geofence.SHCoreModuleReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
@@ -23,7 +23,8 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".AskGeoPermission"
+
+        <activity android:name="com.streethawk.library.geofence.AskGeoPermission" />
             android:theme="@style/Theme.AppCompat.Streethawk_Translucent"/>
     </application>
 

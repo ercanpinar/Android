@@ -32,4 +32,12 @@ interface Constants {
     String BEACON_MONITOR_FLAG = "beaconmonitorflag";
     int CODE_IBEACON_UPDATES = 21;
 
+    //Platform types
+    int PLATFORM_ANDROID_NATIVE = 0;
+    int PLATFORM_PHONEGAP       = 1;
+    int PLATFORM_TITANIUM       = 2;
+    int PLATFORM_XAMARIN        = 3;
+    int PLATFORM_UNITY          = 4;
+
+
 }

@@ -263,6 +263,9 @@ public class Push implements Constants{
         else{
             if(!isPushRegistered()){
                 register();
+                if(Util.getPlatformType()== PLATFORM_XAMARIN){
+                    StreetHawk.INSTANCE.tagString("sh_module_push","true");
+                }
             }
             setAppPageReceiver(mISHObserverObject);
             return;

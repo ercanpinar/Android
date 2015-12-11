@@ -23,6 +23,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.streethawk.library.core.Logging;
+import com.streethawk.library.core.StreetHawk;
 import com.streethawk.library.core.Util;
 
 import org.json.JSONException;
@@ -197,6 +198,9 @@ public class Beacons implements Constants{
         if (!isDeviceSupportBLE()) {
             Log.e(Util.TAG, SUBTAG + "Device doesn't support BLE");
             return false;
+        }
+        if(Util.getPlatformType()== PLATFORM_XAMARIN){
+            StreetHawk.INSTANCE.tagString("sh_module_beacon","true");
         }
         return startBeaconService();
     }

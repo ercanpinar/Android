@@ -147,6 +147,10 @@ public class Logging extends LoggingBase {
         } catch (NumberFormatException e) {
             code = 0;
         }
+        if(isDisabledCode(code)){
+            Log.i(Util.TAG,"Log line with code "+code+" is disabled by server");
+            return false;
+        }
         boolean priority = isPriorityLogLine(code);
         return addLogstoBuffer(params, priority);
 
@@ -208,6 +212,9 @@ public class Logging extends LoggingBase {
 
 
     public void sendModuleList(){
+        if(PLATFORM_XAMARIN==Util.getPlatformType()){
+            return;
+        }
         new Thread(new Runnable() {
             @Override
             public void run() {

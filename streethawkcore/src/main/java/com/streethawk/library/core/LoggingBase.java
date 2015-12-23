@@ -323,7 +323,7 @@ public class LoggingBase implements Constants {
                 for (int i = 0; i < array.length(); i++) {
                     try {
                         if (code == array.get(i)) {
-                            return true;  // disabled code return true
+                            return true;  // disabled code return true˜
                         }
                     } catch (JSONException e) {
                         continue;

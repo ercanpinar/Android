@@ -360,6 +360,10 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver impleme
                 } catch (NumberFormatException e) {
                     return;
                 }
+                if (code == CODE_GHOST_PUSH){
+                    //Do nothing
+                    return;
+                }
                 if (code == CODE_REQUEST_THE_APP_STATUS){
                     Logging.getLoggingInstance(context).checkAppState();
                     return;

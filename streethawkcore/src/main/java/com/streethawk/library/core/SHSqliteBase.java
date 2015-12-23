@@ -115,7 +115,7 @@ public abstract class SHSqliteBase extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase database, int oldVersion, int newVersion) {
         database.execSQL("DROP TABLE IF EXISTS " + PUSH_NOTIFICATION_TABLE_NAME);
-        database.execSQL("DROP TABLE IF EXISTS " + BEACON_DATABASE_CREATE);
+        database.execSQL("DROP TABLE IF EXISTS " + BEACON_TABLE_NAME);
         database.execSQL("DROP TABLE IF EXISTS " + GEOFENCE_TABLE_NAME);
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
         SharedPreferences.Editor e = sharedPreferences.edit();

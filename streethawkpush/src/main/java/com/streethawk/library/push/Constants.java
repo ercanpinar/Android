@@ -65,6 +65,7 @@ interface Constants {
     int CODE_FEED_RESULT = 8201;
     int CODE_PUSH_ACK = 8202; // Added in v2
     int CODE_PUSH_RESULT = 8203; // Added in v2
+    int CODE_GHOST_PUSH = 8042;
 
 
 

@@ -38,7 +38,7 @@ public class Growth {
     int PLATFORM_ANDROID_NATIVE = 0;
     int PLATFORM_PHONEGAP       = 1;
     int PLATFORM_TITANIUM       = 2;
-    static int PLATFORM_XAMARIN        = 3;
+    static int PLATFORM_XAMARIN = 3;
     int PLATFORM_UNITY          = 4;
 
 
@@ -77,6 +77,21 @@ public class Growth {
             application.registerActivityLifecycleCallbacks(GrowthActivityLifecycleCallback.getInstance());
         }
     }
+
+    /**
+     * Register IGrowthObserver
+     * @param observer
+     */
+    public void registerIGrowth(IGrowth observer){
+        if(null!=observer){
+            Register register =  new Register();
+            register.registerIGrowthObserver(observer);
+        }else{
+            Log.e(Util.TAG,"observer is null in registerIGrowth returning...");
+        }
+    }
+
+
 
     /**
      * Use originateShareWithCampaign to get the share URL.

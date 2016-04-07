@@ -45,7 +45,19 @@ class PushNotificationDB implements Constants{
     private static final String COLUMN_N = "n";
     private static final String COLUMN_SOUND = "sound";
     private static final String COLUMN_BADGE = "badge";
+    // Interactive push
+    private static final String COLUMN_CONTENT_AVAILABLE    = "contentavailable";
+    private static final String COLUMN_CATEGORY             = "category";
 
+    /* Start custom buttons */
+    private static final String COLOUMN_BT1Title = "btn1title";
+    private static final String COLOUMN_BT2Title = "btn2title";
+    private static final String COLOUMN_BT3Title = "btn3title";
+
+    private static final String COLUMN_BT1ICON  = "btn1icon";
+    private static final String COLUMN_BT2ICON  = "btn2icon";
+    private static final String COLUMN_BT3ICON  = "btn3icon";
+    /* End custom  buttons*/
 
     public static PushNotificationDB getInstance(Context context){
         if(null==instance){
@@ -53,7 +65,6 @@ class PushNotificationDB implements Constants{
         }
         return instance;
     }
-
     private PushNotificationDB(Context context) {
         this.mContext = context;
         mDbHelper = new PushNotificationHelper(context);
@@ -82,6 +93,33 @@ class PushNotificationDB implements Constants{
         values.put(COLUMN_N, object.getNoDialog());
         values.put(COLUMN_SOUND, object.getSound());
         values.put(COLUMN_BADGE, object.getBadge());
+        String contentAvailable = object.getContentAvailable();
+        values.put(COLUMN_CONTENT_AVAILABLE, contentAvailable );
+        String category = object.getCategory();
+        values.put(COLUMN_CATEGORY, category );
+        /* Start Interactive push */
+        if(null!=category){
+            // Take from preexisting button pairs
+            InteractivePush interactivePushObject = new InteractivePush();
+            InteractivePushDB.getInstance(mContext).getBtnPairData(category,interactivePushObject);
+            values.put(COLOUMN_BT1Title, interactivePushObject.getB1Title());
+            values.put(COLOUMN_BT2Title, interactivePushObject.getB2Title());
+            values.put(COLOUMN_BT3Title, interactivePushObject.getB3Title());
+            values.put(COLUMN_BT1ICON, interactivePushObject.getB1Icon());
+            values.put(COLUMN_BT2ICON, interactivePushObject.getB2Icon());
+            values.put(COLUMN_BT3ICON, interactivePushObject.getB3Icon());
+        }else {
+        /*Start custom buttons
+        * Feature not implemented. Take custom buttons from server
+        * */
+            values.put(COLOUMN_BT1Title, object.getBtn1Title());
+            values.put(COLOUMN_BT2Title, object.getBtn2Title());
+            values.put(COLOUMN_BT3Title, object.getBtn3Title());
+            values.put(COLUMN_BT1ICON, object.getBtn1Icon());
+            values.put(COLUMN_BT2ICON, object.getBtn2Icon());
+            values.put(COLUMN_BT3ICON, object.getBtn3Icon());
+        /*End custom buttons*/
+        }
         // Checking agian as it crashed once due to sync issue.
 
         if(!mDatabase.isOpen()){
@@ -137,6 +175,18 @@ class PushNotificationDB implements Constants{
                 String NoDialog = cursor.getString(cursor.getColumnIndex(COLUMN_N));
                 String Sound = cursor.getString(cursor.getColumnIndex(COLUMN_SOUND));
                 String Badge = cursor.getString(cursor.getColumnIndex(COLUMN_BADGE));
+                // For interactive push
+                String content_available = cursor.getString(cursor.getColumnIndex(COLUMN_CONTENT_AVAILABLE));
+                String category  = cursor.getString(cursor.getColumnIndex(COLUMN_CATEGORY));
+
+                /*Start custom buttons*/
+                String btn1Title = cursor.getString(cursor.getColumnIndex(COLOUMN_BT1Title));
+                String btn2Title = cursor.getString(cursor.getColumnIndex(COLOUMN_BT2Title));
+                String btn3Title = cursor.getString(cursor.getColumnIndex(COLOUMN_BT3Title));
+                int btn1Icon = cursor.getInt(cursor.getColumnIndex(COLUMN_BT1ICON));
+                int btn2Icon = cursor.getInt(cursor.getColumnIndex(COLUMN_BT2ICON));
+                int btn3Icon = cursor.getInt(cursor.getColumnIndex(COLUMN_BT3ICON));
+                /*End custom  buttons*/
 
                 cursor.close();
                 database.close();
@@ -152,6 +202,15 @@ class PushNotificationDB implements Constants{
                 obj.setNoDialog(NoDialog);
                 obj.setBadge(Badge);
                 obj.setSound(Sound);
+                //Interactive push
+                obj.setContentAvailable(content_available);
+                obj.setCategory(category);
+                obj.setBtn1Title(btn1Title);
+                obj.setBtn2Title(btn2Title);
+                obj.setBtn3Title(btn3Title);
+                obj.setBtn1Icon(btn1Icon);
+                obj.setBtn2Icon(btn2Icon);
+                obj.setBtn3Icon(btn3Icon);
             } else {
                 Log.e(Util.TAG,"getPushNotificationData msgId " + MsgId + " Not found");
                 cursor.close();

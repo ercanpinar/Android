@@ -144,7 +144,6 @@ class GeofenceDB {
                     " where " + GeofenceHelper.COLUMN_GEOFENCEID + " = '" + geofenceID + "'";
             Cursor cursor = database.rawQuery(query, null);
             if (cursor != null && cursor.moveToFirst()) {
-
                 double lat = cursor.getDouble(cursor.getColumnIndex(GeofenceHelper.COLUMN_LATITUDE));
                 double lng = cursor.getDouble(cursor.getColumnIndex(GeofenceHelper.COLUMN_LONGITUDE));
                 float radius = cursor.getFloat(cursor.getColumnIndex(GeofenceHelper.COLUMN_RADIUS));

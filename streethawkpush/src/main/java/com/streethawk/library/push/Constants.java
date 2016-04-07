@@ -39,40 +39,40 @@ interface Constants {
     String PROPERTY_APP_VERSION     = "app_version";
     String IS_PUSH_FIRST_RUN        = "ispushfirstrun";
     String PUSH_ACCESS_DATA         = "pushaccessData";
-    String SHPAUSETIME          = "shPauseTime";
-    String SHSAVEDTIME          = "shSavedTime";
-    String PAUSE_MINUTES        = "pause_minutes";
+    String SHPAUSETIME              = "shPauseTime";
+    String SHSAVEDTIME              = "shSavedTime";
+    String PAUSE_MINUTES            = "pause_minutes";
 
     //Codes
 
-    int CODE_ERROR = -1;
-    int CODE_OPEN_URL = 8000;
-    int CODE_REQUEST_THE_APP_STATUS = 8003;
-    int CODE_LAUNCH_ACTIVITY = 8004;
-    int CODE_RATE_APP = 8005;
-    int CODE_USER_REGISTRATION_SCREEN = 8006;
-    int CODE_USER_LOGIN_SCREEN = 8007;
-    int CODE_UPDATE_APP = 8008;
-    int CODE_CALL_TELEPHONE_NUMBER = 8009;
-    int CODE_SIMPLE_PROMPT = 8010;
-    int CODE_FEEDBACK = 8011;
-    int CODE_IBEACON = 8012;
-    int CODE_ACCEPT_PUSHMSG = 8013;
-    int CODE_ENABLE_LOCATION = 8014;
-    int CODE_CUSTOM_JSON_FROM_SERVER = 8049;
-    int CODE_CUSTOM_ACTIONS = 8100;
-    int CODE_FEED_ACK = 8200;
-    int CODE_FEED_RESULT = 8201;
-    int CODE_PUSH_ACK = 8202; // Added in v2
-    int CODE_PUSH_RESULT = 8203; // Added in v2
-    int CODE_GHOST_PUSH = 8042;
+    int CODE_ERROR                      = -1;
+    int CODE_OPEN_URL                   = 8000;
+    int CODE_REQUEST_THE_APP_STATUS     = 8003;
+    int CODE_LAUNCH_ACTIVITY            = 8004;
+    int CODE_RATE_APP                   = 8005;
+    int CODE_USER_REGISTRATION_SCREEN   = 8006;
+    int CODE_USER_LOGIN_SCREEN          = 8007;
+    int CODE_UPDATE_APP                 = 8008;
+    int CODE_CALL_TELEPHONE_NUMBER      = 8009;
+    int CODE_SIMPLE_PROMPT              = 8010;
+    int CODE_FEEDBACK                   = 8011;
+    int CODE_IBEACON                    = 8012;
+    int CODE_ACCEPT_PUSHMSG             = 8013;
+    int CODE_ENABLE_LOCATION            = 8014;
+    int CODE_CUSTOM_JSON_FROM_SERVER    = 8049;
+    int CODE_CUSTOM_ACTIONS             = 8100;
+    int CODE_FEED_ACK                   = 8200;
+    int CODE_FEED_RESULT                = 8201;
+    int CODE_PUSH_ACK                   = 8202; // Added in v2
+    int CODE_PUSH_RESULT                = 8203; // Added in v2
+    int CODE_GHOST_PUSH                 = 8042;
 
 
 
     //Results
-    int STREETHAWK_ACCEPTED = 1;
-    int STREETHAWK_DECLINED = -1;
-    int STREETHAWK_POSTPONED = 0;
+    int STREETHAWK_ACCEPTED     = 1;
+    int STREETHAWK_DECLINED     = -1;
+    int STREETHAWK_POSTPONED    = 0;
 
     String BROADCAST_STREETHAWK_ACCEPTED = "com.streethawk.intent.action.gcm.STREETHAWK_ACCEPTED";
     String BROADCAST_STREETHAWK_DECLINED = "com.streethawk.intent.action.gcm.STREETHAWK_DECLINED";
@@ -106,5 +106,16 @@ interface Constants {
     String PUSH_BADGE 			= "badge";
     String PUSH_SOUND 			= "sound";
 
+    //Interactive push
+    String PUSH_CONTENT_AVAILABLE = "content-available";
+    String PUSH_CATEGORY          = "category";
+
+    /*Start custom buttons*/
+    String PUSH_BTN_TITLE       = "t";
+    String PUSH_BTN_ICON        = "i";
+    String PUSH_BUTTON1         = "b1";
+    String PUSH_BUTTON2         = "b2";
+    String PUSH_BUTTON3         = "b3";
+    /*End custom buttons*/
 
 }

@@ -62,6 +62,8 @@ public class Register extends BroadcastReceiver{
     private final String WIDHT = "width";
     private final String HEIGHT = "height";
 
+    private static IGrowth mGrowthObserver = null;
+
     private String getReferrer() {
         String url = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE).getString(REFERRER, null);
         // setting url as null so that when some one simply opens app, he gets null
@@ -71,6 +73,14 @@ public class Register extends BroadcastReceiver{
     }
 
     public Register(){}
+
+    /**
+     * Register IGrowthObserver
+     * @param observer
+     */
+    public void registerIGrowthObserver(IGrowth observer){
+        mGrowthObserver = observer;
+    }
 
     /**
      * Constructor
@@ -191,7 +201,9 @@ public class Register extends BroadcastReceiver{
                             }
                         }
                         if (null != Url) {
-                            Log.i("TAG", "Url" + Url);
+                            if(null!=mGrowthObserver){
+                                mGrowthObserver.onReceiveDeepLinkUrl(Url);
+                            }
                             Intent deepLinkIntent = new Intent();
                             deepLinkIntent.setAction("android.intent.action.VIEW");
                             deepLinkIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

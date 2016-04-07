@@ -2,11 +2,15 @@ package library.streethawk.com.appmarshmallow;
 
 import android.app.Service;
 import android.content.Intent;
-import android.net.Uri;
-import android.os.Handler;
+import android.os.Bundle;
 import android.os.IBinder;
+import android.util.Log;
 
-public class AppService extends Service {
+import com.streethawk.library.push.ISHObserver;
+import com.streethawk.library.push.Push;
+import com.streethawk.library.push.PushDataForApplication;
+
+public class AppService extends Service implements ISHObserver{
     public AppService() {
     }
 
@@ -17,18 +21,8 @@ public class AppService extends Service {
 
     @Override
     public void onCreate() {
-
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                Intent deepLinkIntent = new Intent();
-                deepLinkIntent.setAction("android.intent.action.VIEW");
-                deepLinkIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                deepLinkIntent.setData(Uri.parse("thirdactivity://setparams?param1=30"));
-                getApplicationContext().startActivity(deepLinkIntent);
-            }
-        }, 5000);
+        Log.e("Anurag","App registering service as push notification listener");
+        Push.getInstance(this).registerSHObserver(this);
     }
 
     @Override
@@ -37,4 +31,31 @@ public class AppService extends Service {
     }
 
 
+    @Override
+    public void shReceivedRawJSON(String title, String message, String json) {
+
+    }
+
+    @Override
+    public void shNotifyAppPage(String pageName) {
+
+    }
+
+    @Override
+    public void onReceivePushData(PushDataForApplication pushData) {
+        Log.e("Anurag","Received push data");
+        pushData.displayDataForDebugging("Anurag");
+    }
+
+    @Override
+    public void onReceiveResult(PushDataForApplication resultData, int result) {
+        resultData.displayDataForDebugging("Anurag");
+        Log.e("Anurag","Push result "+result);
+    }
+
+
+    @Override
+    public void onReceiveNonSHPushPayload(Bundle pushPayload) {
+        Log.e("Anurag","Received 3rd party payload");
+    }
 }

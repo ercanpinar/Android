@@ -49,6 +49,8 @@ public class Util extends LoggingBase {
     public static final String DEV_INSTALL = "Dev install";
     public static final String APP_STATUS = "app_status";
     public static final String APP_STATUS_ANSWER = "app_status_answer";
+
+
     public static final String JSON_VALUE = "value";
     public static final String MSGID = "msgid";
     public static final String CODE = "code";
@@ -58,6 +60,13 @@ public class Util extends LoggingBase {
     public static final String TYPE_DATETIME = "datetime";
     private static final String ACCESS_DATA = "access_data";
     public static final String SHGCMREGISTERED = "shgcmregistered";
+
+
+    //Msg from core to be sent as json data in boradcast receiver
+    public static final String MSG_FROM_CORE            = "coremsg";
+    public static final String KEY_UPDATE_VERSION       = "versionupdate";
+
+
 
 
     //Platform types
@@ -83,6 +92,7 @@ public class Util extends LoggingBase {
     public static final String SHSHARED_PREF_FRNDLST    = "shstorefrndlist";  // Stores names of activity in an application
 
     public static final String BROADCAST_SH_APP_STATUS_NOTIFICATION = "com.streethawk.intent.action.APP_STATUS_NOTIFICATION";
+    public static final String BROADCAST_MSG_FROM_CORE              = "com.streethawk.intent.action.MSG_FROM_CORE";
 
     Util(Context context) {
         super(context);
@@ -143,6 +153,11 @@ public class Util extends LoggingBase {
         }
     }
 
+    /**
+     * Returns url for fetching alert settings
+     * @param context
+     * @return
+     */
     public static URL getAlertSettingUrl(Context context){
         try {
             return new URL(buildUri(context, ApiMethod.USER_ALERT_SETTINGS, null));
@@ -152,6 +167,12 @@ public class Util extends LoggingBase {
         }
     }
 
+
+    /**
+     * Returns URL for submitting feedback
+     * @param context
+     * @return
+     */
     public static URL getFeedbackUrl(Context context) {
         try {
             return new URL(buildUri(context, ApiMethod.USER_FEEDBACK, null));
@@ -159,9 +180,27 @@ public class Util extends LoggingBase {
             e.printStackTrace();
             return null;
         }
-
     }
 
+    /**
+     * Returns URL for submitting button pair for interactive push
+     * @param context
+     * @return
+     */
+    public static URL getInteractivePushUrl(Context context){
+        try {
+            return new URL(buildUri(context, ApiMethod.SUBMIT_INTERACTIVE_PUSH, null));
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * Returns url for fetching geofence tree
+     * @param context
+     * @return
+     */
     public static URL getGeofenceUrl(Context context) {
         try {
             return new URL(buildUri(context, ApiMethod.FETCH_GEOFENCE_TREE, null));
@@ -171,6 +210,12 @@ public class Util extends LoggingBase {
         }
     }
 
+
+    /**
+     * Returns url for fetching beacon list
+     * @param context
+     * @return
+     */
     public static URL getBeaconUrl(Context context) {
         try {
             return new URL(buildUri(context, ApiMethod.FETCH_IBEACON_LIST, null));
@@ -180,6 +225,13 @@ public class Util extends LoggingBase {
         }
     }
 
+
+    /**
+     * Returns true is a given service is running
+     * @param context
+     * @param serviceClass
+     * @return
+     */
     public static boolean isServiceRunning(Context context,Class<?> serviceClass) {
         ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
@@ -191,6 +243,11 @@ public class Util extends LoggingBase {
     }
 
 
+    /**
+     * Returns url for fetching feed data from streethawk server
+     * @param context
+     * @return
+     */
     public static URL getFeedUrl(Context context){
         try {
             return new URL(buildUri(context, ApiMethod.FETCH_FEED_ITEMS, null));
@@ -200,6 +257,11 @@ public class Util extends LoggingBase {
         }
     }
 
+    /**
+     * Returns url for submitting crash report to StreetHawk server
+     * @param context
+     * @return
+     */
     public static URL getCrashReportingUrl(Context context) {
         try {
             return new URL(buildUri(context, ApiMethod.INSTALL_REPORT_CRASH, null));
@@ -245,6 +307,10 @@ public class Util extends LoggingBase {
         return id;
     }
 
+    /**
+     * Returns distribution type
+     * @return AAR for android archive and reference library for jar
+     */
     public static final String getDistributionType() {
         return DISTRIBUTION_TYPE;
     }

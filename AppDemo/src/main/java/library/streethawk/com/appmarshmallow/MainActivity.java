@@ -12,19 +12,28 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.streethawk.library.core.ISHEventObserver;
 import com.streethawk.library.core.StreetHawk;
 import com.streethawk.library.growth.Growth;
-import com.streethawk.library.push.ISHObserver;
+import com.streethawk.library.growth.IGrowth;
+import com.streethawk.library.locations.SHLocation;
+import com.streethawk.library.push.InteractivePush;
 import com.streethawk.library.push.Push;
-import com.streethawk.library.push.PushDataForApplication;
 
-public class MainActivity extends Activity implements ISHObserver,ISHEventObserver{
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+
+public class MainActivity extends Activity implements ISHEventObserver,IGrowth{
     private final int PERMISSIONS_LOCATION = 0;
     private final String TAG = "STREETHAWK_DEMO";
 
+    private final String APP_KEY = "MyFirstApp";
+    private final String SERVER  = " DEV";
+    TextView installId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,18 +41,45 @@ public class MainActivity extends Activity implements ISHObserver,ISHEventObserv
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
         Application app = getApplication();
+        installId = (TextView) findViewById(R.id.installid);
        // Push.getInstance(this).shAlertSetting(30);
 
-
-       Push.getInstance(this).registerSHObserver(this);  //Register this class as implementation of ISHObserver
         // Enter your project number here (https://streethawk.freshdesk.com/solution/articles/5000608997)
-       Push.getInstance(this).registerForPushMessaging("223814131914");
+       Push.getInstance(this).registerForPushMessaging("491295755890");
+
+
+        ArrayList<InteractivePush> appPairs = new ArrayList<InteractivePush>();
+
+        appPairs.add(new InteractivePush("Yo", Push.getInstance(this).getIcon("shaccept"), "TO", Push.getInstance(this).getIcon("shcancel"), "appPair"));
+        appPairs.add(new InteractivePush("1o", Push.getInstance(this).getIcon("shaccept"), "O1", Push.getInstance(this).getIcon("shcancel"), "appPair2"));
+        appPairs.add(new InteractivePush("2o", Push.getInstance(this).getIcon("shaccept"), "O2", Push.getInstance(this).getIcon("shcancel"), "appPair3"));
+        appPairs.add(new InteractivePush("3o", Push.getInstance(this).getIcon("shaccept"), "O3", Push.getInstance(this).getIcon("shcancel"), "appPair4"));
+        appPairs.add(new InteractivePush("4o", Push.getInstance(this).getIcon("shaccept"), "O4", Push.getInstance(this).getIcon("shcancel"), "appPair5"));
+        appPairs.add(new InteractivePush("15o", Push.getInstance(this).getIcon("shaccept"), "1O4", Push.getInstance(this).getIcon("shcancel"), "appPair15"));
+        appPairs.add(new InteractivePush("15o", "1O4", "appPair15"));
+        appPairs.add(new InteractivePush("NoIcon", -1, "ICON", Push.getInstance(this).getIcon("shcancel"), "iconnoicon"));
+
+        Push.getInstance(this).setInteractivePushBtnPairs(appPairs);
+        Growth.getInstance(this).registerIGrowth(this);
+
+
         // Enter APP_KEY for your application registered with StreetHawk server
 
 
+       // StreetHawk.INSTANCE.tagString("sh_cuid",Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID));
+
         StreetHawk.INSTANCE.registerEventObserver(this);
-        StreetHawk.INSTANCE.setAppKey("MyFirstApp");
+        StreetHawk.INSTANCE.setAppKey(APP_KEY);
         StreetHawk.INSTANCE.init(app);
+
+
+        int UPDATE_INTERVAL_FG = 2;
+        int UPDATE_DISTANCE_FG = 100;
+        int UPDATE_INTERVAL_BG =  5;
+        int UPDATE_DISTANCE_BG = 500;
+
+
+        SHLocation.getInstance(this).updateLocationMonitoringParams( UPDATE_INTERVAL_FG,  UPDATE_DISTANCE_FG,  UPDATE_INTERVAL_BG,  UPDATE_DISTANCE_BG);
     }
 
 
@@ -70,20 +106,23 @@ public class MainActivity extends Activity implements ISHObserver,ISHEventObserv
                 Toast.makeText(this,"Tagged String "+key+" "+value,Toast.LENGTH_LONG).show();
             }
         }
-
-
-
     }
 
 
     @Override
     public void onResume() {
         super.onResume();
-        // Tagging cuid
-        StreetHawk.INSTANCE.tagCuid("support@streethawk.com");
 
-        // Start Beacon Monitoring.
-        //Beacons.INSTANCE.startBeaconService();
+        installId.setText( " "+StreetHawk.INSTANCE.getInstallId(this));
+
+        TextView appkey = (TextView) findViewById(R.id.appkey);
+        appkey.setText(" "+APP_KEY);
+
+        TextView server = (TextView) findViewById(R.id.server);
+        server.setText(SERVER);
+
+        Intent intent = new Intent(this,AppService.class);
+        startService(intent);
 
     }
 
@@ -132,36 +171,11 @@ public class MainActivity extends Activity implements ISHObserver,ISHEventObserv
      * Sample code for StreetHawk growth
      * @param view
      */
-    public void Growth(View view){
-        // Call originateShare API to generate and share universal link
-        Log.e("Anurag","Growth clicked");
-        Growth.getInstance(this).originateShareWithCampaign("1", "shdemoapp://setparams?param1=45", null);
-        /*
-        {
-            @Override
-            public void onReceiveShareUrl(final String shareUrl) {
-               runOnUiThread(new Runnable() {
-                   @Override
-                   public void run() {
-                       Intent intent = new Intent(Intent.ACTION_SEND);
-                       intent.setType("text/plain");
-                       intent.putExtra(Intent.EXTRA_TEXT, shareUrl);
-                       intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                       startActivity(intent);
+    public void Growth(View view) {
+        Intent intent = new Intent(this,NewGrowthActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
 
-                   }
-               });
-
-            }
-
-            @Override
-            public void onReceiveErrorForShareUrl(final JSONObject errorResponse) {
-
-            }
-        });
-        */
-        //Growth.getInstance(this).originateShareWithCampaign("1", "shdemoapp://setparams?param1=45",null);
-        //Growth.getInstance(this).originateShareWithCampaign("1", "shdemoapp://setparams?param1=45", null, null, null, null, "http://streethawk.com", null);
     }
 
 
@@ -214,8 +228,6 @@ public class MainActivity extends Activity implements ISHObserver,ISHEventObserv
     public void ThirdActivity(View view){
         Intent intent = new Intent(getApplicationContext(),ThirdActivity.class);
         startActivity(intent);
-
-
     }
 
 
@@ -224,42 +236,23 @@ public class MainActivity extends Activity implements ISHObserver,ISHEventObserv
 //        Beacons.getInstance(this).startBeaconMonitoring();
     }
 
-
-
-
+    @Override
+    public void onInstallRegistered(String install_id){
+       //installId.setText(" "+install_id);
+    }
 
     @Override
-    public void shReceivedRawJSON(String title, String message, String json) {
-
-        Log.e("Anurag","RAWJSON"+title+message+json);
-
+    public void onReceiveShareUrl(String shareUrl) {
 
     }
 
     @Override
-    public void shNotifyAppPage(String pageName) {
+    public void onReceiveErrorForShareUrl(JSONObject errorResponse) {
 
     }
 
     @Override
-    public void onReceivePushData(PushDataForApplication pushData) {
-
-
-
-
-    }
-
-    @Override
-    public void onReceiveResult(PushDataForApplication resultData, int result) {
-
-
-
-
-    }
-
-
-    @Override
-    public void onInstallRegistered(String installId) {
-        Log.e("Anurag","InstallID "+installId);
+    public void onReceiveDeepLinkUrl(String deeplinkUrl) {
+        Log.e("Anurag","deeplinkUrl"+deeplinkUrl);
     }
 }

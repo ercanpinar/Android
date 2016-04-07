@@ -10,6 +10,18 @@ import com.google.android.gms.gcm.GcmListenerService;
 import com.streethawk.library.core.Util;
 
 public class SHGcmListenerService extends GcmListenerService implements Constants{
+
+    private static ISHObserver mISHObserver=null;
+
+    public static void setISHObserver(ISHObserver observer){
+        mISHObserver = observer;
+    }
+
+    public static ISHObserver getISHObserver(){
+        return mISHObserver;
+    }
+
+
     private static final String SHGCM_SENDER_KEY_APP = "shgcmsenderkeyapp";
     @Override
     public void onMessageReceived(String from,Bundle data){

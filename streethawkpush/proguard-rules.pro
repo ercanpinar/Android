@@ -28,3 +28,6 @@
 -keep public class com.streethawk.library.push.PushNotificationBroadcastReceiver{
     public *;
 }
+-keep public class com.streethawk.library.push.InteractivePush{
+    public *;
+}

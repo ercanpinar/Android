@@ -32,6 +32,10 @@
     <string name="STREETHAWK_BLUETOOTH_POSITIVE">Enable</string>
     <string name="STREETHAWK_BLUETOOTH_NEGATIVE">Dismiss</string>
 
+    <string name="STREETHAWK_SIMPLE_OK">Ok</string>
+    <string name="STREETHAWK_SIMPLE_CANCEL">Cancel</string>
+
+
     <string name="STREETHAWK_FEEDBACK_POSITIVE">Show</string>
     <string name="STREETHAWK_FEEDBACK_NEGATIVE">Dismiss</string>
     <string name="STREETHAWK_FEEDBACK_SUBMIT">Submit</string>
@@ -43,5 +47,7 @@
     <string name="STREETHAWK_GROWTH_DEFAULT_EMAIL_SUBJECT">Hey! Download an amazing application</string>
     <string name="STREETHAWK_GROWTH_DEFAULT_EMAIL_BODY">Hi Download an amazing application from the link below </string>
     <string name="BLUETOOTH_ENABLE_TOAST">Bluetooth is turned on </string>
+
+
 
 </resources>

@@ -30,6 +30,10 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationServices;
+
+
+
+
 import com.streethawk.library.core.StreetHawk;
 import com.streethawk.library.core.Util;
 
@@ -40,7 +44,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 public class SHGeofence implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,Constants
-        //Comemnt for Xamarin
+        //Comemnt this line for Xamarin
         ,ResultCallback<Status> {
     private final String SUBTAG = "Geofence ";
     private static Context mContext;
@@ -109,6 +113,16 @@ public class SHGeofence implements GoogleApiClient.ConnectionCallbacks, GoogleAp
     }
 
     /**
+     * Use registerForGoefenceTransition when a device enters a geofence registered with StreetHawk
+     * Implement {@link @INotifyGeofenceTransition}
+     * @param observer
+     */
+    public void registerForGoefenceTransition(INotifyGeofenceTransition observer){
+        GeofenceService.registerGeofenceObserver(observer);
+    }
+
+
+    /**
      * Function to stop monitoring of geofences
      */
     public void stopMonitoring() {
@@ -144,12 +158,23 @@ public class SHGeofence implements GoogleApiClient.ConnectionCallbacks, GoogleAp
 
     }
 
-    /**
-     * use StartLocationWithPermissionDialog to make SDK ask for location permission from user.
-     * @param message String to explain user about the location permission
-     */
 
-    public void startGeofenceWithPermissionDialog(String message){
+    /**
+     * startGeofenceWithPermissionDialog is deprecated.
+     * Instead
+     * 1. set SH_GEO_PERMISSION_BUTTON_TEXT, SH_GEO_PERMISSION_TITLE and SH_GEO_PERMISSION_MESSAGE in res/values/strings.xml of your app
+     * 2. Use startGeofenceWithPermissionDialog();
+     * @param message
+     */
+    @Deprecated
+    public void startGeofenceWithPermissionDialog(String message) {
+        startGeofenceWithPermissionDialog();
+    }
+
+    /**
+     * use startGeofenceWithPermissionDialog to make SDK ask for location permission from user.
+     */
+    public void startGeofenceWithPermissionDialog(){
         if(Util.PLATFORM_XAMARIN==Util.RELEASE_PLATFORM){
             Log.i(Util.TAG,"startGeofenceWithPermissionDialog is not supported on Xamarin");
             return;
@@ -157,8 +182,6 @@ public class SHGeofence implements GoogleApiClient.ConnectionCallbacks, GoogleAp
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             Intent intent = new Intent(mContext, AskGeoPermission.class);
             Bundle extras = new Bundle();
-            if (null != message)
-                extras.putString(PERMISSION_MSG, message);
             extras.putBoolean(PERMISSION_BOOL, true);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.putExtras(extras);
@@ -305,7 +328,7 @@ public class SHGeofence implements GoogleApiClient.ConnectionCallbacks, GoogleAp
     }
 
 
-    // Comment this for Xamarin
+    // Comment this line for Xamarin
     @Override
     public void onResult(Status status) {
 

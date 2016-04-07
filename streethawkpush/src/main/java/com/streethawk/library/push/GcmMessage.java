@@ -27,11 +27,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 class GcmMessage extends NotificationBase implements Constants{
-    static class Aps {
-        public String alert;
-        public Integer badge;
-        public String sound;
-    }
     public GcmMessage() {}
     public PushDataForApplication getPushMessageDataForApplication(Context context,Bundle extras){
         PushDataForApplication dataForApplication = new PushDataForApplication();
@@ -140,6 +135,13 @@ class GcmMessage extends NotificationBase implements Constants{
         }
         return null;
     }
+
+    /**
+     * Get push data stored in database
+     * @param context
+     * @param pushData
+     * @param bundle
+     */
     private void getPushMessageData(Context context,PushNotificationData pushData,Bundle bundle){
         String code=null;
         String msgId=null;
@@ -155,7 +157,26 @@ class GcmMessage extends NotificationBase implements Constants{
         String orientation=null;
         String speed=null;
         String installID = null;
-        Aps mAps = null;
+        String contentAvailable = null;
+        String category = null;
+
+
+        /* Start custom button */
+
+        String mBtnJSON;
+
+        String mB1Title ="";
+        String mB1Icon ="";
+
+        String mB2Title ="";
+        String mB2Icon ="";
+
+        String mB3Title ="";
+        String mB3Icon ="";
+
+        /* End custom button*/
+
+        //Aps mAps = null;
         String appString;
         int lengthTitle = 0;
         // boolean isShowConfirm = true;
@@ -173,6 +194,9 @@ class GcmMessage extends NotificationBase implements Constants{
         code = bundle.getString(PUSH_CODE);
         msgId = bundle.getString(PUSH_MSG_ID);
         data = bundle.getString(PUSH_DATA);
+
+
+
         String tempTitlelength = bundle.getString(PUSH_TITLE_LENGTH);
         if (null != tempTitlelength) {
             try {
@@ -198,7 +222,7 @@ class GcmMessage extends NotificationBase implements Constants{
         }
         appString = bundle.getString(PUSH_APS);
         if (!TextUtils.isEmpty(appString)) {
-            mAps = new Aps();
+            //mAps = new Aps();
             try {
                 JSONObject apsJson = new JSONObject(appString);
                 try {
@@ -229,6 +253,25 @@ class GcmMessage extends NotificationBase implements Constants{
                 } catch (JSONException e) {
                     badge ="-1";
                 }
+
+                /*Start interactive push*/
+
+                try {
+                    contentAvailable = apsJson.getString(PUSH_CONTENT_AVAILABLE);
+                } catch (JSONException e) {
+                    contentAvailable = null;
+                }
+
+                try {
+
+                    category = apsJson.getString(PUSH_CATEGORY);
+                } catch (JSONException e) {
+                    category = null;
+                }
+
+                /*End interactive push*/
+
+
                 try {
                     sound = apsJson.getString(PUSH_SOUND);
                 } catch (JSONException e) {
@@ -237,8 +280,55 @@ class GcmMessage extends NotificationBase implements Constants{
             } catch (JSONException e) {
             }
         }
-        String NEWLINE = "\n";
 
+        /*Start custom button*/
+        if(null==title){
+            title = bundle.getString(PUSH_TITLE);
+        }
+        if(null==msg){
+            msg=bundle.getString(PUSH_MSG);
+        }
+
+        mBtnJSON = bundle.getString(PUSH_BUTTON1);
+        if(null!=mBtnJSON){
+            if (!TextUtils.isEmpty(mBtnJSON)) {
+                try {
+                    JSONObject apsJson = new JSONObject(mBtnJSON);
+                    mB1Title = apsJson.getString(PUSH_BTN_TITLE);
+                    mB1Icon = apsJson.getString(PUSH_BTN_ICON);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        mBtnJSON = bundle.getString(PUSH_BUTTON2);
+        if(null!=mBtnJSON){
+            if (!TextUtils.isEmpty(mBtnJSON)) {
+                try {
+                    JSONObject apsJson = new JSONObject(mBtnJSON);
+                    mB2Title = apsJson.getString(PUSH_BTN_TITLE);
+                    mB2Icon = apsJson.getString(PUSH_BTN_ICON);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        mBtnJSON = bundle.getString(PUSH_BUTTON1);
+        if(null!=mBtnJSON){
+            if (!TextUtils.isEmpty(mBtnJSON)) {
+                try {
+                    JSONObject apsJson = new JSONObject(mBtnJSON);
+                    mB3Title = apsJson.getString(PUSH_BTN_TITLE);
+                    mB3Icon = apsJson.getString(PUSH_BTN_ICON);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        /*End custom button*/
+
+        String NEWLINE = "\n";
         pushData.setMsgId(msgId);
         pushData.setCode(code);
         pushData.setTitle(title);
@@ -250,6 +340,29 @@ class GcmMessage extends NotificationBase implements Constants{
         pushData.setNoDialog(NoConfirm);
         pushData.setSound(sound);
         pushData.setBadge(badge);
+        pushData.setContentAvailable(contentAvailable);
+        pushData.setCategory(category);
+
+        if(!mB1Title.isEmpty()){
+            pushData.setBtn2Title(mB2Title);
+        }
+        if(!mB2Title.isEmpty()){
+            pushData.setBtn2Title(mB2Title);
+        }
+        if(!mB3Title.isEmpty()){
+            pushData.setBtn3Title(mB3Title);
+        }
+
+        if(!mB1Icon.isEmpty()){
+            pushData.setBtn1Icon(getIcon(context,mB1Icon));
+        }
+        if(!mB2Icon.isEmpty()){
+            pushData.setBtn2Icon(getIcon(context,mB2Icon));
+        }
+        if(!mB3Icon.isEmpty()){
+            pushData.setBtn3Icon(getIcon(context,mB3Icon));
+        }
+
         String logMsg = "code " + code + NEWLINE +
                 "TitleLength" + lengthTitle + NEWLINE +
                 "Title " + title + NEWLINE +
@@ -259,17 +372,42 @@ class GcmMessage extends NotificationBase implements Constants{
                 "Orientation " + orientation + NEWLINE +
                 "Speed " + speed + NEWLINE +
                 "InstallId " + installID + NEWLINE +
-                "N " + NoConfirm;
+                "N " + NoConfirm + NEWLINE +
+                "b1Title "+ mB1Title + NEWLINE +
+                "b1Icon " + mB1Icon + NEWLINE +
+                "b2Title "+ mB2Title + NEWLINE +
+                "b2Icon " + mB2Icon + NEWLINE +
+                "b3Title "+ mB3Title + NEWLINE +
+                "b3Icon " + mB3Icon + NEWLINE +
+                "content-available "+contentAvailable + NEWLINE +
+                "category" + category
+                ;
     }
+
+    /**
+     * get icon resid from given icon name
+     * @param context
+     * @param iconName
+     * @return
+     */
+    private int getIcon(Context context,String iconName){
+        String packageName = context.getPackageName();
+        return (context.getResources().getIdentifier(iconName, "drawable", packageName));
+    }
+
+    /**
+     * Store push message in data base
+     * @param context
+     * @param bundle
+     * @return
+     */
     public boolean storePushMessageData(Context context, Bundle bundle) {
         PushNotificationDB storePushData = PushNotificationDB.getInstance(context);
         storePushData.open();
         PushNotificationData pushData = new PushNotificationData();
         getPushMessageData(context, pushData, bundle);
-        //pushData.displayMyData();
         storePushData.storeGcmMessageDatabase(pushData);
         storePushData.close();
-
         return true;
     }
 }

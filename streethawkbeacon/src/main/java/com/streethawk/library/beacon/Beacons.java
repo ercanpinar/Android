@@ -33,6 +33,9 @@ public class Beacons implements Constants{
     private final String SUBTAG = "Beacons ";
     private static Beacons mInstance = null;
     private static Context mContext;
+
+
+
     private Beacons() {
     }
 
@@ -43,6 +46,15 @@ public class Beacons implements Constants{
         return mInstance;
     }
 
+
+    /**
+     * Use registerForBeaconStatus to be notified when device is near a beacon region
+     * Implement {@link INotifyBeaconTransition}
+     * @param observer
+     */
+    public void registerForBeaconStatus(INotifyBeaconTransition observer){
+        BeaconServiceBase.registerForBeaconStatus(observer);
+    }
 
     /**
      * API to notify streethawk server when device enters a beacon region.

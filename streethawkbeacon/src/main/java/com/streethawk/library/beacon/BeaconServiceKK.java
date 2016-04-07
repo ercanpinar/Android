@@ -98,8 +98,4 @@ public class BeaconServiceKK extends BeaconServiceBase {
             BeaconDataParser(scanRecord, rssi);
         }
     };
-
-
-
-
 }

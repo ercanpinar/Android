@@ -63,6 +63,7 @@ public class LoggingBase implements Constants {
 
     /*Member variables*/
     private static String mHostUrl = null;
+    //private  static final String PROD_DEFAULT_HOST_URL = "https://api.streethawk.com";
     private  static final String PROD_DEFAULT_HOST_URL = "https://api.streethawk.com";
 
     protected enum ApiMethod {
@@ -80,7 +81,8 @@ public class LoggingBase implements Constants {
         FETCH_IBEACON_LIST,
         FETCH_FEED_ITEMS,
         PUSH_MIRROR,
-        FETCH_GEOFENCE_TREE;
+        FETCH_GEOFENCE_TREE,
+        SUBMIT_INTERACTIVE_PUSH;
     }
 
     private static String getHostUrl(Context context) {
@@ -102,6 +104,7 @@ public class LoggingBase implements Constants {
         Uri hostUri = null;
         switch (method) {
             case INSTALL_LOG:
+            case SUBMIT_INTERACTIVE_PUSH:
                 hostUri = Uri.parse(getHostUrl(context)).buildUpon().appendPath(API_VERSION_V2).build();
                 break;
             default:
@@ -185,6 +188,12 @@ public class LoggingBase implements Constants {
                 uriBuilder.appendPath("geofences");
                 uriBuilder.appendPath("tree");
                 break;
+            /*Interactive push Start*/
+            case SUBMIT_INTERACTIVE_PUSH:
+                uriBuilder.appendPath("apps");
+                uriBuilder.appendPath("submit_interactive_button");
+                break;
+           /* Interactive push End*/
             default:
                 Log.e(Util.TAG, "SUBTAG+No URL for given method " + method);
                 break;

@@ -176,6 +176,33 @@ public enum StreetHawk implements Constants{
     private boolean activityLifecycleRegistered = false;
 
 
+    /**
+     * Tag user's languge here. Please note that SDK can automatically detect device's default language and hence use this API only if
+     * there is a difference in the application and device's language setttings
+     * @param language
+     */
+    public void tagUserLanguage(String language){
+        if(null==language) {
+            Log.e(Util.TAG,"Laungauge is null in tagUserLanguage returning..");
+            return;
+        }
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
+        String userLocale = sharedPreferences.getString(USER_LOCALE , null);
+        if(null==userLocale) {
+            SharedPreferences.Editor e = sharedPreferences.edit();
+            e.putString(USER_LOCALE,language);
+            e.commit();
+            tagString("sh_language", language);
+        }else{
+            if(!userLocale.equals(language)){
+                SharedPreferences.Editor e = sharedPreferences.edit();
+                e.putString(USER_LOCALE,language);
+                e.commit();
+            }
+        }
+    }
+
+
     public void setAppKey(String app_key) {
         mAppKey = app_key;
     }

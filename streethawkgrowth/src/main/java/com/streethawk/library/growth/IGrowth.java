@@ -31,4 +31,10 @@ public interface IGrowth{
      * @param errorResponse
      */
     public void onReceiveErrorForShareUrl(final JSONObject errorResponse);
+
+    /**
+     *Function returns deeplink url to be launched on successful match
+     * @param deeplinkUrl
+     */
+    public void onReceiveDeepLinkUrl(final String deeplinkUrl);
 }

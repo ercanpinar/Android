@@ -43,6 +43,7 @@ import com.streethawk.library.core.StreetHawk;
 import com.streethawk.library.core.Util;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
@@ -63,9 +64,6 @@ public class Push implements Constants{
     private static final String SHGCM_SENDER_KEY_APP = "shgcmsenderkeyapp";
     private static final String SUBTAG = "PUSH ";
     private static ISHObserver mISHObserverObject = null;
-
-
-
 
     private Push() {
     }
@@ -164,7 +162,7 @@ public class Push implements Constants{
         String packageName = context.getPackageName();
         Intent intent = new Intent(action);
         intent.setPackage(packageName);
-        List<ResolveInfo> receivers = pm.queryBroadcastReceivers(intent, PackageManager.GET_INTENT_FILTERS);
+        List<ResolveInfo> receivers = pm.queryBroadcastReceivers(intent, PackageManager.MATCH_DEFAULT_ONLY);
         if (receivers.isEmpty()) {
             Log.e(Util.TAG, SUBTAG + "No receivers for action " + action);
             return false;
@@ -248,10 +246,13 @@ public class Push implements Constants{
                 return;
             }
         }).start();
+
+
+
     }
 
     /**
-     * Call addPushModule() to add growth modules in installs which have already been released with StreetHawk core module.
+     * Call addPushModule() to add push modules in installs which have already been released with StreetHawk core module.
      */
     public void addPushModule(){
         String installId = Util.getInstallId(mContext);
@@ -375,12 +376,7 @@ public class Push implements Constants{
     public void setAppPageReceiver(ISHObserver object) {
         if (null == object)
             return;
-        if (null != mContext) {
-            SHForegroundNotification instance = SHForegroundNotification.getDialogInstance(mContext);
-            instance.setAppPageReceiver(object);
-            PushNotificationBroadcastReceiver.updateAppGcmReceiverList(object);
-
-        }
+        SHGcmListenerService.setISHObserver(object);
     }
 
     /**
@@ -388,7 +384,14 @@ public class Push implements Constants{
      * @param object
      */
     public void registerSHObserver(ISHObserver object) {
+
+        if(null==object){
+            Log.e(Util.TAG,"ISHObserver instance cannot be null");
+            return;
+        }
         mISHObserverObject = object;
+        SHGcmListenerService.setISHObserver(object);
+
     }
 
 
@@ -613,5 +616,41 @@ public class Push implements Constants{
             return url;
     }
 
+    /**
+     * API returns icon identifer. To be used along with API setInteractivePushBtnPairs
+     * @param iconName
+     * @return
+     */
+    public int getIcon(String iconName){
+        String packageName = mContext.getPackageName();
+        return (mContext.getResources().getIdentifier(iconName, "drawable", packageName));
+    }
 
+    /**
+     * API to return button pair from the given title
+     */
+    public void getButtonPairFromId(final String pairTitle,final InteractivePush obj){
+        InteractivePushDB btnPairdb = InteractivePushDB.getInstance(mContext);
+        btnPairdb.getBtnPairData(pairTitle,obj);
+    }
+
+    /**
+     * Set application specific button pairs for interactive push
+     * @param appPairs
+     */
+    public void setInteractivePushBtnPairs( final ArrayList<InteractivePush> appPairs){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if(null==appPairs){
+                    Log.e(Util.TAG,"app pairs is null in setInteractivePushBtnPairs. returning..");
+                    return;
+                }
+                InteractivePushDB btnPairdb = InteractivePushDB.getInstance(mContext);
+                btnPairdb.open();
+                btnPairdb.storeBtnPairsFromList(appPairs);
+                btnPairdb.close();
+            }
+        }).start();
+    }
 }

@@ -246,7 +246,7 @@ public class SHBeaconModuleBC extends BroadcastReceiver implements Constants {
                         object.setBeaconId(ID);
                         object.setUUID(idUUID);
                         object.setMajorNumber(idMajor);
-                        object.setMinorNUmber(idMinor);
+                        object.setMinorNumber(idMinor);
                         beaconDataList.add(object);
                     }
                 }

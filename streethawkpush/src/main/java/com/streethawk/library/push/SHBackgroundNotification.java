@@ -89,6 +89,7 @@ class SHBackgroundNotification extends NotificationBase {
             case CODE_CALL_TELEPHONE_NUMBER:
             case CODE_USER_REGISTRATION_SCREEN:
             case CODE_USER_LOGIN_SCREEN:
+            case CODE_CUSTOM_ACTIONS:
                 return false;
             default:
                 return true;
@@ -110,6 +111,7 @@ class SHBackgroundNotification extends NotificationBase {
             case CODE_ACCEPT_PUSHMSG:
             case CODE_USER_LOGIN_SCREEN:
             case CODE_USER_REGISTRATION_SCREEN:
+            case CODE_CUSTOM_ACTIONS:
                 return false;
             default:
                 PushNotificationBroadcastReceiver obj = new PushNotificationBroadcastReceiver();
@@ -160,53 +162,56 @@ class SHBackgroundNotification extends NotificationBase {
             obj.clearPendingDialogFlagAndDB(mContext, pushData.getMsgId());
             return;
         }
-
         String tmpTitle = pushData.getTitle();
         tmpTitle = getUnicodeForEmoji(tmpTitle, true);
         String tmpMsg = pushData.getMsg();
         tmpMsg = getUnicodeForEmoji(tmpMsg, true);
         String msgId = pushData.getMsgId();
-
         Spanned title = null;
         Spanned msg = null;
         Spanned app_name = null;
         String app_name_str = Util.getAppName(mContext);
-
         if (tmpTitle != null) {
             if (!tmpTitle.isEmpty())
                 title = Html.fromHtml(tmpTitle);
         }
-
         if (tmpMsg != null) {
             if (!tmpMsg.isEmpty())
                 msg = Html.fromHtml(tmpMsg);
         }
-
         if (null != app_name_str)
             app_name = Html.fromHtml(app_name_str);
         int code = Integer.parseInt(pushData.getCode());
         if (checkInvalidCode(code)) {
             return;
         }
-
         NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext);
-        String positiveButtonTitle = null;
-
-        if (code == CODE_SIMPLE_PROMPT) {
-            positiveButtonTitle = getStringtoDisplay(mContext, TYPE_SIMPLE_PUSH_NOTIFICATION_POSITIVE);
-        } else {
-            positiveButtonTitle = getPositiveButtonTitle(mContext, code);
-        }
-        if (code == CODE_OPEN_URL) {
-            if (isInAppSlide()) {
-                PushNotificationDB dbObject = PushNotificationDB.getInstance(mContext);
-                dbObject.open();
-                dbObject.forceStoreNoDialog(msgId);
-                dbObject.close();
+        String positiveButtonTitle = pushData.getBtn1Title();
+        int positiveButtonIcon = pushData.getBtn1Icon();
+        if(null==positiveButtonTitle) {
+            // get default button title if title is not set from StreetHawk console
+            if (code == CODE_SIMPLE_PROMPT) {
+                positiveButtonTitle = getStringtoDisplay(mContext, TYPE_SIMPLE_PUSH_NOTIFICATION_POSITIVE);
+            } else {
+                positiveButtonTitle = getPositiveButtonTitle(mContext, code);
+            }
+            if (code == CODE_OPEN_URL) {
+                if (isInAppSlide()) {
+                    PushNotificationDB dbObject = PushNotificationDB.getInstance(mContext);
+                    dbObject.open();
+                    dbObject.forceStoreNoDialog(msgId);
+                    dbObject.close();
+                }
             }
         }
-        String negativeButtonTitle = getNegativeButtonTitle(mContext, code);
-        String neutralButtonTitle;
+        String negativeButtonTitle = pushData.getBtn2Title();
+        int negativeButtonIcon = pushData.getBtn2Icon();
+        if(null==negativeButtonTitle) {
+            // get default button title if title is not set from StreetHawk console
+            negativeButtonTitle = getNegativeButtonTitle(mContext, code);
+        }
+        String neutralButtonTitle = pushData.getBtn3Title();
+        int neutralButtonIcon = pushData.getBtn3Icon();
 
         Bundle extras = new Bundle();
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
@@ -216,7 +221,6 @@ class SHBackgroundNotification extends NotificationBase {
         extras.putString(PENDING_DIALOG, msgId);
         extras.putBoolean(FROMBG, true);
         extras.putString(SHPACKAGENAME, mContext.getPackageName());
-
 
         Intent positiveIntent = new Intent();
         positiveIntent.putExtras(extras);
@@ -248,7 +252,6 @@ class SHBackgroundNotification extends NotificationBase {
         }
 
         //Floating notification for lolipop
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             if (shouldDisplayHeadsUpNotification(code))
                 builder.setPriority(Notification.PRIORITY_HIGH);
@@ -295,15 +298,24 @@ class SHBackgroundNotification extends NotificationBase {
                 builder.setDeleteIntent(negativePendingIntent);
                 break;
             case CODE_RATE_APP:
-                builder.addAction(getIcon(mContext, code, STREETHAWK_DECLINED), negativeButtonTitle, neutralPendingIntent);
+                if(-1==negativeButtonIcon){
+                    negativeButtonIcon = getIcon(mContext, code, STREETHAWK_DECLINED);
+                }
+                builder.addAction(negativeButtonIcon, negativeButtonTitle, neutralPendingIntent);
                 builder.setDeleteIntent(neutralPendingIntent);
                 break;
             default:
-                builder.addAction(getIcon(mContext, code, STREETHAWK_DECLINED), negativeButtonTitle, negativePendingIntent);
+                if(-1==negativeButtonIcon){
+                    negativeButtonIcon = getIcon(mContext, code, STREETHAWK_DECLINED);
+                }
+                builder.addAction(negativeButtonIcon, negativeButtonTitle, negativePendingIntent);
                 builder.setDeleteIntent(negativePendingIntent);
         }
-        builder.addAction(getIcon(mContext, code, STREETHAWK_ACCEPTED), positiveButtonTitle, positivePendingIntent);
+        if(-1==positiveButtonIcon){
+            positiveButtonIcon = getIcon(mContext, code, STREETHAWK_ACCEPTED);
+        }
 
+        builder.addAction(positiveButtonIcon, positiveButtonTitle, positivePendingIntent);
         NotificationManager notificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
         Notification notification = builder.build();
         notification.contentIntent = positivePendingIntent;

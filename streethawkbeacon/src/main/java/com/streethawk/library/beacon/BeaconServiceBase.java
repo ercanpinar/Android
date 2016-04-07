@@ -74,6 +74,16 @@ public abstract class BeaconServiceBase extends Service implements Constants{
         super.onDestroy();
     }
 
+    private static INotifyBeaconTransition mINotifyBeaconStatus=null;
+    final ArrayList<BeaconData> mDetectedBeaconList = new ArrayList<BeaconData>();
+
+
+    public static void registerForBeaconStatus(INotifyBeaconTransition observer){
+        mINotifyBeaconStatus = observer;
+    }
+
+
+
     /**
      * Notify server when all beacons are invisible due to turning off bluetooth
      * @param context
@@ -262,6 +272,14 @@ public abstract class BeaconServiceBase extends Service implements Constants{
         if (null != beaconId) {
             mVisibleBeacons.put(beaconId, (double) distance);
         }
+        BeaconData beaconDetected = new BeaconData();
+        beaconDetected.setUUID(UUID);
+        beaconDetected.setMajorNumber(intMajorNo);
+        beaconDetected.setMinorNumber(intMinorNo);
+        beaconDetected.setDistance(distance);
+        beaconDetected.setBeaconId("UnKnown");
+        mDetectedBeaconList.add(beaconDetected);
+        beaconDetected = null;
     }
 
     /**
@@ -321,7 +339,18 @@ public abstract class BeaconServiceBase extends Service implements Constants{
             params.putString("json", object.toString());
             Log.i(Util.TAG, SUBTAG + "Notifying beacons detected" + object.toString());
             manager.addLogsForSending(params);
+            notifyObserver();
             mVisibleBeacons.clear();                // clear list after logging
+        }
+    }
+
+    private void notifyObserver() {
+        if(null!=mINotifyBeaconStatus){
+           if(null!=mDetectedBeaconList){
+               if(!mDetectedBeaconList.isEmpty()){
+                   mINotifyBeaconStatus.notifyBeaconDetected(mDetectedBeaconList);
+               }
+           }
         }
     }
 }

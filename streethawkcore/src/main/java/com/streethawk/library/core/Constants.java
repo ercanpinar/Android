@@ -75,6 +75,10 @@ interface Constants {
     String FEEDBACK_TITLE       = "shStaggedFBTitle";
     String FEEDBACK_CONTENT     = "shStaggedFBContent";
     String FEEDBACK_TYPE        = "shfeedbacktype";
+    String DEVICE_LOCALE        = "shdevicelocale";
+    String USER_LOCALE          = "shuserlocale";
+
+
 
 
     //Release type
@@ -90,8 +94,8 @@ interface Constants {
 
     /*Library version*/
     String SELLING_ARGUMENT    = "1";
-    String FEATURE_NUMBER      = "7";
-    String BUGFIX_NUMBER       = "15";
+    String FEATURE_NUMBER      = "8";
+    String BUGFIX_NUMBER       = "0";
 
     /*Release parameters */
     String SHLIBRARY_VERSION = SELLING_ARGUMENT + "." + FEATURE_NUMBER + "." + BUGFIX_NUMBER;

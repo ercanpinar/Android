@@ -85,6 +85,12 @@ public class PushDataForApplication extends NotificationBase{
     public static final int ACTION_ENABLE_LOCATION = 12;
 
     /**
+     * ACTION_ENABLE_LOCATION = 13
+     */
+    public static final int ACTION_INTERACTIVE_PUSH = 13;
+
+
+    /**
      * RESULT_ACCEPTED = 1
      */
     public static final int RESULT_ACCEPTED = 1;
@@ -97,17 +103,28 @@ public class PushDataForApplication extends NotificationBase{
      */
     public static final int RESULT_POSTPONED = 0;
 
-    private int mAction;
-    private String mMsgID;
-    private String mTitle;
-    private String mMessage;
-    private String mData;
-    private Float mPortion;
-    private int mOrientation;
-    private int mSpeed;
+    private int     mAction;
+    private String  mMsgID;
+    private String  mTitle;
+    private String  mMessage;
+    private String  mData;
+    private Float   mPortion;
+    private int     mOrientation;
+    private int     mSpeed;
     private boolean mDisplayWithoutDialog;
-    private String mSound;
-    private int mBadge;
+    private String  mSound;
+    private int     mBadge;
+    private String  mContentAvailable   = null;  // For interactive push
+    private String  mCategory           = null;  // for interactive push
+
+    /*We are not using custom button as of now*/
+
+    private String  mBtn1Title     = null;      // Custom button 1 title
+    private String  mBtn2Title     = null;      // Custom button 2 title
+    private String  mBtn3Title     = null;      // Custom button 3 title
+    private String  mIC1           = null;     // Icon code for button 1
+    private String  mIC2           = null;     // Icon code for button 2
+    private String  mIC3           = null;     // Icon code for button 3
 
     public void convertPushDataToPushDataForApp(PushNotificationData data, PushDataForApplication dataForApplication) {
         if (null == dataForApplication)
@@ -195,6 +212,9 @@ public class PushDataForApplication extends NotificationBase{
                     break;
                 case CODE_ENABLE_LOCATION:
                     dataForApplication.setAction(PushDataForApplication.ACTION_ENABLE_LOCATION);
+                    break;
+                case CODE_CUSTOM_ACTIONS:
+                    dataForApplication.setAction(PushDataForApplication.ACTION_INTERACTIVE_PUSH);
                     break;
                 default:
                     dataForApplication.setAction(0);
@@ -315,6 +335,51 @@ public class PushDataForApplication extends NotificationBase{
         return mBadge;
     }
 
+    /**
+     * API to get value of content available
+     * @return
+     */
+    public String getContentAvailable(){return mContentAvailable;}
+
+
+
+    /**
+     * get custom title for button 1
+     * @return title for button 1
+     */
+    public String getBtn1Title(){return this.mBtn1Title;}
+
+    /**
+     * get title for button 2
+     * @return title for button 2
+     */
+    public String getBtn2Title(){return this.mBtn2Title;}
+
+    /**
+     * get title for button 3
+     * @return title for button 3
+     */
+    public String getBtn3Title(){return this.mBtn3Title;}
+
+    /**
+     * get icon for button 1
+     * @return icon name for button 1
+     */
+    public String getBtn1Icon(){return this.mIC1;}
+
+    /**
+     * get icon for button 2
+     * @return icon for button 2
+     */
+    public String getBtn2Icon(){return this.mIC2;}
+
+    /**
+     * get icon for button 3
+     * @return icon for button 3
+     */
+    public String getBtn3Icon(){return this.mIC3;}
+
+
 
     /**
      * API for setting action code
@@ -404,6 +469,54 @@ public class PushDataForApplication extends NotificationBase{
         mBadge = badge;
     }
 
+    /**
+     * API for setting content available for payload
+     * @param contentAvailable
+     */
+    public void setContentAvailable(String contentAvailable){this.mContentAvailable=contentAvailable;}
+
+
+    /**
+     * Set title for notification button 1
+     * @param title title for notification button 1
+     */
+    public void setBtn1Title(String title){this.mBtn1Title = title;}
+
+    /**
+     * Set title for notification button 2
+     * @param title title for notification button 2
+     */
+    public void setBtn2Title(String title){this.mBtn2Title = title;}
+
+    /**
+     * Set title for notification button 3
+     * @param title title for notification button 3
+     */
+    public void setBtn3Title(String title){this.mBtn3Title = title;}
+
+    /**
+     * Set icon title for button 1
+     * @param icon icon for button 1
+     */
+    public void setBtn1Icon(String icon){this.mIC1 = icon;}
+
+    /**
+     * Set icon title for button 2
+     * @param icon for button 2
+     */
+    public void setBtn2Icon(String icon){this.mIC2 = icon;}
+
+    /**
+     * Set title for button 3
+     * @param icon for button 3
+     */
+    public void setBtn3Icon(String icon){this.mIC3 = icon;}
+
+
+
+
+
+
 
     /**
      * Display push data received from applicaton.
@@ -416,18 +529,27 @@ public class PushDataForApplication extends NotificationBase{
         String myData = "displayMyData" + NEWLINE +
                 "MsgId " + this.mMsgID + NEWLINE +
                 "Action " + mAction + NEWLINE +
-                "Title " + this.mTitle + NEWLINE +
+                "Title "+ mTitle + NEWLINE +
                 "Msg " + this.mMessage + NEWLINE +
-                "Data " + this.mData + NEWLINE +
-                "Portion " + this.mPortion + NEWLINE +
-                "Orientation " + this.mOrientation + NEWLINE +
-                "Speed " + this.mSpeed + NEWLINE +
+                "Data " + mData + NEWLINE +
+                "Portion "+  mPortion + NEWLINE +
+                "Orientation "+ mOrientation + NEWLINE +
+                "Speed " + mSpeed + NEWLINE +
                 "NoDialog " + this.mDisplayWithoutDialog + NEWLINE +
-                "Sound " + this.mSound + NEWLINE +
-                "Badge " + this.mBadge;
+                "Sound " + mSound + NEWLINE +
+                "Badge " + mBadge + NEWLINE +
+
+                /*Start interactive push*/
+                "Btn1Title" + mBtn1Title + NEWLINE +
+                "Btn2Title" + mBtn2Title + NEWLINE +
+                "Btn3Title" + mBtn3Title + NEWLINE +
+                "Icon_Btn1" + mIC1 + NEWLINE +
+                "Icon_Btn2" + mIC2 + NEWLINE +
+                "Icon_Btn3" + mIC3
+                /*End interactive push*/
+                ;
         Log.i(LogTag, myData);
     }
-
 
     /**
      * Notify push result to StreetHawk SDK. Use this API if you are not using StreetHawks on click listeners

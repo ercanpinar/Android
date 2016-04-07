@@ -172,18 +172,26 @@ public class SHLocation implements Constants{
     }
 
     /**
-     * use StartLocationWithPermissionDialog to make SDK ask for location permission from user.
-     * @param message String to explain user about the location permission
+     * StartLocationWithPermissionDialog is deprecated.
+     * Instead
+     * 1. set SH_LOC_PERMISSION_BUTTON_TEXT, SH_LOC_PERMISSION_TITLE and SH_LOC_PERMISSION_MESSAGE in res/values/strings.xml of your app
+     * 2. Use StartLocationWithPermissionDialog();
+     * @param message
      */
-    public void startLocationWithPermissionDialog(String message){
+    @Deprecated
+    public void startLocationWithPermissionDialog(String message) {
+        startLocationWithPermissionDialog();
+    }
+    /**
+     * use StartLocationWithPermissionDialog to make SDK ask for location permission from user
+     */
+    public void startLocationWithPermissionDialog(){
         if(Util.PLATFORM_XAMARIN==Util.RELEASE_PLATFORM){
             Log.i(Util.TAG,"startLocationWithPermissionDialog is not supported on Xamarin");
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             Intent intent = new Intent(mContext, AskLocPermission.class);
             Bundle extras = new Bundle();
-            if (null != message)
-                extras.putString(PERMISSION_MSG, message);
             extras.putBoolean(PERMISSION_BOOL, true);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.putExtras(extras);

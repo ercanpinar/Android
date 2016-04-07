@@ -20,11 +20,12 @@ package com.streethawk.library.beacon;
 /**
  * Beacon paramaters
  */
-class BeaconData {
+public class BeaconData {
     private String mUUID;
     private int mMajorNumber;
     private int mMinorNumber;
     private String mBeaconId;
+    private double mDistance;
 
     /**
      * Set UUID of the beacon to be monitored
@@ -48,7 +49,14 @@ class BeaconData {
      * set minor number of beacon to be monitored
      * @param minor minor number of beacon
      */
-    public void setMinorNUmber(int minor){this.mMinorNumber = minor;}
+    public void setMinorNumber(int minor){this.mMinorNumber = minor;}
+
+    /**
+     * Set distance of the beacon to be monitored
+     * @param distance
+     */
+    public void setDistance(double distance){this.mDistance = distance;}
+
 
     /**
      * Function returns UUID of beacon
@@ -73,4 +81,11 @@ class BeaconData {
      * @return minor number
      */
     public int getMinorNumber(){return mMinorNumber;}
+
+    /**
+     * Return distance of the beacon
+     * @return distance
+     */
+    public double getDistance(){return mDistance;}
+
 }

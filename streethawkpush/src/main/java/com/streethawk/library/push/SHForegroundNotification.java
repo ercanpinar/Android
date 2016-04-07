@@ -39,6 +39,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.streethawk.library.core.ISHEventObserver;
 import com.streethawk.library.core.Logging;
 import com.streethawk.library.core.StreetHawk;
 import com.streethawk.library.core.Util;
@@ -55,9 +56,6 @@ class SHForegroundNotification extends NotificationBase {
 
     private final String SUBTAG = "SHForegroundNotification ";
     private Context mContext;
-    //private PushNotificationData mPushData;
-    //private static Bundle mExtras;
-    private static ISHObserver mSHObserver = null;
     private boolean isDialogHandled = false;
     private static volatile Dialog mForegroundDialog = null;
     private static SHForegroundNotification mInstance = null;
@@ -67,6 +65,7 @@ class SHForegroundNotification extends NotificationBase {
 
     /**
      * API to dismiss Streethawk dialog dialog
+     *
      */
     public void dismissForegroundDialog() {
         if (null != mForegroundDialog) {
@@ -87,15 +86,6 @@ class SHForegroundNotification extends NotificationBase {
             return;
         if(MyDialog.isShowing())
             MyDialog.dismiss();
-    }
-
-    /**
-     * Pass receiver object which is required for cross platforms
-     *
-     * @param receiverObject
-     */
-    public void setAppPageReceiver(ISHObserver receiverObject) {
-        mSHObserver = receiverObject;
     }
 
     /**
@@ -261,8 +251,17 @@ class SHForegroundNotification extends NotificationBase {
                     if (null != msg) {
                         builder.setMessage(msg);
                     }
-                    String positiveButtonTitle = getPositiveButtonTitle(mContext, code);
-                    String NegativeButtonTitle = getNegativeButtonTitle(mContext, code);
+
+                    String positiveButtonTitle = pushData.getBtn1Title();
+                    if(null==positiveButtonTitle){
+                        positiveButtonTitle = getPositiveButtonTitle(mContext, code);
+                    }
+                    String NegativeButtonTitle = pushData.getBtn2Title();
+                    if(null==NegativeButtonTitle){
+                        NegativeButtonTitle = getNegativeButtonTitle(mContext, code);
+                    }
+                    String neutralButtonTitle = pushData.getBtn3Title();
+
                     // Keeping switch case instead of if to handle non supported codes
                     switch (code) {
                         case CODE_OPEN_URL:
@@ -305,6 +304,26 @@ class SHForegroundNotification extends NotificationBase {
                                     builder.setPositiveButton(positiveButtonTitle, getPositiveOnClickListener(pushData));
                                     builder.setNegativeButton(NegativeButtonTitle, getNegativeOnClickListener(pushData.getMsgId()));
                                 }
+                            }
+                            break;
+                        case CODE_CUSTOM_ACTIONS:
+                            String b1Title = pushData.getBtn1Title();
+                            String b2Title = pushData.getBtn2Title();
+                            String b3Title = pushData.getBtn3Title();
+                            if(null==b1Title)
+                                b1Title = getPositiveButtonTitle(mContext,CODE_CUSTOM_ACTIONS);
+                            builder.setPositiveButton(b1Title, getPositiveOnClickListener(pushData.getMsgId()));
+                            if(null!=b2Title) {
+                                if(!b2Title.isEmpty())
+                                    builder.setNegativeButton(b2Title, getNegativeOnClickListener(pushData.getMsgId()));
+                            }else{
+                                b2Title = getNegativeButtonTitle(mContext,CODE_CUSTOM_ACTIONS);
+                                builder.setNegativeButton(b2Title, getNegativeOnClickListener(pushData.getMsgId()));
+                            }
+
+                            if(null!=b3Title) {
+                                if(!b3Title.isEmpty())
+                                    builder.setNeutralButton(b3Title, getNeutralOnClickListener(pushData.getMsgId()));
                             }
                             break;
                         default:
@@ -478,6 +497,7 @@ class SHForegroundNotification extends NotificationBase {
                         break;
                     case CODE_SIMPLE_PROMPT:
                         PushNotificationBroadcastReceiver obj = new PushNotificationBroadcastReceiver();
+                        obj.clearPendingDialogFlagAndDB(mContext, mPushData.getMsgId());
                         break;
                     case CODE_RATE_APP:
                     case CODE_UPDATE_APP:
@@ -490,6 +510,9 @@ class SHForegroundNotification extends NotificationBase {
                         Intent locIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                         locIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         mContext.startActivity(locIntent);
+                        break;
+                    case CODE_CUSTOM_ACTIONS:
+                        // just send push result to app and let it handle
                         break;
                     default:
                         // Wrong code so dismiss dialog
@@ -533,7 +556,7 @@ class SHForegroundNotification extends NotificationBase {
     }
 
     /**
-     * negative button listener for actions handled by StreetHawk default dialog
+     * negative button listener for actions handled by StreetHawk default dialog and custom actions
      *
      * @param msgId
      * @return
@@ -550,7 +573,7 @@ class SHForegroundNotification extends NotificationBase {
     }
 
     /**
-     * neutral button listener for actions handled by StreetHawk default dialog.
+     * neutral button listener for actions handled by StreetHawk default dialog and custom actions.
      *
      * @param msgId
      * @return
@@ -565,6 +588,24 @@ class SHForegroundNotification extends NotificationBase {
         };
         return neutralClickListener;
     }
+
+    /**
+     * positive button listener for actions handled by custom actions
+     *
+     * @param msgId
+     * @return
+     */
+    private DialogInterface.OnClickListener getPositiveOnClickListener(final String msgId) {
+        DialogInterface.OnClickListener negativeClickListener = new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                sendResultBroadcast(mContext, msgId, STREETHAWK_DECLINED);
+            }
+        };
+        return negativeClickListener;
+    }
+
 
     /**
      * Opens google play to rate or update the app
@@ -688,11 +729,12 @@ class SHForegroundNotification extends NotificationBase {
             case PLATFORM_PHONEGAP:
             case PLATFORM_TITANIUM:
             case PLATFORM_UNITY:
-                if (null == mSHObserver) {
+                ISHObserver instance = SHGcmListenerService.getISHObserver();
+                if (null == instance) {
                     Log.e(Util.TAG, STREETHAWK_ERROR_NO_ISHOBSERVER);
                     return;
                 } else {
-                    mSHObserver.shNotifyAppPage(activityName);
+                    instance.shNotifyAppPage(activityName);
                 }
                 break;
         }

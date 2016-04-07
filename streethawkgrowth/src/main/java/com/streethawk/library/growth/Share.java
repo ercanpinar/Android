@@ -75,7 +75,7 @@ class Share {
     private final String INSTALL_ID = "sh_cuid";
     private final String ID = "utm_campaign";
 
-    private final String SHARE = "https://pointzi.streethawk.com/originate_viral_share/";
+   private final String SHARE = "https://pointzi.streethawk.com/originate_viral_share/";
    // private static Dialog pickerDialog = null;                          //TODO: Material design for picker dialog
     private Context mContext;
     private Activity mActivity;
@@ -580,6 +580,7 @@ class Share {
         logMap.put(APP_KEY, app_key);
         logMap.put(this.ID, ID);
         logMap.put(INSTALL_ID, installId);
+
         logMap.put(URI, uri);
         logMap.put(SCHEME, scheme);
         logMap.put(UTM_SOURCE, utm_source);

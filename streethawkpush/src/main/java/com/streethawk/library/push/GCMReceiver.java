@@ -29,7 +29,10 @@ import com.streethawk.library.core.Util;
 
 public class GCMReceiver extends WakefulBroadcastReceiver {
 
-
+    /**
+     *Display payload for debugging
+     * @param bundle
+     */
     public static void displayAllExtras(Bundle bundle){
         for (String key : bundle.keySet()) {
             Object value = bundle.get(key);
@@ -38,17 +41,29 @@ public class GCMReceiver extends WakefulBroadcastReceiver {
         }
     }
 
+
+    private void dispatchThirdPartyPayload(Bundle extras){
+        ISHObserver observer = SHGcmListenerService.getISHObserver();
+        if(null==observer){
+            Log.i(Util.TAG,"ISHObserver not registered for accepting third party push payload. returning");
+            return;
+        }else{
+            observer.onReceiveNonSHPushPayload(extras);
+        }
+    }
+
     @Override
     public final void onReceive(final Context context, final Intent intent) {
         if ("com.google.android.c2dm.intent.RECEIVE".equals(intent.getAction())) {
-            displayAllExtras(intent.getExtras());
+            //displayAllExtras(intent.getExtras());
             Bundle extras = intent.getExtras();
             if(null==extras)
                 return;
             String installId = extras.getString(Util.INSTALL_ID);
             String storedInstallId = Util.getInstallId(context);
-            if(null==installId)
-                return;
+            if(null==installId) {
+                dispatchThirdPartyPayload(extras);
+            }
             if(null==storedInstallId)
                 return;
             if(!(installId.equals(storedInstallId))) {

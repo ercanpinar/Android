@@ -21,7 +21,6 @@
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -52,7 +51,7 @@
         <service
             android:name=".AppService"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true" />
 
         <activity
             android:name=".ThirdActivity"
@@ -63,12 +62,13 @@
                 <category android:name="android.intent.category.BROWSABLE" />
                 <category android:name="android.intent.category.DEFAULT" />
 
-                <data android:scheme="thirdactivity"
-                    android:host="setparams"/>
+                <data
+                    android:host="setparams"
+                    android:scheme="thirdactivity" />
             </intent-filter>
-
-
         </activity>
+        <activity android:name=".NewGrowthActivity" />
+        <activity android:name=".DynamicAppLoading"></activity>
     </application>
 
 </manifest>

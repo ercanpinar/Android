@@ -1,4 +1,6 @@
 <resources>
     <string name="app_name">StreetHawkGeofence</string>
-    <string name="sh_geo_permission">Okay</string>
+    <string name="SH_GEO_PERMISSION_BUTTON_TEXT">Okay</string>
+    <string name="SH_GEO_PERMISSION_TITLE">Permission Required</string>
+    <string name="SH_GEO_PERMISSION_MESSAGE">Would you like to grant us location permission for monitoring geofences?</string>
 </resources>

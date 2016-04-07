@@ -18,12 +18,17 @@ package com.streethawk.library.core;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Locale;
 
 
 class AppActivityTracking implements Constants{
@@ -86,6 +91,26 @@ class AppActivityTracking implements Constants{
         return sessionTime;
     }
 
+    /**
+     * Send core'smessage to other module
+     * @param context
+     * @param obj
+     */
+    private void SendCoreMsg(Context context,final JSONObject obj){
+        // Send broadcast to notify version update
+        Intent coremsg = new Intent();
+        coremsg.setAction(Util.BROADCAST_MSG_FROM_CORE);
+        if(null!=obj) {
+            coremsg.putExtra(Util.MSG_FROM_CORE, obj.toString());
+            context.sendBroadcast(coremsg);
+        }
+    }
+
+
+    /**
+     * Task to be done when app goes foreground
+     * @param activity
+     */
     public void onAppForegrounded(final Activity activity){
         final Context context = activity.getApplicationContext();
         SaveSessionTime(context);
@@ -101,6 +126,7 @@ class AppActivityTracking implements Constants{
                 boolean runInstallUpdate = false;
                 SharedPreferences sharedPreferences = context.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
                 String storedVersion = sharedPreferences.getString(SHAPPVERSION, null);
+                String userLocale = sharedPreferences.getString(DEVICE_LOCALE , null);
                 String currentAppVersion = Util.getAppVersionName(context);
                 //String storedAdvertisementId = sharedPreferences.getString(SHADVERTISEMENTID, null);
                 //String currentAdvertisementId = Util.getAdvertisingIdentifier(context);
@@ -116,6 +142,13 @@ class AppActivityTracking implements Constants{
                         e.commit();
                         shManager.sendModuleList();
                         runInstallUpdate = true;
+                        JSONObject obj = new JSONObject();
+                        try {
+                            obj.put(Util.KEY_UPDATE_VERSION, currentAppVersion);
+                            SendCoreMsg(context,obj);
+                        }catch(JSONException ex){
+                            ex.printStackTrace();
+                        }
                     }
 
                 } else {
@@ -124,6 +157,28 @@ class AppActivityTracking implements Constants{
                     e.putString(SHAPPVERSION, currentAppVersion);
                     e.commit();
                     shManager.sendModuleList();
+                    JSONObject obj = new JSONObject();
+                    try {
+                        obj.put(Util.KEY_UPDATE_VERSION, currentAppVersion);
+                        SendCoreMsg(context,obj);
+                    }catch(JSONException ex){
+                        ex.printStackTrace();
+                    }
+                }
+                //check and if necessary tag user's locale every time app goes foreground
+                String devUserLocale = Locale.getDefault().getDisplayLanguage();
+                if(null==userLocale){
+                    SharedPreferences.Editor e = sharedPreferences.edit();
+                    e.putString(DEVICE_LOCALE, devUserLocale);
+                    e.commit();
+                    StreetHawk.INSTANCE.tagString("sh_language",devUserLocale);
+                }else{
+                    if(!devUserLocale.equals(userLocale)){
+                        SharedPreferences.Editor e = sharedPreferences.edit();
+                        e.putString(DEVICE_LOCALE, devUserLocale);
+                        e.commit();
+                        StreetHawk.INSTANCE.tagString("sh_language",devUserLocale);
+                    }
                 }
                 /*
                 if (null != storedAdvertisementId) {

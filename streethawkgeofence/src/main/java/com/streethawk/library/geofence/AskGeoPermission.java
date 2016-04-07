@@ -4,25 +4,22 @@ package com.streethawk.library.geofence;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.View;
 
 import com.streethawk.library.core.Util;
 
-public class AskGeoPermission extends AppCompatActivity implements Constants {
+public class AskGeoPermission extends Activity implements Constants {
 
     Activity mActivity;
     boolean showDialog = false;
     private final String SUBTAG = "AskGeoPermission ";
     private final int PERMISSIONS_LOCATION = 0;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,8 +30,7 @@ public class AskGeoPermission extends AppCompatActivity implements Constants {
     public void onResume(){
         super.onResume();
         if(showDialog) {
-            String msg = getIntent().getStringExtra(PERMISSION_MSG);
-            displayPermissionDialog(msg);
+            displayPermissionDialog();
         }
         mActivity = this;
     }
@@ -54,11 +50,11 @@ public class AskGeoPermission extends AppCompatActivity implements Constants {
         }
     }
 
-    private View.OnClickListener SnackBarOnclickListener(){
-        return new View.OnClickListener(){
+    private DialogInterface.OnClickListener askPermission(){
+        return new DialogInterface.OnClickListener(){
             @TargetApi(Build.VERSION_CODES.M)
             @Override
-            public void onClick(View v) {
+            public void onClick(DialogInterface dialogInterface, int i) {
                 mActivity.requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION},
                         PERMISSIONS_LOCATION);
             }
@@ -66,18 +62,42 @@ public class AskGeoPermission extends AppCompatActivity implements Constants {
     }
 
 
-    private void displayPermissionDialog(String msg){
-        String buttonText = getResources().getString(R.string.sh_geo_permission);
-        if(null==buttonText){
-            buttonText = "Okay";
-        }
+    private void displayPermissionDialog(){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if(!checkForLocationPermission(this)) {
                 if(shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)){
-                    CoordinatorLayout coordinatorLayout = (CoordinatorLayout)findViewById(R.id.loccoordinatorLayout);
-                    Snackbar.make(coordinatorLayout, msg, Snackbar.LENGTH_INDEFINITE)
-                            .setAction(buttonText, SnackBarOnclickListener())
-                            .show();
+                    String DEFAULT_PERMISSION_TITLE   = "Permission Required";
+                    String DEFAULT_PERMISSION_MESSAGE = "Would you like to grant us location permission for monitoring geofences?";
+                    String DEFAULT_BUTTON_TEXT        = "Okay";
+                    int id;
+                    String title;
+                    String message;
+                    String buttonTitle;
+
+                    Context context = mActivity.getApplicationContext();
+                    String packageName = context.getPackageName();
+                    id = context.getResources().getIdentifier("SH_GEO_PERMISSION_TITLE", "string", packageName);
+                    if (0 == id)
+                        title = DEFAULT_PERMISSION_TITLE;
+                    else
+                        title = context.getString(id);
+
+                    id = context.getResources().getIdentifier("SH_GEO_PERMISSION_MESSAGE", "string", packageName);
+                    if (0 == id)
+                        message = DEFAULT_PERMISSION_MESSAGE;
+                    else
+                        message = context.getString(id);
+
+                    id = context.getResources().getIdentifier("SH_GEO_PERMISSION_BUTTON_TEXT", "string", packageName);
+                    if (0 == id)
+                        buttonTitle = DEFAULT_BUTTON_TEXT;
+                    else
+                        buttonTitle = context.getString(id);
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setTitle(title);
+                    builder.setMessage(message);
+                    builder.setPositiveButton(buttonTitle,askPermission());
                 }else{
                     this.requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION},
                             PERMISSIONS_LOCATION);

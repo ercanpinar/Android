@@ -68,51 +68,54 @@ public class NotificationBase implements Constants{
     private static final int TYPE_LOGIN_POSITIVE = TYPE_REGISTER_NEGATIVE + 1;
     private static final int TYPE_LOGIN_NEGATIVE = TYPE_LOGIN_POSITIVE + 1;
     public static final int TYPE_BT_ENABLE_TOAST = TYPE_LOGIN_NEGATIVE + 1;
+    public static final int TYPE_SIMPLE_OKAY = TYPE_BT_ENABLE_TOAST + 1;
+    public static final int TYPE_SIMPLE_CANCEL = TYPE_SIMPLE_OKAY + 1;
 
 
 
-    private static final String STREETHAWK_SHOW_URL_POSITIVE = "Show";
-    private static final String STREETHAWK_SHOW_URL_NEGATIVE = "Cancel";
-    private static final String STREETHAWK_SHOW_URL_CLOSE = "Close";
-    private static final String STREETHAWK_OPEN_APP_POSITIVE = "Open";
-    private static final String STREETHAWK_OPEN_APP_NEGATIVE = "Cancel";
-    private static final String STREETHAWK_RATE_POSITIVE = "Rate";
-    private static final String STREETHAWK_RATE_NEGATIVE = "Later";
-    private static final String STREETHAWK_UPDATE_POSITIVE = "Update";
-    private static final String STREETHAWK_UPDATE_NEGATIVE = "Decline";
-    private static final String STREETHAWK_CALL_POSITIVE = "Call";
-    private static final String STREETHAWK_CALL_NEGATIVE = "Cancel";
-    private static final String STREETHAWK_SIMPLE_MESSAGE_POSITIVE = "Okay";
-    private static final String SIMPLE_PUSH_NOTIFICATION_POSITIVE = "Read";
-    private static final String STREETHAWK_PUSH_POSITIVE = "Enable";
-    private static final String STREETHAWK_PUSH_NEGATIVE = "Dismiss";
-    private static final String STREETHAWK_LOCATION_POSITIVE = "Enable";
-    private static final String STREETHAWK_LOCATION_NEGATIVE = "Dismiss";
-    private static final String STREETHAWK_BLUETOOTH_POSITIVE = "Enable";
-    private static final String STREETHAWK_BLUETOOTH_NEGATIVE = "Dismiss";
-    private static final String STREETHAWK_FEEDBACK_POSITIVE = "Show";
-    private static final String STREETHAWK_FEEDBACK_NEGATIVE = "Dismiss";
-    private static final String STREETHAWK_FEEDBACK_SUBMIT = "submit";
-    private static final String STREETHAWK_FEEDBACK_CANCEL = "Cancel";
-    private static final String STREETHAWK_FEEDBACK_HINT_TITLE = "Enter a title for feedback";
-    private static final String STREETHAWK_FEEDBACK_HINT_CONTENT = "Enter your feedback";
-    private static final String STREETHAWK_FEEDBACK_TOAST_SUCCESS = "Thanks for your feedback";
-    private static final String STREETHAWK_FEEDBACK_TOAST_ERROR = "Please enter your feedback message";
-    private static final String BLUETOOTH_ENABLE_TOAST = "Bluetooth is turned on";
 
-    private final String ICON_WEBSITE = "shwebsite";             //8000
-    private final String ICON_APPPAGE = "shapppage";             //8004
-    private final String ICON_RATE = "shrate";                //8005
-    private final String ICON_UPDATE = "shupdate";              //8008
-    private final String ICON_TELEPHONE = "shcall";                //8009
-    private final String ICON_SIMPLEPUSH = "shsimplepush";          //8010
-    private final String ICON_FEEDBACK = "shfeedback";            //8011
-    private final String ICON_BLEUTOOTH = "shbluetooth";           //8012
-    private final String ICON_ACCEPT_PUSH = "shenablepush";          //8013
-    private final String ICON_ENABLE_LOC = "shlocation";            //8014
-    private final String ICON_ACCEPT = "shaccept";              // generic accept
-    private final String ICON_CANCEL = "shcancel";              // generic cancelcancels
-    private final String ICON_LATER = "shlater";               // 8005 later
+    private static final String STREETHAWK_SHOW_URL_POSITIVE        = "Show";
+    private static final String STREETHAWK_SHOW_URL_NEGATIVE        = "Cancel";
+    private static final String STREETHAWK_SHOW_URL_CLOSE           = "Close";
+    private static final String STREETHAWK_OPEN_APP_POSITIVE        = "Open";
+    private static final String STREETHAWK_OPEN_APP_NEGATIVE        = "Cancel";
+    private static final String STREETHAWK_RATE_POSITIVE            = "Rate";
+    private static final String STREETHAWK_RATE_NEGATIVE            = "Later";
+    private static final String STREETHAWK_UPDATE_POSITIVE          = "Update";
+    private static final String STREETHAWK_UPDATE_NEGATIVE          = "Decline";
+    private static final String STREETHAWK_CALL_POSITIVE            = "Call";
+    private static final String STREETHAWK_CALL_NEGATIVE            = "Cancel";
+    private static final String STREETHAWK_SIMPLE_MESSAGE_POSITIVE  = "Okay";
+    private static final String SIMPLE_PUSH_NOTIFICATION_POSITIVE   = "Read";
+    private static final String STREETHAWK_PUSH_POSITIVE            = "Enable";
+    private static final String STREETHAWK_PUSH_NEGATIVE            = "Dismiss";
+    private static final String STREETHAWK_LOCATION_POSITIVE        = "Enable";
+    private static final String STREETHAWK_LOCATION_NEGATIVE        = "Dismiss";
+    private static final String STREETHAWK_BLUETOOTH_POSITIVE       = "Enable";
+    private static final String STREETHAWK_BLUETOOTH_NEGATIVE       = "Dismiss";
+    private static final String STREETHAWK_FEEDBACK_POSITIVE        = "Show";
+    private static final String STREETHAWK_FEEDBACK_NEGATIVE        = "Dismiss";
+    private static final String STREETHAWK_FEEDBACK_SUBMIT          = "submit";
+    private static final String STREETHAWK_FEEDBACK_CANCEL          = "Cancel";
+    private static final String STREETHAWK_FEEDBACK_HINT_TITLE      = "Enter a title for feedback";
+    private static final String STREETHAWK_FEEDBACK_HINT_CONTENT    = "Enter your feedback";
+    private static final String STREETHAWK_FEEDBACK_TOAST_SUCCESS   = "Thanks for your feedback";
+    private static final String STREETHAWK_FEEDBACK_TOAST_ERROR     = "Please enter your feedback message";
+    private static final String BLUETOOTH_ENABLE_TOAST              = "Bluetooth is turned on";
+
+    private final String ICON_WEBSITE       = "shwebsite";             //8000
+    private final String ICON_APPPAGE       = "shapppage";             //8004
+    private final String ICON_RATE          = "shrate";                //8005
+    private final String ICON_UPDATE        = "shupdate";              //8008
+    private final String ICON_TELEPHONE     = "shcall";                //8009
+    private final String ICON_SIMPLEPUSH    = "shsimplepush";          //8010
+    private final String ICON_FEEDBACK      = "shfeedback";            //8011
+    private final String ICON_BLEUTOOTH     = "shbluetooth";           //8012
+    private final String ICON_ACCEPT_PUSH   = "shenablepush";          //8013
+    private final String ICON_ENABLE_LOC    = "shlocation";            //8014
+    private final String ICON_ACCEPT        = "shaccept";              // generic accept
+    private final String ICON_CANCEL        = "shcancel";              // generic cancelcancels
+    private final String ICON_LATER         = "shlater";               // 8005 later
 
     protected static final String SHRESULT = "result";
 
@@ -147,6 +150,8 @@ public class NotificationBase implements Constants{
                     return (context.getResources().getIdentifier(ICON_ACCEPT_PUSH, "drawable", packageName));  //8013
                 case CODE_ENABLE_LOCATION:
                     return (context.getResources().getIdentifier(ICON_ENABLE_LOC, "drawable", packageName));   //8014
+                case CODE_CUSTOM_ACTIONS:
+                    return 0;
                 default:
                     return (context.getResources().getIdentifier(ICON_ACCEPT, "drawable", packageName));
             }
@@ -155,6 +160,8 @@ public class NotificationBase implements Constants{
             switch (code) {
                 case CODE_RATE_APP:
                     return (context.getResources().getIdentifier(ICON_LATER, "drawable", packageName));
+                case CODE_CUSTOM_ACTIONS:
+                    return 0;
                 default:
                     // rest all cases other than rate
                     return (context.getResources().getIdentifier(ICON_CANCEL, "drawable", packageName));
@@ -162,7 +169,6 @@ public class NotificationBase implements Constants{
         }
         return 0;
     }
-
 
     /**
      * Replace shortnames to unicode characters. Emoji one
@@ -337,7 +343,16 @@ public class NotificationBase implements Constants{
                 if (0 == id)
                     return BLUETOOTH_ENABLE_TOAST;
                 break;
-
+            case TYPE_SIMPLE_OKAY:
+                id = context.getResources().getIdentifier("STREETHAWK_SIMPLE_OK", "string", packageName);
+                if (0 == id)
+                    return BLUETOOTH_ENABLE_TOAST;
+                break;
+            case TYPE_SIMPLE_CANCEL:
+                id = context.getResources().getIdentifier("STREETHAWK_SIMPLE_CANCEL", "string", packageName);
+                if (0 == id)
+                    return BLUETOOTH_ENABLE_TOAST;
+                break;
             default:
                 String str = "********************************";
                 return str;
@@ -368,6 +383,8 @@ public class NotificationBase implements Constants{
                 return getStringtoDisplay(context, TYPE_PUSH_NEGATIVE);
             case CODE_ENABLE_LOCATION:
                 return getStringtoDisplay(context, TYPE_LOCATION_NEGATIVE);
+            case CODE_CUSTOM_ACTIONS:
+                return getStringtoDisplay(context, TYPE_SIMPLE_CANCEL);  // incase buttton pairs is not available
             default:
                 return getStringtoDisplay(context, TYPE_DEFAULT_NEGATIVE);
         }
@@ -399,6 +416,8 @@ public class NotificationBase implements Constants{
                 return getStringtoDisplay(context, TYPE_PUSH_POSITIVE);
             case CODE_ENABLE_LOCATION:
                 return getStringtoDisplay(context, TYPE_LOCATION_POSITIVE);
+            case CODE_CUSTOM_ACTIONS:
+                return getStringtoDisplay(context, TYPE_SIMPLE_OKAY);  // in case button pairs are not available
             default:
                 return getStringtoDisplay(context, TYPE_DEFAULT_POSITIVE);
         }

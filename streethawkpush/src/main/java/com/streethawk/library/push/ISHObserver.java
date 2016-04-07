@@ -17,6 +17,8 @@
 
 package com.streethawk.library.push;
 
+import android.os.Bundle;
+
 /**
  *  Interface for handling Raw JSON. App developer can implement this interface in activity or service
  *  to handle Raw JSON sent from Streethawk web console.
@@ -47,5 +49,11 @@ public interface ISHObserver {
      * API is called when application receives push result for a push message
      */
     public void onReceiveResult(PushDataForApplication resultData,int result);
+
+    /**
+     * Function returns third party push payload sent using StreetHawk push notification service
+     * @param pushPayload
+     */
+    public void onReceiveNonSHPushPayload(Bundle pushPayload);
 
 }

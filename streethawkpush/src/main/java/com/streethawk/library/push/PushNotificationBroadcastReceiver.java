@@ -50,6 +50,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -57,15 +58,9 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver impleme
 
     private final String SUBTAG = "PushNotificationBroadcastReceiver";
     public PushNotificationBroadcastReceiver() {}
-    private static ISHObserver mISHObserver;
-    private final String PROJECT_NUMBER = "project_number";
-    private final String PUSH = "push";
-
-
-    public static void updateAppGcmReceiverList(ISHObserver object) {
-        mISHObserver = object;
-    }
-
+    private final String PROJECT_NUMBER = "project_number";  // project number as in GCM
+    private final String SUBMIT_BTN_PAIR = "submit_interactive_button";  // interactive push
+    private final String PUSH = "push";   //Smart push
 
     /**
      * Function displays badges to app icons.
@@ -184,8 +179,71 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver impleme
     }
 
 
+    /**
+     * API returns icon identifer. To be used along with API setInteractivePushBtnPairs
+     * @param context
+     * @param iconName
+     * @return
+     */
+    private int getIcon(Context context,String iconName){
+        String packageName = context.getPackageName();
+        return (context.getResources().getIdentifier(iconName, "drawable", packageName));
+    }
+
+
+    /**
+     * Set application specific button pairs for interactive push
+     * @param context
+     */
+    public void setInteractivePushBtnPairs( final Context context){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String SHAPPVERSION = "shappversion";
+                SharedPreferences sharedPreferences = context.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
+                String storedVersion = sharedPreferences.getString(SHAPPVERSION, null);
+                String currentAppVersion = Util.getAppVersionName(context);
+                final ArrayList<InteractivePush> predefinedPairs = new ArrayList<InteractivePush>();
+                predefinedPairs.add(new InteractivePush("Yes", getIcon(context, "shaccept"), "No", getIcon(context, "shcancel"), "YesNo"));
+                predefinedPairs.add(new InteractivePush("Accept", getIcon(context, "shaccept"), "Decline", getIcon(context, "shcancel"), "AcceptDecline"));
+                predefinedPairs.add(new InteractivePush("Share", getIcon(context, "shshare"), "Download", getIcon(context, "shcloud_download"), "ShareDownload"));
+                predefinedPairs.add(new InteractivePush("Share", getIcon(context, "shshare"), "Remind Me Later", getIcon(context, "shalarm"), "ShareRemind Me Later"));
+                predefinedPairs.add(new InteractivePush("Share", getIcon(context, "shshare"), "Opt-in", getIcon(context, "shaccept"), "ShareOpt-in"));
+                predefinedPairs.add(new InteractivePush("Share", getIcon(context, "shshare"), "Opt-out", getIcon(context, "shcancel"), "ShareOpt-out"));
+                predefinedPairs.add(new InteractivePush("Share", getIcon(context, "shshare"), "Follow", getIcon(context, "shperson"), "ShareFollow"));
+                predefinedPairs.add(new InteractivePush("Share", getIcon(context, "shshare"), "Unfollow", getIcon(context, "shcancel"), "ShareUnfollow"));
+                predefinedPairs.add(new InteractivePush("Share", getIcon(context, "shshare"), "Shop Now", getIcon(context, "shshoppingcart"), "ShareShop Now"));
+                predefinedPairs.add(new InteractivePush("Share", getIcon(context, "shshare"), "Buy Now", getIcon(context, "shshoppingcart"), "ShareBuy Now"));
+                predefinedPairs.add(new InteractivePush("Share", getIcon(context, "shshare"), "Like", getIcon(context, "shlike"), "ShareLike"));
+                predefinedPairs.add(new InteractivePush("Share", getIcon(context, "shshare"), "Dislike", getIcon(context, "shdislike"), "ShareDislike"));
+                predefinedPairs.add(new InteractivePush("Like", getIcon(context, "shlike"), "Dislike", getIcon(context, "shdislike"), "LikeDislike"));
+                predefinedPairs.add(new InteractivePush("\uD83D\uDE00", -1, "\uD83D\uDE1E", -1, "shpre_happysad"));  //HappySad
+                predefinedPairs.add(new InteractivePush("\ud83d\uDC4D", -1, "\uD83D\uDC4E", -1, "shpre_tutd"));  //thumps up thumps down
+                InteractivePushDB btnPairdb = InteractivePushDB.getInstance(context);
+                btnPairdb.open();
+                btnPairdb.storeBtnPairsFromList(predefinedPairs);
+                btnPairdb.close();
+            }
+        }).start();
+    }
+
     @Override
     public void onReceive(final Context context, Intent intent) {
+        if(intent.getAction() == Util.BROADCAST_MSG_FROM_CORE){
+            //Check for msg from core
+            String objAsJson = intent.getStringExtra(Util.MSG_FROM_CORE);
+            if(null!=objAsJson){
+                try{
+                    JSONObject obj = new JSONObject(objAsJson);
+                    String version =(String)obj.get(Util.KEY_UPDATE_VERSION);
+                    if(null!=version){
+                        setInteractivePushBtnPairs(context);
+                    }
+                }catch(JSONException w){
+                    w.printStackTrace();
+                }
+            }
+        }
         // Check for appStatus
         if (intent.getAction() == Util.BROADCAST_SH_APP_STATUS_NOTIFICATION) {
             String installId = intent.getStringExtra(Util.INSTALL_ID);
@@ -315,6 +373,15 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver impleme
                                     context.sendBroadcast(broadcastIntent);
                                 }
                             }
+                            if (app_status.has(SUBMIT_BTN_PAIR) && !app_status.isNull(SUBMIT_BTN_PAIR)) {
+                                final Object value_submit_btn_par = app_status.get(SUBMIT_BTN_PAIR);
+                                if (value_submit_btn_par instanceof Boolean) {
+                                    final boolean isSubmitBtnPair = (Boolean)value_submit_btn_par;
+                                    if(isSubmitBtnPair){
+                                        InteractivePushDB.getInstance(context).submitButtonPairsToServer();
+                                    }
+                                }
+                            }
                         }
                     }
                 } catch (JSONException e) {
@@ -322,6 +389,7 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver impleme
                 }
             }
         }
+        // Receive actual push notification from server
         if (intent.getAction().equals(BROADCAST_SH_PUSH_NOTIFICATION)) {
             final Bundle extras = intent.getExtras();
             boolean forceToBg = false;
@@ -346,6 +414,14 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver impleme
                     clearPendingDialogFlagAndDB(context, msgID);
                     return;
                 }
+
+                ISHObserver instance = SHGcmListenerService.getISHObserver();
+                if(null!=instance){
+                    PushDataForApplication obj  = new PushDataForApplication();
+                    obj.convertPushDataToPushDataForApp(pushData,obj);
+                    instance.onReceivePushData(obj);
+                }
+
                 // Display badge
                 int badgeCnt = 0;
                 try {
@@ -379,7 +455,7 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver impleme
                     String data = pushData.getData();
                     sendAcknowledgement(context, msgID);
                     if (code == CODE_CUSTOM_JSON_FROM_SERVER) {
-                        if (null == mISHObserver) {
+                        if (null == instance) {
                             Log.e(Util.TAG, "No object registered for class implementing ISHObserver. Use registerSHObserver");
                             NotificationBase.sendResultBroadcast(context, msgID, STREETHAWK_DECLINED);
                             return;
@@ -432,17 +508,6 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver impleme
                                     break;
                             }
                         } else {
-                            if (null == mISHObserver) {
-                                Log.w(Util.TAG, "No object registered for class implementing ISHObserver. Use registerSHObserver");
-                            }else {
-                                PushDataForApplication pushDataForApplication = new PushDataForApplication();
-                                pushDataForApplication.convertPushDataToPushDataForApp(pushData, pushDataForApplication);
-                                mISHObserver.onReceivePushData(pushDataForApplication);
-                                if(isCustomDialog) {
-                                    Log.i(Util.TAG, "Developer choose to handle push using custom dialog");
-                                    return;
-                                }
-                            }
                             switch (code) {
                                 case CODE_IBEACON:
                                     BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -481,6 +546,7 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver impleme
             }
 
         } else {
+
             int DISMISS_BADGE = 0;
             int code = 0;
             boolean sendResult = true;
@@ -568,6 +634,11 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver impleme
                         case CODE_SIMPLE_PROMPT:
                             if (fromBG)
                                 return;
+                            else
+                                clearPendingDialogFlagAndDB(context, msgId);
+                            return;
+                        case CODE_CUSTOM_ACTIONS:
+                            return;
                         default:
                             clearPendingDialogFlagAndDB(context, msgId);
                     }
@@ -588,12 +659,13 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver impleme
             }
             // schedule sending of queued broadcast only if we have sent result of previous one.
             if (sendResult) {
-                if (null == mISHObserver) {
+                ISHObserver instance = SHGcmListenerService.getISHObserver();
+                if (null == instance) {
                     Log.w(Util.TAG, "No object registered for class implementing ISHObserver. Use registerSHObserver");
                 } else {
                     PushDataForApplication pushDataForApplication = new PushDataForApplication();
                     pushDataForApplication.convertPushDataToPushDataForApp(dataObject, pushDataForApplication);
-                    mISHObserver.onReceiveResult(pushDataForApplication, result);
+                    instance.onReceiveResult(pushDataForApplication, result);
                 }
                 sendResultLog(context, msgId, result, code);
             }
@@ -724,6 +796,8 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver impleme
                 break;
             case CODE_SIMPLE_PROMPT:
                 startApp(context);
+                break;
+            case CODE_CUSTOM_ACTIONS:
                 break;
             default:
                 clearPendingDialogFlagAndDB(context, msgId);
@@ -872,8 +946,9 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver impleme
         SharedPreferences.Editor e = activityPrefs.edit();
         e.putString(PHONEGAP_URL, tempactivityName);
         e.commit();
-        if(null!=mISHObserver)
-            mISHObserver.shNotifyAppPage(tempactivityName);;
+        ISHObserver instance = SHGcmListenerService.getISHObserver();
+        if(null!=instance)
+            instance.shNotifyAppPage(tempactivityName);;
         startApp(context);
     }
 
@@ -912,8 +987,9 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver impleme
     }
 
     private void handleCustomJsonFromServer(String title, String msg, String json) {
-        if (null != mISHObserver) {
-            mISHObserver.shReceivedRawJSON(title, msg, json);
+        ISHObserver instance = SHGcmListenerService.getISHObserver();
+        if (null != instance) {
+            instance.shReceivedRawJSON(title, msg, json);
         }else{
             Log.e(Util.TAG,SUBTAG+"no ISHObserver registered");
         }

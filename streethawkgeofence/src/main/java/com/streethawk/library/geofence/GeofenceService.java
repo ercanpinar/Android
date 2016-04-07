@@ -42,10 +42,20 @@ public class GeofenceService extends IntentService{
         super(TAG);
     }
     private static Set<String> triggeredParent = new HashSet<String>();
+
+    private static INotifyGeofenceTransition mINotifyGeofenceTransition=null;
+
+
     @Override
     public void onCreate() {
         super.onCreate();
     }
+
+
+    public static void registerGeofenceObserver(INotifyGeofenceTransition observer){
+        mINotifyGeofenceTransition = observer;
+    }
+
 
     public void updateVisibleGeofence(Context context,String id){
         if (Build.VERSION.SDK_INT >=Build.VERSION_CODES.HONEYCOMB) {
@@ -132,6 +142,7 @@ public class GeofenceService extends IntentService{
             GeofenceDB database = new GeofenceDB(context);
             database.open();
             SharedPreferences sharedPreferences = context.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
+            ArrayList<GeofenceData> geolist = new ArrayList<GeofenceData>();
             for (com.google.android.gms.location.Geofence geofence : triggeringGeofences) {
                 final GeofenceData object = new GeofenceData();
                 String geofenceID = geofence.getRequestId();
@@ -163,7 +174,6 @@ public class GeofenceService extends IntentService{
                     e.putString(Constants.PARENT_GEOFENCE_ID,null);
                     e.commit();
                     try {
-
                         Bundle params = new Bundle();
                         params.putString(Util.CODE, Integer.toString(Constants.CODE_GEOFENCE_UPDATES));
                         params.putString(Util.SHMESSAGE_ID, null);
@@ -172,16 +182,17 @@ public class GeofenceService extends IntentService{
                         matchGeofence.put(geofenceID, object.getRadius());
                         params.putString("json", matchGeofence.toString());
                         updateVisibleGeofence(context, geofenceID);
-                        /*
-                        Logging manager = Logging.getLoggingInstance(context);
-                        manager.addLogsForSending(params);
-                        */
                         GeofenceLogging.getInstance().sendLogs(context, params);
+                        geolist.add(object);
                     }catch(JSONException jsonException){
                         jsonException.printStackTrace();
                     }
                 }
             }
+            if(null!=mINotifyGeofenceTransition){
+                mINotifyGeofenceTransition.onDeviceEnteringGeofence(geolist);
+            }
+            geolist=null;
             database.close();
 
         } if (geofenceTransition == com.google.android.gms.location.Geofence.GEOFENCE_TRANSITION_EXIT) {
@@ -189,6 +200,7 @@ public class GeofenceService extends IntentService{
             List<com.google.android.gms.location.Geofence> triggeringGeofences = geofencingEvent.getTriggeringGeofences();
             GeofenceDB database = new GeofenceDB(getApplicationContext());
             database.open();
+            ArrayList<GeofenceData> geolist = new ArrayList<GeofenceData>();
             for (com.google.android.gms.location.Geofence geofence : triggeringGeofences) {
                 final GeofenceData object = new GeofenceData();
                 String geofenceID = geofence.getRequestId();
@@ -210,16 +222,17 @@ public class GeofenceService extends IntentService{
                         geofenceID = spitGeofenceId(geofenceID);
                         matchGeofence.put(geofenceID,"-1");
                         params.putString("json", matchGeofence.toString());
-                        /*
-                        Logging manager = Logging.getLoggingInstance(context);
-                        manager.addLogsForSending(params);
-                        */
                         GeofenceLogging.getInstance().sendLogs(context, params);
+                        geolist.add(object);
                     }catch(JSONException jsonException){
                         jsonException.printStackTrace();
                     }
                 }
             }
+            if(null!=mINotifyGeofenceTransition){
+                mINotifyGeofenceTransition.onDeviceLeavingGeofence(geolist);
+            }
+            geolist=null;
             database.close();
         }
     }

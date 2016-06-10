@@ -1,0 +1,25 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.streethawk.streethawkapp.MainActivity">
+    <item
+        android:id="@+id/action_docs"
+        android:orderInCategory="100"
+        android:title="@string/action_docs"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_sourcecode"
+        android:orderInCategory="100"
+        android:title="@string/action_sourcecode"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_shdotcom"
+        android:orderInCategory="100"
+        android:title="@string/action_shdotcom"
+        app:showAsAction="never" />
+
+
+
+</menu>

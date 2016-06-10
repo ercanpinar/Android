@@ -214,7 +214,6 @@ public class Push implements Constants{
     /**
      * Call this API to register for StreetHawk push messaging service
      * @param project_number Project number as obtained for Google for your project
-     * @return true is register is successful else false
      */
     public void registerForPushMessaging(final String project_number) {
         new Thread(new Runnable() {
@@ -627,6 +626,7 @@ public class Push implements Constants{
     }
 
     /**
+     * @deprecated
      * API to return button pair from the given title
      */
     public void getButtonPairFromId(final String pairTitle,final InteractivePush obj){

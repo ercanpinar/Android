@@ -10,6 +10,11 @@ import com.streethawk.library.push.ISHObserver;
 import com.streethawk.library.push.Push;
 import com.streethawk.library.push.PushDataForApplication;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.Set;
+
 public class AppService extends Service implements ISHObserver{
     public AppService() {
     }
@@ -57,5 +62,16 @@ public class AppService extends Service implements ISHObserver{
     @Override
     public void onReceiveNonSHPushPayload(Bundle pushPayload) {
         Log.e("Anurag","Received 3rd party payload");
+
+        JSONObject json = new JSONObject();
+        Set<String> keys = pushPayload.keySet();
+        for (String key : keys) {
+            try {
+                // json.put(key, bundle.get(key)); see edit below
+                json.put(key, pushPayload.get(key));
+            } catch(JSONException e) {
+                //Handle exception here
+            }
+        }
     }
 }

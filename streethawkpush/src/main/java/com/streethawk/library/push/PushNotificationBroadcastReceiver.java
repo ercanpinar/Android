@@ -437,7 +437,7 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver impleme
                     return;
                 }
                 if (code == CODE_GHOST_PUSH){
-                    //Do nothing
+                    sendAcknowledgement(context, msgID);
                     return;
                 }
                 if (code == CODE_REQUEST_THE_APP_STATUS){

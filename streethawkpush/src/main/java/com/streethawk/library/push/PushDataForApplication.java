@@ -122,9 +122,9 @@ public class PushDataForApplication extends NotificationBase{
     private String  mBtn1Title     = null;      // Custom button 1 title
     private String  mBtn2Title     = null;      // Custom button 2 title
     private String  mBtn3Title     = null;      // Custom button 3 title
-    private String  mIC1           = null;     // Icon code for button 1
-    private String  mIC2           = null;     // Icon code for button 2
-    private String  mIC3           = null;     // Icon code for button 3
+    private int  mIC1              = -1;     // Icon code for button 1
+    private int  mIC2              = -1;     // Icon code for button 2
+    private int  mIC3              = -1;     // Icon code for button 3
 
     public void convertPushDataToPushDataForApp(PushNotificationData data, PushDataForApplication dataForApplication) {
         if (null == dataForApplication)
@@ -230,6 +230,18 @@ public class PushDataForApplication extends NotificationBase{
             dataForApplication.setDisplayWithoutConfirmation(tmpNoDialog);
             dataForApplication.setSound(data.getSound());
             dataForApplication.setBadge(tmpBadge);
+            //Interactive push
+            dataForApplication.setContentAvailable(data.getContentAvailable());
+            dataForApplication.setCategory(data.getCategory());
+
+            dataForApplication.setBtn1Title(data.getBtn1Title());
+            dataForApplication.setBtn2Title(data.getBtn2Title());
+            dataForApplication.setBtn3Title(data.getBtn3Title());
+
+            dataForApplication.setBtn1Icon(data.getBtn1Icon());
+            dataForApplication.setBtn2Icon(data.getBtn2Icon());
+            dataForApplication.setBtn3Icon(data.getBtn3Icon());
+
         } else {
             Log.e(Util.TAG, "PushNotificationData is null in convertPushDataToPushDataForApp");
             return;
@@ -282,8 +294,8 @@ public class PushDataForApplication extends NotificationBase{
 
     /**
      * API to get portion associated with a push message from StreetHawk server
-     * Portion defines percentage of screen covered by the animated webview frame as displayed when action  = ACTION_OPEN_URL
-     * 0 < portoin <=1
+     * Portion defines percentage of screen covered by the animated webview frame as displayed when action equals ACTION_OPEN_URL
+     *  portion can take a value between 0 and 1
      * @return portion
      */
     public float getPortion() {
@@ -341,6 +353,12 @@ public class PushDataForApplication extends NotificationBase{
      */
     public String getContentAvailable(){return mContentAvailable;}
 
+    /**
+     * API to get value of category
+     * @return
+     */
+    public String getCategory(){return mCategory;}
+
 
 
     /**
@@ -365,19 +383,19 @@ public class PushDataForApplication extends NotificationBase{
      * get icon for button 1
      * @return icon name for button 1
      */
-    public String getBtn1Icon(){return this.mIC1;}
+    public int getBtn1Icon(){return this.mIC1;}
 
     /**
      * get icon for button 2
      * @return icon for button 2
      */
-    public String getBtn2Icon(){return this.mIC2;}
+    public int getBtn2Icon(){return this.mIC2;}
 
     /**
      * get icon for button 3
      * @return icon for button 3
      */
-    public String getBtn3Icon(){return this.mIC3;}
+    public int getBtn3Icon(){return this.mIC3;}
 
 
 
@@ -475,6 +493,8 @@ public class PushDataForApplication extends NotificationBase{
      */
     public void setContentAvailable(String contentAvailable){this.mContentAvailable=contentAvailable;}
 
+    public void setCategory(String category){this.mCategory = category;}
+
 
     /**
      * Set title for notification button 1
@@ -498,24 +518,19 @@ public class PushDataForApplication extends NotificationBase{
      * Set icon title for button 1
      * @param icon icon for button 1
      */
-    public void setBtn1Icon(String icon){this.mIC1 = icon;}
+    public void setBtn1Icon(int icon){this.mIC1 = icon;}
 
     /**
      * Set icon title for button 2
      * @param icon for button 2
      */
-    public void setBtn2Icon(String icon){this.mIC2 = icon;}
+    public void setBtn2Icon(int icon){this.mIC2 = icon;}
 
     /**
      * Set title for button 3
      * @param icon for button 3
      */
-    public void setBtn3Icon(String icon){this.mIC3 = icon;}
-
-
-
-
-
+    public void setBtn3Icon(int icon){this.mIC3 = icon;}
 
 
     /**

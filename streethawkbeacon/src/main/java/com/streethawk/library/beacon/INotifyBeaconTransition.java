@@ -16,17 +16,14 @@
  */
 package com.streethawk.library.beacon;
 
-import java.util.ArrayList;
-
 /**
  * Observer to notify when device enters a beacon region
  */
 public interface INotifyBeaconTransition {
     /**
-     * Function returns beacons list of beacons detected near the device.
-     * @param beacons object with beacon parameters
+     * Function notifies apps if beacons are detected beacons
+     * Fetch list of beacons detected using  Beacons.getInstance(this).getDetectedBeaconList();
      */
-    public void notifyBeaconDetected(ArrayList<BeaconData> beacons);
-
+    public abstract void notifyBeaconDetected();
 }
 

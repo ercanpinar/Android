@@ -75,11 +75,19 @@ public abstract class BeaconServiceBase extends Service implements Constants{
     }
 
     private static INotifyBeaconTransition mINotifyBeaconStatus=null;
-    final ArrayList<BeaconData> mDetectedBeaconList = new ArrayList<BeaconData>();
+    final static ArrayList<BeaconData> mDetectedBeaconList = new ArrayList<BeaconData>();
 
 
     public static void registerForBeaconStatus(INotifyBeaconTransition observer){
         mINotifyBeaconStatus = observer;
+    }
+
+    /**
+     * Returns list of beacons detected
+     * @return
+     */
+    public static ArrayList<BeaconData> getBeaconList(){
+        return mDetectedBeaconList;
     }
 
 
@@ -348,7 +356,7 @@ public abstract class BeaconServiceBase extends Service implements Constants{
         if(null!=mINotifyBeaconStatus){
            if(null!=mDetectedBeaconList){
                if(!mDetectedBeaconList.isEmpty()){
-                   mINotifyBeaconStatus.notifyBeaconDetected(mDetectedBeaconList);
+                   mINotifyBeaconStatus.notifyBeaconDetected();
                }
            }
         }

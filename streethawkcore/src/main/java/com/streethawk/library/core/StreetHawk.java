@@ -21,9 +21,12 @@ import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.Application;
 import android.content.ComponentName;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -202,7 +205,99 @@ public enum StreetHawk implements Constants{
         }
     }
 
+    /**
+     * Display badge count on app icon. Note that this function is not supported on all devices.
+     * @param context
+     * @param BadgeCount
+     */
+    public static void displayBadge(Context context, int BadgeCount) {
+        String deviceManufacturer = Build.MANUFACTURER;
+        String packgaeName = context.getPackageName().toString();
+        ComponentName componentName = context.getPackageManager().getLaunchIntentForPackage(context.getPackageName()).getComponent();
+        String launcherActivityName = componentName.getClassName();
 
+        if (deviceManufacturer.equalsIgnoreCase("GENYMOTION")) {
+            String modelStr = "(" + Build.MANUFACTURER + ") " + Build.BRAND + " " + Build.MODEL;
+            if (modelStr.toLowerCase().contains("samsung"))
+                deviceManufacturer = "SAMSUNG";
+            else if (modelStr.toLowerCase().contains("sony"))
+                deviceManufacturer = "SONY";
+            else if (modelStr.toLowerCase().contains("htc"))
+                deviceManufacturer = "HTC";
+            else if (modelStr.toLowerCase().contains("lge"))
+                deviceManufacturer = "lge";
+            else
+                deviceManufacturer = "UNKNOWN";
+        }
+        if (deviceManufacturer.equalsIgnoreCase("SONY")) {
+            Intent badgeIntent = new Intent();
+            try {
+                badgeIntent.setAction("com.sonyericsson.home.action.UPDATE_BADGE");
+                badgeIntent.putExtra("com.sonyericsson.home.intent.extra.badge.ACTIVITY_NAME", launcherActivityName);
+                badgeIntent.putExtra("com.sonyericsson.home.intent.extra.badge.SHOW_MESSAGE", true);
+                badgeIntent.putExtra("com.sonyericsson.home.intent.extra.badge.MESSAGE", Integer.toString(BadgeCount));
+                badgeIntent.putExtra("com.sonyericsson.home.intent.extra.badge.PACKAGE_NAME", packgaeName);
+                context.sendBroadcast(badgeIntent);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return;
+            }
+        } else if (deviceManufacturer.equalsIgnoreCase("SAMSUNG")) {
+            try {
+                ContentResolver samsungCR = context.getContentResolver();
+                Uri badgeURI = Uri.parse("content://com.sec.badge/apps");
+                ContentValues samsungCV = new ContentValues();
+                samsungCV.put("package", packgaeName);
+                samsungCV.put("class", launcherActivityName);
+                samsungCV.put("badgecount", Integer.valueOf(BadgeCount));
+                String str = "package=? AND class=?";
+                String[] arrayOfString = new String[2];
+                arrayOfString[0] = packgaeName;
+                arrayOfString[1] = launcherActivityName;
+                int update = samsungCR.update(badgeURI, samsungCV, str, arrayOfString);
+                if (update == 0) {
+                    samsungCR.insert(badgeURI, samsungCV);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                return;
+            }
+        } else if (deviceManufacturer.equalsIgnoreCase("HTC")) {
+            try {
+                Intent htcIntent = new Intent("com.htc.launcher.action.UPDATE_SHORTCUT");
+                htcIntent.putExtra("packagename", packgaeName);
+                htcIntent.putExtra("count", BadgeCount);
+                context.sendBroadcast(htcIntent);
+                Intent notificationIntent = new Intent("com.htc.launcher.action.SET_NOTIFICATION");
+                ComponentName htcComponentName = new ComponentName(context, StreetHawk.INSTANCE.getCurrentActivity().toString());
+                notificationIntent.putExtra("com.htc.launcher.extra.COMPONENT", htcComponentName.flattenToShortString());
+                notificationIntent.putExtra("com.htc.launcher.extra.COUNT", 99);
+                context.sendBroadcast(notificationIntent);
+            } catch (Exception e) {
+
+                e.printStackTrace();
+
+                return;
+            }
+        } else if (deviceManufacturer.equalsIgnoreCase("LGE")) {
+            Intent intent = new Intent("android.intent.action.BADGE_COUNT_UPDATE");
+            intent.putExtra("badge_count", BadgeCount);
+            intent.putExtra("badge_count_package_name", packgaeName);
+            intent.putExtra("badge_count_class_name", launcherActivityName);
+            context.sendBroadcast(intent);
+        } else {
+
+            Log.i(Util.TAG, "Badges are not supported for " + Build.MANUFACTURER + " " + Build.MODEL);
+
+            return;
+        }
+    }
+
+
+    /**
+     * Function to set App key if not set in AndroidManifest.xaml
+     * @param app_key
+     */
     public void setAppKey(String app_key) {
         mAppKey = app_key;
     }
@@ -213,12 +308,12 @@ public enum StreetHawk implements Constants{
      * @param application
      */
     public void init(final Application application) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-            setActivityLifecycleCallbacks(application);
-        }
         if (null == application) {
             Log.e(Util.TAG, SUBTAG + "StreetHawk is not initialised as application is null in init");
             return;
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+            setActivityLifecycleCallbacks(application);
         }
         mContext = application.getApplicationContext();
         new Thread(new Runnable() {

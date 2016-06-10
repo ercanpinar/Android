@@ -18,7 +18,6 @@ package com.streethawk.library.feeds;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -31,21 +30,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
-import java.net.URLEncoder;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.net.ssl.HttpsURLConnection;
 
 /**
  * Flow of events for feeds
@@ -133,91 +122,47 @@ public class SHFeedItem implements Constants{
         manager.addLogsForSending(params);
     }
 
+
     /**
-     * Call this function to start fetching feeds from server
+     * Read feeds from server
+     * @param offset
      */
-    public void readFeedData(final int offset) {
+    public void readFeedData(final int offset){
         if (null == mContext)
             return;
-        final String APP_KEY = "app_key";
         final String INSTALL_ID = "installid";
-
-        if (Util.isNetworkConnected(mContext)) {
-            new AsyncTask<Void, Void, Void>() {
-                protected Void doInBackground(Void... params) {
-                    BufferedReader reader = null;
+        final String APP_KEY = "app_key";
+        final String EQUALS = "=";
+        final String AND = "&";
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    URL baseurl = Util.getFeedUrl(mContext);
+                    String urlParams = baseurl.toString();
+                    urlParams+="?"+INSTALL_ID+EQUALS+Util.getInstallId(mContext)+AND+
+                                   APP_KEY+EQUALS+Util.getAppKey(mContext)+AND+
+                                    OFFSET+EQUALS+offset;
+                    URL url = null;
                     try {
-                        Bundle query = new Bundle();
-                        String installId = Util.getInstallId(mContext);
-                        String app_key = Util.getAppKey(mContext);
-                        HashMap<String, String> logMap = new HashMap<String, String>();
-                        logMap.put(INSTALL_ID, installId);
-                        logMap.put(APP_KEY, app_key);
-                        logMap.put(OFFSET, Integer.toString(offset));
-                        URL url = null;
-                        url = Util.getFeedUrl(mContext);
-                        HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
-                        connection.setReadTimeout(10000);
-                        connection.setConnectTimeout(15000);
-                        connection.setRequestMethod("GET");
-                        connection.setDoInput(true);
-                        connection.setDoOutput(true);
-                        connection.setRequestProperty("X-Installid", installId);
-                        connection.setRequestProperty("X-App-Key", app_key);
-                        String libVersion = Util.getLibraryVersion();
-                        connection.setRequestProperty("X-Version",libVersion);
-                        connection.setRequestProperty("User-Agent", app_key + "(" + libVersion + ")");
-                        OutputStream os = connection.getOutputStream();
-                        BufferedWriter writer = new BufferedWriter(
-                                new OutputStreamWriter(os, "UTF-8"));
-                        //String logs = Util.getPostDataString(logMap);
-                        String logs="";
-                        boolean first = true;
-                        for (Map.Entry<String, String> entry : logMap.entrySet()) {
-                            StringBuilder result = new StringBuilder();
-                            if (first)
-                                first = false;
-                            else
-                                result.append("&");
-                            String key      = entry.getKey();
-                            String value    = entry.getValue();
-                            if(null!=key) {
-                                result.append(URLEncoder.encode(entry.getKey(), "UTF-8"));
-                                result.append("=");
-                                if(null!=value) {
-                                    result.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
-                                }else{
-                                    result.append(URLEncoder.encode("", "UTF-8"));
-                                }
-                            }
-                            logs+=result.toString();
-                            result = null; //Force GC
-                        }
-                        writer.write(logs);
-                        writer.flush();
-                        writer.close();
-                        os.close();
-                        reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                        String answer = reader.readLine();
-                        if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                            NotifyFeedItemToApplication(answer);
-                            Logging.getLoggingInstance(mContext).processAppStatusCall(answer);
-                        }else{
-                            Logging.getLoggingInstance(mContext).processErrorAckFromServer(answer);
-                        }
-                        connection.disconnect();
+                        url = new URL(urlParams);
                     } catch (MalformedURLException e) {
                         e.printStackTrace();
-                    } catch (ProtocolException e) {
-                        e.printStackTrace();
-                    } catch (UnsupportedEncodingException e) {
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        e.printStackTrace();
                     }
-                    return null;
+                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                    connection.setRequestMethod("GET");
+                    BufferedReader input = new BufferedReader(
+                            new InputStreamReader(connection.getInputStream()));
+                    String answer = input.readLine();
+                    if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                        NotifyFeedItemToApplication(answer);
+                    }
+                    input.close();
+                }catch (IOException e) {
+                    e.printStackTrace();
                 }
-            }.execute();
-        }
+
+            }
+        }).start();
     }
 }

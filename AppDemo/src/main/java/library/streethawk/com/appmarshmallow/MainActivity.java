@@ -2,7 +2,6 @@ package library.streethawk.com.appmarshmallow;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -17,15 +16,9 @@ import android.widget.Toast;
 
 import com.streethawk.library.core.ISHEventObserver;
 import com.streethawk.library.core.StreetHawk;
-import com.streethawk.library.growth.Growth;
 import com.streethawk.library.growth.IGrowth;
-import com.streethawk.library.locations.SHLocation;
-import com.streethawk.library.push.InteractivePush;
-import com.streethawk.library.push.Push;
 
 import org.json.JSONObject;
-
-import java.util.ArrayList;
 
 public class MainActivity extends Activity implements ISHEventObserver,IGrowth{
     private final int PERMISSIONS_LOCATION = 0;
@@ -40,6 +33,9 @@ public class MainActivity extends Activity implements ISHEventObserver,IGrowth{
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
+
+       /*
+
         Application app = getApplication();
         installId = (TextView) findViewById(R.id.installid);
        // Push.getInstance(this).shAlertSetting(30);
@@ -61,6 +57,7 @@ public class MainActivity extends Activity implements ISHEventObserver,IGrowth{
 
         Push.getInstance(this).setInteractivePushBtnPairs(appPairs);
         Growth.getInstance(this).registerIGrowth(this);
+        Beacons.getInstance(this).getDetectedBeaconList();
 
 
         // Enter APP_KEY for your application registered with StreetHawk server
@@ -68,8 +65,8 @@ public class MainActivity extends Activity implements ISHEventObserver,IGrowth{
 
        // StreetHawk.INSTANCE.tagString("sh_cuid",Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID));
 
-        StreetHawk.INSTANCE.registerEventObserver(this);
-        StreetHawk.INSTANCE.setAppKey(APP_KEY);
+        //StreetHawk.INSTANCE.registerEventObserver(this);
+        //StreetHawk.INSTANCE.setAppKey(APP_KEY);
         StreetHawk.INSTANCE.init(app);
 
 
@@ -80,6 +77,7 @@ public class MainActivity extends Activity implements ISHEventObserver,IGrowth{
 
 
         SHLocation.getInstance(this).updateLocationMonitoringParams( UPDATE_INTERVAL_FG,  UPDATE_DISTANCE_FG,  UPDATE_INTERVAL_BG,  UPDATE_DISTANCE_BG);
+        */
     }
 
 
@@ -143,6 +141,12 @@ public class MainActivity extends Activity implements ISHEventObserver,IGrowth{
         } else {
             return true;
         }
+    }
+
+    public void kfactor(View view){
+        Intent intent = new Intent(this,Kfactor.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 
     @Override
@@ -255,4 +259,10 @@ public class MainActivity extends Activity implements ISHEventObserver,IGrowth{
     public void onReceiveDeepLinkUrl(String deeplinkUrl) {
         Log.e("Anurag","deeplinkUrl"+deeplinkUrl);
     }
+
+    private final String UUID           = "uuid";
+    private final String MAJOR_NUMBER   = "majornumber";
+    private final String MINOR_NUMBER   = "minornumber";
+    private final String DISTANCE       = "distance";
+
 }

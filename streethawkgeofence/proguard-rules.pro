@@ -25,6 +25,12 @@
 -keep public class com.streethawk.library.geofence.SHGeofence{
     public *;
 }
--keep public class com.streethawk.library.locations.AskLocPermission{
+-keep public class com.streethawk.library.geofence.AskLocPermission{
+    public *;
+}
+-keep public class com.streethawk.library.geofence.GeofenceData{
+    public *;
+}
+-keep public interface com.streethawk.library.geofence.INotifyGeofenceTransition{
     public *;
 }

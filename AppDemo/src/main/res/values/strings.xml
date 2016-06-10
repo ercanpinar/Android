@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">AppMarshMallow</string>
+    <string name="app_name">StreetHawk</string>
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
@@ -8,6 +8,12 @@
     <string name="STREETHAWK_SIMPLE_MESSAGE_POSITIVE">AppOkay</string>
     <string name="STREETHAWK_SIMPLE_MESSAGE_NOTIFICATION_POSITIVE">AppOkay</string>
     <string name="title_activity_third">ThirdActivity</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="ERRMSG_EMPTY_APP_KEY">AppKey cannot be empty</string>
+    <string name="ERRMSG_DEMO_APP_KEY">App cannot use Demo app key. Please register your appkey</string>
+    <color name="StreetHawkColor">#652e91</color>
 
 
 </resources>

@@ -15,6 +15,7 @@
  * License along with this library.
  */
 package com.streethawk.library.core;
+
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Application;

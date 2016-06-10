@@ -29,6 +29,8 @@ import com.streethawk.library.core.Util;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
 public class Beacons implements Constants{
     private final String SUBTAG = "Beacons ";
     private static Beacons mInstance = null;
@@ -149,6 +151,15 @@ public class Beacons implements Constants{
     }
 
 
+    /**
+     * Function returns list of beacons detected
+     * @return
+     */
+    public ArrayList<BeaconData> getDetectedBeaconList(){
+        return BeaconServiceBase.getBeaconList();
+    }
+
+
     private boolean isDeviceSupportBLE() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2)
             return false;
@@ -157,7 +168,6 @@ public class Beacons implements Constants{
 
     /**
      * Use stopBeaconService API to stop scanning of beacons
-     * @return
      */
     public void stopBeaconMonitoring(){
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);

@@ -104,6 +104,13 @@
           android:id="@+id/thirdactivity"
           android:onClick="ThirdActivity" />
 
+      <Button
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="KFactor test"
+          android:id="@+id/kfactor"
+          android:onClick="kfactor" />
+
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "library.streethawk.com.appmarshmallow"
-        minSdkVersion 10
+        minSdkVersion 14
         targetSdkVersion 23
         versionCode 5
         versionName "5.0"
@@ -33,11 +33,13 @@ dependencies {
     compile 'com.streethawk:locations:1.8.0-SNAPSHOT'
 */
 
-/*
-    compile project (':streethawkgrowth')
-    compile project (':streethawkpush')
-    compile project (':streethawklocations')
-    compile project (':streethawkbeacon')
+    /*
+
+    compile project(':streethawkcore')
+    compile project(':streethawkgrowth')
+    compile project(':streethawkpush')
+    compile project(':streethawklocations')
+    compile project(':streethawkbeacon')
     compile project(':streethawkgeofence')
     compile project(':streethawkfeeds')
 */
@@ -49,5 +51,11 @@ dependencies {
     compile 'com.streethawk:geofence:1.8.0'
     compile 'com.streethawk:locations:1.8.0'
 
+
+
+
+    compile 'com.android.support:support-v4:23.3.0'
+    compile 'com.android.support:appcompat-v7:23.3.0'
+    compile 'com.android.support:support-v4:23.3.0'
 }
-apply plugin: 'com.google.gms.google-services'
+//apply plugin: 'com.google.gms.google-services'

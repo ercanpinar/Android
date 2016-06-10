@@ -30,10 +30,6 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationServices;
-
-
-
-
 import com.streethawk.library.core.StreetHawk;
 import com.streethawk.library.core.Util;
 
@@ -45,7 +41,8 @@ import java.util.ArrayList;
 
 public class SHGeofence implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,Constants
         //Comemnt this line for Xamarin
-        ,ResultCallback<Status> {
+        ,ResultCallback<Status>
+    {
     private final String SUBTAG = "Geofence ";
     private static Context mContext;
     private static SHGeofence mInstance;
@@ -114,7 +111,6 @@ public class SHGeofence implements GoogleApiClient.ConnectionCallbacks, GoogleAp
 
     /**
      * Use registerForGoefenceTransition when a device enters a geofence registered with StreetHawk
-     * Implement {@link @INotifyGeofenceTransition}
      * @param observer
      */
     public void registerForGoefenceTransition(INotifyGeofenceTransition observer){
@@ -157,6 +153,23 @@ public class SHGeofence implements GoogleApiClient.ConnectionCallbacks, GoogleAp
         }).start();
 
     }
+
+    /**
+     * Function retruns list of geofences a device entered
+     * @return
+     */
+    public ArrayList<GeofenceData> getGeofenceEnteredList(){
+        return GeofenceService.getGeoEnterList();
+    }
+
+    /**
+     * Function returns list of geofences device left
+     * @return
+     */
+    public ArrayList<GeofenceData> getGeofenceExitList(){
+        return GeofenceService.getGeoExitList();
+    }
+
 
 
     /**
@@ -326,12 +339,9 @@ public class SHGeofence implements GoogleApiClient.ConnectionCallbacks, GoogleAp
     public void onConnectionFailed(ConnectionResult connectionResult) {
 
     }
-
-
     // Comment this line for Xamarin
     @Override
     public void onResult(Status status) {
 
     }
-
 }

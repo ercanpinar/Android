@@ -25,7 +25,9 @@
 
 
         <activity android:name="com.streethawk.library.geofence.AskGeoPermission" />
+        <!--
             android:theme="@style/Theme.AppCompat.Streethawk_Translucent"/>
+            -->
     </application>
 
 </manifest>

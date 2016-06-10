@@ -63,8 +63,8 @@ public class LoggingBase implements Constants {
 
     /*Member variables*/
     private static String mHostUrl = null;
-    //private  static final String PROD_DEFAULT_HOST_URL = "https://api.streethawk.com";
     private  static final String PROD_DEFAULT_HOST_URL = "https://api.streethawk.com";
+    //private  static final String PROD_DEFAULT_HOST_URL = "https://staging.streethawk.com";
 
     protected enum ApiMethod {
         APP_GET_STATUS,
@@ -87,7 +87,7 @@ public class LoggingBase implements Constants {
 
     private static String getHostUrl(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
-        mHostUrl = sharedPreferences.getString(KEY_HOST, null);
+        mHostUrl = sharedPreferences.getString(KEY_HOST, PROD_DEFAULT_HOST_URL);
         if (null == mHostUrl) {
             mHostUrl = PROD_DEFAULT_HOST_URL;
         }
@@ -302,7 +302,7 @@ public class LoggingBase implements Constants {
                 JSONArray array = new JSONArray(priority);
                 for (int i = 0; i < array.length(); i++) {
                     try {
-                        if (code == array.get(i)) {
+                        if (code == (int)array.get(i)) {
                             return true;
                         }
                     } catch (JSONException e) {
@@ -331,7 +331,7 @@ public class LoggingBase implements Constants {
                 JSONArray array = new JSONArray(disabledLogs);
                 for (int i = 0; i < array.length(); i++) {
                     try {
-                        if (code == array.get(i)) {
+                        if (code ==(int) array.get(i)) {
                             return true;  // disabled code return true˜
                         }
                     } catch (JSONException e) {

@@ -16,23 +16,20 @@
  */
 package com.streethawk.library.geofence;
 
-import java.util.ArrayList;
-
 /**
  * Observers to notify when device enters and exits a given geofence
  */
 public interface INotifyGeofenceTransition {
 
     /**
+     * @deprecated
      * Function called when device enters a geofence region registered with StreetHawk
-     * @param geofences
      */
-    public void onDeviceEnteringGeofence(ArrayList<GeofenceData> geofences);
+    public void onDeviceEnteringGeofence();
 
     /**
      * Function called when device leaves a geofence region registered with StreetHawk
-     * @param geofences
      */
-    public void onDeviceLeavingGeofence(ArrayList<GeofenceData> geofences);
+    public void onDeviceLeavingGeofence();
 
 }

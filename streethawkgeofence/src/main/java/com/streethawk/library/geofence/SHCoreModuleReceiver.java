@@ -23,6 +23,7 @@ import android.content.SharedPreferences;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 
 import com.streethawk.library.core.Logging;
 import com.streethawk.library.core.Util;

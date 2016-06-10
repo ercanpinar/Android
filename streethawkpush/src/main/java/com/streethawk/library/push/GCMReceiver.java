@@ -54,24 +54,31 @@ public class GCMReceiver extends WakefulBroadcastReceiver {
 
     @Override
     public final void onReceive(final Context context, final Intent intent) {
+        try{
         if ("com.google.android.c2dm.intent.RECEIVE".equals(intent.getAction())) {
             //displayAllExtras(intent.getExtras());
             Bundle extras = intent.getExtras();
-            if(null==extras)
+            if (null == extras)
                 return;
             String installId = extras.getString(Util.INSTALL_ID);
             String storedInstallId = Util.getInstallId(context);
-            if(null==installId) {
+            if (null == installId) {
                 dispatchThirdPartyPayload(extras);
             }
-            if(null==storedInstallId)
+            if (null == storedInstallId)
                 return;
-            if(!(installId.equals(storedInstallId))) {
-                return;  // return if storedInstall id is not matching my install id
+            if(null!=installId) {
+                if (!(installId.equals(storedInstallId))) {
+                    return;  // return if storedInstall id is not matching my install id
+                }
             }
-            ComponentName comp = new ComponentName(context.getPackageName(),SHGcmListenerService.class.getName());
+            ComponentName comp = new ComponentName(context.getPackageName(), SHGcmListenerService.class.getName());
             startWakefulService(context, (intent.setComponent(comp)));
             setResultCode(Activity.RESULT_OK);
+        }
+
+    }catch (Exception e){
+            e.printStackTrace();
         }
     }
 }

@@ -45,6 +45,9 @@ public class GeofenceService extends IntentService{
 
     private static INotifyGeofenceTransition mINotifyGeofenceTransition=null;
 
+    private static ArrayList<GeofenceData> geoEnterList = new ArrayList<GeofenceData>();
+    private static ArrayList<GeofenceData> geoExitList = new ArrayList<GeofenceData>();
+
 
     @Override
     public void onCreate() {
@@ -55,6 +58,24 @@ public class GeofenceService extends IntentService{
     public static void registerGeofenceObserver(INotifyGeofenceTransition observer){
         mINotifyGeofenceTransition = observer;
     }
+
+    /**
+     * Return list of geofences device entered
+     * @return
+     */
+    public static ArrayList<GeofenceData> getGeoEnterList(){
+        return geoEnterList;
+    }
+
+    /**
+     * Returns list of geofences device leaves
+     * @return
+     */
+    public static ArrayList<GeofenceData> getGeoExitList(){
+        return geoExitList;
+    }
+
+
 
 
     public void updateVisibleGeofence(Context context,String id){
@@ -102,10 +123,6 @@ public class GeofenceService extends IntentService{
                 params.putString(Util.CODE, Integer.toString(Constants.CODE_GEOFENCE_UPDATES));
                 params.putString(Util.SHMESSAGE_ID, null);
                 params.putString("json",logs);
-                /*
-                Logging manager = Logging.getLoggingInstance(context);
-                manager.addLogsForSending(params);
-                */
                 GeofenceLogging.getInstance().sendLogs(context, params);
             }
         }
@@ -134,7 +151,6 @@ public class GeofenceService extends IntentService{
             Log.e(Util.TAG, TAG + "Error");
             return;
         }
-        // Get the transition type.e
         int geofenceTransition = geofencingEvent.getGeofenceTransition();
         if ((geofenceTransition == com.google.android.gms.location.Geofence.GEOFENCE_TRANSITION_ENTER)) {
             // Get the geofences that were triggered. A single event can trigger multiple geofences.
@@ -190,7 +206,8 @@ public class GeofenceService extends IntentService{
                 }
             }
             if(null!=mINotifyGeofenceTransition){
-                mINotifyGeofenceTransition.onDeviceEnteringGeofence(geolist);
+                geoEnterList = geolist;
+               // mINotifyGeofenceTransition.onDeviceEnteringGeofence(geolist);
             }
             geolist=null;
             database.close();
@@ -200,7 +217,7 @@ public class GeofenceService extends IntentService{
             List<com.google.android.gms.location.Geofence> triggeringGeofences = geofencingEvent.getTriggeringGeofences();
             GeofenceDB database = new GeofenceDB(getApplicationContext());
             database.open();
-            ArrayList<GeofenceData> geolist = new ArrayList<GeofenceData>();
+           ArrayList<GeofenceData> geolist = new ArrayList<GeofenceData>();
             for (com.google.android.gms.location.Geofence geofence : triggeringGeofences) {
                 final GeofenceData object = new GeofenceData();
                 String geofenceID = geofence.getRequestId();
@@ -230,7 +247,8 @@ public class GeofenceService extends IntentService{
                 }
             }
             if(null!=mINotifyGeofenceTransition){
-                mINotifyGeofenceTransition.onDeviceLeavingGeofence(geolist);
+                //mINotifyGeofenceTransition.onDeviceLeavingGeofence(geoExitList);
+                geoExitList=geolist;
             }
             geolist=null;
             database.close();

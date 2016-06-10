@@ -31,7 +31,7 @@
 -keep public class com.streethawk.library.beacon.SHBeaconModuleBC{
     public *;
 }
--keep public class com.streethawk.library.beacon.INotifyBeaconTransition{
+-keep public interface com.streethawk.library.beacon.INotifyBeaconTransition{
     public *;
 }
 -keep public class com.streethawk.library.beacon.BeaconData{

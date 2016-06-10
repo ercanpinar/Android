@@ -1,0 +1,55 @@
+apply plugin: 'com.android.application'
+
+android {
+    signingConfigs {
+    }
+    compileSdkVersion 23
+    buildToolsVersion "23.0.2"
+    defaultConfig {
+        applicationId "com.streethawk.streethawkapp"
+        minSdkVersion 9
+        targetSdkVersion 23
+        versionCode 1
+        versionName "1.0"
+        multiDexEnabled true
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    testCompile 'junit:junit:4.12'
+    compile 'com.android.support:appcompat-v7:23.3.0'
+    compile 'com.android.support:design:23.3.0'
+/*
+    compile 'com.google.firebase:firebase-core:9.0.2'
+    compile 'com.google.firebase:firebase-messaging:9.0.2'
+
+*/
+
+    compile 'com.streethawk:core:1.8.1'
+    compile 'com.streethawk:push:1.8.1'
+    compile 'com.streethawk:growth:1.8.1'
+    compile 'com.streethawk:beacon:1.8.1'
+    compile 'com.streethawk:geofence:1.8.1'
+    compile 'com.streethawk:locations:1.8.1'
+    compile 'com.streethawk:feeds:1.8.1'
+
+
+    /*
+    //compile project(':streethawkcore')
+    //compile 'com.streethawk:core:1.8.1'
+    compile project(':streethawkgrowth')
+    compile project(':streethawkpush')
+    compile project(':streethawklocations')
+    compile project(':streethawkbeacon')
+    compile project(':streethawkgeofence')
+    compile project(':streethawkfeeds')
+    */
+}
+//apply plugin: 'com.google.gms.google-services'

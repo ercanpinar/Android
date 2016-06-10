@@ -169,7 +169,7 @@ public class Logging extends LoggingBase {
                         Bundle query = new Bundle();
                         query.putString(Util.SHAPP_KEY, app_key);
                         query.putString(Util.INSTALL_ID, installId);
-                        URL url = new URL(buildUri(mContext, ApiMethod.FETCH_IBEACON_LIST,query));
+                        URL url = new URL(buildUri(mContext, ApiMethod.APP_GET_STATUS,query));
                         HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
                         connection.setReadTimeout(10000);
                         connection.setConnectTimeout(15000);
@@ -471,6 +471,21 @@ public class Logging extends LoggingBase {
     public void saveActivityNames(){
         super.saveActivityNames();
     }
+
+
+    private void displayLogLine(String TAG, HashMap<String, String> logMap){
+        String result="";
+        String SPACE = " ";
+        String NEW_LINE = "\n";
+        for (Map.Entry<String, String> entry : logMap.entrySet()){
+
+            String key      = entry.getKey();
+            String value    = entry.getValue();
+            result+= key +SPACE+value+NEW_LINE;
+        }
+        Log.e(TAG,result);
+    }
+
 
     /**
      * Flush cached logs to server

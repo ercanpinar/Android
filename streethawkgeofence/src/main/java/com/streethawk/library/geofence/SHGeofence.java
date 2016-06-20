@@ -26,8 +26,6 @@ import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationServices;
 import com.streethawk.library.core.StreetHawk;
@@ -41,7 +39,7 @@ import java.util.ArrayList;
 
 public class SHGeofence implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,Constants
         //Comemnt this line for Xamarin
-        ,ResultCallback<Status>
+        //,ResultCallback<Status>
     {
     private final String SUBTAG = "Geofence ";
     private static Context mContext;
@@ -340,8 +338,10 @@ public class SHGeofence implements GoogleApiClient.ConnectionCallbacks, GoogleAp
 
     }
     // Comment this line for Xamarin
+   /*
     @Override
     public void onResult(Status status) {
 
     }
+    */
 }

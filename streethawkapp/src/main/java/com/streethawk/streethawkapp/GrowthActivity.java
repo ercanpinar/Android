@@ -12,6 +12,9 @@ import android.widget.EditText;
 
 import com.streethawk.library.core.StreetHawk;
 import com.streethawk.library.growth.Growth;
+import com.streethawk.library.growth.IGrowth;
+
+import org.json.JSONObject;
 
 public class GrowthActivity extends AppCompatActivity {
 
@@ -91,8 +94,23 @@ public class GrowthActivity extends AppCompatActivity {
                 String Utm_term = mUtm_term.getText().toString();
                 String Campaign_Content = mCampaign_Content.getText().toString();
                 String DefaultURI = mDefaultURI.getText().toString();
-                Growth.getInstance(mActivity).originateShareWithCampaign(Utm_campaign,DeepLinkUri,Utm_source
-                        ,Utm_medium,Utm_term,Campaign_Content,DefaultURI, null);
+                Growth.getInstance(mActivity).originateShareWithCampaign(Utm_campaign, DeepLinkUri, Utm_source
+                        , Utm_medium, Utm_term, Campaign_Content, DefaultURI, new IGrowth() {
+                            @Override
+                            public void onReceiveShareUrl(String shareUrl) {
+
+                            }
+
+                            @Override
+                            public void onReceiveErrorForShareUrl(JSONObject errorResponse) {
+
+                            }
+
+                            @Override
+                            public void onReceiveDeepLinkUrl(String deeplinkUrl) {
+
+                            }
+                        });
             }
         };
     }

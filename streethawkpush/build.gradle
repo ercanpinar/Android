@@ -1,15 +1,14 @@
 apply plugin: 'com.android.library'
 
 android {
+    signingConfigs {
+    }
     compileSdkVersion 23
     buildToolsVersion "23.0.1"
-
-
     // For phonegap
     lintOptions {
         abortOnError false
     }
-
     defaultConfig {
         minSdkVersion 9
         targetSdkVersion 23
@@ -22,37 +21,31 @@ android {
     dexOptions {
         javaMaxHeapSize "4g"
     }
-
     task makeJar(type: Copy) {
         from('build/intermediates/bundles/release/')
         into('build/outputs/jar')
         include('classes.jar')
         rename('classes.jar', 'streethawkpush.jar')
     }
-
     makeJar.dependsOn(clearJar, build)
     buildTypes {
         release {
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             zipAlignEnabled true
             proguardFile '/Users/anuragkondeya/AndroidStudioWorkspace/opensourceSDK/Android/streethawkpush/proguard-rules.pro'
         }
     }
-
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.google.android.gms:play-services-gcm:9.0.2'
     // Unit testing dependencies
     testCompile 'junit:junit:4.12'
-
-
     compile project(':streethawkcore')
     //compile 'com.streethawk:core:1.8.1'
     //compile 'com.streethawk:core:1.8.0-SNAPSHOT'
-
 }
 
 //apply from: '../sh_maven_push.gradle'

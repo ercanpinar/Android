@@ -32,6 +32,7 @@ dependencies {
 
 */
 
+    /*
     compile 'com.streethawk:core:1.8.1'
     compile 'com.streethawk:push:1.8.1'
     compile 'com.streethawk:growth:1.8.1'
@@ -39,10 +40,10 @@ dependencies {
     compile 'com.streethawk:geofence:1.8.1'
     compile 'com.streethawk:locations:1.8.1'
     compile 'com.streethawk:feeds:1.8.1'
+    */
 
 
-    /*
-    //compile project(':streethawkcore')
+    compile project(':streethawkcore')
     //compile 'com.streethawk:core:1.8.1'
     compile project(':streethawkgrowth')
     compile project(':streethawkpush')
@@ -50,6 +51,6 @@ dependencies {
     compile project(':streethawkbeacon')
     compile project(':streethawkgeofence')
     compile project(':streethawkfeeds')
-    */
+
 }
 //apply plugin: 'com.google.gms.google-services'

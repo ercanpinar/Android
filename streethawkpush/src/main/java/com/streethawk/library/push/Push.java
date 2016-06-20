@@ -162,11 +162,14 @@ public class Push implements Constants{
         String packageName = context.getPackageName();
         Intent intent = new Intent(action);
         intent.setPackage(packageName);
+
+
         List<ResolveInfo> receivers = pm.queryBroadcastReceivers(intent, PackageManager.MATCH_DEFAULT_ONLY);
         if (receivers.isEmpty()) {
             Log.e(Util.TAG, SUBTAG + "No receivers for action " + action);
             return false;
         }
+
         Log.v(Util.TAG, SUBTAG + "Found " + receivers.size() + " receivers for action " + action);
         for (ResolveInfo receiver : receivers) {
             String name = receiver.activityInfo.name;
@@ -205,9 +208,11 @@ public class Push implements Constants{
             Log.w(Util.TAG, SUBTAG + "No receiver allowed to receive " + PERMISSION_GCM_INTENTS);
             return false;
         }
+        /*
         if(!checkReceiver(mContext, allowedReceivers, INTENT_FROM_GCM_MESSAGE)){
             return false;
         }
+        */
         return true;
     }
 

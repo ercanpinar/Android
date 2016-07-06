@@ -79,6 +79,13 @@ public class Util extends LoggingBase {
     public static final int RELEASE_PLATFORM = PLATFORM_XAMARIN;
 
 
+    public static final String LOG_LAT  = "shloglat";   // Latitiude for logline
+    public static final String LOG_LNG  = "shloglng";   // Latitude for logline
+
+
+
+
+
     //public static Activity mActivity;
 
     public static final String INSTALL_ID = "installid";

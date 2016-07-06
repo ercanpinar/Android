@@ -1,3 +1,4 @@
+/*
 package library.streethawk.com.appmarshmallow;
 
 import android.content.Context;
@@ -15,7 +16,7 @@ import android.widget.TextView;
 
 import com.streethawk.library.core.StreetHawk;
 import com.streethawk.library.core.Util;
-public class Settings extends Fragment implements Constants {
+public class Setting extends Fragment implements Constants {
 
 
     private View mView;
@@ -28,12 +29,12 @@ public class Settings extends Fragment implements Constants {
 
     private OnFragmentInteractionListener mListener;
 
-    public Settings() {
+    public Setting() {
         // Required empty public constructor
     }
 
-    public static Settings newInstance(String param1, String param2) {
-        Settings fragment = new Settings();
+    public static Setting newInstance(String param1, String param2) {
+        Setting fragment = new Setting();
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
@@ -156,3 +157,4 @@ public class Settings extends Fragment implements Constants {
         void onFragmentInteraction(Uri uri);
     }
 }
+*/

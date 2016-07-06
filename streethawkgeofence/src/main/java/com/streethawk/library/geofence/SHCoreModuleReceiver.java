@@ -1,25 +1,11 @@
-/*
- * Copyright (c) StreetHawk, All rights reserved.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 3.0 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library.
- */
+/* Copyright (c) StreetHawk, All rights reserved. This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation; either version 3.0 of the License, or (at your option) any later version. This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details. You should have received a copy of the GNU Lesser General Public License along with this library. */
 package com.streethawk.library.geofence;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -44,10 +30,12 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.HttpsURLConnection;
 
-public class SHCoreModuleReceiver extends BroadcastReceiver implements Constants{
+public class SHCoreModuleReceiver extends BroadcastReceiver implements Constants {
     private final String GEOFENCELIST = "geofences";
     private final String KEY_GEOFENCE = "shKeyGeofenceList";
 
@@ -62,119 +50,107 @@ public class SHCoreModuleReceiver extends BroadcastReceiver implements Constants
     }
 
     private void fetchGeofenceList(final Context context) {
-        if (null == context)
-            return;
-        if (Util.isNetworkConnected(context)) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    {
-                        String installId = Util.getInstallId(context);
-                        if (null == installId) {
-                            SharedPreferences sharedPreferences = context.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
-                            SharedPreferences.Editor e = sharedPreferences.edit();
-                            e.putString(KEY_GEOFENCE, null);
-                            e.commit();
-                            return;
-                        }
-                        if (installId.isEmpty()) {
-                            SharedPreferences sharedPreferences = context.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
-                            SharedPreferences.Editor e = sharedPreferences.edit();
-                            e.putString(KEY_GEOFENCE, null);
-                            e.commit();
-                            return;
-                        }
-                        String app_key = Util.getAppKey(context);
-                        Bundle query = new Bundle();
-                        HashMap<String, String> logMap = new HashMap<String, String>();
-                        logMap.put(Util.INSTALL_ID, installId);
-                        BufferedReader reader = null;
-                        try {
-                            String libVersion = Util.getLibraryVersion();
-                            URL url = Util.getGeofenceUrl(context);
-                            HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
-                            connection.setReadTimeout(10000);
-                            connection.setConnectTimeout(15000);
-                            connection.setRequestMethod("GET");
-                            connection.setDoInput(true);
-                            connection.setDoOutput(true);
-                            connection.setRequestProperty("X-Installid", installId);
-                            connection.setRequestProperty("X-App-Key", app_key);
-                            connection.setRequestProperty("X-Version", libVersion);
-                            connection.setRequestProperty("User-Agent", app_key + "(" + libVersion + ")");
-                            OutputStream os = connection.getOutputStream();
-                            BufferedWriter writer = new BufferedWriter(
-                                    new OutputStreamWriter(os, "UTF-8"));
-                            //String logs = Util.getPostDataString(logMap);
-                            String logs="";
-                            boolean first = true;
-                            for (Map.Entry<String, String> entry : logMap.entrySet()) {
-                                StringBuilder result = new StringBuilder();
-                                if (first)
-                                    first = false;
-                                else
-                                    result.append("&");
-                                String key      = entry.getKey();
-                                String value    = entry.getValue();
-                                if(null!=key) {
-                                    result.append(URLEncoder.encode(entry.getKey(), "UTF-8"));
-                                    result.append("=");
-                                    if(null!=value) {
-                                        result.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
-                                    }else{
-                                        result.append(URLEncoder.encode("", "UTF-8"));
-                                    }
-                                }
-                                logs+=result.toString();
-                                result = null; //Force GC
+        if (null == context) return;
+        if (Util.isNetworkConnected(context)) new Thread(new Runnable() {
+            @Override
+            public void run() {
+                {
+                    String installId = Util.getInstallId(context);
+                    if (null == installId) {
+                        SharedPreferences sharedPreferences = context.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
+                        SharedPreferences.Editor e = sharedPreferences.edit();
+                        e.putString(KEY_GEOFENCE, null);
+                        e.commit();
+                        return;
+                    }
+                    if (installId.isEmpty()) {
+                        SharedPreferences sharedPreferences = context.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
+                        SharedPreferences.Editor e = sharedPreferences.edit();
+                        e.putString(KEY_GEOFENCE, null);
+                        e.commit();
+                        return;
+                    }
+                    String app_key = Util.getAppKey(context);
+                    Bundle query = new Bundle();
+                    HashMap<String, String> logMap = new HashMap<String, String>();
+                    logMap.put(Util.INSTALL_ID, installId);
+                    BufferedReader reader = null;
+                    try {
+                        String libVersion = Util.getLibraryVersion();
+                        URL url = Util.getGeofenceUrl(context);
+                        HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+                        connection.setReadTimeout(10000);
+                        connection.setConnectTimeout(15000);
+                        connection.setRequestMethod("GET");
+                        connection.setDoInput(true);
+                        connection.setDoOutput(true);
+                        connection.setRequestProperty("X-Installid", installId);
+                        connection.setRequestProperty("X-App-Key", app_key);
+                        connection.setRequestProperty("X-Version", libVersion);
+                        connection.setRequestProperty("User-Agent", app_key + "(" + libVersion + ")");
+                        OutputStream os = connection.getOutputStream();
+                        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8")); /*String logs = Util.getPostDataString(logMap);*/
+                        String logs = "";
+                        boolean first = true;
+                        for (Map.Entry<String, String> entry : logMap.entrySet()) {
+                            StringBuilder result = new StringBuilder();
+                            if (first) first = false;
+                            else result.append("&");
+                            String key = entry.getKey();
+                            String value = entry.getValue();
+                            if (null != key) {
+                                result.append(URLEncoder.encode(entry.getKey(), "UTF-8"));
+                                result.append("=");
+                                if (null != value)
+                                    result.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
+                                else result.append(URLEncoder.encode("", "UTF-8"));
                             }
-                            writer.write(logs);
-                            writer.flush();
-                            writer.close();
-                            os.close();
-                            reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                            String answer = reader.readLine();
-                            if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                                if (null == answer)
-                                    return;
-                                if (answer.isEmpty())
-                                    return;
-                                try {
-                                    JSONObject jsonObject = new JSONObject(answer);
-                                    JSONArray value = jsonObject.getJSONArray(Util.JSON_VALUE);
-                                    SHGeofence instance = SHGeofence.getInstance(context);
-                                    instance.stopMonitoring();
-                                    forceClearGeofenceData(context);
-                                    SharedPreferences sharedPreferences = context.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
-                                    SharedPreferences.Editor e = sharedPreferences.edit();
-                                    e.putString(PARENT_GEOFENCE_ID, null);
-                                    e.commit();
-                                    instance.storeGeofenceList(value);
-                                    boolean status = sharedPreferences.getBoolean(IS_GEOFENCE_ENABLE, false);
-                                    if (status){
-                                        instance.startGeofenceMonitoring();
-                                    }
-
-                                } catch (JSONException e) {
-                                }
-                                Logging.getLoggingInstance(context).processAppStatusCall(answer);
-                            } else {
+                            logs += result.toString();
+                            result = null; /*Force GC*/
+                        }
+                        writer.write(logs);
+                        writer.flush();
+                        writer.close();
+                        os.close();
+                        reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                        String answer = reader.readLine();
+                        if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                            if (null == answer) return;
+                            if (answer.isEmpty()) return;
+                            try {
+                                JSONObject jsonObject = new JSONObject(answer);
+                                JSONArray value = jsonObject.getJSONArray(Util.JSON_VALUE);
+                                SHGeofence instance = SHGeofence.getInstance(context);
+                                instance.stopMonitoring();
+                                forceClearGeofenceData(context);
                                 SharedPreferences sharedPreferences = context.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
                                 SharedPreferences.Editor e = sharedPreferences.edit();
-                                e.putString(KEY_GEOFENCE, null);
+                                e.putString(PARENT_GEOFENCE_ID, null);
                                 e.commit();
-                                Logging.getLoggingInstance(context).processErrorAckFromServer(answer);
+                                Log.e("Anurag", "StoreGeofence list");
+                                instance.storeGeofenceList(value);
+                                boolean status = sharedPreferences.getBoolean(IS_GEOFENCE_ENABLE, false);
+                                if (status) instance.startGeofenceMonitoring();
+
+                            } catch (JSONException e) {
                             }
-                            connection.disconnect();
-                        } catch (UnsupportedEncodingException e) {
-                            e.printStackTrace();
-                        } catch (IOException e) {
-                            e.printStackTrace();
+                            Logging.getLoggingInstance(context).processAppStatusCall(answer);
+                        } else {
+                            SharedPreferences sharedPreferences = context.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
+                            SharedPreferences.Editor e = sharedPreferences.edit();
+                            e.putString(KEY_GEOFENCE, null);
+                            e.commit();
+                            Logging.getLoggingInstance(context).processErrorAckFromServer(answer);
                         }
+                        connection.disconnect();
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
                 }
-            }).start();
-        }
+            }
+        }).start();
 
     }
 
@@ -199,6 +175,7 @@ public class SHCoreModuleReceiver extends BroadcastReceiver implements Constants
             }
         }
     }
+
 
     @Override
     public void onReceive(final Context context, Intent intent) {
@@ -228,7 +205,7 @@ public class SHCoreModuleReceiver extends BroadcastReceiver implements Constants
             }
         }
         if (action.equals("android.location.PROVIDERS_CHANGED")) {
-            final Handler delay= new Handler();
+            final Handler delay = new Handler();
             delay.postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -245,14 +222,68 @@ public class SHCoreModuleReceiver extends BroadcastReceiver implements Constants
                         }
                     } else {
                         SharedPreferences sharedPreferences = context.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
-                        boolean status = sharedPreferences.getBoolean(IS_GEOFENCE_ENABLE, false);
-                        if (status){
-                            SHGeofence.getInstance(context).startGeofenceMonitoring();
-                        }
+                        final boolean status = sharedPreferences.getBoolean(IS_GEOFENCE_ENABLE,false);
+                        final ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(1);
+                        executor.schedule(new Runnable() {
+                            @Override
+                            public void run() {
+                                if(status) {
+                                    SHGeofence.getInstance(context).startGeofenceMonitoring();
+                                }
+                                Location location = StreetHawkLocationService.getInstance().getLastKnownLocation(context);
+                                if (null != location) {
+                                    double lat = location.getLatitude();
+                                    double lng = location.getLongitude();
+                                    if (lat == 0 && lng == 0)
+                                        return;
+                                    StreetHawkLocationService.getInstance().StoreLocationsForLogging(context);
+                                    Bundle extras = new Bundle();
+                                    extras.putString(Util.CODE, Integer.toString(CODE_LOCATION_UPDATES));
+                                    extras.putString(Util.SHMESSAGE_ID, null);
+                                    extras.putString(LOCAL_TIME, Util.getFormattedDateTime(System.currentTimeMillis(), false));
+                                    extras.putString(SHLATTITUDE, Double.toString(location.getLatitude()));
+                                    extras.putString(SHLONGITUDE, Double.toString(location.getLongitude()));
+                                    Logging.getLoggingInstance(context).addLogsForSending(extras);
+                                }
+                            }
+                        }, 1, TimeUnit.MINUTES);
                     }
                 }
-            },2000);
+            }, 2000);
+        }
+        if (action.equals("com.streethawk.intent.action.gcm.STREETHAWK_LOCATIONS")) {
+            if (null != intent) {
+                try {
+                    String packageName = intent.getStringExtra(SHPACKAGENAME);
+                    if (!packageName.equals(context.getPackageName())) {
+                        return;
+                    }
+                } catch (Exception e) {
+                    return;
+                }
+                Location location = StreetHawkLocationService.getInstance().getLastKnownLocation(context);
+                if (null != location) {
+                    double lat = location.getLatitude();
+                    double lng = location.getLongitude();
+                    if (lat == 0 && lng == 0)
+                        return;
+                    StreetHawkLocationService.getInstance().StoreLocationsForLogging(context);
+                    Bundle extras = new Bundle();
+                    extras.putString(Util.CODE, Integer.toString(CODE_PERIODIC_LOCATION_UPDATE));
+                    extras.putString(Util.SHMESSAGE_ID, null);
+                    extras.putString(LOCAL_TIME, Util.getFormattedDateTime(System.currentTimeMillis(), false));
+                    extras.putString(SHLATTITUDE, Double.toString(lat));
+                    extras.putString(SHLONGITUDE, Double.toString(lng));
+                    Logging.getLoggingInstance(context).addLogsForSending(extras);
+                    extras.putString(Util.CODE, Integer.toString(CODE_LOCATION_UPDATES));
+                    extras.putString(Util.SHMESSAGE_ID, null);
+                    extras.putString(LOCAL_TIME, Util.getFormattedDateTime(System.currentTimeMillis(), false));
+                    extras.putString(SHLATTITUDE, Double.toString(lat));
+                    extras.putString(SHLONGITUDE, Double.toString(lng));
+                    Logging.getLoggingInstance(context).addLogsForSending(extras);
 
+                }
+            }
         }
     }
 }

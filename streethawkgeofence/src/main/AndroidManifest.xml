@@ -3,6 +3,7 @@
     package="com.streethawk.library.geofence">
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
         android:allowBackup="true"
@@ -19,7 +20,12 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="com.streethawk.intent.action.APP_STATUS_NOTIFICATION" />
+                <action android:name="com.streethawk.intent.action.gcm.STREETHAWK_LOCATIONS" />
                 <action android:name="android.location.PROVIDERS_CHANGED" />
+                <intent-filter>
+
+                    <action android:name="android.location.PROVIDERS_CHANGED" />
+                </intent-filter>
             </intent-filter>
         </receiver>
 

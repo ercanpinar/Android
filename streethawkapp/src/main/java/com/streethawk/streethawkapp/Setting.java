@@ -16,7 +16,7 @@ import android.widget.Toast;
 
 import com.streethawk.library.core.Util;
 
-public class Settings extends AppCompatActivity implements Constants {
+public class Setting extends AppCompatActivity implements Constants {
 
     Activity mActivity;
 
@@ -74,6 +74,11 @@ public class Settings extends AppCompatActivity implements Constants {
         e.commit();
         Toast.makeText(context,"Cleared AUTH_TOKEN and Porject Number",Toast.LENGTH_LONG).show();
     }
+
+    public void testAlert(View view){
+        new  TestService().SendAlertToServer();
+    }
+
 
     public void reregister() {
         AlertDialog.Builder builder = new AlertDialog.Builder(mActivity, R.style.StreetHawkDialogTheme);

@@ -152,6 +152,7 @@ public class GeofenceService extends IntentService{
             return;
         }
         int geofenceTransition = geofencingEvent.getGeofenceTransition();
+        Log.e("Anurag","Entering geofence");
         if ((geofenceTransition == com.google.android.gms.location.Geofence.GEOFENCE_TRANSITION_ENTER)) {
             // Get the geofences that were triggered. A single event can trigger multiple geofences.
             List<com.google.android.gms.location.Geofence> triggeringGeofences = geofencingEvent.getTriggeringGeofences();
@@ -200,6 +201,7 @@ public class GeofenceService extends IntentService{
                         updateVisibleGeofence(context, geofenceID);
                         GeofenceLogging.getInstance().sendLogs(context, params);
                         geolist.add(object);
+                        Log.e("Anurag","Notified geofence enter "+matchGeofence);
                     }catch(JSONException jsonException){
                         jsonException.printStackTrace();
                     }
@@ -213,6 +215,7 @@ public class GeofenceService extends IntentService{
             database.close();
 
         } if (geofenceTransition == com.google.android.gms.location.Geofence.GEOFENCE_TRANSITION_EXIT) {
+            Log.e("Anurag","Leaving geofence");
             // Get the geofences that were triggered. A single event can trigger multiple geofences.
             List<com.google.android.gms.location.Geofence> triggeringGeofences = geofencingEvent.getTriggeringGeofences();
             GeofenceDB database = new GeofenceDB(getApplicationContext());
@@ -240,6 +243,7 @@ public class GeofenceService extends IntentService{
                         matchGeofence.put(geofenceID,"-1");
                         params.putString("json", matchGeofence.toString());
                         GeofenceLogging.getInstance().sendLogs(context, params);
+                        Log.e("Anurag","Notified geofence exit "+matchGeofence);
                         geolist.add(object);
                     }catch(JSONException jsonException){
                         jsonException.printStackTrace();

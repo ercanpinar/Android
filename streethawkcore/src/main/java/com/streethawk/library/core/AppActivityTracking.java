@@ -23,6 +23,8 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 
+
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -293,7 +295,7 @@ class AppActivityTracking implements Constants{
 
 
     public void notifyNewActivity(Context context, String newActivity, String oldActivity) {
-        if (Util.getPlatformType() == PLATFORM_ANDROID_NATIVE || Util.getPlatformType() == PLATFORM_XAMARIN) {
+        if (Util.getPlatformType() == Util.PLATFORM_ANDROID_NATIVE || Util.getPlatformType() == Util.PLATFORM_XAMARIN) {
             SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREF_ACTIVITY, Context.MODE_PRIVATE);
             boolean bg = false;
             if (null != newActivity) { //send 8108

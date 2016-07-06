@@ -91,7 +91,6 @@ public class SetupActivity extends AppCompatActivity implements Constants {
             e.putString(KEY_AUTH_TOKEN,DEFAULT_AUTH_TOKEN);
         }
         e.commit();
-        Log.e("Anurag","Saved appkey");
         Intent intent = new Intent(this,MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.putExtra(KEY_APP_KEY,appKey);

@@ -139,7 +139,7 @@ public class SHLocation implements Constants{
             return;
         registerScheduledTask();
         restartLocationReporting();
-        if(Util.getPlatformType()== PLATFORM_XAMARIN){
+        if(Util.getPlatformType()== Util.PLATFORM_XAMARIN){
             StreetHawk.INSTANCE.tagString("sh_module_location","true");
         }
 

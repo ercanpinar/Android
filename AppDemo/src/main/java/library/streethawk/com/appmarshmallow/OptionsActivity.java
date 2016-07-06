@@ -12,7 +12,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 public class OptionsActivity extends AppCompatActivity implements Constants,
-        Setup.OnFragmentInteractionListener,ShowAppOptions.OnFragmentInteractionListener,Settings.OnFragmentInteractionListener,
+        //Setup.OnFragmentInteractionListener,ShowAppOptions.OnFragmentInteractionListener,Settings.OnFragmentInteractionListener,
         Analytics.OnFragmentInteractionListener
 {
 
@@ -56,9 +56,11 @@ public class OptionsActivity extends AppCompatActivity implements Constants,
         switch(item.getItemId())
         {
             case R.id.settings:
+                /*
                 Settings settings = new Settings();
                 getSupportFragmentManager().beginTransaction()
                         .add(R.id.fragment_container, settings).commit();
+                        */
                 break;
             case R.id.documents:
                 Intent docs = new Intent(Intent.ACTION_VIEW, Uri.parse("https://streethawk.freshdesk.com/solution/folders/5000273033"));

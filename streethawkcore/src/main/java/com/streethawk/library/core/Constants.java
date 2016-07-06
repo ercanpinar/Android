@@ -77,8 +77,8 @@ interface Constants {
     String FEEDBACK_TYPE        = "shfeedbacktype";
     String DEVICE_LOCALE        = "shdevicelocale";
     String USER_LOCALE          = "shuserlocale";
-
-
+    String SHLATTITUDE                  = "latitude";
+    String SHLONGITUDE                  = "longitude";
 
 
     //Release type

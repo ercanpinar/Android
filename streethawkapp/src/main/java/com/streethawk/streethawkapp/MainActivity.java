@@ -25,6 +25,7 @@ import com.streethawk.library.core.Util;
 import com.streethawk.library.geofence.INotifyGeofenceTransition;
 import com.streethawk.library.growth.Growth;
 import com.streethawk.library.growth.IGrowth;
+import com.streethawk.library.push.Push;
 
 import org.json.JSONObject;
 
@@ -171,12 +172,11 @@ public class MainActivity extends AppCompatActivity implements Constants,IGrowth
             setupintent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(setupintent);
         }
-        Log.e("Anurag","calling init 2");
         SharedPreferences prefs = getSharedPreferences(APP_PREF, Context.MODE_PRIVATE);
         mAppKey = prefs.getString(KEY_APP_KEY,null);
         if(null!=mAppKey) {
-            Log.e("Anurag","Calling init");
             StreetHawk.INSTANCE.setAppKey(mAppKey);
+            Push.getInstance(this).registerForPushMessaging("491295755890");
             StreetHawk.INSTANCE.init(getApplication());
         }else{
             mAppKey = intent.getStringExtra(KEY_APP_KEY);
@@ -186,6 +186,8 @@ public class MainActivity extends AppCompatActivity implements Constants,IGrowth
             }
 
         }
+        Intent Sintent = new Intent(this,TestService.class);
+        startService(Sintent);
     }
 
     public AdapterView.OnItemClickListener optionsOnclickListener(){
@@ -235,11 +237,18 @@ public class MainActivity extends AppCompatActivity implements Constants,IGrowth
                     String appKey = StreetHawk.INSTANCE.getAppKey(context);
                     String authtoken = prefs.getString(KEY_AUTH_TOKEN, "");
 
+                    final String PREF_NAME        = "shtestpref";
+                    final String CONST_PING_TIME = "pingtime";
+                    SharedPreferences prefss = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+                    String lastPingtime  = prefss.getString(CONST_PING_TIME,null);
+
+
                     String message =    "Install id: "  + installid + NEW_LINE +
                                         "AppKey :"      + appKey + NEW_LINE +
                                         "Server :  "    + setServer + NEW_LINE +
                                         "GCM Sender ID: " + senderId + NEW_LINE +
-                                        "Auth Token: "    + authtoken + NEW_LINE;
+                                        "Auth Token: "    + authtoken + NEW_LINE +
+                                        "Last Ping Time"  + lastPingtime + NEW_LINE;
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(mActivity,R.style.StreetHawkDialogTheme);
                     builder.setTitle("Install Info");
@@ -255,7 +264,7 @@ public class MainActivity extends AppCompatActivity implements Constants,IGrowth
                     builder.create().show();
                 }
                 if(SETTINGS==position){
-                    intent = new Intent(getApplicationContext(),Settings.class);
+                    intent = new Intent(getApplicationContext(),Setting.class);
                 }
                 if(null!=intent){
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

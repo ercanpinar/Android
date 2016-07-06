@@ -9,7 +9,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.streethawk.streethawkapp.Settings"
+    tools:context=".Setting"
     tools:showIn="@layout/activity_settings">
 
 
@@ -72,6 +72,14 @@
             android:shadowDy="0"
             android:shadowRadius="5"
             android:id="@+id/button" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Test Push Alert"
+            android:onClick="testAlert"
+            android:id="@+id/testAlert" />
+
 
 
     </LinearLayout>

@@ -19,6 +19,7 @@ package com.streethawk.library.core;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -122,6 +123,36 @@ public class Logging extends LoggingBase {
     }
 
     /**
+     * Returns lat for logigng
+     * @return
+     */
+    private double getLatForLog(){
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
+        try {
+            return(Double.parseDouble(sharedPreferences.getString(Util.LOG_LAT, null)));
+        }catch(NumberFormatException e){
+            return 0.0;
+        }catch (NullPointerException e){
+            return 0.0;
+        }
+    }
+
+    /**
+     * Returns lng for logging
+     * @return
+     */
+    private double getLngForLog(){
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
+        try {
+            return(Double.parseDouble(sharedPreferences.getString(Util.LOG_LNG, null)));
+        }catch(NumberFormatException e){
+            return 0.0;
+        }catch (NullPointerException e){
+            return 0.0;
+        }
+    }
+
+    /**
      * Add logs in queue with forced priority
      * @param params
      * @param forcedPriority
@@ -132,7 +163,6 @@ public class Logging extends LoggingBase {
             return false;
         return addLogstoBuffer(params,forcedPriority);
     }
-
 
     /**
      * Add logs in the queue for sending to server
@@ -153,7 +183,6 @@ public class Logging extends LoggingBase {
         }
         boolean priority = isPriorityLogLine(code);
         return addLogstoBuffer(params, priority);
-
     }
 
     public void checkAppState() {
@@ -212,7 +241,7 @@ public class Logging extends LoggingBase {
 
 
     public void sendModuleList(){
-        if(PLATFORM_XAMARIN==Util.getPlatformType()){
+        if(Util.PLATFORM_XAMARIN==Util.getPlatformType()){
             return;
         }
         new Thread(new Runnable() {
@@ -337,6 +366,12 @@ public class Logging extends LoggingBase {
             return false;
         if (!isInstallLogAllowed(mContext)) {
             return true;
+        }
+        double lat = getLatForLog();
+        double lng = getLngForLog();
+        if(0.0!=lat && 0.0!=lng){
+            params.putDouble(SHLATTITUDE,getLatForLog());
+            params.putDouble(SHLONGITUDE,getLngForLog());
         }
         String sessionId = Util.getSessionId(mContext);
         int code = 0;
@@ -605,6 +640,7 @@ public class Logging extends LoggingBase {
                                 logs+=result.toString();
                                 result = null; //Force GC
                             }
+
                             writer.write(logs);
                             writer.flush();
                             writer.close();

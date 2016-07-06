@@ -142,11 +142,46 @@ public enum StreetHawk implements Constants{
     }
 
 
+    /**
+     * Store locations to be included in logging
+     */
+    private void StoreLocationForLogging(){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Class noParams[] = {};
+                Class[] paramContext = new Class[1];
+                paramContext[0] = Context.class;
+                Class growth = null;
+                try {
+                    growth = Class.forName("com.streethawk.library.geofence.StreetHawkLocationService");
+                    Method growthMethod = growth.getMethod("getInstance", noParams);
+                    Object obj = growthMethod.invoke(null);
+                    if (null != obj) {
+                        Method addGrowthModule = growth.getDeclaredMethod("StoreLocationsForLogging", paramContext);
+                        addGrowthModule.invoke(obj,mContext);
+                    }
+                } catch (ClassNotFoundException e1) {
+                    Log.w(Util.TAG, "Geofence module is not  not present while storing locations for logging");
+                } catch (IllegalAccessException e1) {
+                    e1.printStackTrace();
+                } catch (NoSuchMethodException e1) {
+                    e1.printStackTrace();
+                } catch (InvocationTargetException e1) {
+                    e1.printStackTrace();
+                }
+
+            }
+        }).start();
+    }
+
+
     protected void activityResumedByService(final Activity activity) {
         if (null == activity) {
             Log.e(Util.TAG, SUBTAG + "Returning from activityResumedByService as activity is null");
             return;
         }
+        StoreLocationForLogging();
         setCurrentActivity(activity);
         notifyAppStateResumed(activity);
         StreetHawkCoreService obj = new StreetHawkCoreService();

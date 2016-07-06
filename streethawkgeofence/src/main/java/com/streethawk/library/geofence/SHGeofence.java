@@ -16,6 +16,7 @@
  */
 package com.streethawk.library.geofence;
 
+import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -26,6 +27,8 @@ import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationServices;
 import com.streethawk.library.core.StreetHawk;
@@ -39,7 +42,7 @@ import java.util.ArrayList;
 
 public class SHGeofence implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,Constants
         //Comemnt this line for Xamarin
-        //,ResultCallback<Status>
+        ,ResultCallback<Status>
     {
     private final String SUBTAG = "Geofence ";
     private static Context mContext;
@@ -72,7 +75,36 @@ public class SHGeofence implements GoogleApiClient.ConnectionCallbacks, GoogleAp
                     .build();
     }
 
-    private PendingIntent getGeofencePendingIntent() {
+        private void registerScheduledTask() {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    boolean taskRegistered = (PendingIntent.getBroadcast(mContext, 0,
+                            new Intent(BROADCAST_APP_STATUS_CHK),
+                            PendingIntent.FLAG_NO_CREATE) != null);
+                    if (taskRegistered) {
+                        return;
+                    }
+                    SharedPreferences pref = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
+                    SharedPreferences.Editor e = pref.edit();
+                    e.putLong(SHTASKTIME, System.currentTimeMillis());
+                    e.commit();
+                    AlarmManager alarmManager = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
+                    Intent intent = new Intent(mContext, SHCoreModuleReceiver.class);
+                    intent.setAction(BROADCAST_APP_STATUS_CHK);
+                    intent.putExtra(SHPACKAGENAME,mContext.getPackageName());
+                    PendingIntent appStatusIntent = PendingIntent.getBroadcast(mContext, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+                    long DEBUG_INTERVAL_2MINUTES = 120000l;
+                    //alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), AlarmManager.INTERVAL_HOUR, appStatusIntent);
+                    alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), DEBUG_INTERVAL_2MINUTES, appStatusIntent);
+                }
+            }).start();
+        }
+
+
+
+        private PendingIntent getGeofencePendingIntent() {
         // Reuse the PendingIntent if we already have it.
         if (mGeofencePendingIntent != null) {
             return mGeofencePendingIntent;
@@ -144,9 +176,15 @@ public class SHGeofence implements GoogleApiClient.ConnectionCallbacks, GoogleAp
             public void run() {
                 buildGoogleApiClient();
                 mGoogleApiClient.connect();
-                if(Util.getPlatformType()== PLATFORM_XAMARIN){
+                Log.e("Anurag","Register schedule task");
+                registerScheduledTask();
+                if(Util.getPlatformType()== Util.PLATFORM_XAMARIN){
                     StreetHawk.INSTANCE.tagString("sh_module_geofence","true");
                 }
+                SharedPreferences sharedPreferences = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
+                SharedPreferences.Editor e = sharedPreferences.edit();
+                e.putBoolean(IS_GEOFENCE_ENABLE, true);
+                e.commit();
             }
         }).start();
 
@@ -168,8 +206,6 @@ public class SHGeofence implements GoogleApiClient.ConnectionCallbacks, GoogleAp
         return GeofenceService.getGeoExitList();
     }
 
-
-
     /**
      * startGeofenceWithPermissionDialog is deprecated.
      * Instead
@@ -186,10 +222,6 @@ public class SHGeofence implements GoogleApiClient.ConnectionCallbacks, GoogleAp
      * use startGeofenceWithPermissionDialog to make SDK ask for location permission from user.
      */
     public void startGeofenceWithPermissionDialog(){
-        if(Util.PLATFORM_XAMARIN==Util.RELEASE_PLATFORM){
-            Log.i(Util.TAG,"startGeofenceWithPermissionDialog is not supported on Xamarin");
-            return;
-        }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             Intent intent = new Intent(mContext, AskGeoPermission.class);
             Bundle extras = new Bundle();
@@ -321,27 +353,29 @@ public class SHGeofence implements GoogleApiClient.ConnectionCallbacks, GoogleAp
 
     @Override
     public void onConnected(Bundle bundle) {
-        SharedPreferences sharedPreferences = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
-        SharedPreferences.Editor e = sharedPreferences.edit();
-        e.putBoolean(IS_GEOFENCE_ENABLE, true);
-        e.commit();
         monitorGeofence();
     }
 
     @Override
     public void onConnectionSuspended(int i) {
-
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
+        SharedPreferences.Editor e = sharedPreferences.edit();
+        e.putBoolean(IS_GEOFENCE_ENABLE, false);
+        e.commit();
     }
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
+        SharedPreferences.Editor e = sharedPreferences.edit();
+        e.putBoolean(IS_GEOFENCE_ENABLE, false);
+        e.commit();
     }
     // Comment this line for Xamarin
-   /*
+
     @Override
     public void onResult(Status status) {
 
     }
-    */
+
 }

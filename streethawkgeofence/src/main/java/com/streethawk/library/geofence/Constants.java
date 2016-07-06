@@ -19,15 +19,24 @@ package com.streethawk.library.geofence;
 interface Constants {
     String PARENT_GEOFENCE_ID           = "parentgeofenceid";
     String IS_GEOFENCE_ENABLE           = "shgeofenceenable";
-    String PERMISSION_MSG               = "msg";
-    String PERMISSION_BOOL              = "permission_bool";
     int CODE_USER_DISABLES_LOCATION     = 8112;
     int CODE_GEOFENCE_UPDATES           = 22;       // place in geofence modules
 
-    //Platform types
-    int PLATFORM_ANDROID_NATIVE = 0;
-    int PLATFORM_PHONEGAP       = 1;
-    int PLATFORM_TITANIUM       = 2;
-    int PLATFORM_XAMARIN        = 3;
-    int PLATFORM_UNITY          = 4;
+    String KEY_UPDATE_INTERVAL_BG       = "KEY_UPDATE_INTERVAL_BG";
+    String KEY_UPDATE_DISTANCE_BG       = "KEY_UPDATE_DISTANCE_BG";
+    String KEY_UPDATE_INTERVAL_FG       = "KEY_UPDATE_INTERVAL_FG";
+    String KEY_UPDATE_DISTANCE_FG       = "KEY_UPDATE_DISTANCE_FG";
+    String BROADCAST_APP_STATUS_CHK     = "com.streethawk.intent.action.gcm.STREETHAWK_LOCATIONS";
+    String SHTASKTIME                   = "shTaskTime";
+    String SHPACKAGENAME                = "shpackagename";
+    String LOCAL_TIME                   = "created_local_time";
+    String SHLATTITUDE                  = "latitude";
+    String SHLONGITUDE                  = "longitude";
+    String SHLOCATION_FLAG              = "locationFlag";
+    int CODE_LOCATION_UPDATES           = 20;
+    int WORK_HOME_TIME_INTERVAL         = 3480000;  // 58 minutes so that we dont have sync problems
+    int CODE_PERIODIC_LOCATION_UPDATE   = 19;
+    String PERMISSION_MSG               = "msg";
+    String PERMISSION_BOOL              = "permission_bool";
+
 }

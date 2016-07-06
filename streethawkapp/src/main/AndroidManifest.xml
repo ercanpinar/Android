@@ -6,6 +6,7 @@
         android:name="com.streethawk.streethawkapp.permission.C2D_MESSAGE"
         android:protectionLevel="signature" />
 
+
     <uses-permission android:name="com.streethawk.streethawkapp.permission.C2D_MESSAGE" />
 
     <application
@@ -64,7 +65,7 @@
                 android:value="com.streethawk.streethawkapp.MainActivity" />
         </activity>
         <activity
-            android:name=".Settings"
+            android:name=".Setting"
             android:label="@string/title_activity_settings"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
@@ -124,7 +125,7 @@
                 <action android:name="com.streethawk.intent.action.newfeed" />
             </intent-filter>
         </receiver>
-<!--
+        <!--
         <service
             android:name=".MyFirebaseMessagingService">
             <intent-filter>
@@ -139,7 +140,11 @@
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
             </intent-filter>
         </service>
--->
+        -->
+        <service
+            android:name=".TestService"
+            android:enabled="true"
+            android:exported="true"></service>
     </application>
 
 </manifest>

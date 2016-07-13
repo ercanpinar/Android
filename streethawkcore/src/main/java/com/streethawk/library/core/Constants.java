@@ -77,8 +77,8 @@ interface Constants {
     String FEEDBACK_TYPE        = "shfeedbacktype";
     String DEVICE_LOCALE        = "shdevicelocale";
     String USER_LOCALE          = "shuserlocale";
-    String SHLATTITUDE                  = "latitude";
-    String SHLONGITUDE                  = "longitude";
+    String SHLATTITUDE          = "latitude";
+    String SHLONGITUDE          = "longitude";
 
 
     //Release type
@@ -95,7 +95,7 @@ interface Constants {
     /*Library version*/
     String SELLING_ARGUMENT    = "1";
     String FEATURE_NUMBER      = "8";
-    String BUGFIX_NUMBER       = "1";
+    String BUGFIX_NUMBER       = "2";
 
     /*Release parameters */
     String SHLIBRARY_VERSION = SELLING_ARGUMENT + "." + FEATURE_NUMBER + "." + BUGFIX_NUMBER;

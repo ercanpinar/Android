@@ -138,6 +138,33 @@ public class Util extends LoggingBase {
         }
     }
 
+
+    /**
+     * Set true to see debug logs
+     * @param context
+     * @param flag
+     */
+    public static void setSHDebugFlag(Context context , boolean flag){
+        String SH_DEBUG_FLAG        = "shdebugflag";
+        SharedPreferences prefs = context.getSharedPreferences(SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
+        SharedPreferences.Editor e = prefs.edit();
+        e.putBoolean(SH_DEBUG_FLAG,flag);
+        e.commit();
+    }
+
+    /**
+     * Returns status of debug flags
+     * @param context
+     * @return
+     */
+    public static boolean getSHDebugFlag(Context context){
+        String SH_DEBUG_FLAG        = "shdebugflag";
+        SharedPreferences prefs = context.getSharedPreferences(SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
+        return prefs.getBoolean(SH_DEBUG_FLAG,false);
+    }
+
+
+
     /**
      * Function to get name of the application
      *

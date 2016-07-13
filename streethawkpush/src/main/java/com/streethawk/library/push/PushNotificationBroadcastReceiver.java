@@ -402,7 +402,7 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver impleme
                 if (sharedPreferences.getString(PENDING_DIALOG, null) != null) {
                     forceToBg = true;
                 }
-                if (sharedPreferences.getBoolean(SHUSECUSTOMDIALOG_FLAG, false)) {
+                if (isCustomDialog) {
                     forceToBg = false;
                 }
                 PushNotificationDB database = PushNotificationDB.getInstance(context);
@@ -420,6 +420,11 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver impleme
                     PushDataForApplication obj  = new PushDataForApplication();
                     obj.convertPushDataToPushDataForApp(pushData,obj);
                     instance.onReceivePushData(obj);
+                }else{
+                    if(Util.getSHDebugFlag(context)){
+                        Log.e(Util.TAG,"ISHObserver Instance is null");
+                        isCustomDialog=false;
+                    }
                 }
 
                 // Display badge
@@ -508,35 +513,44 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver impleme
                                     break;
                             }
                         } else {
+                            if (!isCustomDialog) {
                             switch (code) {
-                                case CODE_IBEACON:
-                                    BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-                                    if (bluetoothAdapter != null) {
-                                        boolean isEnabled = bluetoothAdapter.isEnabled();
-                                        if (!isEnabled) {
+                                    case CODE_IBEACON:
+                                        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+                                        if (bluetoothAdapter != null) {
+                                            boolean isEnabled = bluetoothAdapter.isEnabled();
+                                            if (!isEnabled) {
+                                                SHForegroundNotification alert = SHForegroundNotification.getDialogInstance(context);
+                                                alert.display(pushData);
+                                            } else {
+                                                clearPendingDialogFlagAndDB(context, msgID);
+                                                NotificationBase.sendResultBroadcast(context, msgID, STREETHAWK_ACCEPTED);
+                                            }
+                                        }
+                                        break;
+                                    case CODE_ENABLE_LOCATION:
+                                        LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+                                        if (!(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))) {
                                             SHForegroundNotification alert = SHForegroundNotification.getDialogInstance(context);
                                             alert.display(pushData);
                                         } else {
+                                            //ignoring message and hence clearing
+                                            clearPendingDialogFlagAndDB(context, msgID);
                                             clearPendingDialogFlagAndDB(context, msgID);
                                             NotificationBase.sendResultBroadcast(context, msgID, STREETHAWK_ACCEPTED);
                                         }
-                                    }
-                                    break;
-                                case CODE_ENABLE_LOCATION:
-                                    LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-                                    if (!(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))) {
+                                        break;
+                                    default:
                                         SHForegroundNotification alert = SHForegroundNotification.getDialogInstance(context);
                                         alert.display(pushData);
-                                    } else {
-                                        //ignoring message and hence clearing
-                                        clearPendingDialogFlagAndDB(context, msgID);
-                                        NotificationBase.sendResultBroadcast(context, msgID, STREETHAWK_ACCEPTED);
-                                    }
-                                    break;
-                                default:
-                                    SHForegroundNotification alert = SHForegroundNotification.getDialogInstance(context);
-                                    alert.display(pushData);
-                                    break;
+                                        break;
+                                }
+                            }else{
+                                if(null!=instance){
+                                        PushDataForApplication obj  = new PushDataForApplication();
+                                        obj.convertPushDataToPushDataForApp(pushData,obj);
+                                        instance.onReceivePushData(obj);
+                                }
                             }
                         }
                     }

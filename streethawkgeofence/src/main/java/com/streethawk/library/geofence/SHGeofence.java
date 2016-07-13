@@ -15,8 +15,6 @@
  * License along with this library.
  */
 package com.streethawk.library.geofence;
-
-import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -42,7 +40,7 @@ import java.util.ArrayList;
 
 public class SHGeofence implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,Constants
         //Comemnt this line for Xamarin
-        ,ResultCallback<Status>
+        //,ResultCallback<Status>
     {
     private final String SUBTAG = "Geofence ";
     private static Context mContext;
@@ -74,35 +72,6 @@ public class SHGeofence implements GoogleApiClient.ConnectionCallbacks, GoogleAp
                     .addApi(LocationServices.API)
                     .build();
     }
-
-        private void registerScheduledTask() {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    boolean taskRegistered = (PendingIntent.getBroadcast(mContext, 0,
-                            new Intent(BROADCAST_APP_STATUS_CHK),
-                            PendingIntent.FLAG_NO_CREATE) != null);
-                    if (taskRegistered) {
-                        return;
-                    }
-                    SharedPreferences pref = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
-                    SharedPreferences.Editor e = pref.edit();
-                    e.putLong(SHTASKTIME, System.currentTimeMillis());
-                    e.commit();
-                    AlarmManager alarmManager = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
-                    Intent intent = new Intent(mContext, SHCoreModuleReceiver.class);
-                    intent.setAction(BROADCAST_APP_STATUS_CHK);
-                    intent.putExtra(SHPACKAGENAME,mContext.getPackageName());
-                    PendingIntent appStatusIntent = PendingIntent.getBroadcast(mContext, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-                    long DEBUG_INTERVAL_2MINUTES = 120000l;
-                    //alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), AlarmManager.INTERVAL_HOUR, appStatusIntent);
-                    alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), DEBUG_INTERVAL_2MINUTES, appStatusIntent);
-                }
-            }).start();
-        }
-
-
 
         private PendingIntent getGeofencePendingIntent() {
         // Reuse the PendingIntent if we already have it.
@@ -176,8 +145,6 @@ public class SHGeofence implements GoogleApiClient.ConnectionCallbacks, GoogleAp
             public void run() {
                 buildGoogleApiClient();
                 mGoogleApiClient.connect();
-                Log.e("Anurag","Register schedule task");
-                registerScheduledTask();
                 if(Util.getPlatformType()== Util.PLATFORM_XAMARIN){
                     StreetHawk.INSTANCE.tagString("sh_module_geofence","true");
                 }
@@ -187,7 +154,10 @@ public class SHGeofence implements GoogleApiClient.ConnectionCallbacks, GoogleAp
                 e.commit();
             }
         }).start();
-
+        Log.e("Anurag","Starting location service 1");
+        Intent locationIntent = new Intent(mContext, StreetHawkLocationService.class);
+        mContext.startService(locationIntent);
+        Log.e("Anurag","Starting location service 2");
     }
 
     /**
@@ -371,11 +341,12 @@ public class SHGeofence implements GoogleApiClient.ConnectionCallbacks, GoogleAp
         e.putBoolean(IS_GEOFENCE_ENABLE, false);
         e.commit();
     }
-    // Comment this line for Xamarin
 
+    /* Comment this line for Xamarin
     @Override
     public void onResult(Status status) {
 
     }
+    */
 
 }

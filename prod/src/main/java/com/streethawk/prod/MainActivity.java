@@ -2,12 +2,18 @@ package com.streethawk.prod;
 
 import android.*;
 import android.annotation.TargetApi;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -18,8 +24,11 @@ import android.widget.Toast;
 
 import com.streethawk.library.core.StreetHawk;
 import com.streethawk.library.core.Util;
+import com.streethawk.library.geofence.SHCoreModuleReceiver;
 import com.streethawk.library.geofence.SHGeofence;
+import com.streethawk.library.push.ISHObserver;
 import com.streethawk.library.push.Push;
+import com.streethawk.library.push.PushDataForApplication;
 
 
 import org.json.JSONException;
@@ -46,37 +55,37 @@ import javax.net.ssl.HttpsURLConnection;
 /**
  * This app is only for testing push messages on different platform
  */
-public class MainActivity extends AppCompatActivity{
+public class MainActivity extends AppCompatActivity implements ISHObserver{
     private final int PERMISSIONS_LOCATION = 112233;
     private String PREF_NAME  = "shtestpref";
     private String BOOL_SEND_ALERT = "shsendalert";
-    private String BOOL_SEM = "shsemaphore";
+    private String BOOL_TOGGLE_STATE = "shtooglestate";
 
-    private final String SERVER_PROD = "https://api.streethawk.com/v3/debug/?push_android&alert=1";
-    private final String SERVER_STAGING = "https://staging.streethawk.com/v3/debug/?push_android&alert=1";
-    private final String SERVER_HAWK0 = "https://hawk0.streethawk.com/v3/debug/?push_android&alert=1";
+    private final String SERVER_PROD = "https://api.streethawk.com/v3/debug/?push_android&alert=";
+    private final String SERVER_STAGING = "https://staging.streethawk.com/v3/debug/?push_android&alert=";
+    private final String SERVER_HAWK0 = "https://hawk0.streethawk.com/v3/debug/?action=push_android&alert=";
 
     private final String TEST_SERVER = "http://www.google.com";
 
     private String SERVER = SERVER_HAWK0;
-    private final int WAIT_MINS = 1000 * 60 * 5;  // 5 minutes
+    private final String PUSH_MONITOR_EVENT = "com.streethawk.pushmonitorevent";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        Context context = getApplicationContext();
         StreetHawk.INSTANCE.setAppKey("SHSample");
-        Push.getInstance(getApplicationContext()).registerForPushMessaging("491295755890");
+        Push.getInstance(context).registerForPushMessaging("491295755890");
+        Push.getInstance(context).registerSHObserver(this);
+        Push.getInstance(context).setUseCustomDialog(true);   // this will prevent push from displaying on screen
         StreetHawk.INSTANCE.init(getApplication());
-
+        LocalBroadcastManager.getInstance(this).registerReceiver(pushMonitor,new IntentFilter(PUSH_MONITOR_EVENT));
     }
 
     public void StartGeofence(View view){
         displayPermissionDialog();
     }
-
-
 
     @Override
     public void onResume(){
@@ -97,11 +106,37 @@ public class MainActivity extends AppCompatActivity{
         appKey.setText(StreetHawk.INSTANCE.getAppKey(this));
 
         //Display app_key
-
         TextView tag = (TextView)findViewById(R.id.tag);
         tag.setText(TAG_CUID);
         tag.setText(TAG_CUID);
     }
+
+    private void startPushMonitoring(){
+        AlarmManager alarmManager = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(PUSH_MONITOR_EVENT);
+        PendingIntent appStatusIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        long DEBUG_INTERVAL_5MINUTES = 300000l;
+        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), DEBUG_INTERVAL_5MINUTES, appStatusIntent);
+        setAlertFlag(false);
+    }
+
+
+    public void startPushMonitoring(View view){
+        Toast.makeText(this,"Starting push monitoring",Toast.LENGTH_LONG).show();
+        startPushMonitoring();
+    }
+
+    private BroadcastReceiver pushMonitor  = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            if(!getAlertFlag()){
+                SendAlertToServer(SERVER+"1");
+                setToggleState(true);
+            }
+            setAlertFlag(true);  // reset for notifying server
+        }
+    };
 
     /**
      * Store value of alert flag
@@ -114,25 +149,6 @@ public class MainActivity extends AppCompatActivity{
         e.commit();
     }
 
-    private void holdSemaphore(){
-        SharedPreferences prefs = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-        SharedPreferences.Editor e  = prefs.edit();
-        e.putBoolean(BOOL_SEM,true);
-        e.commit();
-    }
-
-    private void releaseSemaphore(){
-        SharedPreferences prefs = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-        SharedPreferences.Editor e  = prefs.edit();
-        e.putBoolean(BOOL_SEM,false);
-        e.commit();
-    }
-
-    private boolean getSemaphoreValue(){
-        SharedPreferences prefs = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-        return prefs.getBoolean(BOOL_SEM,false);
-    }
-
     /**
      * Get current value of alert flag
      * @return
@@ -142,12 +158,30 @@ public class MainActivity extends AppCompatActivity{
         return prefs.getBoolean(BOOL_SEND_ALERT,true);
     }
 
+
+    private void setToggleState(boolean state){
+        SharedPreferences prefs = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor e = prefs.edit();
+        e.putBoolean(BOOL_TOGGLE_STATE,state);
+        e.commit();
+    }
+
+
+    private boolean getToggleState(){
+        SharedPreferences prefs = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        return prefs.getBoolean(BOOL_TOGGLE_STATE,false);
+
+    }
+
+
+
+
     /**
      * Generate a new relic alert
      * @param view
      */
     public void SendAlert(View view){
-        SendAlertToServer();
+        SendAlertToServer(SERVER+"1");
     }
 
     /**
@@ -156,16 +190,14 @@ public class MainActivity extends AppCompatActivity{
      * @param message
      */
     private void DisplayNotification(String title, String message){
-
         NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext());
     }
-    private void SendAlertToServer(){
+    private void SendAlertToServer(final String server){
         new Thread(new Runnable() {
             @Override
             public void run() {
-
                 try {
-                    URL url = new URL(SERVER);
+                    URL url = new URL(server);
                     final HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
                     connection.setRequestMethod("GET");
                     connection.setReadTimeout(10000);
@@ -187,7 +219,6 @@ public class MainActivity extends AppCompatActivity{
                                 }
                             }
                         });
-
                     }
                     connection.disconnect();
                 }catch (ProtocolException e) {
@@ -226,7 +257,6 @@ public class MainActivity extends AppCompatActivity{
             }
         };
     }
-
 
     private void displayPermissionDialog(){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -274,16 +304,13 @@ public class MainActivity extends AppCompatActivity{
             }
         } else {
             Log.e(Util.TAG,"Not requesting permission "+Build.VERSION.SDK_INT+" "+Build.VERSION_CODES.M);
-
         }
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
             case PERMISSIONS_LOCATION: {
-                Log.e("Anurag",""+grantResults.length+" "+grantResults[0]+"  "+requestCode);
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     SHGeofence.getInstance(this).startGeofenceMonitoring();
@@ -293,5 +320,40 @@ public class MainActivity extends AppCompatActivity{
                 }
             }
         }
+    }
+
+    @Override
+    public void shReceivedRawJSON(String title, String message, String json) {
+
+    }
+
+    @Override
+    public void shNotifyAppPage(String pageName) {
+
+    }
+
+    @Override
+    public void onReceivePushData(PushDataForApplication pushData) {
+        setAlertFlag(false);
+        boolean taskRegistered = (PendingIntent.getBroadcast(this, 0,
+                new Intent(PUSH_MONITOR_EVENT),
+                PendingIntent.FLAG_NO_CREATE) != null);
+        if (!taskRegistered) {
+            startPushMonitoring();
+        }
+        if(getToggleState()) {
+            setToggleState(false);
+            SendAlertToServer(SERVER+"0");
+        }
+    }
+
+    @Override
+    public void onReceiveResult(PushDataForApplication resultData, int result) {
+
+    }
+
+    @Override
+    public void onReceiveNonSHPushPayload(Bundle pushPayload) {
+
     }
 }

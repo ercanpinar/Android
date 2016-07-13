@@ -13,6 +13,10 @@
         <service
             android:name="com.streethawk.library.geofence.GeofenceService"
             android:exported="false"></service>
+        <service
+            android:name="com.streethawk.library.geofence.StreetHawkLocationService"
+            android:enabled="true"
+            android:exported="true" />
 
         <receiver
             android:name="com.streethawk.library.geofence.SHCoreModuleReceiver"

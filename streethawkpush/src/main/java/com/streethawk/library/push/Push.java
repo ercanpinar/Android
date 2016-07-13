@@ -236,7 +236,6 @@ public class Push implements Constants{
                 try {
                     token = instanceID.getToken(project_number,
                             GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
-                    Log.e("Anurag","Token "+token);
                 } catch (IOException e) {
                     e.printStackTrace();
                     return;

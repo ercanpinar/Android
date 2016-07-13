@@ -25,7 +25,9 @@ import com.streethawk.library.core.Util;
 import com.streethawk.library.geofence.INotifyGeofenceTransition;
 import com.streethawk.library.growth.Growth;
 import com.streethawk.library.growth.IGrowth;
+import com.streethawk.library.push.ISHObserver;
 import com.streethawk.library.push.Push;
+import com.streethawk.library.push.PushDataForApplication;
 
 import org.json.JSONObject;
 
@@ -33,7 +35,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements Constants,IGrowth,INotifyGeofenceTransition,INotifyBeaconTransition{
+public class MainActivity extends AppCompatActivity implements
+        Constants,IGrowth,INotifyGeofenceTransition,INotifyBeaconTransition,ISHObserver{
+
+
 
     int ANALYTICS   = 0;
     int GROWTH      = ANALYTICS + 1;
@@ -78,6 +83,34 @@ public class MainActivity extends AppCompatActivity implements Constants,IGrowth
 
     @Override
     public void notifyBeaconDetected() {
+
+    }
+
+    @Override
+    public void shReceivedRawJSON(String title, String message, String json) {
+
+    }
+
+    @Override
+    public void shNotifyAppPage(String pageName) {
+
+    }
+
+    @Override
+    public void onReceivePushData(PushDataForApplication pushData) {
+
+        pushData.displayDataForDebugging("Anurag");
+
+
+    }
+
+    @Override
+    public void onReceiveResult(PushDataForApplication resultData, int result) {
+
+    }
+
+    @Override
+    public void onReceiveNonSHPushPayload(Bundle pushPayload) {
 
     }
 
@@ -145,6 +178,14 @@ public class MainActivity extends AppCompatActivity implements Constants,IGrowth
         }
         FirebaseMessaging.getInstance().subscribeToTopic("news");
         */
+
+
+
+
+
+        Log.e("Anurag","Debug logs is ON");
+        Util.setSHDebugFlag(this,true);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fabmain);
@@ -167,7 +208,6 @@ public class MainActivity extends AppCompatActivity implements Constants,IGrowth
             isSetupRequired= intent.getBooleanExtra(KEY_SETUP,false);
         }
         if(isSetupRequired){
-            Log.e("Anurag","Starting setup");
             Intent setupintent  = new Intent(this,SetupActivity.class);
             setupintent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(setupintent);
@@ -177,6 +217,8 @@ public class MainActivity extends AppCompatActivity implements Constants,IGrowth
         if(null!=mAppKey) {
             StreetHawk.INSTANCE.setAppKey(mAppKey);
             Push.getInstance(this).registerForPushMessaging("491295755890");
+            Push.getInstance(this).setUseCustomDialog(false);
+            Push.getInstance(this).registerSHObserver(this);
             StreetHawk.INSTANCE.init(getApplication());
         }else{
             mAppKey = intent.getStringExtra(KEY_APP_KEY);

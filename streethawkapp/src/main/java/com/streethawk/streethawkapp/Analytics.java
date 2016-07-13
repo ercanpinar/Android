@@ -92,6 +92,10 @@ public class Analytics extends AppCompatActivity {
     }
 
 
+
+
+
+
     private View.OnClickListener sendTag() {
         return new View.OnClickListener() {
 
@@ -100,43 +104,62 @@ public class Analytics extends AppCompatActivity {
                 String key = mKeyet.getText().toString();
                 if (key != null) {
                     if (!key.isEmpty()) {
-                        String value = mValuet.getText().toString();
-                        if (value.isEmpty()) {
-                            if (mOptionSelected.equals(TAG_DELETE)) {
-                                StreetHawk.INSTANCE.removeTag(key);
-                                displayToast("Removed tag "+key);
-                            } else {
-                                Toast.makeText(getApplicationContext(), "Enter Value", Toast.LENGTH_LONG).show();
+                        if (mOptionSelected == TAG_DELETE) {
+                            StreetHawk.INSTANCE.removeTag(key);
+                            Toast.makeText(getApplicationContext(), "Removed tag " + key, Toast.LENGTH_LONG).show();
+                        }
+                        if (mOptionSelected == TAG_CUID) {
+                            String value = mValuet.getText().toString();
+                            if (null != value) {
+                                if (!value.isEmpty()) {
+                                    StreetHawk.INSTANCE.tagString("sh_cuid", value);
+                                    Toast.makeText(getApplicationContext(), "Cuid tagged " + value, Toast.LENGTH_LONG).show();
+                                }
                             }
-                        } else {
-                            try {
-                                double dval = Double.parseDouble(value);
-                                StreetHawk.INSTANCE.tagNumeric(key, dval);
-                                displayToast("Sent numeric tag "+key+ " "+dval);
-                            } catch (NumberFormatException e) {
-                                if(mOptionSelected.equals(TAG)){
-                                    StreetHawk.INSTANCE.tagString(key, value);
-                                    displayToast("Sent String tag "+key+ " "+value);
-                                }else if (mOptionSelected.equals(TAG_CUID)){
-                                    StreetHawk.INSTANCE.tagCuid(value);
-                                    displayToast("Tagged install with cuid "+value);
-                                }else if(mOptionSelected.equals(TAG_INCREMENT)){
-                                    try{
-                                        int val = Integer.parseInt(value);
-                                        StreetHawk.INSTANCE.incrementTag(key,val);
-                                        displayToast("Incremented tag "+key+ " "+value);
-                                    }catch(Exception exp) {
+
+                        }
+                        if (mOptionSelected == TAG_INCREMENT) {
+                            String value = mValuet.getText().toString();
+                            if (null != value) {
+                                if (value.isEmpty()) {
+                                    StreetHawk.INSTANCE.incrementTag(key);
+                                    Toast.makeText(getApplicationContext(), "Increment tag value by 1", Toast.LENGTH_LONG).show();
+                                } else {
+                                    int intValue = 1;
+                                    try {
+                                        intValue = Integer.parseInt(value);
+                                        StreetHawk.INSTANCE.incrementTag(key, intValue);
+                                        Toast.makeText(getApplicationContext(), "Increment tag value by " + intValue, Toast.LENGTH_LONG).show();
+                                    } catch (NumberFormatException e) {
                                         StreetHawk.INSTANCE.incrementTag(key);
-                                        displayToast("Incremented tag "+key + " by 1");
+                                        Toast.makeText(getApplicationContext(), "Increment tag value by 1", Toast.LENGTH_LONG).show();
                                     }
                                 }
                             }
                         }
-                    } else
+                        if (mOptionSelected == TAG) {
+                            String value = mValuet.getText().toString();
+                            if (value != null) {
+                                if (value.isEmpty()) {
+                                    Toast.makeText(getApplicationContext(), "Enter a value ", Toast.LENGTH_LONG).show();
+                                } else {
+                                    try {
+                                        double val = Double.parseDouble(value);
+                                        StreetHawk.INSTANCE.tagNumeric(key, val);
+                                        Toast.makeText(getApplicationContext(), "Numeric tag " + key + " : " + value, Toast.LENGTH_LONG).show();
+                                    } catch (NumberFormatException e) {
+                                        StreetHawk.INSTANCE.tagString(key, value);
+                                        Toast.makeText(getApplicationContext(), "String tag " + key + " : " + value, Toast.LENGTH_LONG).show();
+                                    }
+                                }
+                            }
+                        }
+                    } else {
                         Toast.makeText(getApplicationContext(), "Enter key", Toast.LENGTH_LONG).show();
-                } else
-                    Toast.makeText(getApplicationContext(), "Enter key", Toast.LENGTH_LONG).show();
+                    }
+                }
             }
+
         };
     }
 }

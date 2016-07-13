@@ -217,6 +217,9 @@ public class SHCoreModuleReceiver extends BroadcastReceiver implements Constants
                             Logging.getLoggingInstance(context).addLogsForSending(extras);
                             SHGeofence.getInstance(context).stopMonitoring();
                             GeofenceService.notifyAllGeofenceExit(context);
+                            if(Util.getSHDebugFlag(context)){
+                                Log.d(Util.TAG,"  "+"Sending locations disabled by server");
+                            }
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -236,6 +239,7 @@ public class SHCoreModuleReceiver extends BroadcastReceiver implements Constants
                                     double lng = location.getLongitude();
                                     if (lat == 0 && lng == 0)
                                         return;
+
                                     StreetHawkLocationService.getInstance().StoreLocationsForLogging(context);
                                     Bundle extras = new Bundle();
                                     extras.putString(Util.CODE, Integer.toString(CODE_LOCATION_UPDATES));
@@ -244,6 +248,9 @@ public class SHCoreModuleReceiver extends BroadcastReceiver implements Constants
                                     extras.putString(SHLATTITUDE, Double.toString(location.getLatitude()));
                                     extras.putString(SHLONGITUDE, Double.toString(location.getLongitude()));
                                     Logging.getLoggingInstance(context).addLogsForSending(extras);
+                                    if(Util.getSHDebugFlag(context)){
+                                        Log.d(Util.TAG,"  "+"Sending location update on provider change"+lat+","+lng);
+                                    }
                                 }
                             }
                         }, 1, TimeUnit.MINUTES);
@@ -281,6 +288,9 @@ public class SHCoreModuleReceiver extends BroadcastReceiver implements Constants
                     extras.putString(SHLATTITUDE, Double.toString(lat));
                     extras.putString(SHLONGITUDE, Double.toString(lng));
                     Logging.getLoggingInstance(context).addLogsForSending(extras);
+                    if(Util.getSHDebugFlag(context)){
+                        Log.d(Util.TAG,"  "+"*** Sending locations on repeating task"+lat+","+lng);
+                    }
 
                 }
             }

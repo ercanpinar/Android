@@ -370,6 +370,7 @@ public enum StreetHawk implements Constants{
                 coreService.putExtra("fromInit", true);
                 mContext.startService(coreService);
                 Logging.getLoggingInstance(mContext).saveActivityNames();
+                Util.setSHDebugFlag(mContext,true);
             }
         }).start();
     }

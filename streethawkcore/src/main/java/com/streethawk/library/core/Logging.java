@@ -373,6 +373,9 @@ public class Logging extends LoggingBase {
             params.putDouble(SHLATTITUDE,getLatForLog());
             params.putDouble(SHLONGITUDE,getLngForLog());
         }
+        if(Util.getSHDebugFlag(mContext)){
+            Log.d(Util.TAG,"  "+"Device log location"+lat+","+lng);
+        }
         String sessionId = Util.getSessionId(mContext);
         int code = 0;
         if (Util.isAppBG(mContext)) {
@@ -413,6 +416,15 @@ public class Logging extends LoggingBase {
                             dictionary.put(name, params.getString(name));
                         }
 
+                        continue;
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                if (value instanceof Double) {
+                    try {
+                        dictionary.put(name, params.getDouble(name));
                         continue;
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -599,6 +611,9 @@ public class Logging extends LoggingBase {
                         }
                         HashMap<String, String> logMap = new HashMap<String, String>();
                         logMap.put(RECORDS, records);
+                        if(Util.getSHDebugFlag(mContext)){
+                            Log.d(Util.TAG,"Flushing Logs "+records);
+                        }
                         logMap.put(BUNDLE_ID, bundle_id);
                         BufferedReader reader = null;
                         try {
@@ -647,6 +662,9 @@ public class Logging extends LoggingBase {
                             os.close();
                             reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
                             String answer = reader.readLine();
+                            if(Util.getSHDebugFlag(mContext)){
+                                Log.d(Util.TAG,"Response "+answer);
+                            }
                             if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
                                 if (null == answer)
                                     return;

@@ -1,6 +1,8 @@
 package com.streethawk.library.geofence;
 
 import android.Manifest;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -31,49 +33,54 @@ public class StreetHawkLocationService extends Service implements Constants{
         }
 
 
-        private boolean checkForLocationPermission(Context context) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                int coarseLocation = context.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION);
-                int fineLocation = context.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION);
-                if ((coarseLocation == PackageManager.PERMISSION_GRANTED) || (fineLocation == PackageManager.PERMISSION_GRANTED)) {
-                    return true;
-                } else {
-                    return false;
+    private void registerScheduledTask() {
+        Log.e("Anurag","RegisterScheduleTask");
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                boolean taskRegistered = (PendingIntent.getBroadcast(mContext, 0,
+                        new Intent(BROADCAST_APP_STATUS_CHK),
+                        PendingIntent.FLAG_NO_CREATE) != null);
+                if (taskRegistered) {
+                    return;
                 }
-            } else {
-                return true;
+                SharedPreferences pref = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
+                SharedPreferences.Editor e = pref.edit();
+                e.putLong(SHTASKTIME, System.currentTimeMillis());
+                e.commit();
+                AlarmManager alarmManager = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
+                Intent intent = new Intent(mContext, SHCoreModuleReceiver.class);
+                intent.setAction(BROADCAST_APP_STATUS_CHK);
+                intent.putExtra(SHPACKAGENAME,mContext.getPackageName());
+                PendingIntent appStatusIntent = PendingIntent.getBroadcast(mContext, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+                long DEBUG_INTERVAL_2MINUTES = 120000l;
+                alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), AlarmManager.INTERVAL_HOUR, appStatusIntent);
+                //alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), DEBUG_INTERVAL_2MINUTES, appStatusIntent);
+                if(Util.getSHDebugFlag(mContext)){
+                    Log.d(Util.TAG,"*** Running hourly task for locations ");
+                }
             }
-        }
-
-
-        private boolean getUseLocation(Context context) {
-            SharedPreferences sharedPreferences = context.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
-            if (sharedPreferences != null)
-                return sharedPreferences.getBoolean(SHLOCATION_FLAG, false);
-            else
-                return false;
-        }
-
+        }).start();
+    }
         @Override
         public void onCreate() {
             mContext = getApplicationContext();
-            if (getUseLocation(mContext)) {
-                locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-                if (!checkForLocationPermission(mContext)) {
-                    this.stopSelf();
-                } else {
-                    this.stopSelf();
-                }
-            }
+            registerScheduledTask();
         }
 
     public void StoreLocationsForLogging(Context context){
         Location location = getLastKnownLocation(context);
         SharedPreferences sharedPreferences = context.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
         SharedPreferences.Editor e = sharedPreferences.edit();
-        e.putString(Util.LOG_LAT,Double.toString(location.getLatitude()));
-        e.putString(Util.LOG_LNG,Double.toString(location.getLongitude()));
+        double lat = location.getLatitude();
+        double lng = location.getLongitude();
+        e.putString(Util.LOG_LAT,Double.toString(lat));
+        e.putString(Util.LOG_LNG,Double.toString(lng));
         e.commit();
+        if(Util.getSHDebugFlag(context)){
+            Log.d(Util.TAG,"  "+"*** Stored locations for logging"+lat+","+lng);
+        }
     }
 
         public Location getLastKnownLocation(Context context){

@@ -169,21 +169,7 @@ public class MainActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        /*
-        if (getIntent().getExtras() != null) {
-            for (String key : getIntent().getExtras().keySet()) {
-                String value = getIntent().getExtras().getString(key);
-                Log.d("FireBase", "Key: " + key + " Value: " + value);
-            }
-        }
-        FirebaseMessaging.getInstance().subscribeToTopic("news");
-        */
 
-
-
-
-
-        Log.e("Anurag","Debug logs is ON");
         Util.setSHDebugFlag(this,true);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);

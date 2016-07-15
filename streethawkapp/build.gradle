@@ -26,23 +26,19 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:24.0.0'
     compile 'com.android.support:design:24.0.0'
-/*
-    compile 'com.google.firebase:firebase-core:9.0.2'
-    compile 'com.google.firebase:firebase-messaging:9.0.2'
-*/
+
+
+    compile 'com.streethawk:core:1.8.2'
+    compile 'com.streethawk:push:1.8.2'
+    compile 'com.streethawk:growth:1.8.2'
+    compile 'com.streethawk:beacon:1.8.2'
+    compile 'com.streethawk:geofence:1.8.2'
+    compile 'com.streethawk:locations:1.8.2'
+    compile 'com.streethawk:feeds:1.8.2'
 
 /*
-    compile 'com.streethawk:core:1.8.1'
-    compile 'com.streethawk:push:1.8.1'
-    compile 'com.streethawk:growth:1.8.1'
-    compile 'com.streethawk:beacon:1.8.1'
-    compile 'com.streethawk:geofence:1.8.1'
-    compile 'com.streethawk:locations:1.8.1'
-    compile 'com.streethawk:feeds:1.8.1'
-*/
 
-
-    compile project(':streethawkcore')
+    //compile project(':streethawkcore')
     //compile 'com.streethawk:core:1.8.1'
     compile project(':streethawkgrowth')
     compile project(':streethawkpush')
@@ -50,6 +46,5 @@ dependencies {
     compile project(':streethawkbeacon')
     compile project(':streethawkgeofence')
     compile project(':streethawkfeeds')
-
+*/
 }
-//apply plugin: 'com.google.gms.google-services'

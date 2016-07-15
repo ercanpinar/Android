@@ -76,7 +76,7 @@ public class Util extends LoggingBase {
     public static final int PLATFORM_XAMARIN        = 3;
     public static final int PLATFORM_UNITY          = 4;
 
-    public static final int RELEASE_PLATFORM = PLATFORM_XAMARIN;
+    public static final int RELEASE_PLATFORM = PLATFORM_ANDROID_NATIVE;
 
 
     public static final String LOG_LAT  = "shloglat";   // Latitiude for logline

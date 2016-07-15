@@ -127,7 +127,9 @@ public class SHCoreModuleReceiver extends BroadcastReceiver implements Constants
                                 SharedPreferences.Editor e = sharedPreferences.edit();
                                 e.putString(PARENT_GEOFENCE_ID, null);
                                 e.commit();
-                                Log.e("Anurag", "StoreGeofence list");
+                                if(Util.getSHDebugFlag(context)){
+                                    Log.i(Util.TAG,"Saved geofence list "+value);
+                                }
                                 instance.storeGeofenceList(value);
                                 boolean status = sharedPreferences.getBoolean(IS_GEOFENCE_ENABLE, false);
                                 if (status) instance.startGeofenceMonitoring();

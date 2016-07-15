@@ -376,6 +376,7 @@ public class Logging extends LoggingBase {
         if(Util.getSHDebugFlag(mContext)){
             Log.d(Util.TAG,"  "+"Device log location"+lat+","+lng);
         }
+        params.putString(LOCAL_TIME, Util.getFormattedDateTime(System.currentTimeMillis(),false));
         String sessionId = Util.getSessionId(mContext);
         int code = 0;
         if (Util.isAppBG(mContext)) {

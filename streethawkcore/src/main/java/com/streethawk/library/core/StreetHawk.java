@@ -1000,14 +1000,50 @@ public enum StreetHawk implements Constants{
             key = key.substring(0, 29);
             Log.w(Util.TAG, SUBTAG + "Key should be less than 30 chars. Modifying key to " + key);
         }
-        JSONObject object = new JSONObject();
+        try {
+            Bundle extras = new Bundle();
+            Logging manager = Logging.getLoggingInstance(mContext);
+            extras.putString(CODE, Integer.toString(CODE_INCREMENT_TAG));
+            extras.putString(SHMESSAGE_ID, null);
+            extras.putString(SH_KEY, key);
+            extras.putString(TYPE_NUMERIC, Integer.toString(value));
+            manager.addLogsForSending(extras);
+        }catch(NumberFormatException e){
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * API to increment or decrement value of given tag by the given value
+     *
+     * @param key key
+     * @param value value
+     */
+    public void incrementTag(String key, double value) {
+        if (null == key) {
+            Log.e(Util.TAG, SUBTAG + "Key cannot be null in incrementTag ");
+            return;
+        }
+
+        if (key.isEmpty()) {
+            Log.e(Util.TAG, SUBTAG + "key cannot be empty in incrementTag ");
+            return;
+        }
+        if (key.length() >= 30) {
+            key = key.substring(0, 29);
+            Log.w(Util.TAG, SUBTAG + "Key should be less than 30 chars. Modifying key to " + key);
+        }
         Bundle extras = new Bundle();
-        Logging manager = Logging.getLoggingInstance(mContext);
-        extras.putString(CODE, Integer.toString(CODE_INCREMENT_TAG));
-        extras.putString(SHMESSAGE_ID, null);
-        extras.putString(SH_KEY, key);
-        extras.putString(TYPE_NUMERIC, Integer.toString(value));
-        manager.addLogsForSending(extras);
+        try {
+            Logging manager = Logging.getLoggingInstance(mContext);
+            extras.putString(CODE, Integer.toString(CODE_INCREMENT_TAG));
+            extras.putString(SHMESSAGE_ID, null);
+            extras.putString(SH_KEY, key);
+            extras.putString(TYPE_NUMERIC, Double.toString(value));
+            manager.addLogsForSending(extras);
+        }catch(NumberFormatException e){
+            e.printStackTrace();
+        }
     }
 
 

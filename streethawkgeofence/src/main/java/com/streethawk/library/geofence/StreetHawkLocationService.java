@@ -34,7 +34,6 @@ public class StreetHawkLocationService extends Service implements Constants{
 
 
     private void registerScheduledTask() {
-        Log.e("Anurag","RegisterScheduleTask");
         new Thread(new Runnable() {
             @Override
             public void run() {

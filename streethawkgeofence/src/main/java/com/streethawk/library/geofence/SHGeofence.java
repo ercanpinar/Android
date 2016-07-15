@@ -46,8 +46,8 @@ public class SHGeofence implements GoogleApiClient.ConnectionCallbacks, GoogleAp
     private static Context mContext;
     private static SHGeofence mInstance;
 
-    private GoogleApiClient mGoogleApiClient;         // Change to private
-    private static ArrayList<com.google.android.gms.location.Geofence> mGeofenceList;        // change to private
+    private GoogleApiClient mGoogleApiClient;
+    private static ArrayList<com.google.android.gms.location.Geofence> mGeofenceList;
     private PendingIntent mGeofencePendingIntent;
 
     private SHGeofence() {
@@ -154,10 +154,8 @@ public class SHGeofence implements GoogleApiClient.ConnectionCallbacks, GoogleAp
                 e.commit();
             }
         }).start();
-        Log.e("Anurag","Starting location service 1");
         Intent locationIntent = new Intent(mContext, StreetHawkLocationService.class);
         mContext.startService(locationIntent);
-        Log.e("Anurag","Starting location service 2");
     }
 
     /**

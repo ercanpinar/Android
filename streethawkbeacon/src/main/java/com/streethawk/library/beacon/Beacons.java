@@ -151,6 +151,12 @@ public class Beacons implements Constants{
     }
 
 
+
+    //TODO create a new function which return json as detected beacon list
+    //for xamarin
+
+
+
     /**
      * Function returns list of beacons detected
      * @return

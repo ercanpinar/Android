@@ -13,8 +13,11 @@
     <string-array name="TagOptions">
         <item>Tag Key Value</item>
         <item>Tag CUID</item>
+        <item>Tag Phone</item>
         <item>Increment Tag</item>
         <item>Delete Tag</item>
+
+
     </string-array>
 
     <string-array name="Actions">
@@ -59,4 +62,10 @@
     <string name="title_activity_push">Push</string>
     <string name="title_activity_feeds">Feeds</string>
     <string name="title_activity_feedback">Feedback</string>
+    <string name="title_activity_feed_viewer">FeedViewerActivity</string>
+    <string name="title_activity_feed_list">FeedList</string>
+
+    <string name="title_activity_web_view_poc">WebViewPOC</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
 </resources>

@@ -66,7 +66,6 @@ public class TestService extends Service implements ISHObserver {
 
     @Override
     public void onCreate() {
-        Log.e("Anurag","Started Test service");
         Push.getInstance(this).registerSHObserver(this);
     }
 

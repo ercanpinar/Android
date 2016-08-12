@@ -1,1 +1,1 @@
-include ':streethawkcore', ':streethawkgrowth', ':streethawkpush', ':streethawkbeacon', ':streethawklocations', ':streethawkfeeds', ':streethawkgeofence', ':streethawkapp', ':prod'
+include ':streethawkcore', ':streethawkgrowth', ':streethawkpush', ':streethawkbeacon', ':streethawklocations', ':streethawkfeeds', ':streethawkgeofence', ':streethawkapp', ':streethawkdebug'

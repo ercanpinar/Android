@@ -346,14 +346,11 @@ public class LoggingBase implements Constants {
         }
     }
 
-
-
     /**
      * Function process app status calls returns from server
      *
      * @param answer
      */
-
     protected void processAppStatusCall(String answer) {
         try {
             JSONObject object = new JSONObject(answer);

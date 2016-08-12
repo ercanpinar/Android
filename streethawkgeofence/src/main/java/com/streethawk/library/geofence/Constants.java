@@ -17,7 +17,7 @@
 package com.streethawk.library.geofence;
 
 interface Constants {
-    String PARENT_GEOFENCE_ID           = "parentgeofenceid";
+    //String PARENT_GEOFENCE_ID           = "parentgeofenceid";
     String IS_GEOFENCE_ENABLE           = "shgeofenceenable";
     int CODE_USER_DISABLES_LOCATION     = 8112;
     int CODE_GEOFENCE_UPDATES           = 22;       // place in geofence modules
@@ -38,5 +38,8 @@ interface Constants {
     int CODE_PERIODIC_LOCATION_UPDATE   = 19;
     String PERMISSION_MSG               = "msg";
     String PERMISSION_BOOL              = "permission_bool";
+
+    String LAST_LAT                     = "lastlat";
+    String LAST_LNG                     = "lastlng";
 
 }

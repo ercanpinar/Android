@@ -13,16 +13,11 @@
     tools:showIn="@layout/activity_feeds">
 
 
-
-<ScrollView
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <TextView
+    <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/feedview"
-        android:layout_alignParentTop="true"
+        android:id="@+id/feedsummary"
+        android:layout_centerVertical="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
-</ScrollView>
 </RelativeLayout>

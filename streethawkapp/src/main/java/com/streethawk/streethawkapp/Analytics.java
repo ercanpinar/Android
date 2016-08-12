@@ -21,10 +21,12 @@ public class Analytics extends AppCompatActivity {
     EditText mKeyet;
     EditText mValuet;
 
-    String TAG = "tag";                     // 0
-    String TAG_CUID = "tagcuid";            // 1
-    String TAG_INCREMENT = "tagincrement";  // 2
-    String TAG_DELETE = "tagdelete";        // 3
+    String TAG              = "tag";                // 0
+    String TAG_CUID         = "tagcuid";            // 1
+    String TAG_PHONE        = "tagphone";           // 2
+    String TAG_INCREMENT    = "tagincrement";       // 3
+    String TAG_DELETE       = "tagdelete";          // 4
+
 
 
     @Override
@@ -64,19 +66,28 @@ public class Analytics extends AppCompatActivity {
                     mOptionSelected = TAG_CUID;
                     mKeyet.setText("sh_cuid");
                     mKeyet.setEnabled(false);
+                    mValuet.setHint("");
                     return;
                 }
-                if (2 == position) {
+                if(2 == position){
+                    mOptionSelected = TAG_PHONE;
+                    mKeyet.setText("sh_phone");
+                    mKeyet.setEnabled(false);
+                    mValuet.setHint("+61469342981");
+                    mValuet.setEnabled(true);
+                }
+                if (3 == position) {
                     mOptionSelected = TAG_INCREMENT;
                     mValuet.setHint("Increment Value");
                     return;
                 }
-                if (3 == position) {
+                if (4 == position) {
                     mOptionSelected = TAG_DELETE;
                     mValuet.setHint("");
                     mValuet.setEnabled(false);
                     return;
                 }
+
 
             }
 
@@ -125,11 +136,11 @@ public class Analytics extends AppCompatActivity {
                                     StreetHawk.INSTANCE.incrementTag(key);
                                     Toast.makeText(getApplicationContext(), "Increment tag value by 1", Toast.LENGTH_LONG).show();
                                 } else {
-                                    int intValue = 1;
+                                     double dval = 1.0;
                                     try {
-                                        intValue = Integer.parseInt(value);
-                                        StreetHawk.INSTANCE.incrementTag(key, intValue);
-                                        Toast.makeText(getApplicationContext(), "Increment tag value by " + intValue, Toast.LENGTH_LONG).show();
+                                        dval = Double.parseDouble(value);
+                                        StreetHawk.INSTANCE.incrementTag(key, dval);
+                                        Toast.makeText(getApplicationContext(), "Increment tag value by " + dval, Toast.LENGTH_LONG).show();
                                     } catch (NumberFormatException e) {
                                         StreetHawk.INSTANCE.incrementTag(key);
                                         Toast.makeText(getApplicationContext(), "Increment tag value by 1", Toast.LENGTH_LONG).show();
@@ -154,6 +165,18 @@ public class Analytics extends AppCompatActivity {
                                 }
                             }
                         }
+                        if(mOptionSelected ==TAG_PHONE){
+                            String value = mValuet.getText().toString();
+                            if (value != null) {
+                                if (value.isEmpty()) {
+                                    Toast.makeText(getApplicationContext(), "Enter a value ", Toast.LENGTH_LONG).show();
+                                } else {
+                                    StreetHawk.INSTANCE.tagString("sh_phone",value);
+                                    Toast.makeText(getApplicationContext(), "Phone number tagged " + key + " : " + value, Toast.LENGTH_LONG).show();
+                                }
+                            }
+                        }
+
                     } else {
                         Toast.makeText(getApplicationContext(), "Enter key", Toast.LENGTH_LONG).show();
                     }

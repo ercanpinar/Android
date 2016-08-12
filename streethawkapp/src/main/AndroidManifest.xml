@@ -6,8 +6,8 @@
         android:name="com.streethawk.streethawkapp.permission.C2D_MESSAGE"
         android:protectionLevel="signature" />
 
-
     <uses-permission android:name="com.streethawk.streethawkapp.permission.C2D_MESSAGE" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
     <application
         android:allowBackup="true"
@@ -101,14 +101,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Feeds"
-            android:label="@string/title_activity_feeds"
-            android:theme="@style/AppTheme.NoActionBar">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.streethawk.streethawkapp.MainActivity" />
-        </activity>
-        <activity
             android:name=".Feedback"
             android:label="@string/title_activity_feedback"
             android:theme="@style/AppTheme.NoActionBar">
@@ -144,7 +136,27 @@
         <service
             android:name=".TestService"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true" />
+
+        <activity
+            android:name=".FeedViewerActivity"
+            android:label="@string/title_activity_feed_viewer"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".FeedList"
+            android:label="@string/title_activity_feed_list"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <service
+            android:name=".SHFabService"
+            android:enabled="true"
+            android:exported="true" />
+
+        <activity
+            android:name=".WebViewPOC"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_web_view_poc"
+            android:theme="@style/FullscreenTheme"></activity>
     </application>
 
 </manifest>

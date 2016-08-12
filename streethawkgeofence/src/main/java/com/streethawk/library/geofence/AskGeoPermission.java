@@ -119,10 +119,11 @@ public class AskGeoPermission extends Activity implements Constants {
             case PERMISSIONS_LOCATION: {
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Log.e("Anurag","Start geofence monitoring");
                    SHGeofence.getInstance(this).startGeofenceMonitoring();
                 } else {
 
-                    Log.e(Util.TAG, "Permission not granted by user");
+                    Log.d(Util.TAG, "Permission not granted by user");
                 }
             }
         }

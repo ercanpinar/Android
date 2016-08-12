@@ -7,10 +7,10 @@ android {
     buildToolsVersion "24.0.0"
     defaultConfig {
         applicationId "com.streethawk.streethawkapp"
-        minSdkVersion 9
+        minSdkVersion 11
         targetSdkVersion 24
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "1.1"
         multiDexEnabled true
     }
     buildTypes {
@@ -24,10 +24,8 @@ android {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:24.0.0'
-    compile 'com.android.support:design:24.0.0'
 
-
+/*
     compile 'com.streethawk:core:1.8.2'
     compile 'com.streethawk:push:1.8.2'
     compile 'com.streethawk:growth:1.8.2'
@@ -35,10 +33,10 @@ dependencies {
     compile 'com.streethawk:geofence:1.8.2'
     compile 'com.streethawk:locations:1.8.2'
     compile 'com.streethawk:feeds:1.8.2'
+*/
 
-/*
 
-    //compile project(':streethawkcore')
+    compile project(':streethawkcore')
     //compile 'com.streethawk:core:1.8.1'
     compile project(':streethawkgrowth')
     compile project(':streethawkpush')
@@ -46,5 +44,10 @@ dependencies {
     compile project(':streethawkbeacon')
     compile project(':streethawkgeofence')
     compile project(':streethawkfeeds')
-*/
+    compile project(':streethawkdebug')
+
+
+    compile 'com.android.support:appcompat-v7:24.0.0'
+    compile 'com.android.support:design:24.0.0'
+    compile 'com.android.support:support-v4:24.0.0'
 }

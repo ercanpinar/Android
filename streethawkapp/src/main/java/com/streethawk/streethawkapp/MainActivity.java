@@ -1,20 +1,26 @@
 package com.streethawk.streethawkapp;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -50,6 +56,8 @@ public class MainActivity extends AppCompatActivity implements
     int FEEDBACK    = FEEDS +1 ;
     int INSTALLINFO = FEEDBACK + 1;
     int SETTINGS    = INSTALLINFO + 1;
+    int WEBVIEW     = SETTINGS + 1;
+
 
 
     String mAppKey = null;
@@ -99,7 +107,7 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onReceivePushData(PushDataForApplication pushData) {
 
-        pushData.displayDataForDebugging("Anurag");
+        //pushData.displayDataForDebugging("Anurag");
 
 
     }
@@ -150,7 +158,8 @@ public class MainActivity extends AppCompatActivity implements
             "Feeds",
             "Feedback",
             "Install-Info",
-            "Reset "
+            "Reset ",
+            "WebView"
     };
 
 
@@ -203,7 +212,6 @@ public class MainActivity extends AppCompatActivity implements
         if(null!=mAppKey) {
             StreetHawk.INSTANCE.setAppKey(mAppKey);
             Push.getInstance(this).registerForPushMessaging("491295755890");
-            Push.getInstance(this).setUseCustomDialog(false);
             Push.getInstance(this).registerSHObserver(this);
             StreetHawk.INSTANCE.init(getApplication());
         }else{
@@ -214,9 +222,52 @@ public class MainActivity extends AppCompatActivity implements
             }
 
         }
+    }
+
+    /** code to post/handler request for permission */
+    public final static int REQUEST_CODE = 11;
+
+    @TargetApi(Build.VERSION_CODES.M)
+    public void checkDrawOverlayPermission() {
+        /** check if we already  have permission to draw over other apps */
+        if (!Settings.canDrawOverlays(getApplicationContext())) {
+            /** if not construct intent to request permission */
+            Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                    Uri.parse("package:" + getPackageName()));
+            /** request permission via start activity for result */
+            startActivityForResult(intent, REQUEST_CODE);
+        }else{
+            Intent fabIntent = new Intent(this,SHFabService.class);
+            startService(fabIntent);
+        }
+    }
+
+    @TargetApi(Build.VERSION_CODES.M)
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode,  Intent data) {
+        /** check if received result code
+         is equal our requested code for draw permission  */
+        Log.e("Anurag","onActivityresult"+requestCode);
+        if (requestCode == REQUEST_CODE) {
+            if (Settings.canDrawOverlays(this)) {
+                Log.e("Anurag","Startig service");
+                Intent fabIntent = new Intent(this,SHFabService.class);
+                startService(fabIntent);
+            }
+        }
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         Intent Sintent = new Intent(this,TestService.class);
         startService(Sintent);
+      //  checkDrawOverlayPermission();
     }
+
+
+
 
     public AdapterView.OnItemClickListener optionsOnclickListener(){
         return new AdapterView.OnItemClickListener(){
@@ -246,7 +297,7 @@ public class MainActivity extends AppCompatActivity implements
                     intent.putExtra(ACTIVITY,ACTiVITY_LOCATION);
                 }
                 if(FEEDS==position){
-                    intent = new Intent(getApplicationContext(),Feeds.class);
+                    intent = new Intent(getApplicationContext(),FeedList.class);
                 }
                 if(FEEDBACK==position){
                     intent = new Intent(getApplicationContext(),Feedback.class);
@@ -294,10 +345,19 @@ public class MainActivity extends AppCompatActivity implements
                 if(SETTINGS==position){
                     intent = new Intent(getApplicationContext(),Setting.class);
                 }
+                if(WEBVIEW==position){
+                    Intent webIntent = new Intent(getApplicationContext(),WebViewPOC.class);
+                    startActivity(webIntent);
+                }
+
+
                 if(null!=intent){
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
                 }
+
+
+
             }
         };
     }

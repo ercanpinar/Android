@@ -22,6 +22,9 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
+
+import com.streethawk.library.core.Util;
+
 import java.util.ArrayList;
 
 class GeofenceDB {
@@ -78,23 +81,17 @@ class GeofenceDB {
         mDatabase.execSQL("delete from " + GeofenceHelper.GEOFENCE_TABLE_NAME);
     }
 
-    /*
-     * Call getGeofencesListToMonitor when we need to fetch list of geofence to monitor (Root and child with nodes)
-     * @param parentId
+
+    /**
+     * Function will return all the nodes with parentId = null
      * @param geofenceList
      * @return
      */
-    public boolean getGeofencesListToMonitor(final String parentId,ArrayList<GeofenceData> geofenceList) {
+    public boolean getGeofenceListToMonitor(ArrayList<GeofenceData> geofenceList){
         GeofenceHelper helper = new GeofenceHelper(mContext);
         SQLiteDatabase database = helper.getReadableDatabase();
         String query;
-        if(null!=parentId) {
-            query = "select * from " + GeofenceHelper.GEOFENCE_TABLE_NAME +
-                    " where " + GeofenceHelper.COLUMN_PARENT + " = '" + parentId+"'";
-        }else{
-            query = "select * from " + GeofenceHelper.GEOFENCE_TABLE_NAME +
-                    " where " + GeofenceHelper.COLUMN_PARENT + " IS NULL";
-        }
+        query = "select * from " + GeofenceHelper.GEOFENCE_TABLE_NAME;
         Cursor cursor = database.rawQuery(query, null);
         if (cursor != null && cursor.moveToFirst()) {
             while(!cursor.isAfterLast()) {
@@ -103,21 +100,22 @@ class GeofenceDB {
                 float radius = cursor.getFloat(cursor.getColumnIndex(GeofenceHelper.COLUMN_RADIUS));
                 String hasNodes = cursor.getString(cursor.getColumnIndex(GeofenceHelper.COLUMN_NODE));
                 String geofenceID = cursor.getString(cursor.getColumnIndex(GeofenceHelper.COLUMN_GEOFENCEID));
-                geofenceList.add(new GeofenceData()
-                                .setGeofenceID(geofenceID)
-                                .setLatitude(lat)
-                                .setLongitude(lng)
-                                .setRadius(radius)
-                                .setParentID(parentId)
-                                .setChildNodes(Boolean.parseBoolean(hasNodes))
-                );
+                if(!geofenceID.startsWith("_")) {
+                    geofenceList.add(new GeofenceData()
+                            .setGeofenceID(geofenceID)
+                            .setLatitude(lat)
+                            .setLongitude(lng)
+                            .setRadius(radius)
+                            .setParentID(null)
+                            .setChildNodes(Boolean.parseBoolean(hasNodes))
+                    );
+                }
                 cursor.moveToNext();
             }
             cursor.close();
             database.close();
             helper.close();
         } else {
-            Log.e("GeofenceDB", "getGeofenceToMonitor no node found with parent " + parentId);
             cursor.close();
             database.close();
             helper.close();

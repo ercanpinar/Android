@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.streethawk.sdkdebugger">
+
+    <application
+        android:allowBackup="true"
+        android:label="@string/app_name"
+        android:supportsRtl="true">
+        <activity
+            android:name=".StreetHawkDebugActivity"
+            android:label="StreetHawk Debug">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data
+                    android:host="info"
+                    android:scheme="shdebug" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".SHLogCat" />
+        <activity android:name=".SHReRegister"></activity>
+    </application>
+
+</manifest>

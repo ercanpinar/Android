@@ -33,5 +33,14 @@ interface Constants {
     String STOP     = "Stop ";
 
 
+    String EXTRA_FEED_TITLE     = "Feedtitle";
+    String EXTRA_FEED_MESSAGE   = "Feedmessage";
+    String EXTRA_FEED_IMG       = "Feedimg";
+    String EXTRA_FEED_LINK      = "Feedlink";
+    String EXTRA_FEED_VIDEO     = "Feedvideo";
+
+
+
+
 
 }

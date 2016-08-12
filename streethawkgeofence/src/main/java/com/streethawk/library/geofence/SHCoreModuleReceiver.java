@@ -28,6 +28,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -120,19 +121,20 @@ public class SHCoreModuleReceiver extends BroadcastReceiver implements Constants
                             try {
                                 JSONObject jsonObject = new JSONObject(answer);
                                 JSONArray value = jsonObject.getJSONArray(Util.JSON_VALUE);
-                                SHGeofence instance = SHGeofence.getInstance(context);
+                                StreetHawkLocationService instance = StreetHawkLocationService.getInstance(context);
                                 instance.stopMonitoring();
                                 forceClearGeofenceData(context);
                                 SharedPreferences sharedPreferences = context.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
-                                SharedPreferences.Editor e = sharedPreferences.edit();
-                                e.putString(PARENT_GEOFENCE_ID, null);
-                                e.commit();
-                                if(Util.getSHDebugFlag(context)){
-                                    Log.i(Util.TAG,"Saved geofence list "+value);
+                                if (Util.getSHDebugFlag(context)) {
+                                    Log.d(Util.TAG, "Saved geofence list " + value);
                                 }
-                                instance.storeGeofenceList(value);
+                                instance.storeGeofenceData(value);
                                 boolean status = sharedPreferences.getBoolean(IS_GEOFENCE_ENABLE, false);
-                                if (status) instance.startGeofenceMonitoring();
+                                if (status) {
+                                    ArrayList<GeofenceData> geofenceList = new ArrayList<GeofenceData>();
+                                    instance.storeGeofenceListForMonitoring(geofenceList);
+                                    instance.startGeofenceMonitoring();
+                                }
 
                             } catch (JSONException e) {
                             }
@@ -171,9 +173,6 @@ public class SHCoreModuleReceiver extends BroadcastReceiver implements Constants
             } else {
                 // Force clear geofence list if server sends null as timestamp
                 forceClearGeofenceData(context);
-                SharedPreferences.Editor e = sharedPreferences.edit();
-                e.putString(PARENT_GEOFENCE_ID, null);
-                e.commit();
             }
         }
     }
@@ -209,56 +208,63 @@ public class SHCoreModuleReceiver extends BroadcastReceiver implements Constants
         if (action.equals("android.location.PROVIDERS_CHANGED")) {
             final Handler delay = new Handler();
             delay.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-                    if (!(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))) {
-                        try {
-                            Bundle extras = new Bundle();
-                            extras.putString(Util.CODE, Integer.toString(CODE_USER_DISABLES_LOCATION));
-                            Logging.getLoggingInstance(context).addLogsForSending(extras);
-                            SHGeofence.getInstance(context).stopMonitoring();
-                            GeofenceService.notifyAllGeofenceExit(context);
-                            if(Util.getSHDebugFlag(context)){
-                                Log.d(Util.TAG,"  "+"Sending locations disabled by server");
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    } else {
-                        SharedPreferences sharedPreferences = context.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
-                        final boolean status = sharedPreferences.getBoolean(IS_GEOFENCE_ENABLE,false);
-                        final ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(1);
-                        executor.schedule(new Runnable() {
-                            @Override
-                            public void run() {
-                                if(status) {
-                                    SHGeofence.getInstance(context).startGeofenceMonitoring();
-                                }
-                                Location location = StreetHawkLocationService.getInstance().getLastKnownLocation(context);
-                                if (null != location) {
-                                    double lat = location.getLatitude();
-                                    double lng = location.getLongitude();
-                                    if (lat == 0 && lng == 0)
-                                        return;
+                                  @Override
+                                  public void run() {
+                                      LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+                                      if (!(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))) {
+                                          try {
+                                              Bundle extras = new Bundle();
+                                              extras.putString(Util.CODE, Integer.toString(CODE_USER_DISABLES_LOCATION));
+                                              StreetHawkLocationService.getInstance(context).resetCurrentLocation(context);
+                                              Logging.getLoggingInstance(context).addLogsForSending(extras);
+                                              StreetHawkLocationService.getInstance(context).stopMonitoring();
+                                              GeofenceService.notifyAllGeofenceExit(context);
+                                              if (Util.getSHDebugFlag(context)) {
+                                                  Log.d(Util.TAG, "  " + "Sending locations disabled by server");
+                                              }
+                                          } catch (Exception e) {
+                                              e.printStackTrace();
+                                          }
+                                      } else {
+                                          SharedPreferences sharedPreferences = context.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
+                                          final boolean status = sharedPreferences.getBoolean(IS_GEOFENCE_ENABLE, false);
+                                          final ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(1);
+                                          executor.schedule(new Runnable() {
+                                                                @Override
+                                                                public void run() {
+                                                                    try {
+                                                                        Thread.sleep(1000);
+                                                                    } catch (InterruptedException e) {
+                                                                        e.printStackTrace();
+                                                                    }
+                                                                    if (status) {
+                                                                        StreetHawkLocationService.getInstance(context).startGeofenceMonitoring();
+                                                                    }
+                                                                    Location location = StreetHawkLocationService.getInstance(context).getLastKnownLocation(context);
+                                                                    if (null != location) {
+                                                                        double lat = location.getLatitude();
+                                                                        double lng = location.getLongitude();
+                                                                        if (lat == 0 && lng == 0)
+                                                                            return;
+                                                                        StreetHawkLocationService.getInstance(context).forceStoreCurrentLocation(context);
+                                                                        Bundle extras = new Bundle();
+                                                                        extras.putString(Util.CODE, Integer.toString(CODE_LOCATION_UPDATES));
+                                                                        extras.putString(Util.SHMESSAGE_ID, null);
+                                                                        extras.putString(LOCAL_TIME, Util.getFormattedDateTime(System.currentTimeMillis(), false));
+                                                                        Logging.getLoggingInstance(context).addLogsForSending(extras);
+                                                                        if (Util.getSHDebugFlag(context)) {
+                                                                            Log.d(Util.TAG, "  " + "*** Sending Location update on location enable ***");
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
 
-                                    StreetHawkLocationService.getInstance().StoreLocationsForLogging(context);
-                                    Bundle extras = new Bundle();
-                                    extras.putString(Util.CODE, Integer.toString(CODE_LOCATION_UPDATES));
-                                    extras.putString(Util.SHMESSAGE_ID, null);
-                                    extras.putString(LOCAL_TIME, Util.getFormattedDateTime(System.currentTimeMillis(), false));
-                                    extras.putString(SHLATTITUDE, Double.toString(location.getLatitude()));
-                                    extras.putString(SHLONGITUDE, Double.toString(location.getLongitude()));
-                                    Logging.getLoggingInstance(context).addLogsForSending(extras);
-                                    if(Util.getSHDebugFlag(context)){
-                                        Log.d(Util.TAG,"  "+"Sending location update on provider change"+lat+","+lng);
-                                    }
-                                }
-                            }
-                        }, 1, TimeUnit.MINUTES);
-                    }
-                }
-            }, 2000);
+                                                  , 1, TimeUnit.MINUTES);
+                                      }
+                                  }
+                              }
+
+                    , 2000);
         }
         if (action.equals("com.streethawk.intent.action.gcm.STREETHAWK_LOCATIONS")) {
             if (null != intent) {
@@ -270,30 +276,25 @@ public class SHCoreModuleReceiver extends BroadcastReceiver implements Constants
                 } catch (Exception e) {
                     return;
                 }
-                Location location = StreetHawkLocationService.getInstance().getLastKnownLocation(context);
+                Location location = StreetHawkLocationService.getInstance(context).getLastKnownLocation(context);
                 if (null != location) {
                     double lat = location.getLatitude();
                     double lng = location.getLongitude();
                     if (lat == 0 && lng == 0)
                         return;
-                    StreetHawkLocationService.getInstance().StoreLocationsForLogging(context);
+                    StreetHawkLocationService.getInstance(context).forceStoreCurrentLocation(context);
                     Bundle extras = new Bundle();
                     extras.putString(Util.CODE, Integer.toString(CODE_PERIODIC_LOCATION_UPDATE));
                     extras.putString(Util.SHMESSAGE_ID, null);
                     extras.putString(LOCAL_TIME, Util.getFormattedDateTime(System.currentTimeMillis(), false));
-                    extras.putString(SHLATTITUDE, Double.toString(lat));
-                    extras.putString(SHLONGITUDE, Double.toString(lng));
                     Logging.getLoggingInstance(context).addLogsForSending(extras);
                     extras.putString(Util.CODE, Integer.toString(CODE_LOCATION_UPDATES));
                     extras.putString(Util.SHMESSAGE_ID, null);
                     extras.putString(LOCAL_TIME, Util.getFormattedDateTime(System.currentTimeMillis(), false));
-                    extras.putString(SHLATTITUDE, Double.toString(lat));
-                    extras.putString(SHLONGITUDE, Double.toString(lng));
                     Logging.getLoggingInstance(context).addLogsForSending(extras);
-                    if(Util.getSHDebugFlag(context)){
-                        Log.d(Util.TAG,"  "+"*** Sending locations on repeating task"+lat+","+lng);
+                    if (Util.getSHDebugFlag(context)) {
+                        Log.d(Util.TAG, "  " + "*** Sending locaiton update on periodic task ***");
                     }
-
                 }
             }
         }

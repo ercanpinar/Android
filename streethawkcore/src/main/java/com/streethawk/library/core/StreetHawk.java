@@ -141,7 +141,6 @@ public enum StreetHawk implements Constants{
         }).start();
     }
 
-
     /**
      * Store locations to be included in logging
      */
@@ -155,10 +154,10 @@ public enum StreetHawk implements Constants{
                 Class growth = null;
                 try {
                     growth = Class.forName("com.streethawk.library.geofence.StreetHawkLocationService");
-                    Method growthMethod = growth.getMethod("getInstance", noParams);
-                    Object obj = growthMethod.invoke(null);
+                    Method growthMethod = growth.getMethod("getInstance", paramContext);
+                    Object obj = growthMethod.invoke(null,mContext);
                     if (null != obj) {
-                        Method addGrowthModule = growth.getDeclaredMethod("StoreLocationsForLogging", paramContext);
+                        Method addGrowthModule = growth.getDeclaredMethod("forceStoreCurrentLocation", paramContext);
                         addGrowthModule.invoke(obj,mContext);
                     }
                 } catch (ClassNotFoundException e1) {
@@ -174,7 +173,6 @@ public enum StreetHawk implements Constants{
             }
         }).start();
     }
-
 
     protected void activityResumedByService(final Activity activity) {
         if (null == activity) {

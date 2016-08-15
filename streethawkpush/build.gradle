@@ -30,7 +30,7 @@ android {
     makeJar.dependsOn(clearJar, build)
     buildTypes {
         release {
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             zipAlignEnabled true
             //proguardFile '/Users/anuragkondeya/AndroidStudioWorkspace/opensourceSDK/Android/streethawkpush/proguard-rules.pro'
@@ -44,7 +44,7 @@ dependencies {
     // Unit testing dependencies
     //testCompile 'junit:junit:4.12'
     //compile project(':streethawkcore')
-    compile 'com.streethawk:core:1.8.3'
+    compile 'com.streethawk:core:1.8.4'
     //compile 'com.streethawk:core:1.8.0-SNAPSHOT'
 }
 

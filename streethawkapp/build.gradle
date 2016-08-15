@@ -36,7 +36,7 @@ dependencies {
 */
 
 
-    compile project(':streethawkcore')
+    //compile project(':streethawkcore')
     //compile 'com.streethawk:core:1.8.1'
     compile project(':streethawkgrowth')
     compile project(':streethawkpush')

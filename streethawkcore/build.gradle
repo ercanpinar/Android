@@ -36,12 +36,12 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             //proguardFile '/Users/anuragkondeya/AndroidWorkspace/opensourceSDK/Android/streethawkcore/proguard-rules.pro'
         }
         debug {
-            minifyEnabled false
+            minifyEnabled true
         }
     }
 }
@@ -49,5 +49,4 @@ android {
 dependencies {
     //compile project(':base')
 }
-
 //apply from: '../sh_maven_push.gradle'

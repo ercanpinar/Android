@@ -21,19 +21,33 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.GridLayout;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.Spinner;
+import android.widget.TableLayout;
+import android.widget.TableRow;
+import android.widget.TextView;
 
 
-
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Locale;
 
 
-class AppActivityTracking implements Constants{
+class AppActivityTracking implements Constants {
 
     private static AppActivityTracking mActivityTracking = null;
     private static final String SESSIONIDCNT = "session_id_cnt";
@@ -43,6 +57,8 @@ class AppActivityTracking implements Constants{
     private String SESSION_LENGTH = "length";
     private String BG = "bg";
     private String SHARED_PREF_ACTIVITY = "sharedprefactivity";  // shared preference to keep a note of activity start time
+    private JSONArray mWidgetList = null;
+    private ArrayList<WidgetObject> mWidgetListForSaving;
 
     private void SaveSessionTime(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
@@ -51,7 +67,7 @@ class AppActivityTracking implements Constants{
         e.commit();
     }
 
-    public void notifyChangedOrientation(final Activity activity){
+    public void notifyChangedOrientation(final Activity activity) {
         final Context context = activity.getApplicationContext();
         new Thread(new Runnable() {
             @Override
@@ -69,10 +85,43 @@ class AppActivityTracking implements Constants{
                     Object obj = pushMethod.invoke(null, context);
                     if (null != obj) {
                         Method addPushModule = push.getDeclaredMethod("notifyChangeOrientation", paramActivity);
-                        addPushModule.invoke(obj,activity);
+                        addPushModule.invoke(obj, activity);
                     }
                 } catch (ClassNotFoundException e1) {
                     Log.w(Util.TAG, "Push module is not  not present");
+                } catch (IllegalAccessException e1) {
+                    e1.printStackTrace();
+                } catch (NoSuchMethodException e1) {
+                    e1.printStackTrace();
+                } catch (InvocationTargetException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        }).start();
+
+        /*Notify orientation change to feeds module*/
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Class noParams[] = {};
+                Class[] paramContext = new Class[1];
+                paramContext[0] = Context.class;
+                Class[] paramActivity = new Class[1];
+                paramActivity[0] = Activity.class;
+
+                Class push = null;
+
+                try {
+                    push = Class.forName("com.streethawk.library.feeds.TrigerActivityTracker");
+                    Method pushMethod = push.getMethod("getInstance", noParams);
+                    Object obj = pushMethod.invoke(null);
+                    if (null != obj) {
+                        Method addPushModule = push.getDeclaredMethod("onOrientationChange", paramActivity);
+                        addPushModule.invoke(obj, activity);
+                    }
+                } catch (ClassNotFoundException e1) {
+                    Log.w(Util.TAG, "Feed module is not present");
                 } catch (IllegalAccessException e1) {
                     e1.printStackTrace();
                 } catch (NoSuchMethodException e1) {
@@ -95,25 +144,197 @@ class AppActivityTracking implements Constants{
 
     /**
      * Send core'smessage to other module
+     *
      * @param context
      * @param obj
      */
-    private void SendCoreMsg(Context context,final JSONObject obj){
+    private void SendCoreMsg(Context context, final JSONObject obj) {
         // Send broadcast to notify version update
         Intent coremsg = new Intent();
         coremsg.setAction(Util.BROADCAST_MSG_FROM_CORE);
-        if(null!=obj) {
+        if (null != obj) {
             coremsg.putExtra(Util.MSG_FROM_CORE, obj.toString());
             context.sendBroadcast(coremsg);
         }
     }
 
+    private void notifyAppForegroundedToChildModules(final Activity activity) {
+        //Notify foreground to push module
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Class[] paramContext = new Class[1];
+                paramContext[0] = Context.class;
+                Class[] paramActivity = new Class[1];
+                paramActivity[0] = Activity.class;
+
+                Class push = null;
+
+                try {
+                    push = Class.forName("com.streethawk.library.push.Push");
+                    Method pushMethod = push.getMethod("getInstance", paramContext);
+                    Object obj = pushMethod.invoke(null, activity.getApplicationContext());
+                    if (null != obj) {
+                        Method addPushModule = push.getDeclaredMethod("notifyAppForegrounded", paramActivity);
+                        addPushModule.invoke(obj, activity);
+                    }
+                } catch (ClassNotFoundException e1) {
+                    Log.w(Util.TAG, "Push module is not  not present");
+                } catch (IllegalAccessException e1) {
+                    e1.printStackTrace();
+                } catch (NoSuchMethodException e1) {
+                    e1.printStackTrace();
+                } catch (InvocationTargetException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        }).start();
+        //Notify foreground to feed modules
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Class noParams[] = {};
+                Class[] paramContext = new Class[1];
+                paramContext[0] = Context.class;
+                Class[] paramActivity = new Class[1];
+                paramActivity[0] = Activity.class;
+
+                Class push = null;
+
+                try {
+                    push = Class.forName("com.streethawk.library.feeds.TrigerActivityTracker");
+                    Method pushMethod = push.getMethod("getInstance", noParams);
+                    Object obj = pushMethod.invoke(null);
+                    if (null != obj) {
+                        Method addPushModule = push.getDeclaredMethod("onApplicationForegronded", paramActivity);
+                        addPushModule.invoke(obj, activity);
+                    }
+                } catch (ClassNotFoundException e1) {
+                    Log.w(Util.TAG, "Feed module is not present");
+                } catch (IllegalAccessException e1) {
+                    e1.printStackTrace();
+                } catch (NoSuchMethodException e1) {
+                    e1.printStackTrace();
+                } catch (InvocationTargetException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
+
+    public void notifyAppBackgroundedToChildModules(final Activity activity) {
+        //Notify foreground to feed modules
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Class noParams[] = {};
+                Class[] paramContext = new Class[1];
+                paramContext[0] = Context.class;
+                Class[] paramActivity = new Class[1];
+                paramActivity[0] = Activity.class;
+
+                Class push = null;
+
+                try {
+                    push = Class.forName("com.streethawk.library.feeds.TrigerActivityTracker");
+                    Method pushMethod = push.getMethod("getInstance", noParams);
+                    Object obj = pushMethod.invoke(null);
+                    if (null != obj) {
+                        Method addPushModule = push.getDeclaredMethod("onApplicationBackgrounded", paramActivity);
+                        addPushModule.invoke(obj, activity);
+                    }
+                } catch (ClassNotFoundException e1) {
+                    Log.w(Util.TAG, "Feed module is not present");
+                } catch (IllegalAccessException e1) {
+                    e1.printStackTrace();
+                } catch (NoSuchMethodException e1) {
+                    e1.printStackTrace();
+                } catch (InvocationTargetException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
+    public void notifyEnteringNewActivityToChildModules(final Activity activity) {
+        //Notify foreground to feed modules
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Class noParams[] = {};
+                Class[] paramContext = new Class[1];
+                paramContext[0] = Context.class;
+                Class[] paramActivity = new Class[1];
+                paramActivity[0] = Activity.class;
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                Class push = null;
+
+                try {
+                    push = Class.forName("com.streethawk.library.feeds.TrigerActivityTracker");
+                    Method pushMethod = push.getMethod("getInstance", noParams);
+                    Object obj = pushMethod.invoke(null);
+                    if (null != obj) {
+                        Method addPushModule = push.getDeclaredMethod("onEnteringNewActivity", paramActivity);
+                        addPushModule.invoke(obj, activity);
+                    }
+                } catch (ClassNotFoundException e1) {
+                    Log.w(Util.TAG, "Feed module is not present");
+                } catch (IllegalAccessException e1) {
+                    e1.printStackTrace();
+                } catch (NoSuchMethodException e1) {
+                    e1.printStackTrace();
+                } catch (InvocationTargetException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
+    public void notifyLeavingNewActivityToChildModules(final Activity activity) {
+        //Notify foreground to feed modules
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Class noParams[] = {};
+                Class[] paramContext = new Class[1];
+                paramContext[0] = Context.class;
+                Class[] paramActivity = new Class[1];
+                paramActivity[0] = Activity.class;
+
+                Class push = null;
+
+                try {
+                    push = Class.forName("com.streethawk.library.feeds.TrigerActivityTracker");
+                    Method pushMethod = push.getMethod("getInstance", noParams);
+                    Object obj = pushMethod.invoke(null);
+                    if (null != obj) {
+                        Method addPushModule = push.getDeclaredMethod("onLeavingNewActivity", paramActivity);
+                        addPushModule.invoke(obj, activity);
+                    }
+                } catch (ClassNotFoundException e1) {
+                    Log.w(Util.TAG, "Feed module is not present");
+                } catch (IllegalAccessException e1) {
+                    e1.printStackTrace();
+                } catch (NoSuchMethodException e1) {
+                    e1.printStackTrace();
+                } catch (InvocationTargetException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        }).start();
+    }
 
     /**
      * Task to be done when app goes foreground
+     *
      * @param activity
      */
-    public void onAppForegrounded(final Activity activity){
+    public void onAppForegrounded(final Activity activity) {
         final Context context = activity.getApplicationContext();
         SaveSessionTime(context);
         Bundle extras = new Bundle();
@@ -128,7 +349,7 @@ class AppActivityTracking implements Constants{
                 boolean runInstallUpdate = false;
                 SharedPreferences sharedPreferences = context.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
                 String storedVersion = sharedPreferences.getString(SHAPPVERSION, null);
-                String userLocale = sharedPreferences.getString(DEVICE_LOCALE , null);
+                String userLocale = sharedPreferences.getString(DEVICE_LOCALE, null);
                 String currentAppVersion = Util.getAppVersionName(context);
                 //String storedAdvertisementId = sharedPreferences.getString(SHADVERTISEMENTID, null);
                 //String currentAdvertisementId = Util.getAdvertisingIdentifier(context);
@@ -147,8 +368,8 @@ class AppActivityTracking implements Constants{
                         JSONObject obj = new JSONObject();
                         try {
                             obj.put(Util.KEY_UPDATE_VERSION, currentAppVersion);
-                            SendCoreMsg(context,obj);
-                        }catch(JSONException ex){
+                            SendCoreMsg(context, obj);
+                        } catch (JSONException ex) {
                             ex.printStackTrace();
                         }
                     }
@@ -162,24 +383,24 @@ class AppActivityTracking implements Constants{
                     JSONObject obj = new JSONObject();
                     try {
                         obj.put(Util.KEY_UPDATE_VERSION, currentAppVersion);
-                        SendCoreMsg(context,obj);
-                    }catch(JSONException ex){
+                        SendCoreMsg(context, obj);
+                    } catch (JSONException ex) {
                         ex.printStackTrace();
                     }
                 }
                 //check and if necessary tag user's locale every time app goes foreground
                 String devUserLocale = Locale.getDefault().getDisplayLanguage();
-                if(null==userLocale){
+                if (null == userLocale) {
                     SharedPreferences.Editor e = sharedPreferences.edit();
                     e.putString(DEVICE_LOCALE, devUserLocale);
                     e.commit();
-                    StreetHawk.INSTANCE.tagString("sh_language",devUserLocale);
-                }else{
-                    if(!devUserLocale.equals(userLocale)){
+                    StreetHawk.INSTANCE.tagString("sh_language", devUserLocale);
+                } else {
+                    if (!devUserLocale.equals(userLocale)) {
                         SharedPreferences.Editor e = sharedPreferences.edit();
                         e.putString(DEVICE_LOCALE, devUserLocale);
                         e.commit();
-                        StreetHawk.INSTANCE.tagString("sh_language",devUserLocale);
+                        StreetHawk.INSTANCE.tagString("sh_language", devUserLocale);
                     }
                 }
                 /*
@@ -197,49 +418,21 @@ class AppActivityTracking implements Constants{
                     e.commit();
                 }
                 */
-                if (runInstallUpdate && (Util.getInstallId(context)!=null) ) {
+                if (runInstallUpdate && (Util.getInstallId(context) != null)) {
                     try {
-                        Install.getInstance(context).updateInstall(null,Install.INSTALL_CODE_IGNORE);
+                        Install.getInstance(context).updateInstall(null, Install.INSTALL_CODE_IGNORE);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
             }
         }).start();
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Class[] paramContext = new Class[1];
-                paramContext[0] = Context.class;
-                Class[] paramActivity = new Class[1];
-                paramActivity[0] = Activity.class;
-
-                Class push = null;
-
-                try {
-                    push = Class.forName("com.streethawk.library.push.Push");
-                    Method pushMethod = push.getMethod("getInstance", paramContext);
-                    Object obj = pushMethod.invoke(null, context);
-                    if (null != obj) {
-                        Method addPushModule = push.getDeclaredMethod("notifyAppForegrounded", paramActivity);
-                        addPushModule.invoke(obj,activity);
-                    }
-                } catch (ClassNotFoundException e1) {
-                    Log.w(Util.TAG, "Push module is not  not present");
-                } catch (IllegalAccessException e1) {
-                    e1.printStackTrace();
-                } catch (NoSuchMethodException e1) {
-                    e1.printStackTrace();
-                } catch (InvocationTargetException e1) {
-                    e1.printStackTrace();
-                }
-            }
-        }).start();
+        notifyAppForegroundedToChildModules(activity);
     }
 
-    public void onAppBackgrounded(final Activity activity){
-       if(null==activity)
-           return;
+    public void onAppBackgrounded(final Activity activity) {
+        if (null == activity)
+            return;
         final Context context = activity.getApplicationContext();
         long currentTime = System.currentTimeMillis();
         Bundle extras = new Bundle();
@@ -259,6 +452,7 @@ class AppActivityTracking implements Constants{
         extras.putString(LOCAL_TIME, Util.getFormattedDateTime(currentTime, false));
         shManager.addLogsForSending(extras);
         incrementSessionId(context);
+        notifyAppBackgroundedToChildModules(activity);
     }
 
 
@@ -278,8 +472,42 @@ class AppActivityTracking implements Constants{
         e.commit();
     }
 
+    /**
+     * Function returns viewname by stripping package name from it
+     *
+     * @param fullyQualifiedName
+     * @return
+     */
+    private String getViewName(String fullyQualifiedName) {
+        String className = new StringBuilder(fullyQualifiedName).reverse().toString();
+        int indexOfPeriod = className.indexOf(".");
+        if (-1 != indexOfPeriod) {
+            className = className.subSequence(0, className.indexOf(".")).toString();
+            className = new StringBuilder(className).reverse().toString();
+            return className;
+        }
+        return null;
+    }
 
-   private String getFriendlyNameFromclassName(Context context, final String fullyQualifiedName) {
+    /**
+     * Function returns identifier of the widget by stripping package name from it
+     *
+     * @param fullyQualifiedName
+     * @return
+     */
+    private String getTextID(String fullyQualifiedName) {
+        String className = new StringBuilder(fullyQualifiedName).reverse().toString();
+        int indexOfPeriod = className.indexOf("di:");
+        if (-1 != indexOfPeriod) {
+            className = className.subSequence(0, className.indexOf("di:")).toString();
+            className = new StringBuilder(className).reverse().toString();
+            className = className.substring(1);
+            return className;
+        }
+        return null;
+    }
+
+    private String getFriendlyNameFromclassName(Context context, final String fullyQualifiedName) {
         if (fullyQualifiedName == null)
             return null;
         if (null == context)
@@ -293,8 +521,71 @@ class AppActivityTracking implements Constants{
         return className;
     }
 
+    private void fillViewList(Activity activity) {
+        if (null == activity) {
+            return;
+        } else {
+            mWidgetList = new JSONArray();
+            mWidgetListForSaving = new ArrayList<>();
+            ViewGroup rootView = (ViewGroup) activity.findViewById(android.R.id.content).getRootView();
+            fillViewList(activity, rootView);
+        }
+    }
 
-    public void notifyNewActivity(Context context, String newActivity, String oldActivity) {
+    private void fillViewList(Activity activity, View view) {
+        //Add child JSON in the list
+        JSONObject object = new JSONObject();
+        try {
+            int id = view.getId();
+            if (-1 != id) {
+                String viewTextID = null;
+                viewTextID = view.getResources().getResourceName(id);
+                WidgetObject obj = new WidgetObject();
+                String viewName = getViewName(activity.getClass().getName());
+                String widgetID = getTextID(viewTextID);
+                obj.setParentViewName(viewName);
+                obj.setTextID(widgetID);
+                obj.setResID(id);
+                mWidgetListForSaving.add(obj);
+                object.put(ID, viewTextID);
+                mWidgetList.put(object);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        if (view instanceof ViewGroup) {
+            ViewGroup viewGroup = (ViewGroup) view;
+            int childCount = viewGroup.getChildCount();
+            for (int i = 0; i < childCount; i++) {
+                fillViewList(activity, viewGroup.getChildAt(i));
+
+            }
+        }
+    }
+
+    private void saveWidgetList(Activity activity) {
+
+        //TODO : add activity level checks to prevent recurssive storing of activity
+
+        fillViewList(activity);
+        saveWidgetsInfo(activity);
+    }
+
+    private void saveWidgetsInfo(Activity activity) {
+        if (mWidgetListForSaving.isEmpty()) {
+            return;
+        } else {
+            WidgetDB storeGeofenceDB = new WidgetDB(activity.getApplicationContext());
+            storeGeofenceDB.open();
+            for (WidgetObject obj : mWidgetListForSaving) {
+                storeGeofenceDB.storeWidgetData(obj);
+            }
+            storeGeofenceDB.close();
+        }
+    }
+
+    public void notifyNewActivity(Activity activity, String newActivity, String oldActivity) {
+        Context context = activity.getApplicationContext();
         if (Util.getPlatformType() == Util.PLATFORM_ANDROID_NATIVE || Util.getPlatformType() == Util.PLATFORM_XAMARIN) {
             SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREF_ACTIVITY, Context.MODE_PRIVATE);
             boolean bg = false;
@@ -309,6 +600,8 @@ class AppActivityTracking implements Constants{
                 extras.putString(TYPE_STRING, friendlyName);
                 final Logging shManager = Logging.getLoggingInstance(context);
                 shManager.addLogsForSending(extras);
+                saveWidgetList(activity);  //Save activity list for super tag and widgets
+                notifyEnteringNewActivityToChildModules(activity);
             } else {
                 bg = true; // indicates this is last activity before going to bg
             }
@@ -339,6 +632,7 @@ class AppActivityTracking implements Constants{
                     e.clear();          // To save shared pref from growing in case app crashes
                 e.commit();
                 shManager.addLogsForSending(extras);
+                notifyLeavingNewActivityToChildModules(activity);
             }
         }
     }

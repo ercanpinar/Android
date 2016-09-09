@@ -1,5 +1,6 @@
 package com.streethawk.streethawkapp;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -12,6 +13,8 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.streethawk.library.core.StreetHawk;
+import com.streethawk.library.feeds.SHTips;
+import com.streethawk.library.feeds.SHTours;
 
 public class Analytics extends AppCompatActivity {
 
@@ -26,6 +29,8 @@ public class Analytics extends AppCompatActivity {
     String TAG_PHONE        = "tagphone";           // 2
     String TAG_INCREMENT    = "tagincrement";       // 3
     String TAG_DELETE       = "tagdelete";          // 4
+
+    private Activity mActivity;
 
 
 
@@ -49,6 +54,8 @@ public class Analytics extends AppCompatActivity {
         mTagSpinner.setOnItemSelectedListener(spinnerSelect());
         mKeyet = (EditText) findViewById(R.id.tagKey);
         mValuet = (EditText) findViewById(R.id.tagval);
+
+        mActivity = this;
     }
 
     private Spinner.OnItemSelectedListener spinnerSelect(){
@@ -112,6 +119,14 @@ public class Analytics extends AppCompatActivity {
 
             @Override
             public void onClick(View view) {
+                SHTours tours =new SHTours(mActivity);
+                tours.startTour("454162");
+
+/*
+                SHTips tips = new SHTips();
+                tips.unit_test_tooltip(mActivity,"tagKey");
+*/
+
                 String key = mKeyet.getText().toString();
                 if (key != null) {
                     if (!key.isEmpty()) {
@@ -127,7 +142,6 @@ public class Analytics extends AppCompatActivity {
                                     Toast.makeText(getApplicationContext(), "Cuid tagged " + value, Toast.LENGTH_LONG).show();
                                 }
                             }
-
                         }
                         if (mOptionSelected == TAG_INCREMENT) {
                             String value = mValuet.getText().toString();

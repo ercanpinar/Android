@@ -213,14 +213,23 @@ public class FeedItem implements Parcelable {
     }
 
 
-    public void displayForDebugging(String TAG, String MSG) {
+    public String getObjectDetails(){
         String NEWLINE = "\n";
-        Log.e(TAG, MSG + NEWLINE +
-                "Title " + mFeedTitle + NEWLINE
+        return "Feed ID"+FeedId+NEWLINE
+                +"Title " + mFeedTitle + NEWLINE
                 + "Message " + mFeedMessage + NEWLINE
                 + "URL " + mURL + NEWLINE
                 + "Img " + mImage + NEWLINE
-                + "Video " + mVideo);
+                + "Video " + mVideo;
+    }
+
+
+
+
+
+    public void displayForDebugging(String TAG, String MSG) {
+
+        Log.e(TAG, MSG + getObjectDetails());
     }
 
     protected FeedItem(Parcel in) {

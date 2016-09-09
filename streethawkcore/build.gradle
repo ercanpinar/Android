@@ -36,17 +36,18 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             //proguardFile '/Users/anuragkondeya/AndroidWorkspace/opensourceSDK/Android/streethawkcore/proguard-rules.pro'
         }
         debug {
-            minifyEnabled true
+            minifyEnabled false
         }
     }
 }
 
 dependencies {
     //compile project(':base')
+    compile 'com.android.support:design:24.0.0'
 }
 //apply from: '../sh_maven_push.gradle'

@@ -51,7 +51,6 @@ public class GrowthActivity extends AppCompatActivity {
         mDeepLinkUri = (EditText)findViewById(R.id.deeplinkuri);
         mActivity = this;
 
-
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

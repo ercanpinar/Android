@@ -54,6 +54,7 @@ public class GCMReceiver extends WakefulBroadcastReceiver {
 
     @Override
     public final void onReceive(final Context context, final Intent intent) {
+        Log.e("Anurag","Received push from server");
         try{
         if ("com.google.android.c2dm.intent.RECEIVE".equals(intent.getAction())) {
             //displayAllExtras(intent.getExtras());

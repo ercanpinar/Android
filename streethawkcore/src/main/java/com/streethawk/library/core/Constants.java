@@ -94,8 +94,8 @@ interface Constants {
 
     /*Library version*/
     String SELLING_ARGUMENT    = "1";
-    String FEATURE_NUMBER      = "8";
-    String BUGFIX_NUMBER       = "4";
+    String FEATURE_NUMBER      = "9";
+    String BUGFIX_NUMBER       = "0";
 
     /*Release parameters */
     String SHLIBRARY_VERSION = SELLING_ARGUMENT + "." + FEATURE_NUMBER + "." + BUGFIX_NUMBER;
@@ -103,4 +103,17 @@ interface Constants {
     String DISTRIBUTION_TYPE = DISTRIBUTION_AAR;
     String BROADCAST_APP_STATUS_CHK = "com.streethawk.intent.action.gcm.STREETHAWK_APP_STATUS_CHK";
     String KEY_ADV_ID= "sh_advertising_identifier";
+
+
+    String ID       = "id";
+    String PARENT   = "parent";
+
+
+    String SUPERTAG_NAME     = "name";
+    String SUPERTAG_TYPE     = "type";
+    String SUPERTAG_VALUE    = "value";
+
+
+
+
 }

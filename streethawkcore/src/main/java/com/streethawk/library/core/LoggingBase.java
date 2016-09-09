@@ -63,9 +63,9 @@ public class LoggingBase implements Constants {
 
     /*Member variables*/
     private static String mHostUrl = null;
-    private  static final String PROD_DEFAULT_HOST_URL = "https://api.streethawk.com";
+    //private  static final String PROD_DEFAULT_HOST_URL = "https://api.streethawk.com";
     //private  static final String PROD_DEFAULT_HOST_URL = "https://staging.streethawk.com";
-    //private  static final String PROD_DEFAULT_HOST_URL = "https://hawk0.streethawk.com";
+    private  static final String PROD_DEFAULT_HOST_URL = "https://hawk.streethawk.com";
 
     protected enum ApiMethod {
         APP_GET_STATUS,

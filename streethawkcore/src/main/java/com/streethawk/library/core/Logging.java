@@ -340,6 +340,12 @@ public class Logging extends LoggingBase {
         }).start();
     }
 
+
+
+
+
+
+
     /**
      * Function returns key count which acts as key for logs in logbuffer shared pref.
      * @return
@@ -397,8 +403,6 @@ public class Logging extends LoggingBase {
                     sessionId = null;
             }
         }
-
-
         String logid = Integer.toString(getLogId(mContext));
         params.putString(LOG_ID, logid);
         params.putString(CREATED, Util.getFormattedDateTime(System.currentTimeMillis(), true));
@@ -416,7 +420,6 @@ public class Logging extends LoggingBase {
                         } else {
                             dictionary.put(name, params.getString(name));
                         }
-
                         continue;
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -633,7 +636,6 @@ public class Logging extends LoggingBase {
                             OutputStream os = connection.getOutputStream();
                             BufferedWriter writer = new BufferedWriter(
                                     new OutputStreamWriter(os, "UTF-8"));
-                            //String logs = Util.getPostDataString(logMap);
                             String logs="";
                             boolean first = true;
                             for (Map.Entry<String, String> entry : logMap.entrySet()) {
@@ -656,7 +658,6 @@ public class Logging extends LoggingBase {
                                 logs+=result.toString();
                                 result = null; //Force GC
                             }
-
                             writer.write(logs);
                             writer.flush();
                             writer.close();

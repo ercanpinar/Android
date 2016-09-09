@@ -62,6 +62,9 @@ public class FeedList extends AppCompatActivity implements ISHFeedItemObserver, 
     private final String FEED_VIDEO = "video";
     private final String CONTENT = "content";
 
+
+
+
     private ListView mFeedItemListView;
     FeedItemAdapter mListViewAdapter;
 
@@ -74,7 +77,9 @@ public class FeedList extends AppCompatActivity implements ISHFeedItemObserver, 
                     JSONObject feedObject = feeds.getJSONObject(i);
                     FeedItem feedItemObject = new FeedItem();
                     payLoadParser(feedItemObject, feedObject);
+                    Log.e("Anurag","2 ************ FeedID"+feedItemObject.getFeedId()+feedItemObject.getFeedTitle());
                     mFeedList.add(feedItemObject);
+                    Log.e("Anurag","Feed read");
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -94,7 +99,6 @@ public class FeedList extends AppCompatActivity implements ISHFeedItemObserver, 
     public void shFeedReceived(final JSONArray feeds) {
         if (null == feeds)
             return;
-
         String title = null;
         String message = null;
         String url = null;
@@ -106,6 +110,9 @@ public class FeedList extends AppCompatActivity implements ISHFeedItemObserver, 
         mFeedList.clear();
         new fetchFeedListTask().execute(feeds);
     }
+
+
+
 
     private void payLoadParser(final FeedItem feedItemObject, final JSONObject feedJsonObject) {
         if (null != feedJsonObject) {
@@ -150,7 +157,8 @@ public class FeedList extends AppCompatActivity implements ISHFeedItemObserver, 
                 e.printStackTrace();
             }
             try {
-                feedItemObject.setFeedId(feedJsonObject.getString(FEEDID));
+                String FeedId = feedJsonObject.getString(FEEDID);
+                feedItemObject.setFeedId(FeedId);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -163,7 +171,7 @@ public class FeedList extends AppCompatActivity implements ISHFeedItemObserver, 
                     if (aps != null) {
 
                         try {
-                            feedItemObject.setFeedId(aps.getString(SOUND));
+                            feedItemObject.setSound(aps.getString(SOUND));
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -271,6 +279,8 @@ public class FeedList extends AppCompatActivity implements ISHFeedItemObserver, 
             LayoutInflater inflater = (LayoutInflater) getApplicationContext()
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             View rowView = inflater.inflate(R.layout.feedsummarydisplay, parent, false);
+            if(mFeedList.size()==0)
+                return rowView;
             FeedItem obj = mFeedList.get(position);
             TextView title = (TextView) rowView.findViewById(R.id.feedtitle);
             TextView message = (TextView) rowView.findViewById(R.id.feedmessage);
@@ -293,6 +303,7 @@ public class FeedList extends AppCompatActivity implements ISHFeedItemObserver, 
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 FeedItem obj = mFeedList.get(position);
+                obj.displayForDebugging("Anurag","OnItemClick");
                 Context context = getApplicationContext();
                 Intent intent = new Intent(context, FeedViewerActivity.class);
                 intent.putExtra("FEEDITEM_PARCEL",obj);

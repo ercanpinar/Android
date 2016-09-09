@@ -45,11 +45,7 @@ import java.net.URL;
  */
 public class SHFeedItem implements Constants{
     private static Context mContext;
-    private final String OFFSET         = "offset";
-    private final int CODE_FEED_ACK     = 8200;
-    private final int CODE_FEED_RESULT  = 8201;
-    private final String SHFEEDID       = "feed_id";
-    private final String SHRESULT       = "result";
+
 
     protected static final String BROADCAST_NEW_FEED ="com.streethawk.intent.action.newfeed";
     private static ISHFeedItemObserver mObserver = null;
@@ -122,11 +118,14 @@ public class SHFeedItem implements Constants{
         manager.addLogsForSending(params);
     }
 
-
     /**
      * Read feeds from server
      * @param offset
      */
+
+    //TODO: change this to return feed from locally stored String
+    //May be later
+
     public void readFeedData(final int offset){
         if (null == mContext)
             return;

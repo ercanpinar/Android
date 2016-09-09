@@ -28,6 +28,8 @@ import android.widget.ListView;
 import com.streethawk.library.beacon.INotifyBeaconTransition;
 import com.streethawk.library.core.StreetHawk;
 import com.streethawk.library.core.Util;
+import com.streethawk.library.feeds.SHTips;
+import com.streethawk.library.feeds.SHTours;
 import com.streethawk.library.geofence.INotifyGeofenceTransition;
 import com.streethawk.library.growth.Growth;
 import com.streethawk.library.growth.IGrowth;
@@ -167,8 +169,19 @@ public class MainActivity extends AppCompatActivity implements
         return new View.OnClickListener(){
             @Override
             public void onClick(View view) {
+
+/*
                 Growth.getInstance(mActivity).getShareUrlForAppDownload("StreetHawkApp","streethawkapp://activity=MainActivity","StreetHawkApp","inApp",
                         "","","http://www.streethawk.com",null);
+
+*/
+                /*
+                SHTips tips = new SHTips();
+                tips.unit_test_tooltip(mActivity,"fabmain");
+                */
+                SHTours tours =new SHTours(mActivity);
+                tours.startTour("454186");
+
             }
         };
     }
@@ -263,7 +276,6 @@ public class MainActivity extends AppCompatActivity implements
         super.onResume();
         Intent Sintent = new Intent(this,TestService.class);
         startService(Sintent);
-      //  checkDrawOverlayPermission();
     }
 
 

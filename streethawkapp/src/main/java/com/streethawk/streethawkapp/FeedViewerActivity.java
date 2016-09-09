@@ -26,8 +26,10 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.streethawk.library.feeds.ISHFeedItemObserver;
+import com.streethawk.library.feeds.SHFeedItem;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -43,6 +45,44 @@ public class FeedViewerActivity extends Activity implements Constants {
     private FeedItem mFeedItem = null;
     private FrameLayout mBaseFrame;
 
+    private int ACCEPTED = 1;
+    private int DECLINED = -1;
+    private int LATER   =  0;
+
+    private static String  mFeedId = null;
+
+    public void SendLike(View view){
+        try {
+            int id = Integer.parseInt(mFeedId);
+            SHFeedItem.getInstance(getApplicationContext()).notifyFeedResult(id,ACCEPTED);
+            Toast.makeText(getApplicationContext(),"Sent feed result ACCEPTED",Toast.LENGTH_LONG).show();
+        }catch(NumberFormatException e){
+            Toast.makeText(getApplicationContext(),"FeedId is not a int",Toast.LENGTH_LONG).show();
+        }
+    }
+
+    public void SendDislike(View view){
+        try {
+            int id = Integer.parseInt(mFeedId);
+            SHFeedItem.getInstance(getApplicationContext()).notifyFeedResult(id,DECLINED);
+            Toast.makeText(getApplicationContext(),"Sent feed result DECLINED",Toast.LENGTH_LONG).show();
+        }catch(NumberFormatException e){
+            Toast.makeText(getApplicationContext(),"FeedId is not a int",Toast.LENGTH_LONG).show();
+        }
+    }
+
+    public void SendLater(View view){
+        try {
+            int id = Integer.parseInt(mFeedId);
+            SHFeedItem.getInstance(getApplicationContext()).notifyFeedResult(id,LATER);
+            Toast.makeText(getApplicationContext(),"Sent feed result LATER",Toast.LENGTH_LONG).show();
+        }catch(NumberFormatException e){
+            Toast.makeText(getApplicationContext(),"FeedId is not a int",Toast.LENGTH_LONG).show();
+        }
+    }
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,88 +94,28 @@ public class FeedViewerActivity extends Activity implements Constants {
         }
     }
 
+    private void sendFeedAckLog(){
+        if(mFeedId==null) {
+            return;
+        }
+        try {
+            int int_feed_id = Integer.parseInt(mFeedId);
+            SHFeedItem.getInstance(this).sendFeedAck(int_feed_id);
+        }catch (NumberFormatException e){
+            e.printStackTrace();
+        }
+    }
+
+
     @Override
     protected void onResume() {
         super.onResume();
-        mBaseFrame = (FrameLayout) findViewById(R.id.baseframe);
         if (mFeedItem != null) {
-            String title = mFeedItem.getFeedTitle();
-            if (null != title) {
-                if (!title.isEmpty()) {
-                    TextView titleTV = new TextView(getApplicationContext());
-                    titleTV.setGravity(Gravity.CENTER_HORIZONTAL);
-                    titleTV.setBackgroundColor(Color.parseColor("#000000"));
-                    titleTV.setTextColor(Color.parseColor("#000000"));
-                    titleTV.setText(title);
-                }
-            }
-            String message = mFeedItem.getFeedMessage();
-            if (null != message) {
-                if (!message.isEmpty()) {
-                    TextView MessageTV = new TextView(getApplicationContext());
-                    MessageTV.setTextColor(Color.parseColor("#000000"));
-                    MessageTV.setText(message);
-                }
-            }
-            String webUrl = mFeedItem.getURL();
-            if (null != webUrl) {
-                if (!webUrl.isEmpty()) {
-                    LayoutInflater inflater = (LayoutInflater) getApplicationContext()
-                            .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                    WebView webView = (WebView) inflater.inflate(R.layout.feed_web_view, mBaseFrame, false);
-                    webView.setWebViewClient(new WebViewClient());
-                    webView.loadUrl(webUrl);
-                    mBaseFrame.addView(webView);
-                }
-            }
-            String imageUrl = mFeedItem.getImage();
-            if (null != imageUrl) {
-                if (!imageUrl.isEmpty()) {
-                    DisplayImageView(imageUrl);
-                }
-            }
-            String videoUrl = mFeedItem.getVideo();
-            if (null != videoUrl) {
-                if (!videoUrl.isEmpty()) {
-                    //TODO Display Video URL
-                }
+            mFeedId = mFeedItem.getFeedId();
+            sendFeedAckLog();
+            TextView feed = (TextView)findViewById(R.id.jsonText);
+            feed.setText(mFeedItem.getObjectDetails());
             }
         }
-        mBaseFrame.invalidate();
+
     }
-
-// TODO : Only for testing, This fetch is redundant
-class fetchImageTask extends AsyncTask<String, Void, Bitmap> {
-    @Override
-    protected Bitmap doInBackground(String... urls) {
-        String imageUrl = urls[0];
-        try {
-            Log.e("Anurag", "ImageView " + imageUrl);
-            InputStream in = new java.net.URL(imageUrl).openStream();
-            return BitmapFactory.decodeStream(in);
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    @Override
-    protected void onPostExecute(Bitmap image) {
-        super.onPostExecute(image);
-        FrameLayout frame = (FrameLayout) findViewById(R.id.baseframe);
-        LayoutInflater inflater = (LayoutInflater) getApplicationContext()
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        ImageView imageView = (ImageView) inflater.inflate(R.layout.feed_image_view, frame, false);
-        imageView.setImageBitmap(image);
-        frame.addView(imageView);
-    }
-
-}
-
-    private void DisplayImageView(String url) {
-        new fetchImageTask().execute(url);
-    }
-
-}

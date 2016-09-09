@@ -147,12 +147,12 @@ class BeaconDB {
                     String beaconId = cursor.getString(cursor.getColumnIndex(BeaconDBHelper.COLUMN_BEACONID));
                     database.close();
                     return beaconId;
-                } else {
-                    cursor.close();
-                    database.close();
-                    helper.close();
-                    return null;
-                }
+            } else {
+                cursor.close();
+                database.close();
+                helper.close();
+                return null;
+            }
             }catch(SQLiteException e){
                 e.printStackTrace();
                 database.close();

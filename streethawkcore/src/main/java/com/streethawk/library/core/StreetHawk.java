@@ -795,7 +795,7 @@ public enum StreetHawk implements Constants{
                             SharedPreferences.Editor e = prefs.edit();
                             e.putString(SHPGPREVPAGE, currentActivity);
                             e.commit();
-                            appActivityTracking.notifyNewActivity(context, currentActivity, storedActivity);
+                            appActivityTracking.notifyNewActivity(activity, currentActivity, storedActivity);
                             appActivityTracking.onAppForegrounded(activity);
                         }
                         else if (currentActivity.equals(storedActivity)) {
@@ -807,7 +807,7 @@ public enum StreetHawk implements Constants{
                             SharedPreferences.Editor e = prefs.edit();
                             e.putString(SHPGPREVPAGE, currentActivity);
                             e.apply();
-                            appActivityTracking.notifyNewActivity(context, currentActivity, storedActivity);
+                            appActivityTracking.notifyNewActivity(activity, currentActivity, storedActivity);
                         }
                     }
                 }
@@ -833,7 +833,7 @@ public enum StreetHawk implements Constants{
                         SharedPreferences.Editor e = prefs.edit();
                         e.putString(SHPGPREVPAGE, null);
                         e.commit();
-                        appActivityTracking.notifyNewActivity(context, null, storedActivity);
+                        appActivityTracking.notifyNewActivity(activity, null, storedActivity);
                         appActivityTracking.onAppBackgrounded(activity);
                     }
                 } else {
@@ -842,7 +842,7 @@ public enum StreetHawk implements Constants{
                     SharedPreferences.Editor e = prefs.edit();
                     e.putString(SHPGPREVPAGE, null);
                     e.commit();
-                    appActivityTracking.notifyNewActivity(context, null, storedActivity);
+                    appActivityTracking.notifyNewActivity(activity, null, storedActivity);
                     appActivityTracking.onAppBackgrounded(activity);
                 }
                 return;

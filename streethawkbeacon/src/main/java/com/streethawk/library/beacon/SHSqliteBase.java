@@ -11,7 +11,7 @@ import com.streethawk.library.core.Util;
 public abstract class SHSqliteBase extends SQLiteOpenHelper {
 
     private static final String STREETHAWK_DATABASE  = "streethawk.db";
-    private static final int STREETHAWK_DATABASE_VERSION = 8;
+    private static final int STREETHAWK_DATABASE_VERSION = 9;
     public static final String PUSH_NOTIFICATION_TABLE_NAME = "pushnotification";
     private final String KEY_IBEACON = "shKeyIBeacon";
     private final String KEY_GEOFENCE = "shKeyGeofenceList";

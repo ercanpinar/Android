@@ -5,11 +5,12 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 public abstract class SHSqliteBase extends SQLiteOpenHelper {
 
     private static final String STREETHAWK_DATABASE  = "streethawk.db";
-    private static final int STREETHAWK_DATABASE_VERSION = 8;
+    private static final int STREETHAWK_DATABASE_VERSION = 9;
     public static final String PUSH_NOTIFICATION_TABLE_NAME = "pushnotification";
     private final String KEY_IBEACON = "shKeyIBeacon";
     private final String KEY_GEOFENCE = "shKeyGeofenceList";
@@ -58,7 +59,6 @@ public abstract class SHSqliteBase extends SQLiteOpenHelper {
     protected static final String COLUMN_MAJOR_NUMBER  = "majorno";
     protected static final String COLUMN_MINOR_NUMBER  = "minorno";
 
-
     protected static final String GEOFENCE_TABLE_NAME  = "geofence";
     protected static final String COLUMN_GEOFENCEID    = "id";
     protected static final String COLUMN_LATITUDE      = "latitude";
@@ -75,6 +75,17 @@ public abstract class SHSqliteBase extends SQLiteOpenHelper {
     protected static final String COLUMN_B2ICON             = "b2icon";
     protected static final String COLUMN_B3TITLE            = "b3title";
     protected static final String COLUMN_B3ICON             = "b3icon";
+
+    /* Start ToolTips */
+    public static final String TOOLTIP_TABLE_NAME    = "tooltip";
+    public static final String COLUMN_TEXT_ID           = "textid";
+    public static final String COLUMN_RES_ID            = "resid";
+    public static final String COLUMN_PARENT_VIEW       = "parentview";
+    public static final String COLUMN_X                 = "x";
+    public static final String COLUMN_Y                 = "y";
+    /* End ToolTips*/
+
+
 
     public SHSqliteBase(Context context) {
         super(context, STREETHAWK_DATABASE, null, STREETHAWK_DATABASE_VERSION);
@@ -135,10 +146,21 @@ public abstract class SHSqliteBase extends SQLiteOpenHelper {
                 + COLUMN_B3TITLE + TEXT + COMA
                 + COLUMN_B3ICON + INTEGER
                 + ")";
+
+        final String TOOLTIP_DATABASE_CREATE = "create table "
+                + TOOLTIP_TABLE_NAME + "(" + COLUMN_RES_ID
+                + INTEGER + PRIMARY_KEY + UNIQUE + COMA
+                + COLUMN_TEXT_ID + TEXT + COMA
+                + COLUMN_PARENT_VIEW + TEXT + COMA
+                + COLUMN_X + INTEGER + COMA
+                + COLUMN_Y + INTEGER
+                + ")";
+
         database.execSQL(PUSH_NOTIFICATION_DATABASE_CREATE);
         database.execSQL(BEACON_DATABASE_CREATE);
         database.execSQL(GEOFENCE_DATABASE_CREATE);
         database.execSQL(BTNPAIR_DATABASE_CREATE);
+        database.execSQL(TOOLTIP_DATABASE_CREATE);
     }
 
     @Override
@@ -147,6 +169,7 @@ public abstract class SHSqliteBase extends SQLiteOpenHelper {
         database.execSQL("DROP TABLE IF EXISTS " + BEACON_TABLE_NAME);
         database.execSQL("DROP TABLE IF EXISTS " + GEOFENCE_TABLE_NAME);
         database.execSQL("DROP TABLE IF EXISTS " + BUTTON_PAIR_TABLE_NAME);
+        database.execSQL("DROP TABLE IF EXISTS " + TOOLTIP_TABLE_NAME);
 
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
         SharedPreferences.Editor e = sharedPreferences.edit();
@@ -155,5 +178,4 @@ public abstract class SHSqliteBase extends SQLiteOpenHelper {
         e.commit();
         onCreate(database);
     }
-
 }

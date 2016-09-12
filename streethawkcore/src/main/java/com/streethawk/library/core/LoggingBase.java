@@ -281,6 +281,9 @@ public class LoggingBase implements Constants {
             case CODE_INCREMENT_TAG:            // 8997
             case CODE_UPDATE_CUSTOM_TAG:        // 8999
             case CODE_DELETE_CUSTOM_TAG:        // 8998
+            //Added for tips and tours
+            case CODE_FEED_RESULT:
+            case CODE_FEED_ACK:
                 return true;
             default:
                 return false;

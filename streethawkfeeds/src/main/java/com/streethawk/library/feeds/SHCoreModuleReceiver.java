@@ -149,9 +149,15 @@ public class SHCoreModuleReceiver extends BroadcastReceiver implements Constants
                                         try {
                                             String tour = data.getString(TOUR);
                                             editor.putString(feedId, tour.toString());
+                                            editor.commit();
                                         } catch (JSONException e) {
                                             e.printStackTrace();
                                         }
+                                        editor.commit();
+                                        break;
+                                    case MODAL:
+                                        String modal = data.getString(MODAL);
+                                        editor.putString(feedId, modal.toString());
                                         editor.commit();
                                         break;
                                     case TIP:

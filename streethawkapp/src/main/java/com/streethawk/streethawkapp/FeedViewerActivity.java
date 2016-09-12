@@ -54,8 +54,9 @@ public class FeedViewerActivity extends Activity implements Constants {
     public void SendLike(View view){
         try {
             int id = Integer.parseInt(mFeedId);
-            SHFeedItem.getInstance(getApplicationContext()).notifyFeedResult(id,ACCEPTED);
-            Toast.makeText(getApplicationContext(),"Sent feed result ACCEPTED",Toast.LENGTH_LONG).show();
+            SHFeedItem.getInstance(getApplicationContext()).notifyFeedResult(id,"accepted",false);
+
+            Toast.makeText(getApplicationContext(),"Sent feed result accepted",Toast.LENGTH_LONG).show();
         }catch(NumberFormatException e){
             Toast.makeText(getApplicationContext(),"FeedId is not a int",Toast.LENGTH_LONG).show();
         }
@@ -64,8 +65,8 @@ public class FeedViewerActivity extends Activity implements Constants {
     public void SendDislike(View view){
         try {
             int id = Integer.parseInt(mFeedId);
-            SHFeedItem.getInstance(getApplicationContext()).notifyFeedResult(id,DECLINED);
-            Toast.makeText(getApplicationContext(),"Sent feed result DECLINED",Toast.LENGTH_LONG).show();
+            SHFeedItem.getInstance(getApplicationContext()).notifyFeedResult(id,"rejected",true);
+            Toast.makeText(getApplicationContext(),"Sent feed result rejected",Toast.LENGTH_LONG).show();
         }catch(NumberFormatException e){
             Toast.makeText(getApplicationContext(),"FeedId is not a int",Toast.LENGTH_LONG).show();
         }
@@ -74,14 +75,12 @@ public class FeedViewerActivity extends Activity implements Constants {
     public void SendLater(View view){
         try {
             int id = Integer.parseInt(mFeedId);
-            SHFeedItem.getInstance(getApplicationContext()).notifyFeedResult(id,LATER);
-            Toast.makeText(getApplicationContext(),"Sent feed result LATER",Toast.LENGTH_LONG).show();
+            SHFeedItem.getInstance(getApplicationContext()).notifyFeedResult(id,"postponed",true);
+            Toast.makeText(getApplicationContext(),"Sent feed result postponed",Toast.LENGTH_LONG).show();
         }catch(NumberFormatException e){
             Toast.makeText(getApplicationContext(),"FeedId is not a int",Toast.LENGTH_LONG).show();
         }
     }
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

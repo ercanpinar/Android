@@ -28,6 +28,7 @@ import android.widget.ListView;
 import com.streethawk.library.beacon.INotifyBeaconTransition;
 import com.streethawk.library.core.StreetHawk;
 import com.streethawk.library.core.Util;
+import com.streethawk.library.feeds.Modal;
 import com.streethawk.library.feeds.SHTips;
 import com.streethawk.library.feeds.SHTours;
 import com.streethawk.library.geofence.INotifyGeofenceTransition;
@@ -178,9 +179,13 @@ public class MainActivity extends AppCompatActivity implements
                 /*
                 SHTips tips = new SHTips();
                 tips.unit_test_tooltip(mActivity,"fabmain");
-                */
+
                 SHTours tours =new SHTours(mActivity);
                 tours.startTour("454186");
+                */
+
+                Modal modal = new Modal();
+                modal.unit_test_tooltip(mActivity);
 
             }
         };

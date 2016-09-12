@@ -101,23 +101,58 @@ public class SHFeedItem implements Constants{
         manager.addLogsForSending(params);
     }
 
+
+
+
     /**
+     *
      * Notify feed result for user action on feed item.
      * @param feedId Id of feed item associated with result
      * @param result 1 Accepted, 0 postponed, -1 decline
      */
+    @Deprecated
     public void notifyFeedResult(int feedId, int result) {
+        if(1==result){
+            notifyFeedResult(feedId,"accepted",false);
+            return;
+        }
+        if(0==result){
+            notifyFeedResult(feedId,"postponed",false);
+            return;
+        }
+        if(-1==result){
+            notifyFeedResult(feedId,"rejected",false);
+            return;
+        }
+    }
+
+    /**
+     *
+     * @param feedId Id of the feed item associated with the result
+     * @param result Feed result in String
+     * @param feedDelete set to true if feed items should be deleted from server for the given install
+     */
+    public void notifyFeedResult(int feedId,String result,boolean feedDelete){
         if (null == mContext) {
             Log.e(Util.TAG, "notifyFeedResult: context==null returning..");
         }
         Bundle params = new Bundle();
         params.putString(Util.CODE, Integer.toString(CODE_FEED_RESULT));
         params.putInt(SHFEEDID, feedId);
-        params.putInt(SHRESULT, result);
+        JSONObject status  =  new JSONObject();
+        try {
+            status.put(RESULT_RESULT,result);
+            if(feedDelete)
+                status.put(RESULT_FEED_DELETE,"true");
+            else
+                status.put(RESULT_FEED_DELETE,"false");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        params.putString(STATUS,status.toString());
         Logging manager = Logging.getLoggingInstance(mContext);
         manager.addLogsForSending(params);
     }
-
     /**
      * Read feeds from server
      * @param offset

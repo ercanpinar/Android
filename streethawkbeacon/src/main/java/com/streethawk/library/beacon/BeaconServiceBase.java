@@ -118,7 +118,7 @@ public abstract class BeaconServiceBase extends Service implements Constants{
             mOldBeacons.clear();
             return;
         }
-        params.putString(Util.CODE, Integer.toString(CODE_IBEACON_UPDATES));
+        params.putInt(Util.CODE, CODE_IBEACON_UPDATES);
         params.putString(Util.SHMESSAGE_ID, null);
         params.putString("json", object.toString());
         manager.addLogsForSending(params);
@@ -342,7 +342,7 @@ public abstract class BeaconServiceBase extends Service implements Constants{
             if (object.toString().equals("{ }")) {
                 return;
             }
-            params.putString(Util.CODE, Integer.toString(CODE_IBEACON_UPDATES));
+            params.putInt(Util.CODE,CODE_IBEACON_UPDATES);
             params.putString(Util.SHMESSAGE_ID, null);
             params.putString("json", object.toString());
             Log.i(Util.TAG, SUBTAG + "Notifying beacons detected" + object.toString());

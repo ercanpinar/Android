@@ -422,6 +422,7 @@ public class SHTips extends Utils implements Constants {
     }
 
 
+
     public void registerClickListener(ITipClickEvents eventListener) {
         if (null == mClickEventListeners) {
             mClickEventListeners = new ArrayList<ITipClickEvents>();

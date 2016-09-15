@@ -95,7 +95,7 @@ public class Beacons implements Constants{
                 public void run() {
                     Logging manager = Logging.getLoggingInstance(mContext);
                     Bundle params = new Bundle();
-                    params.putString(Util.CODE, Integer.toString(CODE_IBEACON_UPDATES));
+                    params.putInt(Util.CODE,CODE_IBEACON_UPDATES);
                     params.putString(Util.SHMESSAGE_ID, null);
                     params.putString("json", object.toString());
                     manager.addLogsForSending(params);
@@ -140,7 +140,7 @@ public class Beacons implements Constants{
                 public void run() {
                     Logging manager = Logging.getLoggingInstance(mContext);
                     Bundle params = new Bundle();
-                    params.putString(Util.CODE, Integer.toString(CODE_IBEACON_UPDATES));
+                    params.putInt(Util.CODE, CODE_IBEACON_UPDATES);
                     params.putString(Util.SHMESSAGE_ID, null);
                     params.putString("json", object.toString());
                     manager.addLogsForSending(params);

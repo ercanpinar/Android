@@ -214,7 +214,7 @@ public class SHCoreModuleReceiver extends BroadcastReceiver implements Constants
                                       if (!(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))) {
                                           try {
                                               Bundle extras = new Bundle();
-                                              extras.putString(Util.CODE, Integer.toString(CODE_USER_DISABLES_LOCATION));
+                                              extras.putInt(Util.CODE,CODE_USER_DISABLES_LOCATION);
                                               StreetHawkLocationService.getInstance(context).resetCurrentLocation(context);
                                               Logging.getLoggingInstance(context).addLogsForSending(extras);
                                               StreetHawkLocationService.getInstance(context).stopMonitoring();
@@ -248,7 +248,7 @@ public class SHCoreModuleReceiver extends BroadcastReceiver implements Constants
                                                                             return;
                                                                         StreetHawkLocationService.getInstance(context).forceStoreCurrentLocation(context);
                                                                         Bundle extras = new Bundle();
-                                                                        extras.putString(Util.CODE, Integer.toString(CODE_LOCATION_UPDATES));
+                                                                        extras.putInt(Util.CODE,CODE_LOCATION_UPDATES);
                                                                         extras.putString(Util.SHMESSAGE_ID, null);
                                                                         extras.putString(LOCAL_TIME, Util.getFormattedDateTime(System.currentTimeMillis(), false));
                                                                         Logging.getLoggingInstance(context).addLogsForSending(extras);
@@ -284,11 +284,11 @@ public class SHCoreModuleReceiver extends BroadcastReceiver implements Constants
                         return;
                     StreetHawkLocationService.getInstance(context).forceStoreCurrentLocation(context);
                     Bundle extras = new Bundle();
-                    extras.putString(Util.CODE, Integer.toString(CODE_PERIODIC_LOCATION_UPDATE));
+                    extras.putInt(Util.CODE, CODE_PERIODIC_LOCATION_UPDATE);
                     extras.putString(Util.SHMESSAGE_ID, null);
                     extras.putString(LOCAL_TIME, Util.getFormattedDateTime(System.currentTimeMillis(), false));
                     Logging.getLoggingInstance(context).addLogsForSending(extras);
-                    extras.putString(Util.CODE, Integer.toString(CODE_LOCATION_UPDATES));
+                    extras.putInt(Util.CODE,CODE_LOCATION_UPDATES);
                     extras.putString(Util.SHMESSAGE_ID, null);
                     extras.putString(LOCAL_TIME, Util.getFormattedDateTime(System.currentTimeMillis(), false));
                     Logging.getLoggingInstance(context).addLogsForSending(extras);

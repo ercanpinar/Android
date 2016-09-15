@@ -123,7 +123,7 @@ public class GeofenceService extends IntentService {
                     return;
                 }
                 Bundle params = new Bundle();
-                params.putString(Util.CODE, Integer.toString(Constants.CODE_GEOFENCE_UPDATES));
+                params.putInt(Util.CODE,Constants.CODE_GEOFENCE_UPDATES);
                 params.putString(Util.SHMESSAGE_ID, null);
                 params.putString("json", logs);
                 GeofenceLogging.getInstance().sendLogs(context, params);
@@ -182,7 +182,7 @@ public class GeofenceService extends IntentService {
                 database.getMatchedGeofenceData(geofenceID, object);
                 try {
                     Bundle params = new Bundle();
-                    params.putString(Util.CODE, Integer.toString(Constants.CODE_GEOFENCE_UPDATES));
+                    params.putInt(Util.CODE,Constants.CODE_GEOFENCE_UPDATES);
                     params.putString(Util.SHMESSAGE_ID, null);
                     JSONObject matchGeofence = new JSONObject();
                     geofenceID = spitGeofenceId(geofenceID);
@@ -214,7 +214,7 @@ public class GeofenceService extends IntentService {
                 database.getMatchedGeofenceData(geofenceID, object);
                 try {
                     Bundle params = new Bundle();
-                    params.putString(Util.CODE, Integer.toString(Constants.CODE_GEOFENCE_UPDATES));
+                    params.putInt(Util.CODE,Constants.CODE_GEOFENCE_UPDATES);
                     params.putString(Util.SHMESSAGE_ID, null);
                     JSONObject matchGeofence = new JSONObject();
                     geofenceID = spitGeofenceId(geofenceID);

@@ -137,7 +137,7 @@ public class StreethawkLocationService extends Service implements Constants{
                     Bundle extras = new Bundle();
                     double lat = location.getLatitude();
                     double lng = location.getLongitude();
-                    extras.putString(Util.CODE, Integer.toString(CODE_LOCATION_UPDATES));
+                    extras.putInt(Util.CODE,CODE_LOCATION_UPDATES);
                     extras.putString(Util.SHMESSAGE_ID, null);
                     extras.putString(LOCAL_TIME, Util.getFormattedDateTime(System.currentTimeMillis(), false));
                     extras.putString(SHLATTITUDE, Double.toString(lat));

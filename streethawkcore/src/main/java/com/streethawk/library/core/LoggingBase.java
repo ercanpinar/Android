@@ -581,7 +581,7 @@ public class LoggingBase implements Constants {
                 if (key instanceof String) {
                     switch (key) {
                         case CODE:
-                            code = object.getString(CODE);
+                            code = object.getString(ERROR_CODE);
                             break;
                         case JSON_VALUE:
                             value = object.getString(JSON_VALUE);

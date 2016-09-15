@@ -175,13 +175,17 @@ public class TrigerActivityTracker extends Utils implements Constants {
 
     public void onEnteringNewActivity(Activity activity) {
 
-        String viewName = getViewName(activity.getClass().getName());
+        final String viewName = getViewName(activity.getClass().getName());
         SHTriger triger = new SHTriger();
         new TrigerDB(activity.getApplicationContext()).getTrigerForView(viewName, triger);
         if (null != triger) {
+            //Start Tour/Modal based on the trigger
             displayTriggerInCurrentView(activity, triger);
-        }
+            return;
+        }else{
 
+            //Start Tour/Modal based on user entering the activity
+        }
     }
 
     public void onLeavingNewActivity(Activity activity) {

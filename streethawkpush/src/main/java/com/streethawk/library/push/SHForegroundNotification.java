@@ -748,7 +748,7 @@ class SHForegroundNotification extends NotificationBase {
     private void SendErrorLog(String comment) {
         try {
             Bundle params = new Bundle();
-            params.putString(Util.CODE, Integer.toString(CODE_ERROR));
+            params.putInt(Util.CODE,CODE_ERROR);
             params.putString(Util.TYPE_STRING, comment);
             Logging manager = Logging.getLoggingInstance(mContext);
             manager.addLogsForSending(params);

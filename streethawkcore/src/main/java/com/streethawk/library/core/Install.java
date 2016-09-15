@@ -363,7 +363,7 @@ class Install extends LoggingBase {
                                 ed.commit();
                                 StreetHawk.INSTANCE.tagString(KEY_ADV_ID, advId);
                                 Bundle extras  = new Bundle();
-                                extras.putString(CODE, Integer.toString(CODE_UPDATE_CUSTOM_TAG));
+                                extras.putInt(CODE, CODE_UPDATE_CUSTOM_TAG);
                                 extras.putString(SHMESSAGE_ID, null);
                                 extras.putString(SH_KEY, KEY_ADV_ID);
                                 extras.putString(TYPE_STRING, advId);
@@ -407,7 +407,7 @@ class Install extends LoggingBase {
                             }
                             int timezone = Util.getTimeZoneOffsetInMinutes();
                             Bundle logParams = new Bundle();
-                            logParams.putString(CODE, Integer.toString(CODE_DEVICE_TIMEZONE));
+                            logParams.putInt(CODE,CODE_DEVICE_TIMEZONE);
                             logParams.putString(SHMESSAGE_ID, null);
                             logParams.putString(TYPE_NUMERIC, Integer.toString(Util.getTimeZoneOffsetInMinutes()));
                             Logging manager = Logging.getLoggingInstance(mContext);

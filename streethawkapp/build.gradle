@@ -46,6 +46,7 @@ dependencies {
     compile project(':streethawkgeofence')
     compile project(':streethawkfeeds')
     compile project(':streethawkdebug')
+    compile project(':streethawkauthor')
 
 
     compile 'com.android.support:appcompat-v7:24.0.0'

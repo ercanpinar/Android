@@ -15,12 +15,9 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -29,10 +26,7 @@ import com.streethawk.library.beacon.INotifyBeaconTransition;
 import com.streethawk.library.core.StreetHawk;
 import com.streethawk.library.core.Util;
 import com.streethawk.library.feeds.Modal;
-import com.streethawk.library.feeds.SHTips;
-import com.streethawk.library.feeds.SHTours;
 import com.streethawk.library.geofence.INotifyGeofenceTransition;
-import com.streethawk.library.growth.Growth;
 import com.streethawk.library.growth.IGrowth;
 import com.streethawk.library.push.ISHObserver;
 import com.streethawk.library.push.Push;
@@ -43,6 +37,10 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import streethawk.com.streethawkauthor.Authoring;
+import streethawk.com.streethawkauthor.ColorPicker;
+import streethawk.com.streethawkauthor.IColorPickerObserver;
 
 public class MainActivity extends AppCompatActivity implements
         Constants,IGrowth,INotifyGeofenceTransition,INotifyBeaconTransition,ISHObserver{
@@ -60,6 +58,8 @@ public class MainActivity extends AppCompatActivity implements
     int INSTALLINFO = FEEDBACK + 1;
     int SETTINGS    = INSTALLINFO + 1;
     int WEBVIEW     = SETTINGS + 1;
+    int AUTHORING   = WEBVIEW + 1;
+    int COLORPICKER = AUTHORING+1;
 
 
 
@@ -162,7 +162,9 @@ public class MainActivity extends AppCompatActivity implements
             "Feedback",
             "Install-Info",
             "Reset ",
-            "WebView"
+            "WebView",
+            "Authoring",
+            "ColorPicker"
     };
 
 
@@ -366,15 +368,37 @@ public class MainActivity extends AppCompatActivity implements
                     Intent webIntent = new Intent(getApplicationContext(),WebViewPOC.class);
                     startActivity(webIntent);
                 }
+                if(AUTHORING==position){
 
+                    /*
+                    Intent authorIntent = new Intent(mActivity, AddButtonService.class);
+                    mActivity.startService(authorIntent);
+
+                    Intent authorIntent = new Intent(mActivity, AskPermission.class);
+                    mActivity.startActivity(authorIntent);
+                    */
+
+                    Authoring authoring = new Authoring(mActivity);
+                    authoring.startAuthoring();
+
+
+                }
+
+                if(COLORPICKER == position){
+                    ColorPicker picker = new ColorPicker();
+                    picker.showColorPicker(mActivity, new IColorPickerObserver() {
+                        @Override
+                        public void onColorSelected(String color) {
+                            Log.e("Anurag","Color selected "+color);
+                        }
+                    });
+
+                }
 
                 if(null!=intent){
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
                 }
-
-
-
             }
         };
     }

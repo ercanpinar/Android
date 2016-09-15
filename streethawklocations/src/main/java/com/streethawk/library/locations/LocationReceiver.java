@@ -56,7 +56,7 @@ public class LocationReceiver extends BroadcastReceiver implements Constants{
                     if (lat == 0 && lng == 0)
                         return;
                     Bundle extras = new Bundle();
-                    extras.putString(Util.CODE, Integer.toString(CODE_LOCATION_UPDATES));
+                    extras.putInt(Util.CODE,CODE_LOCATION_UPDATES);
                     extras.putString(Util.SHMESSAGE_ID, null);
                     extras.putString(LOCAL_TIME, Util.getFormattedDateTime(System.currentTimeMillis(), false));
                     extras.putString(SHLATTITUDE, Double.toString(location.getLatitude()));
@@ -83,7 +83,7 @@ public class LocationReceiver extends BroadcastReceiver implements Constants{
                         if (lat == 0 && lng == 0)
                             return;
                         Bundle extras = new Bundle();
-                        extras.putString(Util.CODE, Integer.toString(CODE_PERIODIC_LOCATION_UPDATE));
+                        extras.putInt(Util.CODE,CODE_PERIODIC_LOCATION_UPDATE);
                         extras.putString(Util.SHMESSAGE_ID, null);
                         extras.putString(LOCAL_TIME, Util.getFormattedDateTime(System.currentTimeMillis(), false));
                         extras.putString(SHLATTITUDE, Double.toString(location.getLatitude()));

@@ -54,7 +54,7 @@ public class FeedViewerActivity extends Activity implements Constants {
     public void SendLike(View view){
         try {
             int id = Integer.parseInt(mFeedId);
-            SHFeedItem.getInstance(getApplicationContext()).notifyFeedResult(id,"accepted",false);
+            SHFeedItem.getInstance(getApplicationContext()).notifyFeedResult(id,"accepted",false,false);
 
             Toast.makeText(getApplicationContext(),"Sent feed result accepted",Toast.LENGTH_LONG).show();
         }catch(NumberFormatException e){
@@ -65,7 +65,7 @@ public class FeedViewerActivity extends Activity implements Constants {
     public void SendDislike(View view){
         try {
             int id = Integer.parseInt(mFeedId);
-            SHFeedItem.getInstance(getApplicationContext()).notifyFeedResult(id,"rejected",true);
+            SHFeedItem.getInstance(getApplicationContext()).notifyFeedResult(id,"rejected",true,true);
             Toast.makeText(getApplicationContext(),"Sent feed result rejected",Toast.LENGTH_LONG).show();
         }catch(NumberFormatException e){
             Toast.makeText(getApplicationContext(),"FeedId is not a int",Toast.LENGTH_LONG).show();
@@ -75,7 +75,7 @@ public class FeedViewerActivity extends Activity implements Constants {
     public void SendLater(View view){
         try {
             int id = Integer.parseInt(mFeedId);
-            SHFeedItem.getInstance(getApplicationContext()).notifyFeedResult(id,"postponed",true);
+            SHFeedItem.getInstance(getApplicationContext()).notifyFeedResult(id,"postponed",true,true);
             Toast.makeText(getApplicationContext(),"Sent feed result postponed",Toast.LENGTH_LONG).show();
         }catch(NumberFormatException e){
             Toast.makeText(getApplicationContext(),"FeedId is not a int",Toast.LENGTH_LONG).show();

@@ -47,10 +47,11 @@ interface Constants {
     int CODE_FEED_RESULT  = 8201;
     String FEED_EXPIRED   = "feed_expired";
 
-    String STATUS               = "status";
-    String RESULT_ID            = "id";
-    String RESULT_RESULT        = "result";
-    String RESULT_FEED_DELETE   = "feed_delete";
+    String STATUS                   = "result";
+    String RESULT_ID                = "id";
+    String RESULT_RESULT            = "status";
+    String RESULT_FEED_DELETE       = "feed_delete";
+    String RESULT_FEED_COMPLETED    = "completed";
 
     String TIP_ID           = "id";
     String TITLE            = "title";

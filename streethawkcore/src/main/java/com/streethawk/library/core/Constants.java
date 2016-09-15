@@ -79,8 +79,13 @@ interface Constants {
     String USER_LOCALE          = "shuserlocale";
     String SHLATTITUDE          = "latitude";
     String SHLONGITUDE          = "longitude";
+
+
     int CODE_FEED_ACK     = 8200;
     int CODE_FEED_RESULT  = 8201;
+
+    String ERROR_CODE = "code";
+
 
 
     //Release type

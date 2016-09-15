@@ -51,7 +51,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.HttpsURLConnection;
 
-public class Logging extends LoggingBase {
+public class Logging extends LoggingBase implements Constants {
 
     private static final String SUBTAG = "Logging ";
 
@@ -60,8 +60,8 @@ public class Logging extends LoggingBase {
     private final int WAIT_BUFFER = 1;
     private static boolean semHeld = false;
 
-    public static final String SHSHARED_PREF_LOGGING    = "shlogbugger";      // to buffer logs
-    public static final String SHSHARED_PREF_STAGGING   = "shbufferstagging"; // temp cache of logs
+    public static final String SHSHARED_PREF_LOGGING = "shlogbugger";      // to buffer logs
+    public static final String SHSHARED_PREF_STAGGING = "shbufferstagging"; // temp cache of logs
 
     /*String constants used in logging*/
     private final String LOGIDCOUNT = "log_id_count";
@@ -80,18 +80,17 @@ public class Logging extends LoggingBase {
     private volatile int logIdCounter;
 
 
-    private Logging(Context context){
+    private Logging(Context context) {
         super(context);
         mContext = context;
 
     }
 
-    public Logging getInstance(Context context){
-        if(null==mInstance)
+    public Logging getInstance(Context context) {
+        if (null == mInstance)
             mInstance = new Logging(context);
         return mInstance;
     }
-
 
 
     private int getLogId(Context context) {
@@ -112,6 +111,7 @@ public class Logging extends LoggingBase {
 
     /**
      * Function to check status of StreetHawk logs.
+     *
      * @param context
      * @return false will disable sending of logs to streethawk server
      */
@@ -124,61 +124,65 @@ public class Logging extends LoggingBase {
 
     /**
      * Returns lat for logigng
+     *
      * @return
      */
-    private double getLatForLog(){
+    private double getLatForLog() {
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
         try {
-            return(Double.parseDouble(sharedPreferences.getString(Util.LOG_LAT, null)));
-        }catch(NumberFormatException e){
+            return (Double.parseDouble(sharedPreferences.getString(Util.LOG_LAT, null)));
+        } catch (NumberFormatException e) {
             return 0.0;
-        }catch (NullPointerException e){
+        } catch (NullPointerException e) {
             return 0.0;
         }
     }
 
     /**
      * Returns lng for logging
+     *
      * @return
      */
-    private double getLngForLog(){
+    private double getLngForLog() {
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
         try {
-            return(Double.parseDouble(sharedPreferences.getString(Util.LOG_LNG, null)));
-        }catch(NumberFormatException e){
+            return (Double.parseDouble(sharedPreferences.getString(Util.LOG_LNG, null)));
+        } catch (NumberFormatException e) {
             return 0.0;
-        }catch (NullPointerException e){
+        } catch (NullPointerException e) {
             return 0.0;
         }
     }
 
     /**
      * Add logs in queue with forced priority
+     *
      * @param params
      * @param forcedPriority
      * @return
      */
-    public boolean addLogsForSending(Bundle params,boolean forcedPriority){
-        if(!getStreethawkState())  // Return if StreetHawk is disabled
+    public boolean addLogsForSending(Bundle params, boolean forcedPriority) {
+        if (!getStreethawkState())  // Return if StreetHawk is disabled
             return false;
-        return addLogstoBuffer(params,forcedPriority);
+        return addLogstoBuffer(params, forcedPriority);
     }
 
     /**
      * Add logs in the queue for sending to server
+     *
      * @param params
      */
     public boolean addLogsForSending(Bundle params) {
-        if(!getStreethawkState())  // Return if StreetHawk is disabled
+        if (!getStreethawkState())  // Return if StreetHawk is disabled
             return false;
         int code = 0;
         try {
-            code = Integer.parseInt(params.getString(CODE));
+            code = params.getInt(CODE);
         } catch (NumberFormatException e) {
             code = 0;
         }
-        if(isDisabledCode(code)){
-            Log.i(Util.TAG,"Log line with code "+code+" is disabled by server");
+        if (isDisabledCode(code)) {
+            Log.i(Util.TAG, "Log line with code " + code + " is disabled by server");
             return false;
         }
         boolean priority = isPriorityLogLine(code);
@@ -198,7 +202,7 @@ public class Logging extends LoggingBase {
                         Bundle query = new Bundle();
                         query.putString(Util.SHAPP_KEY, app_key);
                         query.putString(Util.INSTALL_ID, installId);
-                        URL url = new URL(buildUri(mContext, ApiMethod.APP_GET_STATUS,query));
+                        URL url = new URL(buildUri(mContext, ApiMethod.APP_GET_STATUS, query));
                         HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
                         connection.setReadTimeout(10000);
                         connection.setConnectTimeout(15000);
@@ -208,7 +212,7 @@ public class Logging extends LoggingBase {
                         connection.setRequestProperty("X-Installid", installId);
                         connection.setRequestProperty("X-App-Key", app_key);
                         String libVersion = Util.getLibraryVersion();
-                        connection.setRequestProperty("X-Version",libVersion);
+                        connection.setRequestProperty("X-Version", libVersion);
                         connection.setRequestProperty("User-Agent", app_key + "(" + libVersion + ")");
                         connection.connect();
                         BufferedReader reader = null;
@@ -231,29 +235,29 @@ public class Logging extends LoggingBase {
         }
     }
 
-    public void processAppStatusCall(String answer){
+    public void processAppStatusCall(String answer) {
         super.processAppStatusCall(answer);
     }
 
-    public void processErrorAckFromServer(String answer){
+    public void processErrorAckFromServer(String answer) {
         super.processErrorAckFromServer(answer);
     }
 
 
-    public void sendModuleList(){
-        if(Util.PLATFORM_XAMARIN==Util.getPlatformType()){
+    public void sendModuleList() {
+        if (Util.PLATFORM_XAMARIN == Util.getPlatformType()) {
             return;
         }
         new Thread(new Runnable() {
             @Override
             public void run() {
-                final String PUSH     = "sh_module_push";
-                final String BEACON   = "sh_module_beacon";
+                final String PUSH = "sh_module_push";
+                final String BEACON = "sh_module_beacon";
                 final String GEOFENCE = "sh_module_geofence";
                 final String LOCATION = "sh_module_location";
-                final String FEEDS    = "sh_module_feeds";
-                final String GROWTH   = "sh_module_growth";
-                final String TRUE     = "true";
+                final String FEEDS = "sh_module_feeds";
+                final String GROWTH = "sh_module_growth";
+                final String TRUE = "true";
 
                 Class[] paramContext = new Class[1];
                 paramContext[0] = Activity.class;
@@ -261,12 +265,12 @@ public class Logging extends LoggingBase {
                 try {
                     Class.forName("com.streethawk.library.growth.Growth");
                     Bundle extras = new Bundle();
-                    extras.putString(CODE, Integer.toString(Constants.CODE_UPDATE_CUSTOM_TAG));
+                    extras.putInt(CODE, CODE_UPDATE_CUSTOM_TAG);
                     extras.putString(SHMESSAGE_ID, null);
                     extras.putString(SHMESSAGE_ID, null);
                     extras.putString(SH_KEY, GROWTH);
-                    extras.putString(TYPE_STRING,TRUE);
-                    addLogsForSending(extras,false);
+                    extras.putString(TYPE_STRING, TRUE);
+                    addLogsForSending(extras, false);
                 } catch (ClassNotFoundException e1) {
                     Log.w(Util.TAG, "Growth module is not  not present");
                 }
@@ -274,12 +278,12 @@ public class Logging extends LoggingBase {
                 try {
                     Class.forName("com.streethawk.library.push.Push");
                     Bundle extras = new Bundle();
-                    extras.putString(CODE, Integer.toString(Constants.CODE_UPDATE_CUSTOM_TAG));
+                    extras.putInt(CODE, CODE_UPDATE_CUSTOM_TAG);
                     extras.putString(SHMESSAGE_ID, null);
                     extras.putString(SHMESSAGE_ID, null);
                     extras.putString(SH_KEY, PUSH);
-                    extras.putString(TYPE_STRING,TRUE);
-                    addLogsForSending(extras,false);
+                    extras.putString(TYPE_STRING, TRUE);
+                    addLogsForSending(extras, false);
                 } catch (ClassNotFoundException e1) {
                     Log.w(Util.TAG, "Growth module is not  not present");
                 }
@@ -287,12 +291,12 @@ public class Logging extends LoggingBase {
                 try {
                     Class.forName("com.streethawk.library.beacon.Beacons");
                     Bundle extras = new Bundle();
-                    extras.putString(CODE, Integer.toString(Constants.CODE_UPDATE_CUSTOM_TAG));
+                    extras.putInt(CODE, CODE_UPDATE_CUSTOM_TAG);
                     extras.putString(SHMESSAGE_ID, null);
                     extras.putString(SHMESSAGE_ID, null);
                     extras.putString(SH_KEY, BEACON);
-                    extras.putString(TYPE_STRING,TRUE);
-                    addLogsForSending(extras,false);
+                    extras.putString(TYPE_STRING, TRUE);
+                    addLogsForSending(extras, false);
                 } catch (ClassNotFoundException e1) {
                     Log.w(Util.TAG, "Growth module is not  not present");
                 }
@@ -300,12 +304,12 @@ public class Logging extends LoggingBase {
                 try {
                     Class.forName("com.streethawk.library.geofence.SHGeofence");
                     Bundle extras = new Bundle();
-                    extras.putString(CODE, Integer.toString(Constants.CODE_UPDATE_CUSTOM_TAG));
+                    extras.putInt(CODE, CODE_UPDATE_CUSTOM_TAG);
                     extras.putString(SHMESSAGE_ID, null);
                     extras.putString(SHMESSAGE_ID, null);
                     extras.putString(SH_KEY, GEOFENCE);
-                    extras.putString(TYPE_STRING,TRUE);
-                    addLogsForSending(extras,false);
+                    extras.putString(TYPE_STRING, TRUE);
+                    addLogsForSending(extras, false);
                 } catch (ClassNotFoundException e1) {
                     Log.w(Util.TAG, "Growth module is not  not present");
                 }
@@ -313,12 +317,12 @@ public class Logging extends LoggingBase {
                 try {
                     Class.forName("com.streethawk.library.locations.SHLocation");
                     Bundle extras = new Bundle();
-                    extras.putString(CODE, Integer.toString(Constants.CODE_UPDATE_CUSTOM_TAG));
+                    extras.putInt(CODE, CODE_UPDATE_CUSTOM_TAG);
                     extras.putString(SHMESSAGE_ID, null);
                     extras.putString(SHMESSAGE_ID, null);
                     extras.putString(SH_KEY, LOCATION);
-                    extras.putString(TYPE_STRING,TRUE);
-                    addLogsForSending(extras,false);
+                    extras.putString(TYPE_STRING, TRUE);
+                    addLogsForSending(extras, false);
                 } catch (ClassNotFoundException e1) {
                     Log.w(Util.TAG, "Growth module is not  not present");
                 }
@@ -326,12 +330,12 @@ public class Logging extends LoggingBase {
                 try {
                     Class.forName("com.streethawk.library.feeds.SHFeedItem");
                     Bundle extras = new Bundle();
-                    extras.putString(CODE, Integer.toString(Constants.CODE_UPDATE_CUSTOM_TAG));
+                    extras.putInt(CODE, CODE_UPDATE_CUSTOM_TAG);
                     extras.putString(SHMESSAGE_ID, null);
                     extras.putString(SHMESSAGE_ID, null);
                     extras.putString(SH_KEY, FEEDS);
-                    extras.putString(TYPE_STRING,TRUE);
-                    addLogsForSending(extras,false);
+                    extras.putString(TYPE_STRING, TRUE);
+                    addLogsForSending(extras, false);
                 } catch (ClassNotFoundException e1) {
                     Log.w(Util.TAG, "Growth module is not  not present");
                 }
@@ -341,13 +345,9 @@ public class Logging extends LoggingBase {
     }
 
 
-
-
-
-
-
     /**
      * Function returns key count which acts as key for logs in logbuffer shared pref.
+     *
      * @return
      */
     private int getKeyCnt() {
@@ -363,6 +363,7 @@ public class Logging extends LoggingBase {
 
     /**
      * Add logs to buffer
+     *
      * @param params
      * @param priority
      * @return
@@ -375,19 +376,19 @@ public class Logging extends LoggingBase {
         }
         double lat = getLatForLog();
         double lng = getLngForLog();
-        if(0.0!=lat && 0.0!=lng){
-            params.putDouble(SHLATTITUDE,getLatForLog());
-            params.putDouble(SHLONGITUDE,getLngForLog());
+        if (0.0 != lat && 0.0 != lng) {
+            params.putDouble(SHLATTITUDE, getLatForLog());
+            params.putDouble(SHLONGITUDE, getLngForLog());
         }
-        if(Util.getSHDebugFlag(mContext)){
-            Log.d(Util.TAG,"  "+"Device log location"+lat+","+lng);
+        if (Util.getSHDebugFlag(mContext)) {
+            Log.d(Util.TAG, "  " + "Device log location" + lat + "," + lng);
         }
-        params.putString(LOCAL_TIME, Util.getFormattedDateTime(System.currentTimeMillis(),false));
+        params.putString(LOCAL_TIME, Util.getFormattedDateTime(System.currentTimeMillis(), false));
         String sessionId = Util.getSessionId(mContext);
         int code = 0;
         if (Util.isAppBG(mContext)) {
             try {
-                code = Integer.parseInt(params.getString(CODE));
+                code = params.getInt(CODE);
             } catch (NumberFormatException e) {
                 code = 0;
             }
@@ -412,40 +413,23 @@ public class Logging extends LoggingBase {
         for (String name : names) {
             Object value = params.get(name);
             if (value != null) {
-                if (value instanceof String) {
-                    try {
-                        if (name.equals("json")) {
-                            JSONObject object = new JSONObject(params.getString(name));
-                            dictionary.put(name, object);
-                        } else {
-                            dictionary.put(name, params.getString(name));
-                        }
-                        continue;
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                if (value != null) {
+                    if(value instanceof String) {
+                        try {
+                            JSONObject obj = new JSONObject((String) value);
+                            dictionary.put(name, obj);
+                            continue;
+                        } catch (JSONException e) {}
                     }
-                }
-
-                if (value instanceof Double) {
-                    try {
-                        dictionary.put(name, params.getDouble(name));
-                        continue;
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                    if(value instanceof String) {
+                        try {
+                            JSONArray obj = new JSONArray((String) value);
+                            dictionary.put(name, obj);
+                            continue;
+                        } catch (JSONException e) {}
                     }
-                }
-                if (value instanceof Integer) {
                     try {
-                        dictionary.put(name, params.getInt(name));
-                        continue;
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-                if (value instanceof JSONObject || value instanceof JSONArray) {
-                    try {
-                        dictionary.put(name, value);
-                        continue;
+                        dictionary.put(name,value);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -463,9 +447,9 @@ public class Logging extends LoggingBase {
         return true;
     }
 
-
     /**
      * Two buffer logic to collect logs which needs to be flushed to server.
+     *
      * @return
      */
     private boolean copyLogsinCycleBuffer() {
@@ -479,7 +463,7 @@ public class Logging extends LoggingBase {
             public void run() {
                 SharedPreferences sourceBuffer = mContext.getSharedPreferences(SHSHARED_PREF_LOGGING, Context.MODE_PRIVATE);
                 SharedPreferences.Editor sourceEdit = sourceBuffer.edit();
-                String logs="[";
+                String logs = "[";
                 int keyCount = 1 + sourceBuffer.getInt(KEY_COUNT, 0);
                 String str;
                 for (int i = 0; i < keyCount; i++) {
@@ -492,24 +476,24 @@ public class Logging extends LoggingBase {
                         e.printStackTrace();
                     }
                     if (null != dictionary) {
-                        logs+=dictionary.toString()+",";
+                        logs += dictionary.toString() + ",";
                     }
                 }
                 //remove last comma
                 int size = logs.length();
-                if(size>1) {
-                    logs = logs.substring(0,size-1);
+                if (size > 1) {
+                    logs = logs.substring(0, size - 1);
                 }
-                logs+="]";
+                logs += "]";
                 sourceEdit.clear();
                 sourceEdit.commit();
-                if(logs.equals("[]")) {
+                if (logs.equals("[]")) {
                     return;
                 }
                 SharedPreferences DestinationBuffer = mContext.getSharedPreferences(SHSHARED_PREF_STAGGING, Context.MODE_PRIVATE);
                 SharedPreferences.Editor destinationEdit = DestinationBuffer.edit();
                 String key = getBundleId();
-                destinationEdit.putString(key,logs);
+                destinationEdit.putString(key, logs);
                 destinationEdit.commit();
                 flushLogsToServer(key);
                 semHeld = false;
@@ -519,27 +503,28 @@ public class Logging extends LoggingBase {
         return true;
     }
 
-    public void saveActivityNames(){
+    public void saveActivityNames() {
         super.saveActivityNames();
     }
 
 
-    private void displayLogLine(String TAG, HashMap<String, String> logMap){
-        String result="";
+    private void displayLogLine(String TAG, HashMap<String, String> logMap) {
+        String result = "";
         String SPACE = " ";
         String NEW_LINE = "\n";
-        for (Map.Entry<String, String> entry : logMap.entrySet()){
+        for (Map.Entry<String, String> entry : logMap.entrySet()) {
 
-            String key      = entry.getKey();
-            String value    = entry.getValue();
-            result+= key +SPACE+value+NEW_LINE;
+            String key = entry.getKey();
+            String value = entry.getValue();
+            result += key + SPACE + value + NEW_LINE;
         }
-        Log.e(TAG,result);
+        Log.e(TAG, result);
     }
 
 
     /**
      * Flush cached logs to server
+     *
      * @param key
      * @return
      */
@@ -555,7 +540,7 @@ public class Logging extends LoggingBase {
                         if (null == installId)
                             return;
                         if (installId.isEmpty())
-                            return ;
+                            return;
                         String app_key = Util.getAppKey(mContext);
                         SharedPreferences prefs = mContext.getSharedPreferences(SHSHARED_PREF_STAGGING, Context.MODE_PRIVATE);
                         SharedPreferences.Editor staggingEdit = prefs.edit();
@@ -564,7 +549,7 @@ public class Logging extends LoggingBase {
                             bundle_id = key;
                         } else {
                             //JSONArray mainArray = new JSONArray();
-                            String mainLogs="[";
+                            String mainLogs = "[";
                             Map<String, ?> keysPrefs = prefs.getAll();
                             if (keysPrefs == null) {
                                 return;
@@ -581,7 +566,7 @@ public class Logging extends LoggingBase {
                                     for (int i = 0; i < subArray.length(); i++) {
                                         JSONObject subobject = subArray.getJSONObject(i);
                                         //mainArray.put(subobject);
-                                        mainLogs+=subobject.toString()+",";
+                                        mainLogs += subobject.toString() + ",";
                                     }
                                     staggingEdit.remove(inUsekey);
                                 } catch (JSONException e) {
@@ -589,12 +574,12 @@ public class Logging extends LoggingBase {
                                 }
                             }
                             int size = mainLogs.length();
-                            if(size>1) {
-                                mainLogs = mainLogs.substring(0,size-1);
+                            if (size > 1) {
+                                mainLogs = mainLogs.substring(0, size - 1);
                             }
-                            mainLogs+="]";
-                            if(mainLogs.equals("[]")) {
-                                Log.i(Util.TAG,SUBTAG+"Returning due to empty logs");
+                            mainLogs += "]";
+                            if (mainLogs.equals("[]")) {
+                                Log.i(Util.TAG, SUBTAG + "Returning due to empty logs");
                                 return;
                             }
 
@@ -615,8 +600,8 @@ public class Logging extends LoggingBase {
                         }
                         HashMap<String, String> logMap = new HashMap<String, String>();
                         logMap.put(RECORDS, records);
-                        if(Util.getSHDebugFlag(mContext)){
-                            Log.d(Util.TAG,"Flushing Logs "+records);
+                        if (Util.getSHDebugFlag(mContext)) {
+                            Log.d(Util.TAG, "Flushing Logs " + records);
                         }
                         logMap.put(BUNDLE_ID, bundle_id);
                         BufferedReader reader = null;
@@ -631,12 +616,12 @@ public class Logging extends LoggingBase {
                             connection.setRequestProperty("X-Installid", installId);
                             connection.setRequestProperty("X-App-Key", app_key);
                             String libVersion = Util.getLibraryVersion();
-                            connection.setRequestProperty("X-Version",libVersion);
+                            connection.setRequestProperty("X-Version", libVersion);
                             connection.setRequestProperty("User-Agent", app_key + "(" + libVersion + ")");
                             OutputStream os = connection.getOutputStream();
                             BufferedWriter writer = new BufferedWriter(
                                     new OutputStreamWriter(os, "UTF-8"));
-                            String logs="";
+                            String logs = "";
                             boolean first = true;
                             for (Map.Entry<String, String> entry : logMap.entrySet()) {
                                 StringBuilder result = new StringBuilder();
@@ -644,18 +629,18 @@ public class Logging extends LoggingBase {
                                     first = false;
                                 else
                                     result.append("&");
-                                String key      = entry.getKey();
-                                String value    = entry.getValue();
-                                if(null!=key) {
+                                String key = entry.getKey();
+                                String value = entry.getValue();
+                                if (null != key) {
                                     result.append(URLEncoder.encode(entry.getKey(), "UTF-8"));
                                     result.append("=");
-                                    if(null!=value) {
+                                    if (null != value) {
                                         result.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
-                                    }else{
+                                    } else {
                                         result.append(URLEncoder.encode("", "UTF-8"));
                                     }
                                 }
-                                logs+=result.toString();
+                                logs += result.toString();
                                 result = null; //Force GC
                             }
                             writer.write(logs);
@@ -664,8 +649,8 @@ public class Logging extends LoggingBase {
                             os.close();
                             reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
                             String answer = reader.readLine();
-                            if(Util.getSHDebugFlag(mContext)){
-                                Log.d(Util.TAG,"Response "+answer);
+                            if (Util.getSHDebugFlag(mContext)) {
+                                Log.d(Util.TAG, "Response " + answer);
                             }
                             if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
                                 if (null == answer)
@@ -695,16 +680,18 @@ public class Logging extends LoggingBase {
                 }).start();
             }
         } catch (Exception e) {
-                Log.e(Util.TAG, "SUBTAG+Exception " + e);
+            Log.e(Util.TAG, "SUBTAG+Exception " + e);
         }
         return false;
     }
+
     public boolean ForceFlushLogsToServer() {
         return flushLogsToServer(null);
     }
 
     /**
      * Function returns bundle ID which server echos back as ack and indicated install to clear the cached logs associated with that install.
+     *
      * @return
      */
     private String getBundleId() {
@@ -720,6 +707,7 @@ public class Logging extends LoggingBase {
 
     /**
      * Function returns count of buffered logs which needs to be flushed to server
+     *
      * @return int as buffer count
      */
     private int getBufferCnt() {
@@ -731,8 +719,10 @@ public class Logging extends LoggingBase {
         e.commit();
         return cnt;
     }
+
     /**
      * Function resets session id
+     *
      * @param context
      */
     public static void resetSessionId(Context context) {
@@ -744,6 +734,7 @@ public class Logging extends LoggingBase {
 
     /**
      * Function returns singleton instance of logging class
+     *
      * @param context
      * @return
      */
@@ -761,16 +752,16 @@ public class Logging extends LoggingBase {
     public void flushPendingFeedback() {
         String title = null;
         String content = null;
-        int type =0;
+        int type = 0;
         if (null != mContext) {
             SharedPreferences prefs = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
             title = prefs.getString(Constants.FEEDBACK_TITLE, null);
             content = prefs.getString(Constants.FEEDBACK_CONTENT, null);
-            type = prefs.getInt(Constants.FEEDBACK_TYPE,0);
+            type = prefs.getInt(Constants.FEEDBACK_TYPE, 0);
             if (null == title && null == content)
                 return;
             else {
-                Logging.getLoggingInstance(mContext).sendFeedbackToServer(title, content,type);
+                Logging.getLoggingInstance(mContext).sendFeedbackToServer(title, content, type);
             }
         }
     }
@@ -795,13 +786,13 @@ public class Logging extends LoggingBase {
                 if (title != null)
                     logMap.put(TITLE, title);
                 String type;
-                try{
+                try {
                     type = Integer.toString(feedbacktype);
-                }catch(NumberFormatException e){
+                } catch (NumberFormatException e) {
                     type = null;
                 }
-                if(null!=type)
-                    logMap.put(FEEDBACK_TYPE,Integer.toString(feedbacktype));
+                if (null != type)
+                    logMap.put(FEEDBACK_TYPE, Integer.toString(feedbacktype));
 
                 BufferedReader reader = null;
                 try {
@@ -816,13 +807,13 @@ public class Logging extends LoggingBase {
                     connection.setRequestProperty("X-Installid", Util.getInstallId(mContext));
                     connection.setRequestProperty("X-App-Key", app_key);
                     String libVersion = Util.getLibraryVersion();
-                    connection.setRequestProperty("X-Version",libVersion);
+                    connection.setRequestProperty("X-Version", libVersion);
                     connection.setRequestProperty("User-Agent", app_key + "(" + libVersion + ")");
                     OutputStream os = connection.getOutputStream();
                     BufferedWriter writer = new BufferedWriter(
                             new OutputStreamWriter(os, "UTF-8"));
                     //String logs = Util.getPostDataString(logMap);
-                    String logs="";
+                    String logs = "";
                     boolean first = true;
                     for (Map.Entry<String, String> entry : logMap.entrySet()) {
                         StringBuilder result = new StringBuilder();
@@ -830,18 +821,18 @@ public class Logging extends LoggingBase {
                             first = false;
                         else
                             result.append("&");
-                        String key      = entry.getKey();
-                        String value    = entry.getValue();
-                        if(null!=key) {
+                        String key = entry.getKey();
+                        String value = entry.getValue();
+                        if (null != key) {
                             result.append(URLEncoder.encode(entry.getKey(), "UTF-8"));
                             result.append("=");
-                            if(null!=value) {
+                            if (null != value) {
                                 result.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
-                            }else{
+                            } else {
                                 result.append(URLEncoder.encode("", "UTF-8"));
                             }
                         }
-                        logs+=result.toString();
+                        logs += result.toString();
                         result = null; //Force GC
                     }
                     writer.write(logs);
@@ -860,8 +851,8 @@ public class Logging extends LoggingBase {
                         SharedPreferences prefs = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
                         SharedPreferences.Editor e = prefs.edit();
                         e.putString(Constants.FEEDBACK_TITLE, title);
-                        e.putString(Constants.FEEDBACK_CONTENT,content);
-                        e.putString(Constants.FEEDBACK_TYPE,type);
+                        e.putString(Constants.FEEDBACK_CONTENT, content);
+                        e.putString(Constants.FEEDBACK_TYPE, type);
                         e.commit();
                         processErrorAckFromServer(answer);
                     }

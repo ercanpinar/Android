@@ -20,6 +20,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.util.Log;
@@ -76,9 +77,7 @@ class AppActivityTracking implements Constants {
                 paramContext[0] = Context.class;
                 Class[] paramActivity = new Class[1];
                 paramActivity[0] = Activity.class;
-
                 Class push = null;
-
                 try {
                     push = Class.forName("com.streethawk.library.push.Push");
                     Method pushMethod = push.getMethod("getInstance", paramContext);
@@ -293,6 +292,43 @@ class AppActivityTracking implements Constants {
                 }
             }
         }).start();
+
+
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Class noParams[] = {};
+                Class[] paramContext = new Class[1];
+                paramContext[0] = Context.class;
+                Class[] paramActivity = new Class[1];
+                paramActivity[0] = Activity.class;
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                Class push = null;
+
+                try {
+                    push = Class.forName("streethawk.com.streethawkauthor.ActivityTracker");
+                    Method pushMethod = push.getMethod("getInstance", noParams);
+                    Object obj = pushMethod.invoke(null);
+                    if (null != obj) {
+                        Method addPushModule = push.getDeclaredMethod("onEnteringNewActivity", paramActivity);
+                        addPushModule.invoke(obj, activity);
+                    }
+                } catch (ClassNotFoundException e1) {
+                    Log.w(Util.TAG, "Feed module is not present");
+                } catch (IllegalAccessException e1) {
+                    e1.printStackTrace();
+                } catch (NoSuchMethodException e1) {
+                    e1.printStackTrace();
+                } catch (InvocationTargetException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        }).start();
     }
 
     public void notifyLeavingNewActivityToChildModules(final Activity activity) {
@@ -338,7 +374,7 @@ class AppActivityTracking implements Constants {
         final Context context = activity.getApplicationContext();
         SaveSessionTime(context);
         Bundle extras = new Bundle();
-        extras.putString(CODE, Integer.toString(CODE_APP_OPENED_FROM_BG));  //Sending 8103
+        extras.putInt(CODE,CODE_APP_OPENED_FROM_BG);  //Sending 8103
         extras.putString(LOCAL_TIME, Util.getFormattedDateTime(System.currentTimeMillis(), false));
         final Logging shManager = Logging.getLoggingInstance(context);
         shManager.addLogsForSending(extras);
@@ -356,7 +392,7 @@ class AppActivityTracking implements Constants {
                 if (null != storedVersion) {
                     if (!storedVersion.equals(currentAppVersion)) {
                         Bundle extras = new Bundle();
-                        extras.putString(CODE, Integer.toString(CODE_CLIENT_UPGRADE));
+                        extras.putInt(CODE,CODE_CLIENT_UPGRADE);
                         extras.putString(TYPE_STRING, currentAppVersion);
                         final Logging shManager = Logging.getLoggingInstance(context);
                         shManager.addLogsForSending(extras);
@@ -441,14 +477,14 @@ class AppActivityTracking implements Constants {
         if (-1 == startSessionTime) {
             return;
         }
-        extras.putString(CODE, Integer.toString(CODE_SESSIONS));                // Sending 8105
+        extras.putInt(CODE,CODE_SESSIONS);                // Sending 8105
         extras.putString(SESSION_START, Util.getFormattedDateTime(startSessionTime, true));
         extras.putString(SESSION_END, Util.getFormattedDateTime(currentTime, true));
         extras.putString(SESSION_LENGTH, Long.toString(Math.round((currentTime - startSessionTime) / 1000.0)));  // length in seconds
         final Logging shManager = Logging.getLoggingInstance(context);
         shManager.addLogsForSending(extras);
         extras.clear();
-        extras.putString(CODE, Integer.toString(CODE_APP_TO_BG));                // Sending 8104
+        extras.putInt(CODE,CODE_APP_TO_BG);                // Sending 8104
         extras.putString(LOCAL_TIME, Util.getFormattedDateTime(currentTime, false));
         shManager.addLogsForSending(extras);
         incrementSessionId(context);
@@ -533,13 +569,18 @@ class AppActivityTracking implements Constants {
     }
 
     private void fillViewList(Activity activity, View view) {
-        //Add child JSON in the list
+      if(null==view)
+          return;
         JSONObject object = new JSONObject();
         try {
             int id = view.getId();
             if (-1 != id) {
                 String viewTextID = null;
-                viewTextID = view.getResources().getResourceName(id);
+                //TODO This crashes on Steven's phone
+                Resources res = view.getResources();
+                if(null==res)
+                    return;
+                viewTextID = res.getResourceName(id);
                 WidgetObject obj = new WidgetObject();
                 String viewName = getViewName(activity.getClass().getName());
                 String widgetID = getTextID(viewTextID);
@@ -592,7 +633,7 @@ class AppActivityTracking implements Constants {
             if (null != newActivity) { //send 8108
                 String friendlyName = getFriendlyNameFromclassName(context.getApplicationContext(), newActivity);
                 Bundle extras = new Bundle();
-                extras.putString(CODE, Integer.toString(CODE_USER_ENTER_ACTIVITY));
+                extras.putInt(CODE,CODE_USER_ENTER_ACTIVITY);
                 extras.putString(SHMESSAGE_ID, null);
                 SharedPreferences.Editor e = sharedPreferences.edit();
                 e.putLong(newActivity, System.currentTimeMillis());      // Store start time of this activity
@@ -608,7 +649,7 @@ class AppActivityTracking implements Constants {
             if (null != oldActivity) { //send 8109
                 String friendlyName = getFriendlyNameFromclassName(context.getApplicationContext(), oldActivity);
                 Bundle extras = new Bundle();
-                extras.putString(CODE, Integer.toString(CODE_USER_LEAVE_ACTIVITY));
+                extras.putInt(CODE,CODE_USER_LEAVE_ACTIVITY);
                 extras.putString(SHMESSAGE_ID, null);
                 if (null == friendlyName) {
                     friendlyName = oldActivity;
@@ -617,7 +658,7 @@ class AppActivityTracking implements Constants {
                 final Logging shManager = Logging.getLoggingInstance(context);
                 shManager.addLogsForSending(extras);
                 extras.clear();
-                extras.putString(CODE, Integer.toString(CODE_COMPLETE_ACTIVITY));
+                extras.putInt(CODE,CODE_COMPLETE_ACTIVITY);
                 extras.putString(TYPE_STRING, friendlyName);
                 Long storedTime = sharedPreferences.getLong(friendlyName, -1);
                 extras.putString(SESSION_START, Util.getFormattedDateTime(storedTime, true));

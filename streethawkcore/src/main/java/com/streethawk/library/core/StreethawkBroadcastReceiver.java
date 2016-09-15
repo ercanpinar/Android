@@ -74,7 +74,7 @@ public class StreethawkBroadcastReceiver extends BroadcastReceiver implements Co
                         edit.commit();
                         // 8050 is a priority log hence logs will flush
                         Bundle logParams = new Bundle();
-                        logParams.putString(Util.CODE, Integer.toString(CODE_DEVICE_TIMEZONE));
+                        logParams.putInt(Util.CODE,CODE_DEVICE_TIMEZONE);
                         logParams.putString(Util.SHMESSAGE_ID, null);
                         logParams.putString(TYPE_NUMERIC, Integer.toString(Util.getTimeZoneOffsetInMinutes()));
                         Logging manager = Logging.getLoggingInstance(context);
@@ -114,7 +114,7 @@ public class StreethawkBroadcastReceiver extends BroadcastReceiver implements Co
             // send heartbeat every 6 hrs
             if (difference >= DURATION_SIX_HRS) {
                 Bundle extras = new Bundle();
-                extras.putString(Util.CODE, Integer.toString(CODE_HEARTBEAT));
+                extras.putInt(Util.CODE,CODE_HEARTBEAT);
                 extras.putString(Util.SHMESSAGE_ID, null);
                 Logging manager = Logging.getLoggingInstance(context);
                 manager.addLogsForSending(extras);

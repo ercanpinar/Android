@@ -992,7 +992,7 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver impleme
         try {
             Bundle params = new Bundle();
             params.putString(Util.SHMESSAGE_ID, msgId);
-            params.putString(Util.CODE, Integer.toString(CODE_PUSH_ACK));
+            params.putInt(Util.CODE,CODE_PUSH_ACK);
             Logging manager = Logging.getLoggingInstance(context);
             manager.addLogsForSending(params);
         } catch (Exception e) {
@@ -1015,7 +1015,7 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver impleme
             params.putString(Util.SHMESSAGE_ID, msgId);
             params.putString(Util.TYPE_NUMERIC, Integer.toString(code));
             params.putString(NotificationBase.SHRESULT, Integer.toString(result));
-            params.putString(Util.CODE, Integer.toString(CODE_PUSH_RESULT));
+            params.putInt(Util.CODE,CODE_PUSH_RESULT);
             Logging manager = Logging.getLoggingInstance(context);
             manager.addLogsForSending(params);
         } catch (Exception e) {

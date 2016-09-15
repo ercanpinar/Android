@@ -442,6 +442,4 @@ public class Modal implements Constants {
         rootView.addView(LL_ButtonBar);
         return rootView;
     }
-
-
 }

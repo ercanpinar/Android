@@ -385,7 +385,7 @@ public enum StreetHawk implements Constants{
             @Override
             public void run() {
                 Bundle extras = new Bundle();
-                extras.putString(CODE, Integer.toString(CODE_USER_ENTER_ACTIVITY));
+                extras.putInt(CODE,CODE_USER_ENTER_ACTIVITY);
                 extras.putString(SHMESSAGE_ID, null);
                 extras.putString(TYPE_STRING, viewName);
                 final Logging shManager = Logging.getLoggingInstance(mContext);
@@ -421,7 +421,7 @@ public enum StreetHawk implements Constants{
             @Override
             public void run() {
                 Bundle extras = new Bundle();
-                extras.putString(CODE, Integer.toString(CODE_USER_LEAVE_ACTIVITY));
+                extras.putInt(CODE,CODE_USER_LEAVE_ACTIVITY);
                 extras.putString(SHMESSAGE_ID, null);
                 extras.putString(TYPE_STRING, viewName);
                 final Logging shManager = Logging.getLoggingInstance(mContext);
@@ -500,7 +500,7 @@ public enum StreetHawk implements Constants{
         Future<Boolean> result = executorservice.submit(new Callable<Boolean>() {
             public Boolean call() throws Exception {
                 Bundle extras = new Bundle();
-                extras.putString(CODE, Integer.toString(CODE_UPDATE_CUSTOM_TAG));
+                extras.putInt(CODE,CODE_UPDATE_CUSTOM_TAG);
                 extras.putString(SHMESSAGE_ID, null);
                 extras.putString(SHMESSAGE_ID, null);
                 extras.putString(SH_KEY, checkKey);
@@ -576,7 +576,7 @@ public enum StreetHawk implements Constants{
         Future<Boolean> result = executorservice.submit(new Callable<Boolean>() {
             public Boolean call() throws Exception {
                 Bundle extras = new Bundle();
-                extras.putString(CODE, Integer.toString(CODE_UPDATE_CUSTOM_TAG));
+                extras.putInt(CODE,CODE_UPDATE_CUSTOM_TAG);
                 extras.putString(SHMESSAGE_ID, null);
                 extras.putString(SH_KEY, checkKey);
                 extras.putString(TYPE_STRING, checkValue);
@@ -951,8 +951,7 @@ public enum StreetHawk implements Constants{
         Future<Boolean> result = executorservice.submit(new Callable<Boolean>() {
             public Boolean call() throws Exception {
                 Bundle extras = new Bundle();
-                extras.putString(CODE, Integer.toString(CODE_UPDATE_CUSTOM_TAG));
-                extras.putString(CODE, Integer.toString(CODE_UPDATE_CUSTOM_TAG));
+                extras.putInt(CODE,CODE_UPDATE_CUSTOM_TAG);
                 extras.putString(SHMESSAGE_ID, null);
                 extras.putString(SH_KEY, checkKey);
                 extras.putString(TYPE_DATETIME, checkValue);
@@ -1001,7 +1000,7 @@ public enum StreetHawk implements Constants{
         try {
             Bundle extras = new Bundle();
             Logging manager = Logging.getLoggingInstance(mContext);
-            extras.putString(CODE, Integer.toString(CODE_INCREMENT_TAG));
+            extras.putInt(CODE, CODE_INCREMENT_TAG);
             extras.putString(SHMESSAGE_ID, null);
             extras.putString(SH_KEY, key);
             extras.putString(TYPE_NUMERIC, Integer.toString(value));
@@ -1034,7 +1033,7 @@ public enum StreetHawk implements Constants{
         Bundle extras = new Bundle();
         try {
             Logging manager = Logging.getLoggingInstance(mContext);
-            extras.putString(CODE, Integer.toString(CODE_INCREMENT_TAG));
+            extras.putInt(CODE, CODE_INCREMENT_TAG);
             extras.putString(SHMESSAGE_ID, null);
             extras.putString(SH_KEY, key);
             extras.putString(TYPE_NUMERIC, Double.toString(value));
@@ -1081,7 +1080,7 @@ public enum StreetHawk implements Constants{
         }
         Bundle extras = new Bundle();
         Logging manager = Logging.getLoggingInstance(mContext);
-        extras.putString(CODE, Integer.toString(CODE_DELETE_CUSTOM_TAG));
+        extras.putInt(CODE,CODE_DELETE_CUSTOM_TAG);
         extras.putString(SHMESSAGE_ID, null);
         extras.putString(SH_KEY, key);
         manager.addLogsForSending(extras);

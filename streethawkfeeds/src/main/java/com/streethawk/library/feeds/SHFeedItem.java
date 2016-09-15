@@ -95,14 +95,11 @@ public class SHFeedItem implements Constants{
             Log.e(Util.TAG, "notifyFeedResult: context==null returning..");
         }
         Bundle params = new Bundle();
-        params.putString(Util.CODE, Integer.toString(CODE_FEED_ACK));
+        params.putInt(Util.CODE,CODE_FEED_ACK);
         params.putInt(SHFEEDID, feedId);
         Logging manager = Logging.getLoggingInstance(mContext);
         manager.addLogsForSending(params);
     }
-
-
-
 
     /**
      *
@@ -113,15 +110,15 @@ public class SHFeedItem implements Constants{
     @Deprecated
     public void notifyFeedResult(int feedId, int result) {
         if(1==result){
-            notifyFeedResult(feedId,"accepted",false);
+            notifyFeedResult(feedId,"accepted",false,false);
             return;
         }
         if(0==result){
-            notifyFeedResult(feedId,"postponed",false);
+            notifyFeedResult(feedId,"postponed",false,false);
             return;
         }
         if(-1==result){
-            notifyFeedResult(feedId,"rejected",false);
+            notifyFeedResult(feedId,"rejected",false,false);
             return;
         }
     }
@@ -132,20 +129,18 @@ public class SHFeedItem implements Constants{
      * @param result Feed result in String
      * @param feedDelete set to true if feed items should be deleted from server for the given install
      */
-    public void notifyFeedResult(int feedId,String result,boolean feedDelete){
+    public void notifyFeedResult(int feedId,String result,boolean feedDelete,boolean completed){
         if (null == mContext) {
             Log.e(Util.TAG, "notifyFeedResult: context==null returning..");
         }
         Bundle params = new Bundle();
-        params.putString(Util.CODE, Integer.toString(CODE_FEED_RESULT));
+        params.putInt(Util.CODE,CODE_FEED_RESULT);
         params.putInt(SHFEEDID, feedId);
         JSONObject status  =  new JSONObject();
         try {
             status.put(RESULT_RESULT,result);
-            if(feedDelete)
-                status.put(RESULT_FEED_DELETE,"true");
-            else
-                status.put(RESULT_FEED_DELETE,"false");
+            status.put(RESULT_FEED_DELETE,feedDelete);
+            status.put(RESULT_FEED_COMPLETED,feedDelete);
         } catch (JSONException e) {
             e.printStackTrace();
         }

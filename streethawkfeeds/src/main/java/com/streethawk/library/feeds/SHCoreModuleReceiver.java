@@ -182,6 +182,7 @@ public class SHCoreModuleReceiver extends BroadcastReceiver implements Constants
     public void readFeedData(final Context context, final int offset) {
         if (null == context)
             return;
+        Log.e("Anurag","Reading feeds");
         final String INSTALL_ID = "installid";
         final String APP_KEY = "app_key";
         final String EQUALS = "=";
@@ -209,8 +210,12 @@ public class SHCoreModuleReceiver extends BroadcastReceiver implements Constants
                     String answer = input.readLine();
                     if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
                         parseAndSaveResponse(context, answer);
-                        mPaginationCnt+=20;
-                        readFeedData(context,mPaginationCnt);
+                        /*
+                        if(!answer.equals("[]")) {
+                            mPaginationCnt += 20;
+                            readFeedData(context, mPaginationCnt);
+                        }
+                        */
                     }
                     input.close();
                 } catch (IOException e) {
@@ -268,6 +273,9 @@ public class SHCoreModuleReceiver extends BroadcastReceiver implements Constants
                                                 editor.commit();
                                             }
                                         }
+
+                                        /* TODO
+
                                         Intent pushNotificationIntent = new Intent();
                                         pushNotificationIntent.setAction(SHFeedItem.BROADCAST_NEW_FEED);
                                         pushNotificationIntent.putExtra(Util.INSTALL_ID, Util.getInstallId(context));
@@ -280,7 +288,10 @@ public class SHCoreModuleReceiver extends BroadcastReceiver implements Constants
                                             e.commit();
                                             Log.e("Anurag","Reading feed data");
                                             readFeedData(context, mPaginationCnt);
+
+
                                         }
+                                        */
                                     }
                                 }
                             }else{

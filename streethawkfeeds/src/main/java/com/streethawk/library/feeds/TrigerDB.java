@@ -92,7 +92,6 @@ public class TrigerDB {
                 String bgColor= cursor.getString(cursor.getColumnIndex(TriggerDBHelper.COLUMN_WIDGET_BGCOLOR));
                 String ToolId= cursor.getString(cursor.getColumnIndex(TriggerDBHelper.COLUMN_TOOL_ID));
                 String placement = cursor.getString(cursor.getColumnIndex(TriggerDBHelper.COLUMN_WIDGET_PLACEMENT));
-
                 cursor.close();
                 database.close();
                 helper.close();

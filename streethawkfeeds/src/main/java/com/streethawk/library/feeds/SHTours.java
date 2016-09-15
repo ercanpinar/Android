@@ -25,11 +25,9 @@ public class SHTours implements Constants, ITipClickEvents {
     private int mTourStepNumber = 0;
     private ArrayList<TipObject> mTourList;
     private String mtourID = null;
-
     public SHTours(Activity activity) {
         mActivity = activity;
     }
-
     public void startTour(String tourId) {
         if (null == mActivity)
             return;
@@ -71,7 +69,7 @@ public class SHTours implements Constants, ITipClickEvents {
     public void onButtonClickedOnTip(TipObject object, int[] feedResults) {
         JSONObject status = new JSONObject();
         Bundle params = new Bundle();
-        params.putString(Util.CODE, Integer.toString(CODE_FEED_RESULT));
+        params.putInt(Util.CODE, CODE_FEED_RESULT);
         int isNext = feedResults[0];
         try {
             params.putInt(SHFEEDID, Integer.parseInt(mtourID));
@@ -90,6 +88,7 @@ public class SHTours implements Constants, ITipClickEvents {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+            params.putString(STATUS,status.toString());
             Logging manager = Logging.getLoggingInstance(mActivity.getApplicationContext());
             manager.addLogsForSending(params);
             return;
@@ -127,6 +126,7 @@ public class SHTours implements Constants, ITipClickEvents {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+            params.putString(STATUS,status.toString());
             Logging manager = Logging.getLoggingInstance(mActivity.getApplicationContext());
             manager.addLogsForSending(params);
         }

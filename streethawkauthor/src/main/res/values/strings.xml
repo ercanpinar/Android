@@ -40,5 +40,12 @@
     <string name="tipcreate_title_hint">Enter title of the tip</string>
     <string name="tipcreate_content_hint">Enter content of the tip</string>
     <string name="tipcreate_positiveButton_title">Finish</string>
+    <string name="tipcreate_end_authoring">Done</string>
+
+    <string name="tipcreate_positive_button_hint">Yes</string>
+    <string name="tipcreate_negative_button_hint">No</string>
+    <string name="DND">DND</string>
+
+
 
 </resources>

@@ -25,27 +25,33 @@ import android.widget.ListView;
 import com.streethawk.library.beacon.INotifyBeaconTransition;
 import com.streethawk.library.core.StreetHawk;
 import com.streethawk.library.core.Util;
+import com.streethawk.library.feeds.ISHFeedItemObserver;
 import com.streethawk.library.feeds.Modal;
+import com.streethawk.library.feeds.SHFeedItem;
 import com.streethawk.library.geofence.INotifyGeofenceTransition;
 import com.streethawk.library.growth.IGrowth;
 import com.streethawk.library.push.ISHObserver;
 import com.streethawk.library.push.Push;
 import com.streethawk.library.push.PushDataForApplication;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.TimeZone;
 
 import streethawk.com.streethawkauthor.Authoring;
 import streethawk.com.streethawkauthor.ColorPicker;
 import streethawk.com.streethawkauthor.IColorPickerObserver;
 
 public class MainActivity extends AppCompatActivity implements
-        Constants,IGrowth,INotifyGeofenceTransition,INotifyBeaconTransition,ISHObserver{
-
-
+        Constants,IGrowth,INotifyGeofenceTransition,INotifyBeaconTransition,ISHObserver,ISHFeedItemObserver{
 
     int ANALYTICS   = 0;
     int GROWTH      = ANALYTICS + 1;
@@ -58,9 +64,11 @@ public class MainActivity extends AppCompatActivity implements
     int INSTALLINFO = FEEDBACK + 1;
     int SETTINGS    = INSTALLINFO + 1;
     int WEBVIEW     = SETTINGS + 1;
-    int AUTHORING   = WEBVIEW + 1;
+    int PUSH_PING   = WEBVIEW + 1;
+    int GRANT_PERMISSION    =   PUSH_PING+1;
+    int AUTHORING   = GRANT_PERMISSION + 1;
     int COLORPICKER = AUTHORING+1;
-
+    int SERVER_LOGS = COLORPICKER + 1;
 
 
     String mAppKey = null;
@@ -109,10 +117,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onReceivePushData(PushDataForApplication pushData) {
-
         //pushData.displayDataForDebugging("Anurag");
-
-
     }
 
     @Override
@@ -125,6 +130,10 @@ public class MainActivity extends AppCompatActivity implements
 
     }
 
+    @Override
+    public void shFeedReceived(JSONArray value) {
+
+    }
 
     private class StableArrayAdapter extends ArrayAdapter<String> {
         HashMap<String, Integer> mIdMap = new HashMap<String, Integer>();
@@ -163,8 +172,11 @@ public class MainActivity extends AppCompatActivity implements
             "Install-Info",
             "Reset ",
             "WebView",
+            "Push Ping",
+            "Grant permission",
             "Authoring",
-            "ColorPicker"
+            "ColorPicker",
+            "Logging Report"
     };
 
 
@@ -242,6 +254,7 @@ public class MainActivity extends AppCompatActivity implements
             }
 
         }
+        SHFeedItem.getInstance(this).registerFeedItemObserver(this);
     }
 
     /** code to post/handler request for permission */
@@ -335,10 +348,15 @@ public class MainActivity extends AppCompatActivity implements
                     String appKey = StreetHawk.INSTANCE.getAppKey(context);
                     String authtoken = prefs.getString(KEY_AUTH_TOKEN, "");
 
-                    final String PREF_NAME        = "shtestpref";
-                    final String CONST_PING_TIME = "pingtime";
+
+                    String TIME_LAST_PUSH   = "timeLastPush";
+                    String LAST_SERVER_MSG  = "lastServerMessage";
+                    String APP_SHARED_PREF  = "LAST_SERVER_MSG";
+
+                    final String PREF_NAME        = "shsample_sharedPref";
                     SharedPreferences prefss = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-                    String lastPingtime  = prefss.getString(CONST_PING_TIME,null);
+                    String lastPingtime  = prefss.getString(TIME_LAST_PUSH,null);
+                    String lastMessageToServer  = prefss.getString(LAST_SERVER_MSG,null);
 
 
                     String message =    "Install id: "  + installid + NEW_LINE +
@@ -346,7 +364,8 @@ public class MainActivity extends AppCompatActivity implements
                                         "Server :  "    + setServer + NEW_LINE +
                                         "GCM Sender ID: " + senderId + NEW_LINE +
                                         "Auth Token: "    + authtoken + NEW_LINE +
-                                        "Last Ping Time"  + lastPingtime + NEW_LINE;
+                                        "Last Ping Time"  + lastPingtime + NEW_LINE+
+                                        "Last message to server " + lastMessageToServer ;
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(mActivity,R.style.StreetHawkDialogTheme);
                     builder.setTitle("Install Info");
@@ -378,10 +397,23 @@ public class MainActivity extends AppCompatActivity implements
                     mActivity.startActivity(authorIntent);
                     */
 
-                    Authoring authoring = new Authoring(mActivity);
+                    Authoring authoring = Authoring.getInstance(mActivity);
                     authoring.startAuthoring();
 
 
+                }
+                if(GRANT_PERMISSION==position){
+                    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+                        // Show alert dialog to the user saying a separate permission is needed
+                        // Launch the settings activity if the user prefers
+                        Intent myIntent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
+                        mActivity.startActivity(myIntent);
+                    }
+                }
+
+                if(PUSH_PING == position){
+                    Intent pushping = new Intent(getApplicationContext(),PushPingService.class);
+                    startService(pushping);
                 }
 
                 if(COLORPICKER == position){
@@ -392,6 +424,10 @@ public class MainActivity extends AppCompatActivity implements
                             Log.e("Anurag","Color selected "+color);
                         }
                     });
+                }
+
+                if(SERVER_LOGS==position){
+                    intent = new Intent(getApplicationContext(),Logreport.class);
 
                 }
 
@@ -402,7 +438,6 @@ public class MainActivity extends AppCompatActivity implements
             }
         };
     }
-
 
     private void openUrlInBrowser(String url) {
         if(null==url)

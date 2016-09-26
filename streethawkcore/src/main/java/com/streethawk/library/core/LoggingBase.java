@@ -16,7 +16,6 @@
  */
 
 package com.streethawk.library.core;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -56,6 +55,7 @@ public class LoggingBase implements Constants {
     private final String HOST           = "host";
     private final String ACTIVITY_LIST  = "submit_views";
     private final String DISABLE_LOGS   = "disable_logs";
+    private final String POINTZI_HOST   = "pointzi_host";
 
     protected LoggingBase(Context context) {
         this.mContext = context;
@@ -63,9 +63,9 @@ public class LoggingBase implements Constants {
 
     /*Member variables*/
     private static String mHostUrl = null;
-    //private  static final String PROD_DEFAULT_HOST_URL = "https://api.streethawk.com";
+    private  static final String PROD_DEFAULT_HOST_URL = "https://api.streethawk.com";
     //private  static final String PROD_DEFAULT_HOST_URL = "https://staging.streethawk.com";
-    private  static final String PROD_DEFAULT_HOST_URL = "https://hawk.streethawk.com";
+    //private  static final String PROD_DEFAULT_HOST_URL = "https://hawk.streethawk.com";
 
     protected enum ApiMethod {
         APP_GET_STATUS,
@@ -400,6 +400,16 @@ public class LoggingBase implements Constants {
                             setDisableLogs((JSONArray) value_disable_logs);
                         }
                     }
+                    //TODO
+                    if (app_status.has(POINTZI_HOST) && !app_status.isNull(POINTZI_HOST)) {
+                        Object value_host = app_status.get(POINTZI_HOST);
+                        if (value_host instanceof String) {
+                            //setHost((String) value_host);
+                            //TODO: Add code to change Change POINTZI HOST
+                        }
+                    }
+
+
                 }
             }
         } catch (JSONException e) {
@@ -564,7 +574,6 @@ public class LoggingBase implements Constants {
         }
     }
 
-
     /**
      * Function handles error json returned from server
      *
@@ -596,7 +605,6 @@ public class LoggingBase implements Constants {
         }
     }
 
-
     /**
      * Functions sets host url on which clients will be talking to server
      *
@@ -616,12 +624,10 @@ public class LoggingBase implements Constants {
         }
     }
 
-
     protected boolean getStreethawkState() {
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
         return sharedPreferences.getBoolean(KEY_STREETHAWK, true);
     }
-
 
     /**
      * Set Streethawk state

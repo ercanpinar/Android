@@ -48,10 +48,10 @@ interface Constants {
     String FEED_EXPIRED   = "feed_expired";
 
     String STATUS                   = "result";
-    String RESULT_ID                = "id";
+    String RESULT_ID                = "step_id";
     String RESULT_RESULT            = "status";
     String RESULT_FEED_DELETE       = "feed_delete";
-    String RESULT_FEED_COMPLETED    = "completed";
+    String RESULT_FEED_COMPLETED    = "complete";
 
     String TIP_ID           = "id";
     String TITLE            = "title";

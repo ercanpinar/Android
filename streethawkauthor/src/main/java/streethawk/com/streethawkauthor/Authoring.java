@@ -7,15 +7,14 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.PixelFormat;
 import android.os.Build;
-import android.os.Handler;
 import android.util.Log;
-import android.view.GestureDetector;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.FrameLayout;
+import android.view.WindowManager;
 import android.widget.Spinner;
 
 import com.streethawk.library.core.WidgetDB;
@@ -24,60 +23,37 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class Authoring implements Constants{
+public class Authoring implements Constants, IToolBarButtonListener {
 
-    private View.OnTouchListener mActivityTouchListener;
-
-
-    class ViewDetails{
-        public String viewName;
-        public float viewX;
-        public float viewY;
-        public float viewWidth;
-        public float viewHeight;
-
+    Authoring(){}
+    private static Authoring instance =null;
+    public static Authoring getInstance(Activity activity){
+        mActivity = activity;
+        if(null==instance){
+            instance = new Authoring();
+        }
+        return instance;
     }
 
-    private Activity mActivity;
+
+    private static Activity mActivity;
     private int mStepNumber = 0;
     private String mOption = null;
 
-    private final String TOUR   = "Tour";
-    private final String TIP    = "Tip";
-    private final String MODAL  = "Modal";
-    private ArrayList<ViewDetails> mViewsOnActivity;
+    private final String TOUR = "Tour";
+    private final String TIP = "Tip";
+    private final String MODAL = "Modal";
+
 
     private JSONObject mPayload;
-    public Authoring(Activity activity){
-        this.mActivity = activity;
-    }
+
+    private static WindowManager windowManager;
+    private static View mBarView;
+    WindowManager.LayoutParams winParams;
 
 
-    private void selectTriggerPosition(){
+    private void selectTriggerPosition() {
 
-    }
-
-    private void showStep2Dialog(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
-        builder.setTitle(mActivity.getResources().getString(R.string.step2_title));
-        builder.setPositiveButton(mActivity.getResources().getString(R.string.step1_next),
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        Intent intent = new Intent(mActivity,AuthoringActivity.class);
-                        intent.putExtra(EXTRA_TOOL_TYPE,mOption);
-                        mActivity.startActivity(intent);
-                    }
-                });
-        builder.setNegativeButton(mActivity.getResources().getString(R.string.step1_cancel), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                Log.e("Anurag","Cancel pressed");
-
-            }
-        });
-        builder.setCancelable(false);
-        builder.show();
     }
 
     /**
@@ -85,7 +61,7 @@ public class Authoring implements Constants{
      * 2. Select widget
      * 3. Recurssion
      */
-    private void createTour(){
+    private void createTour() {
         mStepNumber++;
     }
 
@@ -94,8 +70,8 @@ public class Authoring implements Constants{
      * 2. Select widget
      * 3. Save
      */
-    private void createTip(){
-        Log.e("Anurag","Create a tip");
+    private void createTip() {
+        Log.e("Anurag", "Create a tip");
     }
 
     /**
@@ -103,91 +79,234 @@ public class Authoring implements Constants{
      * 2. Select view
      * 3. Save
      */
-    private void createModal(){
+    private void createModal() {
 
     }
-
-    /**
-     * Function returns viewname by stripping package name from it
-     *
-     * @param fullyQualifiedName
-     * @return
-     */
-    private String getViewName(String fullyQualifiedName) {
-        String className = new StringBuilder(fullyQualifiedName).reverse().toString();
-        int indexOfPeriod = className.indexOf(".");
-        if (-1 != indexOfPeriod) {
-            className = className.subSequence(0, className.indexOf(".")).toString();
-            className = new StringBuilder(className).reverse().toString();
-            return className;
-        }
-        return null;
-    }
-
-
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    private void fillViewList() {
-        mViewsOnActivity = new ArrayList<>();
-        String viewName = getViewName(mActivity.getClass().getName());
-        Context context = mActivity.getApplicationContext();
-        WidgetDB.WidgetDBHelper helper = new WidgetDB(context).new WidgetDBHelper(context);
-        SQLiteDatabase database = helper.getReadableDatabase();
-        String query = "select * from " + WidgetDB.WidgetDBHelper.TOOLTIP_TABLE_NAME +
-                " where " + WidgetDB.WidgetDBHelper.COLUMN_PARENT_VIEW + " = '" + viewName.trim() + "'";
-        Cursor cursor = database.rawQuery(query, null);
-        if (cursor != null && cursor.moveToFirst()) {
-            while (!cursor.isAfterLast()) {
-                int resId = (cursor.getInt(cursor.getColumnIndex(WidgetDB.WidgetDBHelper.COLUMN_RES_ID)));
-                if (-1 != resId) {
-                    View view = mActivity.findViewById(resId);
-                    if (null != view) {
-                        ViewDetails viewDetails = new ViewDetails();
-                        viewDetails.viewX = view.getX();
-                        viewDetails.viewY = view.getY();
-                        viewDetails.viewWidth = view.getWidth();
-                        viewDetails.viewHeight = view.getHeight();
-                        mViewsOnActivity.add(viewDetails);
-                    }
-                }
-                cursor.moveToNext();
-            }
-        }
-    }
-
-    public void startAuthoring() {
-        if(null==mActivity)
-            return;
-        Intent intent = new Intent(mActivity,AuthoringService.class);
-        mActivity.startService(intent);
-        fillViewList();
-        AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
-        builder.setTitle(mActivity.getResources().getString(R.string.step1_title));
-        builder.setPositiveButton(mActivity.getResources().getString(R.string.step1_next),
-                new DialogInterface.OnClickListener() {
+    public void forceDismissToolBar(){
+        mActivity.runOnUiThread(new Runnable() {
             @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                View view =  mActivity.getLayoutInflater().inflate( R.layout.step1spinner, null );
-                Spinner spinner = (Spinner)view.findViewById(R.id.step1type);
-                mOption = spinner.getSelectedItem().toString();
-                if((mOption.equals(TOUR)) ||(mOption.equals(TIP)))
-                    showStep2Dialog();
-                else{
-                    //TODO: modals
+            public void run() {
+                if(null!=mBarView){
+                    ((WindowManager) mActivity.getApplicationContext().getSystemService(Activity.
+                            WINDOW_SERVICE)).removeView(mBarView);
                 }
 
             }
         });
-        builder.setNegativeButton(mActivity.getResources().getString(R.string.step1_cancel), new DialogInterface.OnClickListener() {
+    }
+    private void addButtonListener() {
+        final Activity currentActivity = new ActivityTracker().getCurrentActivity();
+        AlertDialog.Builder builder = new AlertDialog.Builder(currentActivity);
+        builder.setTitle(currentActivity.getResources().getString(R.string.step1_title));
+        builder.setPositiveButton(currentActivity.getResources().getString(R.string.step1_next),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        View view = currentActivity.getLayoutInflater().inflate(R.layout.step1spinner, null);
+                        Spinner spinner = (Spinner) view.findViewById(R.id.step1type);
+                        mOption = spinner.getSelectedItem().toString();
+                        if ((mOption.equals(TOUR)) || (mOption.equals(TIP))) {
+                            Intent intent = new Intent(currentActivity, AuthoringActivity.class);
+                            intent.putExtra(EXTRA_TOOL_TYPE, mOption);
+                            intent.putExtra(EXTRA_PARENT, new ActivityTracker().getNameOfCurrentActivity());
+                            AuthoringService instance = AuthoringService.getInstance();
+                            instance.clearTipListObject();
+                            instance.setType(mOption);
+                            currentActivity.startActivity(intent);
+
+                        } else {
+                            //TODO: modals
+                        }
+
+                    }
+                });
+        builder.setNegativeButton(currentActivity.getResources().getString(R.string.step1_cancel), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                Log.e("Anurag","Cancel pressed");
-                if(mStepNumber!=0){
+                Log.e("Anurag", "Cancel pressed");
+                if (mStepNumber != 0) {
                     mStepNumber--;
                 }
             }
         });
-        View view = mActivity.getLayoutInflater().inflate( R.layout.step1spinner, null );
+        View view = currentActivity.getLayoutInflater().inflate(R.layout.step1spinner, null);
         builder.setView(view);
+        forceDismissToolBar();
         builder.show();
+    }
+
+    private void backButtonListener() {
+        Log.e("Anurag", "back button clicked");
+    }
+
+    private void saveButtonListener() {
+        AuthoringService instance = AuthoringService.getInstance();
+        instance.prepareJSONForCampaign();
+        //TODO: create dialog to create campaign , ask for title message etc.
+        instance.sendToolTipToServer();
+        //TODO: create dialog to create another tour
+    }
+
+    private void previewButtonListener() {
+        Log.e("Anurag", "preview button clicked");
+        AuthoringService instance = AuthoringService.getInstance();
+        instance.prepareJSONForCampaign();
+       //TODO review the tip
+    }
+
+    private void nextButtonListener() {
+        Log.e("Anurag", "next button clicked");
+
+    }
+
+    private void cancelButtonListener() {
+        Log.e("Anurag", "cancel button clicked");
+        //TODO add confirmation dialog box here
+        forceDismissToolBar();
+    }
+
+    @Override
+    public void onButtonClick(String title) {
+
+        switch (title) {
+            case BUTTON_ADD:
+                addButtonListener();
+                break;
+            case BUTTON_BACK:
+                backButtonListener();
+                break;
+            case BUTTON_SAVE:
+                saveButtonListener();
+                break;
+            case BUTTON_PREVIEW:
+                previewButtonListener();
+                break;
+            case BUTTON_NEXT:
+                nextButtonListener();
+                break;
+            case BUTTON_CANCEL:
+                cancelButtonListener();
+                break;
+            default:
+                Log.e("Anurag", "UnHandled button " + title);
+                break;
+        }
+    }
+
+    private static int initialX;
+    private static int initialY;
+    private static float initialTouchX;
+    private static float initialTouchY;
+
+    @Override
+    public void onTouchClick(MotionEvent motionEvent) {
+        switch (motionEvent.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                initialX = winParams.x;
+                initialY = winParams.y;
+                initialTouchX = motionEvent.getRawX();
+                initialTouchY = motionEvent.getRawY();
+                return;
+            case MotionEvent.ACTION_UP:
+                return;
+            case MotionEvent.ACTION_MOVE:
+                winParams.x = initialX + (int) (motionEvent.getRawX() - initialTouchX);
+                winParams.y = initialY + (int) (motionEvent.getRawY() - initialTouchY);
+                windowManager.updateViewLayout(mBarView, winParams);
+                return;
+        }
+    }
+
+
+
+    private View.OnTouchListener toolBarListener() {
+        return new View.OnTouchListener() {
+            private int initialX;
+            private int initialY;
+            private float initialTouchX;
+            private float initialTouchY;
+
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                switch (motionEvent.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        initialX = winParams.x;
+                        initialY = winParams.y;
+                        initialTouchX = motionEvent.getRawX();
+                        initialTouchY = motionEvent.getRawY();
+                        return true;
+                    case MotionEvent.ACTION_UP:
+                        return true;
+                    case MotionEvent.ACTION_MOVE:
+                        winParams.x = initialX + (int) (motionEvent.getRawX() - initialTouchX);
+                        winParams.y = initialY + (int) (motionEvent.getRawY() - initialTouchY);
+                        windowManager.updateViewLayout(mBarView, winParams);
+                        return true;
+                }
+                return false;
+            }
+        };
+    }
+
+
+
+    public void displayMainToolBar(int mode){
+
+        switch(mode){
+            case TOOLBAR_ADD: {
+                windowManager = (WindowManager) mActivity.getSystemService(Activity.WINDOW_SERVICE);
+                winParams = new WindowManager.LayoutParams(
+                        WindowManager.LayoutParams.WRAP_CONTENT,
+                        WindowManager.LayoutParams.WRAP_CONTENT,
+                        WindowManager.LayoutParams.TYPE_PHONE,
+                        WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                        PixelFormat.TRANSLUCENT);
+                winParams.gravity = Gravity.TOP | Gravity.LEFT;
+                winParams.x = 0;
+                winParams.y = windowManager.getDefaultDisplay().getHeight() / 2;
+                Toolbar bar = new Toolbar();
+                bar.showAddButton = true;
+                bar.showCancelButton = true;
+                bar.registerClickListener(this);
+                mBarView = bar.getToolBarView(mActivity.getApplicationContext());
+                mBarView.setOnTouchListener(toolBarListener());
+                windowManager.addView(mBarView, winParams);
+            }
+                break;
+            case TOOLBAR_TIP_SAVE: {
+                windowManager = (WindowManager) mActivity.getSystemService(Activity.WINDOW_SERVICE);
+                winParams = new WindowManager.LayoutParams(
+                        WindowManager.LayoutParams.WRAP_CONTENT,
+                        WindowManager.LayoutParams.WRAP_CONTENT,
+                        WindowManager.LayoutParams.TYPE_PHONE,
+                        WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                        PixelFormat.TRANSLUCENT);
+                winParams.gravity = Gravity.TOP | Gravity.LEFT;
+                winParams.x = 0;
+                winParams.y = windowManager.getDefaultDisplay().getHeight() / 2;
+                Toolbar bar = new Toolbar();
+                bar.showSaveButton = true;
+                bar.showPlayButton = true;
+                bar.showCancelButton = true;
+                bar.registerClickListener(this);
+                mBarView = bar.getToolBarView(mActivity.getApplicationContext());
+                mBarView.setOnTouchListener(toolBarListener());
+                windowManager.addView(mBarView, winParams);
+            }
+                break;
+            case TOOLBAR_TOUR_SAVE:
+                break;
+            default:
+                break;
+
+        }
+    }
+
+    public void startAuthoring() {
+        if (null == mActivity)
+            return;
+        Intent intent = new Intent(mActivity, AuthoringService.class);
+        mActivity.startService(intent);
+        displayMainToolBar(TOOLBAR_ADD);
     }
 }

@@ -285,11 +285,20 @@ class SHBackgroundNotification extends NotificationBase {
             else
                 builder.setSound(soundUri);
         }
-        Bitmap icon = BitmapFactory.decodeResource(mContext.getResources(),
-                Util.getAppIcon(mContext));
+
+        int iconId = sharedPreferences.getInt(RES_ID_FOR_BG_NOTFICATION_LARGE,-1);
+
+        if(-1==iconId){
+            iconId = Util.getAppIcon(mContext);
+        }
+        Bitmap icon = BitmapFactory.decodeResource(mContext.getResources(),iconId);
         builder.setLargeIcon(icon);
 
-        builder.setSmallIcon(Util.getAppIcon(mContext));
+        int smalliconId = sharedPreferences.getInt(RES_ID_FOR_BG_NOTFICATION_SMALL,-1);
+        if(-1==smalliconId){
+            smalliconId = Util.getAppIcon(mContext);
+        }
+        builder.setSmallIcon(smalliconId);
         if (code == CODE_RATE_APP) {
             neutralPendingIntent = PendingIntent.getBroadcast(mContext, code, neutralIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         }

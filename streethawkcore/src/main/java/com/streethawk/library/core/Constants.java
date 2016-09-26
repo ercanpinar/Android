@@ -101,12 +101,11 @@ interface Constants {
 
     /*Library version*/
     String SELLING_ARGUMENT    = "1";
-    String FEATURE_NUMBER      = "9";
-    String BUGFIX_NUMBER       = "0";
+    String FEATURE_NUMBER      = "8";
+    String BUGFIX_NUMBER       = "5";
 
     /*Release parameters */
     String SHLIBRARY_VERSION = SELLING_ARGUMENT + "." + FEATURE_NUMBER + "." + BUGFIX_NUMBER;
-   // int RELEASE_PLATFORM = PLATFORM_XAMARIN;  //Moved to utils
     String DISTRIBUTION_TYPE = DISTRIBUTION_AAR;
     String BROADCAST_APP_STATUS_CHK = "com.streethawk.intent.action.gcm.STREETHAWK_APP_STATUS_CHK";
     String KEY_ADV_ID= "sh_advertising_identifier";

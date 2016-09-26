@@ -43,6 +43,10 @@ interface Constants {
     String SHSAVEDTIME              = "shSavedTime";
     String PAUSE_MINUTES            = "pause_minutes";
 
+    String RES_ID_FOR_BG_NOTFICATION_LARGE    = "residforbgnotificationlarge";
+    String RES_ID_FOR_BG_NOTFICATION_SMALL    = "residforbgnotificationsmall";
+
+
     //Codes
 
     int CODE_ERROR                      = -1;

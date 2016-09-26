@@ -68,4 +68,5 @@
     <string name="title_activity_web_view_poc">WebViewPOC</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="title_activity_logreport">Logreport</string>
 </resources>

@@ -3,6 +3,7 @@ package com.streethawk.streethawkapp;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -45,6 +46,13 @@ public class Setting extends AppCompatActivity implements Constants {
         e.putString("shKeyHost", url);
         e.commit();
     }
+
+    public void startPushPing(View view){
+        Intent intent = new Intent(this,PushPingService.class);
+        startService(intent);
+        Toast.makeText(this,"Push ping started",Toast.LENGTH_SHORT).show();
+    }
+
 
 
     public void onRadioButtonClicked(View view) {

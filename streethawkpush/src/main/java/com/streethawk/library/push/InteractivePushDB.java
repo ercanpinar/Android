@@ -285,7 +285,6 @@ class InteractivePushDB implements Constants{
                         BufferedWriter writer = new BufferedWriter(
                                 new OutputStreamWriter(os, "UTF-8"));
                         if(payload.length()<=0){
-                            Log.e("Anurag","Payload is empty");
                             return;
                         }
                         writer.write(payload.toString());

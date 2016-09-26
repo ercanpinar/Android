@@ -2,12 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.streethawk.streethawkapp">
 
+
     <permission
         android:name="com.streethawk.streethawkapp.permission.C2D_MESSAGE"
         android:protectionLevel="signature" />
 
     <uses-permission android:name="com.streethawk.streethawkapp.permission.C2D_MESSAGE" />
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
     <application
         android:allowBackup="true"
@@ -15,15 +15,6 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <receiver
-            android:name="com.streethawk.library.push.GCMReceiver"
-            android:permission="com.google.android.c2dm.permission.SEND">
-            <intent-filter>
-                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
-                <!-- Add  package_name here -->
-                <category android:name="com.streethawk.streethawkapp" />
-            </intent-filter>
-        </receiver>
 
         <activity
             android:name=".MainActivity"
@@ -57,6 +48,15 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.streethawk.streethawkapp.MainActivity" />
         </activity>
+        <receiver
+            android:name="com.streethawk.library.push.GCMReceiver"
+            android:permission="com.google.android.c2dm.permission.SEND" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <!--Add  package_name here-->
+                <category android:name="com.streethawk.streethawkapp" />
+            </intent-filter>
+        </receiver>
         <activity
             android:name=".StartBGL"
             android:theme="@style/AppTheme.NoActionBar">
@@ -156,7 +156,26 @@
             android:name=".WebViewPOC"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_web_view_poc"
-            android:theme="@style/FullscreenTheme"></activity>
+            android:theme="@style/FullscreenTheme" />
+        <activity
+            android:name=".Logreport"
+            android:label="@string/title_activity_logreport"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <service
+            android:name=".PushPingService"
+            android:enabled="true"
+            android:exported="true"></service>
+
+        <receiver
+            android:name=".AlarmTaskReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.streethawk.pushtester.alarmtask" />
+            </intent-filter>
+        </receiver>
+
     </application>
 
 </manifest>

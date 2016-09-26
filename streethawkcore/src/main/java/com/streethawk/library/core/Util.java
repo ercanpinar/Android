@@ -61,13 +61,9 @@ public class Util extends LoggingBase {
     private static final String ACCESS_DATA = "access_data";
     public static final String SHGCMREGISTERED = "shgcmregistered";
 
-
     //Msg from core to be sent as json data in boradcast receiver
     public static final String MSG_FROM_CORE            = "coremsg";
     public static final String KEY_UPDATE_VERSION       = "versionupdate";
-
-
-
 
     //Platform types
     public static final int PLATFORM_ANDROID_NATIVE = 0;
@@ -164,8 +160,6 @@ public class Util extends LoggingBase {
         return prefs.getBoolean(SH_DEBUG_FLAG,false);
     }
 
-
-
     /**
      * Function to get name of the application
      *
@@ -173,7 +167,6 @@ public class Util extends LoggingBase {
      * @return name of the application
      */
     public static String getAppName(Context context) {
-
         PackageManager pm = context.getPackageManager();
         try {
             ApplicationInfo appInfo = pm.getApplicationInfo(context.getPackageName(), PackageManager.GET_META_DATA);

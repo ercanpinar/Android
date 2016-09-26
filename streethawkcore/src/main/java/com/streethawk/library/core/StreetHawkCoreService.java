@@ -521,6 +521,8 @@ public class StreetHawkCoreService extends Service implements Thread.UncaughtExc
 
     private void flushIndividualCrashReportToServer(final File file) {
         final Context context = getApplicationContext();
+        if(null==context)
+            return;
         final String EXCEPTION_FILE = "exception_file";
         if (Util.isNetworkConnected(context)) {
             new Thread(new Runnable() {
@@ -537,6 +539,8 @@ public class StreetHawkCoreService extends Service implements Thread.UncaughtExc
                         URL url = Util.getCrashReportingUrl(context);
                         HttpsURLConnection conn = null;
                         final String installId =Util.getInstallId(context);
+                        if(null==installId)
+                            return;
                         final String app_key  = Util.getAppKey(context);
                         String time = getTimeFromFileName(file.getName());
                         conn = (HttpsURLConnection) url.openConnection();

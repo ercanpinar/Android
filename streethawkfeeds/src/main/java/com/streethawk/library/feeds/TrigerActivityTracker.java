@@ -112,8 +112,6 @@ public class TrigerActivityTracker extends Utils implements Constants {
                     break;
 
             }
-            Log.e("Anurag","Popup window Trigger");
-            Log.e("Anurag",obj.getTarget());
             PopupWindow tipPopUpWindow = new PopupWindow(mActivity);
             if (null == placement)
                 placement = BOTTOM;
@@ -121,26 +119,24 @@ public class TrigerActivityTracker extends Utils implements Constants {
             if (null == target) {
                 //TODO: target center of screen
             } else {
-                Log.e("Anurag","2");
+
                 int widgetID = getResIdFromWidgetName(mActivity, target);
-                Log.e("Anurag","3");
+
                 if (-1 == widgetID) {
                     //TODO target center of screen
                 } else {
-                    Log.e("Anurag","4");
+
                     View anchor = mActivity.findViewById(widgetID);
-                    Log.e("Anurag","5");
+
                     if (null != anchor) {
                         switch (placement) {
                             case BOTTOM:
                             default:
-                                Log.e("Anurag","6");
                                 tipPopUpWindow.setContentView(baseLayout);
-                                Log.e("Anurag","7");
                                 if(anchor.getVisibility()==View.VISIBLE) {
                                     tipPopUpWindow.showAsDropDown(anchor, 0, 0);
                                 }
-                                Log.e("Anurag","8");
+
                                 break;
                             case TOP:
                                 break;
@@ -202,6 +198,10 @@ public class TrigerActivityTracker extends Utils implements Constants {
         //TODO
 
     }
+
+
+
+
 
 
 }

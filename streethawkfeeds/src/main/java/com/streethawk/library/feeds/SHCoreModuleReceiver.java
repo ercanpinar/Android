@@ -182,7 +182,6 @@ public class SHCoreModuleReceiver extends BroadcastReceiver implements Constants
     public void readFeedData(final Context context, final int offset) {
         if (null == context)
             return;
-        Log.e("Anurag","Reading feeds");
         final String INSTALL_ID = "installid";
         final String APP_KEY = "app_key";
         final String EQUALS = "=";
@@ -231,7 +230,7 @@ public class SHCoreModuleReceiver extends BroadcastReceiver implements Constants
     @Override
     public void onReceive(Context context, Intent intent) {
 
-        unit_test_tour(context);
+      //  unit_test_tour(context);
 
         if (intent.getAction() == Util.BROADCAST_SH_APP_STATUS_NOTIFICATION) {
             String installId = intent.getStringExtra(Util.INSTALL_ID);

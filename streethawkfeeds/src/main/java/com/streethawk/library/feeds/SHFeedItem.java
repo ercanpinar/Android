@@ -110,7 +110,7 @@ public class SHFeedItem implements Constants{
     @Deprecated
     public void notifyFeedResult(int feedId, int result) {
         if(1==result){
-            notifyFeedResult(feedId,"accepted",false,false);
+            notifyFeedResult(feedId,"accepted",true,false);
             return;
         }
         if(0==result){
@@ -118,9 +118,35 @@ public class SHFeedItem implements Constants{
             return;
         }
         if(-1==result){
-            notifyFeedResult(feedId,"rejected",false,false);
+            notifyFeedResult(feedId,"rejected",true,false);
             return;
         }
+    }
+
+    /**
+     *
+     * @param feedId Id of the feed item associated with the result
+     * @param result Feed result in String
+     */
+    private void notifyFeedResult_Old(int feedId,String result){
+        if (null == mContext) {
+            Log.e(Util.TAG, "notifyFeedResult: context==null returning..");
+        }
+        Bundle params = new Bundle();
+        params.putInt(Util.CODE,CODE_FEED_RESULT);
+        params.putInt(SHFEEDID, feedId);
+
+        if(result.equals("accepted")){
+            params.putInt(STATUS,1);
+        }
+        if(result.equals("postponed")){
+            params.putInt(STATUS,0);
+        }
+        if(result.equals("rejected")){
+            params.putInt(STATUS,1);
+        }
+        Logging manager = Logging.getLoggingInstance(mContext);
+        manager.addLogsForSending(params);
     }
 
     /**
@@ -140,7 +166,7 @@ public class SHFeedItem implements Constants{
         try {
             status.put(RESULT_RESULT,result);
             status.put(RESULT_FEED_DELETE,feedDelete);
-            status.put(RESULT_FEED_COMPLETED,feedDelete);
+            status.put(RESULT_FEED_COMPLETED,completed);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -148,10 +174,39 @@ public class SHFeedItem implements Constants{
         Logging manager = Logging.getLoggingInstance(mContext);
         manager.addLogsForSending(params);
     }
+
+
     /**
-     * Read feeds from server
-     * @param offset
+     *
+     * @param feedId  Identifier for the feeditem
+     * @param step_id Step identifier
+     * @param result  accepted|rejected|postponed
+     * @param feedDelete true is feed items needs to be deleted on server
+     * @param completed  true if
      */
+    public void notifyFeedResult(int feedId,String step_id,String result,boolean feedDelete,boolean completed){
+        if (null == mContext) {
+            Log.e(Util.TAG, "notifyFeedResult: context==null returning..");
+        }
+
+
+
+        Bundle params = new Bundle();
+        params.putInt(Util.CODE,CODE_FEED_RESULT);
+        params.putInt(SHFEEDID, feedId);
+        JSONObject status  =  new JSONObject();
+        try {
+            status.put(RESULT_ID,step_id);
+            status.put(RESULT_RESULT,result);
+            status.put(RESULT_FEED_DELETE,feedDelete);
+            status.put(RESULT_FEED_COMPLETED,completed);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        params.putString(STATUS,status.toString());
+        Logging manager = Logging.getLoggingInstance(mContext);
+        manager.addLogsForSending(params);
+    }
 
     //TODO: change this to return feed from locally stored String
     //May be later
@@ -178,12 +233,14 @@ public class SHFeedItem implements Constants{
                     } catch (MalformedURLException e) {
                         e.printStackTrace();
                     }
+                    Log.e("StreetHawk","Fetching feed data from server");
                     HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                     connection.setRequestMethod("GET");
                     BufferedReader input = new BufferedReader(
                             new InputStreamReader(connection.getInputStream()));
                     String answer = input.readLine();
                     if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                        Log.e("StreetHawk","Received feed data from server");
                         NotifyFeedItemToApplication(answer);
                     }
                     input.close();

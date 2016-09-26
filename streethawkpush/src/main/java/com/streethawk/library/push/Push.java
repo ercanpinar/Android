@@ -327,21 +327,21 @@ public class Push implements Constants{
             public void run() {
                 long backoff = BACKOFF_MILLI_SECONDS + new Random().nextInt(1000);
                 for (int i = 1; i <= MAX_ATTEMPTS; i++) {
-                        SharedPreferences prefs = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
-                        String token  = prefs.getString(PUSH_ACCESS_DATA,null);
-                        if(null!=token) {
-                            updateInstallWithGcmIdIfNeeded(token);
-                            return;
-                        }else{
-                            Log.e(Util.TAG,"Access data is null");
-                        }
-                       try {
-                            Thread.sleep(backoff);
-                        } catch (InterruptedException e1) {
-                            Thread.currentThread().interrupt();
-                        }
-                        backoff *= 2;
+                    SharedPreferences prefs = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
+                    String token  = prefs.getString(PUSH_ACCESS_DATA,null);
+                    if(null!=token) {
+                        updateInstallWithGcmIdIfNeeded(token);
+                        return;
+                    }else{
+                        Log.e(Util.TAG,"Access data is null");
                     }
+                    try {
+                        Thread.sleep(backoff);
+                    } catch (InterruptedException e1) {
+                        Thread.currentThread().interrupt();
+                    }
+                    backoff *= 2;
+                }
             }
         }).start();
     }
@@ -612,12 +612,12 @@ public class Push implements Constants{
      * @return app page to be displayed else returns null
      */
     public String getAppPage() {
-            SharedPreferences frnd = mContext.getSharedPreferences(Util.SHSHARED_PREF_FRNDLST, Context.MODE_PRIVATE);
-            String url = frnd.getString(PHONEGAP_URL, null);
-            SharedPreferences.Editor e = frnd.edit();
-            e.remove(PHONEGAP_URL);
-            e.commit();
-            return url;
+        SharedPreferences frnd = mContext.getSharedPreferences(Util.SHSHARED_PREF_FRNDLST, Context.MODE_PRIVATE);
+        String url = frnd.getString(PHONEGAP_URL, null);
+        SharedPreferences.Editor e = frnd.edit();
+        e.remove(PHONEGAP_URL);
+        e.commit();
+        return url;
     }
 
     /**

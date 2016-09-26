@@ -1,14 +1,23 @@
 package streethawk.com.streethawkauthor;
 
 import android.app.Activity;
+import android.util.Log;
 
-/**
- * Created by anuragkondeya on 13/09/2016.
- */
 public class ActivityTracker {
-
-
     private static Activity mActivity;
+
+    public String getNameOfCurrentActivity() {
+        if(null==mActivity)
+            return null;
+        String className = new StringBuilder(mActivity.getClass().getName()).reverse().toString();
+        int indexOfPeriod = className.indexOf(".");
+        if (-1 != indexOfPeriod) {
+            className = className.subSequence(0, className.indexOf(".")).toString();
+            className = new StringBuilder(className).reverse().toString();
+            return className;
+        }
+        return null;
+    }
 
     public Activity getCurrentActivity(){
         return mActivity;
@@ -26,8 +35,7 @@ public class ActivityTracker {
     }
 
     public void onApplicationBackgrounded(Activity activity) {
-        //TODO
-
+        Authoring.getInstance(mActivity).forceDismissToolBar();
     }
 
     public void onOrientationChange(Activity activity) {
@@ -37,7 +45,6 @@ public class ActivityTracker {
     }
 
     public void onEnteringNewActivity(Activity activity) {
-
         mActivity = activity;
 
     }

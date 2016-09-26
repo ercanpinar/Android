@@ -72,6 +72,7 @@ interface Constants {
     String SETUP_VIEW               = "view";
     String SETUP_DELAY              = "delay";
     String SETUP_TOOL               = "tool";
+    String SETUP_HIDDEN             = "hidden";
     String SETUP_WIDGET             = "widget";
     String SETUP_WIDGET_TYPE        = "type";
     String SETUP_WIDGET_LABEL       = "label";
@@ -84,6 +85,7 @@ interface Constants {
     String SETUP_TOOL_FEED          = "feed";
     String SETUP_TOOL_TIP           = "tip";
     String SETUP_TOOL_MODAL         = "modal";
+
 
     /*Trigger clicks*/
     String TRIGER_CLICK             = "click";
@@ -100,6 +102,18 @@ interface Constants {
     String TRIGET_TYPE_WARNING      = "Warning";
 
     String EXTRA_TOOL_TYPE          = "extra_tool_type";
+    String EXTRA_PARENT             = "extra_parent";
 
+    String BUTTON_ADD     = "Add";
+    String BUTTON_BACK    = "Back";
+    String BUTTON_SAVE    = "Save";
+    String BUTTON_PREVIEW = "Preview";
+    String BUTTON_NEXT    = "Next";
+    String BUTTON_CANCEL  = "Cancel";
+    String BUTTON_EDIT    = "Edit";
+
+    int TOOLBAR_ADD             = 0;
+    int TOOLBAR_TIP_SAVE        = 1;
+    int TOOLBAR_TOUR_SAVE       = 2;
 
 }

@@ -22,26 +22,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.FrameLayout;
-import android.widget.GridLayout;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.Spinner;
-import android.widget.TableLayout;
-import android.widget.TableRow;
-import android.widget.TextView;
-
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -108,9 +94,7 @@ class AppActivityTracking implements Constants {
                 paramContext[0] = Context.class;
                 Class[] paramActivity = new Class[1];
                 paramActivity[0] = Activity.class;
-
                 Class push = null;
-
                 try {
                     push = Class.forName("com.streethawk.library.feeds.TrigerActivityTracker");
                     Method pushMethod = push.getMethod("getInstance", noParams);
@@ -232,9 +216,7 @@ class AppActivityTracking implements Constants {
                 paramContext[0] = Context.class;
                 Class[] paramActivity = new Class[1];
                 paramActivity[0] = Activity.class;
-
                 Class push = null;
-
                 try {
                     push = Class.forName("com.streethawk.library.feeds.TrigerActivityTracker");
                     Method pushMethod = push.getMethod("getInstance", noParams);
@@ -253,6 +235,68 @@ class AppActivityTracking implements Constants {
                     e1.printStackTrace();
                 }
             }
+        }).start();
+
+        new Thread(new Runnable() {
+
+
+            //TODO
+
+            @Override
+            public void run() {
+                Class noParams[] = {};
+                Class[] paramContext = new Class[1];
+                paramContext[0] = Context.class;
+                Class[] paramActivity = new Class[1];
+                paramActivity[0] = Activity.class;
+
+                Class push = null;
+
+                try {
+                    push = Class.forName("streethawk.com.streethawkauthor.TrigerActivityTracker");
+                    Method pushMethod = push.getMethod("getInstance", noParams);
+                    Object obj = pushMethod.invoke(null);
+                    if (null != obj) {
+                        Method addPushModule = push.getDeclaredMethod("onApplicationBackgrounded", paramActivity);
+                        addPushModule.invoke(obj, activity);
+                    }
+                } catch (ClassNotFoundException e1) {
+                    Log.w(Util.TAG, "Feed module is not present");
+                } catch (IllegalAccessException e1) {
+                    e1.printStackTrace();
+                } catch (NoSuchMethodException e1) {
+                    e1.printStackTrace();
+                } catch (InvocationTargetException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        }).start();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Class noParams[] = {};
+                Class[] paramContext = new Class[1];
+                paramContext[0] = Context.class;
+                Class[] paramActivity = new Class[1];
+                paramActivity[0] = Activity.class;
+                try {
+                    Class cls = Class.forName("streethawk.com.streethawkauthor.ActivityTracker");
+                    Object obj = cls.newInstance();
+                    Method method = cls.getMethod("onApplicationBackgrounded", paramActivity);
+                    method.invoke(obj,activity);
+                } catch (InstantiationException e) {
+                    e.printStackTrace();
+                } catch (NoSuchMethodException e) {
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                } catch (InvocationTargetException e) {
+                    e.printStackTrace();
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
+            }
+
         }).start();
     }
 
@@ -293,8 +337,6 @@ class AppActivityTracking implements Constants {
             }
         }).start();
 
-
-
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -304,30 +346,23 @@ class AppActivityTracking implements Constants {
                 Class[] paramActivity = new Class[1];
                 paramActivity[0] = Activity.class;
                 try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
+                    Class cls = Class.forName("streethawk.com.streethawkauthor.ActivityTracker");
+                    Object obj = cls.newInstance();
+                    Method method = cls.getMethod("onEnteringNewActivity", paramActivity);
+                    method.invoke(obj,activity);
+                } catch (InstantiationException e) {
+                    e.printStackTrace();
+                } catch (NoSuchMethodException e) {
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                } catch (InvocationTargetException e) {
+                    e.printStackTrace();
+                } catch (ClassNotFoundException e) {
                     e.printStackTrace();
                 }
-                Class push = null;
-
-                try {
-                    push = Class.forName("streethawk.com.streethawkauthor.ActivityTracker");
-                    Method pushMethod = push.getMethod("getInstance", noParams);
-                    Object obj = pushMethod.invoke(null);
-                    if (null != obj) {
-                        Method addPushModule = push.getDeclaredMethod("onEnteringNewActivity", paramActivity);
-                        addPushModule.invoke(obj, activity);
-                    }
-                } catch (ClassNotFoundException e1) {
-                    Log.w(Util.TAG, "Feed module is not present");
-                } catch (IllegalAccessException e1) {
-                    e1.printStackTrace();
-                } catch (NoSuchMethodException e1) {
-                    e1.printStackTrace();
-                } catch (InvocationTargetException e1) {
-                    e1.printStackTrace();
-                }
             }
+
         }).start();
     }
 
@@ -576,7 +611,7 @@ class AppActivityTracking implements Constants {
             int id = view.getId();
             if (-1 != id) {
                 String viewTextID = null;
-                //TODO This crashes on Steven's phone
+
                 Resources res = view.getResources();
                 if(null==res)
                     return;
@@ -605,9 +640,7 @@ class AppActivityTracking implements Constants {
     }
 
     private void saveWidgetList(Activity activity) {
-
         //TODO : add activity level checks to prevent recurssive storing of activity
-
         fillViewList(activity);
         saveWidgetsInfo(activity);
     }
@@ -641,7 +674,7 @@ class AppActivityTracking implements Constants {
                 extras.putString(TYPE_STRING, friendlyName);
                 final Logging shManager = Logging.getLoggingInstance(context);
                 shManager.addLogsForSending(extras);
-                saveWidgetList(activity);  //Save activity list for super tag and widgets
+               // saveWidgetList(activity);  //
                 notifyEnteringNewActivityToChildModules(activity);
             } else {
                 bg = true; // indicates this is last activity before going to bg

@@ -38,9 +38,6 @@ import android.os.PowerManager;
 import android.provider.Settings;
 import android.util.Log;
 import android.widget.Toast;
-
-import com.google.android.gms.gcm.GoogleCloudMessaging;
-import com.google.android.gms.iid.InstanceID;
 import com.streethawk.library.core.Logging;
 import com.streethawk.library.core.StreetHawk;
 import com.streethawk.library.core.Util;
@@ -264,6 +261,7 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver impleme
                                         return;
                                     if(newSenderID.isEmpty())
                                         return;
+                                   /*
                                     new Thread(new Runnable() {
                                         @Override
                                         public void run() {
@@ -309,6 +307,7 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver impleme
                                             }
                                         }
                                     }).start();
+                                    */
                                 }
                             }
                             if (object.has(PUSH)) {

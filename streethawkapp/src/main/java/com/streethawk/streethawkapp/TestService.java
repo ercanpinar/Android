@@ -48,13 +48,13 @@ public class TestService extends Service implements ISHObserver {
     private final String CONST_PING_TIME = "pingtime";
 
 
-    private final String SERVER_PROD = "https://api.streethawk.com/v3/debug/?push_android&alert=1";
+    private final String SERVER_PROD    = "https://api.streethawk.com/v3/debug/?push_android&alert=1";
     private final String SERVER_STAGING = "https://staging.streethawk.com/v3/debug/?push_android&alert=1";
-    private final String SERVER_HAWK0 = "https://hawk0.streethawk.com/v3/debug/?push_android&alert=1";
+    private final String SERVER_HAWK    = "https://hawk.streethawk.com/v3/debug/?push_android&alert=1";
 
     private final String TEST_SERVER = "http://www.google.com";
 
-    private String SERVER = SERVER_HAWK0;
+    private String SERVER = SERVER_HAWK;
     private final int WAIT_MINS = 1000 * 60 * 5;  // 5 minutes
 
     @Override
@@ -68,8 +68,6 @@ public class TestService extends Service implements ISHObserver {
     public void onCreate() {
         Push.getInstance(this).registerSHObserver(this);
     }
-
-
 
     /**
      * Store value of alert flag

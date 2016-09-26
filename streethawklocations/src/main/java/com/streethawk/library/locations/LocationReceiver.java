@@ -62,7 +62,6 @@ public class LocationReceiver extends BroadcastReceiver implements Constants{
                     extras.putString(SHLATTITUDE, Double.toString(location.getLatitude()));
                     extras.putString(SHLONGITUDE, Double.toString(location.getLongitude()));
                     Logging.getLoggingInstance(context).addLogsForSending(extras);
-                    Log.e("Anurag","Sending location update "+location.getLatitude()+location.getLongitude());
                 }
             }
         }

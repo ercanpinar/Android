@@ -53,7 +53,6 @@
             android:text="Or enter url below"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
-
         <EditText
             android:id="@+id/customUrl"
             android:layout_width="match_parent"
@@ -80,6 +79,12 @@
             android:onClick="testAlert"
             android:id="@+id/testAlert" />
 
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Start Push Ping"
+            android:onClick="startPushPing"
+            android:id="@+id/pushping" />
 
 
     </LinearLayout>

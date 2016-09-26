@@ -9,10 +9,16 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.PixelFormat;
 import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 
 import com.streethawk.library.core.WidgetDB;
@@ -25,9 +31,15 @@ import java.util.ArrayList;
 public class AuthoringService extends Service implements Constants{
 
 
-    private ArrayList<Tip> tipList;   //parse this list for creating JSON to be submited to server
+    //TODO : Change this into an intent service
 
+
+    private static ArrayList<Tip> tipList;   //parse this list for creating JSON to be submited to server
     private static AuthoringService instance=null;
+    private static String mType;
+    private static String mTrigger;
+
+    private String mPayload;
 
 
     /**
@@ -41,6 +53,16 @@ public class AuthoringService extends Service implements Constants{
         return instance;
     }
 
+
+    public String getPayload(){
+        return mPayload;
+    }
+
+    private void setPayLoad(String payload){
+        mPayload = payload;
+    }
+
+
     public AuthoringService() {
     }
     @Override
@@ -52,35 +74,63 @@ public class AuthoringService extends Service implements Constants{
     @Override
     public void onCreate() {
         super.onCreate();
-        tipList = new ArrayList<Tip>();
     }
-
-
-
     /**
      * Add object to tip list for adding params in JSON
      * @param object
      */
     public void addTipToList(Tip object){
+        if(null==tipList)
+            tipList = new ArrayList<Tip>();
         tipList.add(object);
     }
 
+    public void setType(String type){
+        mType = type;
+    }
+
+    public void setTrigger(String trigger){
+        mTrigger = trigger;
+    }
+
     public void clearTipListObject(){
-        tipList.clear();
+        if(null!=tipList)
+            tipList.clear();
+        mType = null;
+        mTrigger = null;
     }
 
-    private void sendPaylodToServer(JSONObject json){
-
+    public void sendToolTipToServer(){
+        Log.e("Anurag","Send tooltip to server "+mPayload);
     }
 
 
-
-    public void prepareJSONForCampaign(String type){
-        if(null==tipList)
+    public void prepareJSONForCampaign(){
+        if(null==tipList) {
             return;
-        if(tipList.size()<=0)
+        }
+        if(tipList.size()<=0) {
             return;
+        }
         JSONObject jsonObject = new JSONObject();
+
+        JSONObject setup = new JSONObject();
+        try {
+            setup.put(SETUP_DISPLAY,null);
+            setup.put(SETUP_TRIGGER,null);
+            setup.put(SETUP_TARGET,null);
+            setup.put(SETUP_VIEW,null);
+            setup.put(SETUP_HIDDEN,null);
+            setup.put(SETUP_TOOL,null);
+            JSONObject widget = new JSONObject();
+            widget.put(SETUP_WIDGET_TYPE,null);
+            widget.put(SETUP_WIDGET_LABEL,null);
+            widget.put(SETUP_WIDGET_CSS,null);
+            setup.put(SETUP_WIDGET,widget);
+            jsonObject.put(SETUP,setup);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         try {
             for (Tip tip : tipList) {
                 JSONObject obj = new JSONObject();
@@ -106,22 +156,20 @@ public class AuthoringService extends Service implements Constants{
                         customData.put(DND,DNDObject);
                     }
                     obj.put(CUSTOM_DATA,customData);
-
                 }
-            jsonObject.put(type,obj);
+            jsonObject.put(mType,obj);
             }
-            sendPaylodToServer(jsonObject);
+            Log.e("Anurag","4");
+            setPayLoad(jsonObject.toString());
         }catch(JSONException e){
             e.printStackTrace();
         }
-
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
     }
-
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 

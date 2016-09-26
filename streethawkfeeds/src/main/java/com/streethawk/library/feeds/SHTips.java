@@ -70,6 +70,10 @@ public class SHTips extends Utils implements Constants {
         showTip(activity, widget, true);
     }
 
+    public void showTips(){
+
+    }
+
 
     private String[] getButtonTextFromButtonPairs(String pairName) {
         String[] btnPairs = new String[2];
@@ -251,13 +255,11 @@ public class SHTips extends Utils implements Constants {
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public void showTip(Activity currentActivity, TipObject widget, boolean sendResult) {
-        Log.e("Anurag","Calling show tip");
         if (null == currentActivity)
             return;
         if (widget == null)
             return;
         mSendFeedResultForEachTip = sendResult;
-        Log.e("Anurag","SHTips");
         if (null == tipPopUpWindow) {
             tipPopUpWindow = new PopupWindow(currentActivity);
         }
@@ -497,6 +499,8 @@ public class SHTips extends Utils implements Constants {
         }
     }
 
+    //TODO add proper feed result for all the three function
+
     private View.OnClickListener declineButtonListener(final Activity activity, final TipObject widget) {
         return new View.OnClickListener() {
 
@@ -726,7 +730,6 @@ public class SHTips extends Utils implements Constants {
         if (null == activity)
             return null;
 
-
         String backGroundColor = widget.getBackGroundColor();
         String titleColor = widget.getTitleColor();
         String contentColor = widget.getContentColor();
@@ -775,7 +778,6 @@ public class SHTips extends Utils implements Constants {
         }
 
         String title = widget.getTitle();
-
         if (null != title) {
             //Add title here
             if (!title.isEmpty()) {
@@ -789,17 +791,13 @@ public class SHTips extends Utils implements Constants {
             }
         }
         LL_titleBar.addView(LL_title_horizontal);
-
         //MessageBar
         LinearLayout LL_MessageBar = new LinearLayout(context);
         LinearLayout.LayoutParams LL_MessageBarParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         LL_MessageBar.setOrientation(LinearLayout.VERTICAL);
         LL_MessageBar.setLayoutParams(LL_MessageBarParams);
         LL_MessageBar.setPadding(1, 1, 1, 1);
-
         String content = widget.getContent();
-
-
         if (null != content) {
             if (!content.isEmpty()) {
                 TextView messageTv = new TextView(context);
@@ -810,7 +808,6 @@ public class SHTips extends Utils implements Constants {
                 LL_MessageBar.addView(messageTv);
             }
         }
-
         //Buttons
         LinearLayout LL_ButtonBar = new LinearLayout(context);
         LinearLayout.LayoutParams LL_ButtonBarParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);

@@ -38,12 +38,15 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.ConcurrentModificationException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.TimeZone;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -523,6 +526,32 @@ public class Logging extends LoggingBase implements Constants {
 
 
     /**
+     * Anurag remove/comment this code for release
+     * @param activity
+     * @param message
+     */
+
+    private void saveLogs(String activity,String message){
+
+        String COLON = " : ";
+        String NEWLINE = "\n";
+        String COMMA = "  ,  ";
+        SharedPreferences prefs = mContext.getSharedPreferences("SHLogging", Context.MODE_PRIVATE);
+        SharedPreferences.Editor e = prefs.edit();
+        DateFormat df = new SimpleDateFormat("EEE, d MMM yyyy, HH:mm");
+        String local_date = " LT: "+df.format(Calendar.getInstance().getTime());
+        DateFormat df2 = DateFormat.getTimeInstance();
+        df2.setTimeZone(TimeZone.getTimeZone("gmt"));
+        String utc = " UTC: " +df2.format(new Date());
+        String logstring = local_date+COMMA+utc+COMMA+activity+COMMA+message+NEWLINE;
+        String prevlog = prefs.getString("logger","");
+        prevlog  = logstring+NEWLINE+NEWLINE+prevlog;
+        e.putString("logger",prevlog);
+        e.commit();
+    }
+
+
+    /**
      * Flush cached logs to server
      *
      * @param key
@@ -645,10 +674,12 @@ public class Logging extends LoggingBase implements Constants {
                             }
                             writer.write(logs);
                             writer.flush();
+                            saveLogs("SEND_REQUEST",records);
                             writer.close();
                             os.close();
                             reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
                             String answer = reader.readLine();
+                            saveLogs("RESPONSE",answer);
                             if (Util.getSHDebugFlag(mContext)) {
                                 Log.d(Util.TAG, "Response " + answer);
                             }

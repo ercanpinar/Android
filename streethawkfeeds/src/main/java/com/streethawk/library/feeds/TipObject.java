@@ -2,6 +2,8 @@ package com.streethawk.library.feeds;
 
 import android.app.Activity;
 
+import org.json.JSONArray;
+
 /**
  * Created by anuragkondeya on 1/09/2016.
  */
@@ -12,7 +14,7 @@ class TipObject implements Constants {
     private String mContent;
     private String mPlacement = BOTTOM;  //Direction of the widget
     private String mTarget;     // Target element of the widget
-    private String[] mChild;
+    private JSONArray mChild;
 
     private String mBackGroundColor = "#FFFFFF";   // Default white
     private String mTitleColor = "#000000";       // Default black
@@ -108,7 +110,7 @@ class TipObject implements Constants {
         mHasDND = flag;
     }
 
-    public void setChild(String[] child){mChild = child;}
+    public void setChild(JSONArray child){mChild = child;}
 
 
     public String getBackGroundColor() {
@@ -188,5 +190,5 @@ class TipObject implements Constants {
         return mDNDB2;
     }
 
-    public String[] getChild() {return mChild;}
+    public JSONArray getChild() {return mChild;}
 }

@@ -20,6 +20,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteConstraintException;
 import android.util.Log;
 
 import com.streethawk.library.core.Util;
@@ -33,6 +34,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashSet;
 
 public class SHCoreModuleReceiver extends BroadcastReceiver implements Constants {
     private final String FEED = "feed";
@@ -47,135 +49,42 @@ public class SHCoreModuleReceiver extends BroadcastReceiver implements Constants
         readFeedData(context, 0);
     }
 
-
-    private void parseAndSaveTrigger(Context context,JSONObject setup,String feedid){
-        if(null==setup)
-            return;
-        if(null==feedid)
-            return;
-
-        SHTriger obj =  new SHTriger();
-        try{
-            obj.setDisplay(setup.getString(SETUP_DISPLAY));
-        } catch (JSONException e) {
-            obj.setDisplay(null);
-        }
-        try{
-            obj.setTriger(setup.getString(SETUP_TRIGGER));
-        } catch (JSONException e) {
-            obj.setTriger(null);
-        }
-        try{
-            obj.setTarget(setup.getString(SETUP_TARGET));
-        } catch (JSONException e) {
-            obj.setTarget(null);
-        }
-        try{
-            obj.setView(setup.getString(SETUP_VIEW));
-        } catch (JSONException e) {
-            obj.setView(null);
-        }
-        try{
-            obj.setDelay(setup.getInt(SETUP_DELAY));
-        } catch (JSONException e) {
-            obj.setDelay(-1);
-        }
-        try{
-            obj.setTool(setup.getString(SETUP_TOOL));
-        } catch (JSONException e) {
-            obj.setTool(null);
-        }
-        try{
-            JSONObject widget = setup.getJSONObject(SETUP_WIDGET);
-            try{
-                obj.setWidgetType(widget.getString(SETUP_WIDGET_TYPE));
-            } catch (JSONException e) {
-                obj.setWidgetType(null);
-            }
-            try{
-                obj.setWidgetLabel(widget.getString(SETUP_WIDGET_LABEL));
-            } catch (JSONException e) {
-                obj.setWidgetLabel(null);
-            }
-            try{
-                obj.setWidgetCss(widget.getString(SETUP_WIDGET_CSS));
-            } catch (JSONException e) {
-                obj.setWidgetCss(null);
-            }
-            try{
-                obj.setBGColor(widget.getString(SETUP_WIDGET_BGCOLOR));
-            } catch (JSONException e) {
-                obj.setBGColor(null);
-            }
-            try{
-                obj.setBGColor(widget.getString(SETUP_WIDGET_PLACEMENT));
-            } catch (JSONException e) {
-                obj.setBGColor(null);
-            }
-        } catch (JSONException e) {
-
-        }
+    private void parseAndSaveResponse(Context context,String answer){
         TrigerDB trigetDb = new TrigerDB(context);
         trigetDb.open();
-        trigetDb.storeTriggerData(obj);
-        trigetDb.close();
-    }
-
-    private void parseAndSaveResponse(Context context, String answer) {
-        try {
-            SharedPreferences sharedPreferences = context.getSharedPreferences(SHSHARED_PREF_FEEDLIST,
-                    Context.MODE_PRIVATE);
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putString(ALL_FEEDS, answer);                     // Storing all for local feeds
+        SHTriger trigger = new SHTriger();
+        try{
             JSONObject feedItem = new JSONObject(answer);
             Object val = feedItem.get(VALUE);
             if (val instanceof JSONArray) {
                 JSONArray arr = (JSONArray) val;
                 for (int i = 0; i < arr.length(); i++) {
                     JSONObject obj = arr.getJSONObject(i);
-                    String feedId = obj.getString(PAYLOAD_SHFEEDID);
+                    trigger.setFeedID(obj.getString(PAYLOAD_SHFEEDID));
                     JSONObject content = obj.getJSONObject(CONTENT);
                     if (null != content) {
                         JSONObject data = new JSONObject(content.getString(DATA));
-                        if (null != data) {
-                            JSONObject init = data.getJSONObject(SETUP);
-                            if (null != init) {
-                                parseAndSaveTrigger(context,init,feedId);
-                                String type = init.getString(INIT_TOOL);
-                                if (null == type)
-                                    type = FEED;
-                                switch (type) {
-                                    case TOUR:
-                                        try {
-                                            String tour = data.getString(TOUR);
-                                            editor.putString(feedId, tour.toString());
-                                            editor.commit();
-                                        } catch (JSONException e) {
-                                            e.printStackTrace();
-                                        }
-                                        editor.commit();
-                                        break;
-                                    case MODAL:
-                                        String modal = data.getString(MODAL);
-                                        editor.putString(feedId, modal.toString());
-                                        editor.commit();
-                                        break;
-                                    case TIP:
-                                        break;
-                                    case NEWS:
-                                        break;
-                                    case FEED:
-                                        break;
-                                    default:
-                                        break;
-                                }
-                            }
+                        JSONObject init = data.getJSONObject(SETUP);
+                        trigger.setSetup(init.toString());
+                        String tool = init.getString(SETUP_TOOL);
+                        trigger.setTool(tool);
+                        String trgr = init.getString(SETUP_TRIGGER);
+                        trigger.setTrigger(trgr);
+                        trigger.setView(init.getString(SETUP_VIEW));
+                        if(null!=tool){
+                            JSONArray toolObject = data.getJSONArray(tool);
+                            String toolArary = toolObject.toString();
+                            trigger.setJSON( toolArary);
                         }
+                        trigger.setActioned(0);
                     }
+                    trigetDb.storeTriggerData(trigger);
                 }
             }
-        } catch (JSONException e) {
+            trigetDb.close();
+        }catch (JSONException e) {
             e.printStackTrace();
+            trigetDb.close();
         }
     }
 
@@ -229,9 +138,6 @@ public class SHCoreModuleReceiver extends BroadcastReceiver implements Constants
 
     @Override
     public void onReceive(Context context, Intent intent) {
-
-      //  unit_test_tour(context);
-
         if (intent.getAction() == Util.BROADCAST_SH_APP_STATUS_NOTIFICATION) {
             String installId = intent.getStringExtra(Util.INSTALL_ID);
             if (null == installId) {
@@ -256,6 +162,12 @@ public class SHCoreModuleReceiver extends BroadcastReceiver implements Constants
                                         editor.commit();
                                         return;
                                     } else {
+                                        /*
+                                        TrigerDB trigetDb = new TrigerDB(context);
+                                        trigetDb.open();
+                                        trigetDb.forceDeleteAllRecords();
+                                        trigetDb.close();
+                                        */
                                         if (receivedTime.isEmpty()) {
                                             editor.putString(SHFEEDTIMESTAMP, null);
                                             editor.commit();
@@ -272,9 +184,9 @@ public class SHCoreModuleReceiver extends BroadcastReceiver implements Constants
                                                 editor.commit();
                                             }
                                         }
+                                        readFeedData(context, mPaginationCnt);
 
-                                        /* TODO
-
+                                        /* TODO pagination
                                         Intent pushNotificationIntent = new Intent();
                                         pushNotificationIntent.setAction(SHFeedItem.BROADCAST_NEW_FEED);
                                         pushNotificationIntent.putExtra(Util.INSTALL_ID, Util.getInstallId(context));
@@ -287,8 +199,6 @@ public class SHCoreModuleReceiver extends BroadcastReceiver implements Constants
                                             e.commit();
                                             Log.e("Anurag","Reading feed data");
                                             readFeedData(context, mPaginationCnt);
-
-
                                         }
                                         */
                                     }

@@ -1,1 +1,1 @@
-include ':streethawkcore', ':streethawkgrowth', ':streethawkpush', ':streethawkbeacon', ':streethawklocations', ':streethawkfeeds', ':streethawkgeofence', ':streethawkapp', ':streethawkdebug', ':streethawkauthor'
+include ':streethawkcore', ':streethawkgrowth', ':streethawkpush', ':streethawkbeacon', ':streethawklocations', ':streethawkfeeds', ':streethawkgeofence', ':streethawkapp', ':streethawkdebug', ':dev', ':shonboardingtest', ':pushping', ':pointziprod', ':pointzidev'

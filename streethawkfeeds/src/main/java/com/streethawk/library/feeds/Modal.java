@@ -16,6 +16,7 @@ import android.graphics.Color;
 import android.os.Build;
 import android.text.Html;
 import android.text.Spanned;
+import android.text.method.LinkMovementMethod;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,20 +27,24 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.streethawk.library.core.WidgetDB;
+import com.streethawk.library.core.WidgetDBHelper;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
 /**
  * Class renders simple modal
  */
-public class Modal implements Constants {
+public class Modal implements Constants,IPointziClickEventsListener {
 
     public void unit_test_tooltip(Activity activity) {
         TipObject widget = new TipObject();
         widget.setTitle("<b>Enter key here</b>");
         widget.setTitleColor("#FF0000");
-        widget.setContent("Key is must for tagging");
+        widget.setContent("Key is must for tagging <a href=\"slack://open\">slack</a>");
         widget.setTitleColor("#FFFF00");
         widget.setBackGroundColor("#80FF00FF");
         widget.setPlacement(TOP);
@@ -49,18 +54,154 @@ public class Modal implements Constants {
 
     private Activity mActivity;
     private static Dialog mDialog;
-    private static ArrayList<ITipClickEvents> mClickEventListeners = null;
+    private static ArrayList<IPointziClickEventsListener> mClickEventListeners = null;
 
     public Modal() {
     }
 
-    public void registerClickListener(ITipClickEvents eventListener) {
+    public void registerClickListener(IPointziClickEventsListener eventListener) {
         if (null == mClickEventListeners) {
-            mClickEventListeners = new ArrayList<ITipClickEvents>();
+            mClickEventListeners = new ArrayList<IPointziClickEventsListener>();
         }
         mClickEventListeners.add(eventListener);
     }
 
+
+    private void parsePayloadToGetObject(SHTriger source, TipObject dest) {
+        if (null == source)
+            return;
+        if (null == dest)
+            return;
+
+        JSONArray modalArray = null;
+        try {
+            modalArray = new JSONArray(source.getJSON());
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return;
+        }
+        JSONObject modal = null;
+        try {
+            modal = modalArray.getJSONObject(0);
+        } catch (JSONException e1) {
+            e1.printStackTrace();
+        }
+        if (null != modal) {
+            try {
+                dest.setId(modal.getString(TIP_ID));
+            } catch (JSONException e1) {
+            }
+            try {
+                dest.setTitle(modal.getString(TITLE));
+            } catch (JSONException e1) {
+            }
+            try {
+                dest.setContent(modal.getString(CONTENT));
+            } catch (JSONException e1) {
+            }
+            try {
+                dest.setPlacement(modal.getString(PLACEMENT));
+            } catch (JSONException e1) {
+            }
+            try {
+                dest.setTarget(modal.getString(TARGET));
+            } catch (JSONException e1) {
+            }
+            try {
+                dest.setBackGroundColor(modal.getString(BG_COLOR));
+            } catch (JSONException e1) {
+            }
+
+            try {
+                dest.setTitleColor(modal.getString(TITLE_COLOR));
+            } catch (JSONException e1) {
+            }
+
+            try {
+                dest.setContentColor(modal.getString(CONTENT_COLOR));
+            } catch (JSONException e1) {
+            }
+
+            try {
+                dest.setDelay(modal.getInt(DELAY));
+            } catch (JSONException e1) {
+            }
+            try {
+                dest.setImageUrl(modal.getString(IMG_URL));
+            } catch (JSONException e1) {
+            }
+            try {
+                dest.setParent(modal.getString(PARENT));
+            } catch (JSONException e1) {
+            }
+
+            JSONObject customData = null;
+            try {
+                customData = modal.getJSONObject(CUSTOM_DATA);
+            } catch (JSONException e) {
+                customData = null;
+            }
+            if (null != customData) {
+                try {
+                    dest.setAcceptedButtonTitle(customData.getString(NEXT_BUTTON));
+                } catch (JSONException e1) {
+                }
+                try {
+                    dest.setDeclinedButtonTitle(customData.getString(PREV_BUTTON));
+                } catch (JSONException e1) {
+                }
+                try {
+                    dest.setCloseButtonTitle(customData.getString(CLOSE_BUTTON));
+                } catch (JSONException e1) {
+                }
+                JSONObject DNDObject = null;
+                try {
+                    DNDObject = customData.getJSONObject(DND);
+                } catch (JSONException e) {
+                    DNDObject = null;
+                }
+                if(null!=DNDObject) {
+                    try {
+                        dest.setDNDTitle(DNDObject.getString(DND_TITLE));
+                    } catch (JSONException e1) {
+                    }
+
+                    try {
+                        dest.setDNDContent(DNDObject.getString(DND_CONTENT));
+                    } catch (JSONException e1) {
+                    }
+                    String DNDB1 = null;
+                    String DNDB2 = null;
+
+                    try {
+                        DNDB1 = DNDObject.getString(DND_B1);
+                        dest.setDNDB1(DNDB1);
+                    } catch (JSONException e1) {
+                    }
+                    try {
+                        DNDB2 = DNDObject.getString(DND_B2);
+                        dest.setDNDB2(DNDB2);
+                    } catch (JSONException e1) {
+                    }
+
+                    if (null == DNDB1 && null == DNDB2) {
+                        dest.setHasDND(false);
+                    } else {
+                        dest.setHasDND(true);
+                    }
+                }
+            }
+        }
+    }
+
+    public void showModal(Activity activity, SHTriger trigger) {
+        if (null == activity)
+            return;
+        mActivity = activity;
+        TipObject widget = new TipObject();
+        parsePayloadToGetObject(trigger, widget);
+        showModal(activity,widget);
+    }
 
     public void showModal(Activity activity, TipObject widget) {
         mActivity = activity;
@@ -71,8 +212,9 @@ public class Modal implements Constants {
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT);
         baseLayout.setLayoutParams(params);
-        baseLayout.addView(getContentView(activity, widget));
 
+
+        baseLayout.addView(getContentView(activity, widget));
         if (null == mDialog)
             mDialog = new Dialog(activity, android.R.style.Theme_Translucent_NoTitleBar_Fullscreen);
 
@@ -101,8 +243,10 @@ public class Modal implements Constants {
                     int[] results = new int[2];
                     results[0] = -1;  //FeedResult
                     results[1] = -1;  //Expires
-                    for (ITipClickEvents listener : mClickEventListeners) {
-                        listener.onButtonClickedOnTip(widget, results);
+                    if(null!=mClickEventListeners) {
+                        for (IPointziClickEventsListener listener : mClickEventListeners) {
+                            listener.onButtonClickedOnTip(widget, results);
+                        }
                     }
                 } catch (NumberFormatException e) {
                     e.printStackTrace();
@@ -123,8 +267,10 @@ public class Modal implements Constants {
                     int[] results = new int[2];
                     results[0] = 1;  //FeedResult
                     results[1] = -1; //Expires
-                    for (ITipClickEvents listener : mClickEventListeners) {
-                        listener.onButtonClickedOnTip(widget, results);
+                    if(null!=mClickEventListeners) {
+                        for (IPointziClickEventsListener listener : mClickEventListeners) {
+                            listener.onButtonClickedOnTip(widget, results);
+                        }
                     }
                 } catch (NumberFormatException e) {
                     e.printStackTrace();
@@ -166,8 +312,10 @@ public class Modal implements Constants {
                                         int[] results = new int[2];
                                         results[0] = -2;  //FeedResult
                                         results[1] = 1; //Dismiss for all
-                                        for (ITipClickEvents listener : mClickEventListeners) {
-                                            listener.onButtonClickedOnTip(widget, results);
+                                        if(null!=mClickEventListeners) {
+                                            for (IPointziClickEventsListener listener : mClickEventListeners) {
+                                                listener.onButtonClickedOnTip(widget, results);
+                                            }
                                         }
                                     }
                                 });
@@ -181,8 +329,10 @@ public class Modal implements Constants {
                                         int[] results = new int[2];
                                         results[0] = -2;  //FeedResult
                                         results[1] = 0;
-                                        for (ITipClickEvents listener : mClickEventListeners) {
-                                            listener.onButtonClickedOnTip(widget, results);
+                                        if(null!=mClickEventListeners) {
+                                            for (IPointziClickEventsListener listener : mClickEventListeners) {
+                                                listener.onButtonClickedOnTip(widget, results);
+                                            }
                                         }
                                     }
                                 });
@@ -213,8 +363,10 @@ public class Modal implements Constants {
                     results[0] = 0;  //FeedResult
                     results[1] = -1; //Expires
                     if (null != mClickEventListeners) {
-                        for (ITipClickEvents listener : mClickEventListeners) {
-                            listener.onButtonClickedOnTip(widget, results);
+                        if(null!=mClickEventListeners) {
+                            for (IPointziClickEventsListener listener : mClickEventListeners) {
+                                listener.onButtonClickedOnTip(widget, results);
+                            }
                         }
                     }
                 } catch (NumberFormatException e) {
@@ -245,7 +397,7 @@ public class Modal implements Constants {
     private int getResIdFromWidgetName(Activity activity, String widgetName) {
         if (null == widgetName)
             return -1;
-        WidgetDB.WidgetDBHelper helper = new WidgetDB(activity).new WidgetDBHelper(activity.getApplicationContext());
+        WidgetDBHelper helper = new WidgetDBHelper(activity.getApplicationContext());
         SQLiteDatabase database = helper.getReadableDatabase();
 
         String parent = getViewName(activity.getClass().getName());
@@ -254,13 +406,13 @@ public class Modal implements Constants {
         String AND = " and ";
         String DOUBLE_QUOTE = "\"";
 
-        String query = "select * from " + WidgetDB.WidgetDBHelper.TOOLTIP_TABLE_NAME +
-                WHERE + WidgetDB.WidgetDBHelper.COLUMN_TEXT_ID + EQUALS + DOUBLE_QUOTE + widgetName.trim() + DOUBLE_QUOTE +
-                AND + WidgetDB.WidgetDBHelper.COLUMN_PARENT_VIEW + EQUALS + DOUBLE_QUOTE + parent.trim() + DOUBLE_QUOTE;
+        String query = "select * from " + WidgetDBHelper.TOOLTIP_TABLE_NAME +
+                WHERE + WidgetDBHelper.COLUMN_TEXT_ID + EQUALS + DOUBLE_QUOTE + widgetName.trim() + DOUBLE_QUOTE +
+                AND + WidgetDBHelper.COLUMN_PARENT_VIEW + EQUALS + DOUBLE_QUOTE + parent.trim() + DOUBLE_QUOTE;
         try {
             Cursor cursor = database.rawQuery(query, null);
             if (cursor != null && cursor.moveToFirst()) {
-                return cursor.getInt(cursor.getColumnIndex(WidgetDB.WidgetDBHelper.COLUMN_RES_ID));
+                return cursor.getInt(cursor.getColumnIndex(WidgetDBHelper.COLUMN_RES_ID));
             } else {
                 cursor.close();
                 database.close();
@@ -292,36 +444,36 @@ public class Modal implements Constants {
         String backGroundColor = widget.getBackGroundColor();
         String titleColor = widget.getTitleColor();
         String contentColor = widget.getContentColor();
-        Context context = activity.getApplicationContext();
-        LinearLayout rootView = new LinearLayout(context);
+
+        LinearLayout rootView = new LinearLayout(mActivity);
         LinearLayout.LayoutParams rootParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         rootView.setOrientation(LinearLayout.VERTICAL);
         rootView.setLayoutParams(rootParams);
         rootView.setBackgroundColor(Color.parseColor(backGroundColor));
 
         //Dismiss button
-        LinearLayout LL_dismiss = new LinearLayout(context);
+        LinearLayout LL_dismiss = new LinearLayout(mActivity);
         LinearLayout.LayoutParams dismissLLParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         LL_dismiss.setOrientation(LinearLayout.VERTICAL);
         LL_dismiss.setPadding(1, 1, 1, 1);
         LL_dismiss.setLayoutParams(dismissLLParams);
         LL_dismiss.setGravity(Gravity.RIGHT);
-        ImageButton dismissButton = new ImageButton(context);
+        ImageButton dismissButton = new ImageButton(mActivity);
         dismissButton.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         dismissButton.setBackgroundColor(Color.TRANSPARENT);
-        Bitmap cancel = BitmapFactory.decodeResource(context.getResources(),
+        Bitmap cancel = BitmapFactory.decodeResource(mActivity.getResources(),
                 R.drawable.shclose);
         dismissButton.setImageBitmap(cancel);
         dismissButton.setOnClickListener(customCrossButtonListener(activity, widget));
         LL_dismiss.addView(dismissButton);
 
         //Title Bar
-        LinearLayout LL_titleBar = new LinearLayout(context);
+        LinearLayout LL_titleBar = new LinearLayout(mActivity);
         LinearLayout.LayoutParams LL_titleParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         LL_titleBar.setOrientation(LinearLayout.HORIZONTAL);
         LL_titleBar.setLayoutParams(LL_titleParams);
 
-        LinearLayout LL_title_horizontal = new LinearLayout(context);
+        LinearLayout LL_title_horizontal = new LinearLayout(mActivity);
         LinearLayout.LayoutParams LL_title_horizontalParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         LL_title_horizontal.setOrientation(LinearLayout.HORIZONTAL);
         LL_title_horizontal.setLayoutParams(LL_title_horizontalParams);
@@ -332,11 +484,12 @@ public class Modal implements Constants {
             //Add title here
             if (!strTitle.isEmpty()) {
                 Spanned title = Html.fromHtml(strTitle/*+'\u00A9'+0x1F601*/);
-                TextView titletv = new TextView(context);
+                TextView titletv = new TextView(mActivity);
                 titletv.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-                titletv.setTextAppearance(context, android.R.style.TextAppearance_Large);
+                titletv.setTextAppearance(mActivity, android.R.style.TextAppearance_Large);
                 titletv.setText(title);
                 titletv.setPadding(1, 1, 1, 1);
+
                 titletv.setTextColor(Color.parseColor(titleColor));
                 LL_title_horizontal.addView(titletv);
             }
@@ -344,7 +497,7 @@ public class Modal implements Constants {
         LL_titleBar.addView(LL_title_horizontal);
 
         //MessageBar
-        LinearLayout LL_MessageBar = new LinearLayout(context);
+        LinearLayout LL_MessageBar = new LinearLayout(mActivity);
         LinearLayout.LayoutParams LL_MessageBarParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, 1.0f);
         LL_MessageBar.setOrientation(LinearLayout.VERTICAL);
         LL_MessageBar.setLayoutParams(LL_MessageBarParams);
@@ -354,24 +507,26 @@ public class Modal implements Constants {
         if (null != strContent) {
             if (!strContent.isEmpty()) {
                 Spanned content = Html.fromHtml(strContent/*+'\u00A9'+0x1F601*/);
-                TextView messageTv = new TextView(context);
+                TextView messageTv = new TextView(mActivity);
+                messageTv.setMovementMethod(LinkMovementMethod.getInstance());
                 messageTv.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
                 messageTv.setText(content);
                 messageTv.setPadding(1, 1, 1, 1);
+                messageTv.setLinksClickable(true);
                 messageTv.setTextColor(Color.parseColor(contentColor));
                 LL_MessageBar.addView(messageTv);
             }
         }
 
         //Buttons
-        LinearLayout LL_ButtonBar = new LinearLayout(context);
+        LinearLayout LL_ButtonBar = new LinearLayout(mActivity);
         LinearLayout.LayoutParams LL_ButtonBarParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         LL_ButtonBar.setOrientation(LinearLayout.VERTICAL);
         LL_ButtonBar.setLayoutParams(LL_ButtonBarParams);
         LL_ButtonBar.setPadding(1, 1, 1, 1);
         LL_ButtonBar.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL);
 
-        LinearLayout LL_Button_horizontal = new LinearLayout(context);
+        LinearLayout LL_Button_horizontal = new LinearLayout(mActivity);
         LinearLayout.LayoutParams LL_Button_horizontalParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         LL_Button_horizontal.setOrientation(LinearLayout.HORIZONTAL);
         LL_Button_horizontal.setLayoutParams(LL_Button_horizontalParams);
@@ -383,7 +538,7 @@ public class Modal implements Constants {
                 int resId = getResIdFromButtonName(declineButtonTitle);
                 if (-1 != resId) {
                     //Create image button here
-                    ImageButton imgBtn = new ImageButton(context);
+                    ImageButton imgBtn = new ImageButton(mActivity);
                     imgBtn.setPadding(1, 1, 1, 1);
                     imgBtn.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
                     imgBtn.setBackgroundColor(Color.TRANSPARENT);
@@ -393,7 +548,7 @@ public class Modal implements Constants {
                     LL_Button_horizontal.addView(imgBtn);
                 } else {
                     //create normal button here
-                    Button btn = new Button(context);
+                    Button btn = new Button(mActivity);
                     btn.setBackgroundColor(Color.parseColor(backGroundColor));
                     btn.setTextColor(Color.parseColor(titleColor));
                     btn.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -413,7 +568,7 @@ public class Modal implements Constants {
                 int resId = getResIdFromButtonName(accpetedButtonTitle);
                 if (-1 != resId) {
                     //Create image button here
-                    ImageButton imgBtn = new ImageButton(context);
+                    ImageButton imgBtn = new ImageButton(mActivity);
                     imgBtn.setPadding(1, 1, 1, 1);
                     imgBtn.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
                     imgBtn.setBackgroundColor(Color.TRANSPARENT);
@@ -423,7 +578,7 @@ public class Modal implements Constants {
                     LL_Button_horizontal.addView(imgBtn);
                 } else {
                     //create normal button here
-                    Button btn = new Button(context);
+                    Button btn = new Button(mActivity);
                     btn.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
                     btn.setBackgroundColor(Color.parseColor(backGroundColor));
                     btn.setTextColor(Color.parseColor(titleColor));
@@ -441,5 +596,20 @@ public class Modal implements Constants {
         rootView.addView(LL_MessageBar);
         rootView.addView(LL_ButtonBar);
         return rootView;
+    }
+
+    @Override
+    public void onButtonClickedOnTip(TipObject object, int[] feedResults) {
+
+    }
+
+    @Override
+    public void onButtonClickedOnTour(TipObject object, int[] feedResults) {
+
+    }
+
+    @Override
+    public void onButtonClickedOnModal(TipObject object, int[] feedResults) {
+
     }
 }

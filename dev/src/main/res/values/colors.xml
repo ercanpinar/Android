@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#652e91</color>
+    <color name="colorPrimaryDark">#431f61</color>
+    <color name="colorAccent">#cfb1e7</color>
+    <color name="colorStreetHawk">#652e91</color>
+    <color name="colorRed">#FF0000</color>
+    <color name="colorWhite">#FFFFFF</color>
+
+    <color name="colorRedStart">#A80505</color>
+    <color name="colorRedCenter">#E81717</color>
+    <color name="colorRedEnd">#B80606</color>
+
+    <color name="colorSHStart">#9242D1</color>
+    <color name="colorSHCenter">#652E91</color>
+    <color name="colorSHEnd">#652e91</color>
+    <color name="colorBlack">#000000</color>
+
+    <color name="black_overlay">#66000000</color>
+
+
+</resources>

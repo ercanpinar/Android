@@ -51,8 +51,8 @@ public class LoggingBase implements Constants {
     private final String SUBTAG         = "LoggingBase";
     private final String PRIORITY       = "priority";
     private final String RE_REGISTER    = "reregister";
-    private final String STREETHAWK     = "streethawk";
-    private final String HOST           = "host";
+    protected final String STREETHAWK   = "streethawk";
+    protected final String HOST         = "host";
     private final String ACTIVITY_LIST  = "submit_views";
     private final String DISABLE_LOGS   = "disable_logs";
     private final String POINTZI_HOST   = "pointzi_host";
@@ -408,8 +408,6 @@ public class LoggingBase implements Constants {
                             //TODO: Add code to change Change POINTZI HOST
                         }
                     }
-
-
                 }
             }
         } catch (JSONException e) {
@@ -610,7 +608,7 @@ public class LoggingBase implements Constants {
      *
      * @param value_host
      */
-    private void setHost(String value_host) {
+    protected void setHost(String value_host) {
         if (value_host == null)
             return;
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
@@ -634,7 +632,7 @@ public class LoggingBase implements Constants {
      *
      * @param value_streethawk
      */
-    private void setStreethawkState(boolean value_streethawk) {
+    protected void setStreethawkState(boolean value_streethawk) {
 
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
         boolean current_state = sharedPreferences.getBoolean(KEY_STREETHAWK, true);
@@ -646,6 +644,4 @@ public class LoggingBase implements Constants {
             edit.apply();
         }
     }
-
-
 }

@@ -102,7 +102,7 @@ interface Constants {
     /*Library version*/
     String SELLING_ARGUMENT    = "1";
     String FEATURE_NUMBER      = "8";
-    String BUGFIX_NUMBER       = "5";
+    String BUGFIX_NUMBER       = "7";
 
     /*Release parameters */
     String SHLIBRARY_VERSION = SELLING_ARGUMENT + "." + FEATURE_NUMBER + "." + BUGFIX_NUMBER;

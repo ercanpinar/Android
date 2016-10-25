@@ -25,7 +25,7 @@ public class SetupActivity extends AppCompatActivity implements Constants {
     private final String OKAY     = "Okay";
 
     private final String DEFAULT_AUTH_TOKEN = "iloEZKLS5IusDRJ0eQxN6HRHTwhAOD";
-    private final String DEFAULT_APP_KEY = "MyFirstApp";
+    private final String DEFAULT_APP_KEY = "shanuragtestpointzi";
     private final String DEFAULT_PROJECT_NUMBER = "491295755890";
 
     EditText app_keyET;

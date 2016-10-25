@@ -77,9 +77,7 @@ public class FeedList extends AppCompatActivity implements ISHFeedItemObserver, 
                     JSONObject feedObject = feeds.getJSONObject(i);
                     FeedItem feedItemObject = new FeedItem();
                     payLoadParser(feedItemObject, feedObject);
-                    Log.e("Anurag","2 ************ FeedID"+feedItemObject.getFeedId()+feedItemObject.getFeedTitle());
                     mFeedList.add(feedItemObject);
-                    Log.e("Anurag","Feed read");
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -111,11 +109,9 @@ public class FeedList extends AppCompatActivity implements ISHFeedItemObserver, 
         new fetchFeedListTask().execute(feeds);
     }
 
-
-
-
     private void payLoadParser(final FeedItem feedItemObject, final JSONObject feedJsonObject) {
         if (null != feedJsonObject) {
+            feedItemObject.setRawJSON(feedJsonObject.toString());
             try {
                 feedItemObject.setInstallId(feedJsonObject.getString(INSTALLID));
             } catch (JSONException e) {
@@ -307,6 +303,7 @@ public class FeedList extends AppCompatActivity implements ISHFeedItemObserver, 
                 Context context = getApplicationContext();
                 Intent intent = new Intent(context, FeedViewerActivity.class);
                 intent.putExtra("FEEDITEM_PARCEL",obj);
+                intent.putExtra("FEEDITEM_PARCEL_JSON",obj.getObjectDetails());
                 startActivity(intent);
             }
         };

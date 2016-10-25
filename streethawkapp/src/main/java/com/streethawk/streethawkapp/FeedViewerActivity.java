@@ -49,6 +49,8 @@ public class FeedViewerActivity extends Activity implements Constants {
     private int DECLINED = -1;
     private int LATER   =  0;
 
+    private String mJSON="NODATA";
+
     private static String  mFeedId = null;
 
     public void SendLike(View view){
@@ -89,7 +91,10 @@ public class FeedViewerActivity extends Activity implements Constants {
         Intent intent = getIntent();
         if (null != intent) {
             mFeedItem = intent.getParcelableExtra("FEEDITEM_PARCEL");
-            mFeedItem.displayForDebugging("Anurag", "From FeedItemViewer");
+            mJSON = intent.getStringExtra("FEEDITEM_PARCEL_JSON");
+            if(null!=mFeedItem) {
+
+            }
         }
     }
 
@@ -105,7 +110,6 @@ public class FeedViewerActivity extends Activity implements Constants {
         }
     }
 
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -113,7 +117,7 @@ public class FeedViewerActivity extends Activity implements Constants {
             mFeedId = mFeedItem.getFeedId();
             sendFeedAckLog();
             TextView feed = (TextView)findViewById(R.id.jsonText);
-            feed.setText(mFeedItem.getObjectDetails());
+            feed.setText(mFeedItem.getObjectDetails()+ "/n" + mJSON);
             }
         }
 

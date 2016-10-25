@@ -18,7 +18,6 @@
                 <action android:name="android.location.PROVIDERS_CHANGED" />
                 <action android:name="android.intent.action.TIMEZONE_CHANGED" />
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
                 <action android:name="com.streethawk.intent.action.gcm.STREETHAWK_APP_STATUS_CHK" />
             </intent-filter>
         </receiver>

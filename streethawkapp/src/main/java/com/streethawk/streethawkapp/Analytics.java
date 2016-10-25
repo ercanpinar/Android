@@ -13,9 +13,10 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.streethawk.library.core.StreetHawk;
+/*
 import com.streethawk.library.feeds.SHTips;
 import com.streethawk.library.feeds.SHTours;
-
+*/
 public class Analytics extends AppCompatActivity {
 
 
@@ -27,8 +28,9 @@ public class Analytics extends AppCompatActivity {
     String TAG              = "tag";                // 0
     String TAG_CUID         = "tagcuid";            // 1
     String TAG_PHONE        = "tagphone";           // 2
-    String TAG_INCREMENT    = "tagincrement";       // 3
-    String TAG_DELETE       = "tagdelete";          // 4
+    String TAG_DATETIME     = "tagDatetime";        // 3
+    String TAG_INCREMENT    = "tagincrement";       // 4
+    String TAG_DELETE       = "tagdelete";          // 5
 
     private Activity mActivity;
 
@@ -83,19 +85,21 @@ public class Analytics extends AppCompatActivity {
                     mValuet.setHint("+61469342981");
                     mValuet.setEnabled(true);
                 }
-                if (3 == position) {
+                if(3 == position){
+                    mOptionSelected = TAG_DATETIME;
+                    mValuet.setText("2014-07-25 15:33:20");
+                }
+                if (4 == position) {
                     mOptionSelected = TAG_INCREMENT;
                     mValuet.setHint("Increment Value");
                     return;
                 }
-                if (4 == position) {
+                if (5 == position) {
                     mOptionSelected = TAG_DELETE;
                     mValuet.setHint("");
                     mValuet.setEnabled(false);
                     return;
                 }
-
-
             }
 
             @Override
@@ -119,10 +123,10 @@ public class Analytics extends AppCompatActivity {
 
             @Override
             public void onClick(View view) {
+                /*
                 SHTours tours =new SHTours(mActivity);
                 tours.startTour("454162");
 
-/*
                 SHTips tips = new SHTips();
                 tips.unit_test_tooltip(mActivity,"tagKey");
 */
@@ -186,6 +190,17 @@ public class Analytics extends AppCompatActivity {
                                     Toast.makeText(getApplicationContext(), "Enter a value ", Toast.LENGTH_LONG).show();
                                 } else {
                                     StreetHawk.INSTANCE.tagString("sh_phone",value);
+                                    Toast.makeText(getApplicationContext(), "Phone number tagged " + key + " : " + value, Toast.LENGTH_LONG).show();
+                                }
+                            }
+                        }
+                        if(mOptionSelected ==TAG_DATETIME){
+                            String value = mValuet.getText().toString();
+                            if (value != null) {
+                                if (value.isEmpty()) {
+                                    Toast.makeText(getApplicationContext(), "Enter a value ", Toast.LENGTH_LONG).show();
+                                } else {
+                                    StreetHawk.INSTANCE.tagDatetime(key,value);
                                     Toast.makeText(getApplicationContext(), "Phone number tagged " + key + " : " + value, Toast.LENGTH_LONG).show();
                                 }
                             }

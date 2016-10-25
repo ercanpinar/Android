@@ -145,7 +145,6 @@ public class Analytics extends Fragment {
             public boolean onKey(View view, int i, KeyEvent keyEvent) {
                 if (keyEvent.getAction() == KeyEvent.ACTION_DOWN) {
                     if (i == KeyEvent.KEYCODE_BACK) {
-                        Log.e("Anurag","back button");
                         getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                         return true;
                     }

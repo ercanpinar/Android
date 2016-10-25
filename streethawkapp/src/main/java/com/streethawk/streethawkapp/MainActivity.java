@@ -21,22 +21,38 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.streethawk.library.beacon.INotifyBeaconTransition;
 import com.streethawk.library.core.StreetHawk;
 import com.streethawk.library.core.Util;
 import com.streethawk.library.feeds.ISHFeedItemObserver;
+//import com.streethawk.library.feeds.Modal;
+//import com.streethawk.library.feeds.Modal;
 import com.streethawk.library.feeds.Modal;
 import com.streethawk.library.feeds.SHFeedItem;
+import com.streethawk.library.feeds.SHTips;
 import com.streethawk.library.geofence.INotifyGeofenceTransition;
+import com.streethawk.library.growth.Growth;
 import com.streethawk.library.growth.IGrowth;
 import com.streethawk.library.push.ISHObserver;
 import com.streethawk.library.push.Push;
 import com.streethawk.library.push.PushDataForApplication;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -44,31 +60,31 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.TimeZone;
 
-import streethawk.com.streethawkauthor.Authoring;
-import streethawk.com.streethawkauthor.ColorPicker;
-import streethawk.com.streethawkauthor.IColorPickerObserver;
+import javax.net.ssl.HttpsURLConnection;
 
 public class MainActivity extends AppCompatActivity implements
-        Constants,IGrowth,INotifyGeofenceTransition,INotifyBeaconTransition,ISHObserver,ISHFeedItemObserver{
+        Constants, IGrowth, INotifyGeofenceTransition, INotifyBeaconTransition,
+        ISHObserver, ISHFeedItemObserver {
 
-    int ANALYTICS   = 0;
-    int GROWTH      = ANALYTICS + 1;
-    int PUSH        = GROWTH + 1;
-    int BEACONS     = PUSH + 1;
-    int GEOFENCE    = BEACONS + 1;
-    int LOCATIONS   = GEOFENCE + 1;
-    int FEEDS       = LOCATIONS + 1;
-    int FEEDBACK    = FEEDS +1 ;
+    int ANALYTICS = 0;
+    int GROWTH = ANALYTICS + 1;
+    int PUSH = GROWTH + 1;
+    int BEACONS = PUSH + 1;
+    int GEOFENCE = BEACONS + 1;
+    int LOCATIONS = GEOFENCE + 1;
+    int FEEDS = LOCATIONS + 1;
+    int FEEDBACK = FEEDS + 1;
     int INSTALLINFO = FEEDBACK + 1;
-    int SETTINGS    = INSTALLINFO + 1;
-    int WEBVIEW     = SETTINGS + 1;
-    int PUSH_PING   = WEBVIEW + 1;
-    int GRANT_PERMISSION    =   PUSH_PING+1;
-    int AUTHORING   = GRANT_PERMISSION + 1;
-    int COLORPICKER = AUTHORING+1;
+    int SETTINGS = INSTALLINFO + 1;
+    int WEBVIEW = SETTINGS + 1;
+    int GRANT_PERMISSION = WEBVIEW + 1;
+    int AUTHORING = GRANT_PERMISSION + 1;
+    int COLORPICKER = AUTHORING + 1;
     int SERVER_LOGS = COLORPICKER + 1;
+    int MODAL = SERVER_LOGS + 1;
 
 
     String mAppKey = null;
@@ -92,7 +108,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onDeviceEnteringGeofence() {
-        
+
     }
 
     @Override
@@ -117,7 +133,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onReceivePushData(PushDataForApplication pushData) {
-        //pushData.displayDataForDebugging("Anurag");
+        pushData.displayDataForDebugging("StreetHawk");
     }
 
     @Override
@@ -137,6 +153,7 @@ public class MainActivity extends AppCompatActivity implements
 
     private class StableArrayAdapter extends ArrayAdapter<String> {
         HashMap<String, Integer> mIdMap = new HashMap<String, Integer>();
+
         public StableArrayAdapter(Context context, int textViewResourceId,
                                   List<String> objects) {
             super(context, textViewResourceId, objects);
@@ -176,32 +193,34 @@ public class MainActivity extends AppCompatActivity implements
             "Grant permission",
             "Authoring",
             "ColorPicker",
-            "Logging Report"
+            "Logging Report",
+            "Modal"
     };
 
 
-    private View.OnClickListener share(){
-        return new View.OnClickListener(){
+    private View.OnClickListener share() {
+        return new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-/*
-                Growth.getInstance(mActivity).getShareUrlForAppDownload("StreetHawkApp","streethawkapp://activity=MainActivity","StreetHawkApp","inApp",
-                        "","","http://www.streethawk.com",null);
 
-*/
-                /*
+                //Growth.getInstance(mActivity).getShareUrlForAppDownload("StreetHawkApp","streethawkapp://activity=MainActivity","StreetHawkApp","inApp",
+                 //       "","","http://www.streethawk.com",null);
+
+
                 SHTips tips = new SHTips();
                 tips.unit_test_tooltip(mActivity,"fabmain");
 
-                SHTours tours =new SHTours(mActivity);
-                tours.startTour("454186");
-                */
+
+                //SHTours tours =new SHTours(mActivity);
+                //tours.startTour("454186");
+
 
                 Modal modal = new Modal();
                 modal.unit_test_tooltip(mActivity);
 
             }
+
         };
     }
 
@@ -211,7 +230,7 @@ public class MainActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Util.setSHDebugFlag(this,true);
+        Util.setSHDebugFlag(this, true);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -219,9 +238,9 @@ public class MainActivity extends AppCompatActivity implements
         fab.setOnClickListener(share());
         mActivity = this;
 
-        mListView = (ListView)findViewById(R.id.appOptions);
+        mListView = (ListView) findViewById(R.id.appOptions);
         final ArrayList<String> list = new ArrayList<String>();
-        for(int i=0;i<mOptions.length;i++){
+        for (int i = 0; i < mOptions.length; i++) {
             list.add(mOptions[i]);
         }
         final StableArrayAdapter adapter = new StableArrayAdapter(this,
@@ -231,33 +250,36 @@ public class MainActivity extends AppCompatActivity implements
 
         Intent intent = getIntent();
         boolean isSetupRequired = false;
-        if(null!=intent) {
-            isSetupRequired= intent.getBooleanExtra(KEY_SETUP,false);
+        if (null != intent) {
+            isSetupRequired = intent.getBooleanExtra(KEY_SETUP, false);
         }
-        if(isSetupRequired){
-            Intent setupintent  = new Intent(this,SetupActivity.class);
+        if (isSetupRequired) {
+            Intent setupintent = new Intent(this, SetupActivity.class);
             setupintent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(setupintent);
         }
         SharedPreferences prefs = getSharedPreferences(APP_PREF, Context.MODE_PRIVATE);
-        mAppKey = prefs.getString(KEY_APP_KEY,null);
-        if(null!=mAppKey) {
+        mAppKey = prefs.getString(KEY_APP_KEY, null);
+        if (null != mAppKey) {
             StreetHawk.INSTANCE.setAppKey(mAppKey);
             Push.getInstance(this).registerForPushMessaging("491295755890");
+            Push.getInstance(this).setLargeIconResID("ic_launcher");
+            Push.getInstance(this).setSmallIconResID("ic_stat_notification");
             Push.getInstance(this).registerSHObserver(this);
             StreetHawk.INSTANCE.init(getApplication());
-        }else{
+        } else {
             mAppKey = intent.getStringExtra(KEY_APP_KEY);
-            if(null!=mAppKey){
+            if (null != mAppKey) {
                 StreetHawk.INSTANCE.setAppKey(mAppKey);
                 StreetHawk.INSTANCE.init(getApplication());
             }
-
         }
         SHFeedItem.getInstance(this).registerFeedItemObserver(this);
     }
 
-    /** code to post/handler request for permission */
+    /**
+     * code to post/handler request for permission
+     */
     public final static int REQUEST_CODE = 11;
 
     @TargetApi(Build.VERSION_CODES.M)
@@ -269,22 +291,22 @@ public class MainActivity extends AppCompatActivity implements
                     Uri.parse("package:" + getPackageName()));
             /** request permission via start activity for result */
             startActivityForResult(intent, REQUEST_CODE);
-        }else{
-            Intent fabIntent = new Intent(this,SHFabService.class);
+        } else {
+            Intent fabIntent = new Intent(this, SHFabService.class);
             startService(fabIntent);
         }
     }
 
     @TargetApi(Build.VERSION_CODES.M)
     @Override
-    protected void onActivityResult(int requestCode, int resultCode,  Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         /** check if received result code
          is equal our requested code for draw permission  */
-        Log.e("Anurag","onActivityresult"+requestCode);
+        Log.e("Anurag", "onActivityresult" + requestCode);
         if (requestCode == REQUEST_CODE) {
             if (Settings.canDrawOverlays(this)) {
-                Log.e("Anurag","Startig service");
-                Intent fabIntent = new Intent(this,SHFabService.class);
+                Log.e("Anurag", "Startig service");
+                Intent fabIntent = new Intent(this, SHFabService.class);
                 startService(fabIntent);
             }
         }
@@ -294,49 +316,47 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onResume() {
         super.onResume();
-        Intent Sintent = new Intent(this,TestService.class);
+        Intent Sintent = new Intent(this, TestService.class);
         startService(Sintent);
     }
 
 
-
-
-    public AdapterView.OnItemClickListener optionsOnclickListener(){
-        return new AdapterView.OnItemClickListener(){
+    public AdapterView.OnItemClickListener optionsOnclickListener() {
+        return new AdapterView.OnItemClickListener() {
 
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                Intent intent=null;
-                if(ANALYTICS==position){
-                    intent = new Intent(getApplicationContext(),Analytics.class);
+                Intent intent = null;
+                if (ANALYTICS == position) {
+                    intent = new Intent(getApplicationContext(), Analytics.class);
                 }
-                if(GROWTH==position){
-                    intent = new Intent(getApplicationContext(),GrowthActivity.class);
+                if (GROWTH == position) {
+                    intent = new Intent(getApplicationContext(), GrowthActivity.class);
                 }
-                if(PUSH==position){
-                    intent = new Intent(getApplicationContext(),PushActivity.class);
+                if (PUSH == position) {
+                    intent = new Intent(getApplicationContext(), PushActivity.class);
                 }
-                if(BEACONS==position){
-                    intent = new Intent(getApplicationContext(),StartBGL.class);
-                    intent.putExtra(ACTIVITY,ACTiVITY_BEACON);
+                if (BEACONS == position) {
+                    intent = new Intent(getApplicationContext(), StartBGL.class);
+                    intent.putExtra(ACTIVITY, ACTiVITY_BEACON);
                 }
-                if(GEOFENCE==position){
-                    intent = new Intent(getApplicationContext(),StartBGL.class);
-                    intent.putExtra(ACTIVITY,ACTiVITY_GEOFENCE);
+                if (GEOFENCE == position) {
+                    intent = new Intent(getApplicationContext(), StartBGL.class);
+                    intent.putExtra(ACTIVITY, ACTiVITY_GEOFENCE);
                 }
-                if(LOCATIONS==position){
-                    intent = new Intent(getApplicationContext(),StartBGL.class);
-                    intent.putExtra(ACTIVITY,ACTiVITY_LOCATION);
+                if (LOCATIONS == position) {
+                    intent = new Intent(getApplicationContext(), StartBGL.class);
+                    intent.putExtra(ACTIVITY, ACTiVITY_LOCATION);
                 }
-                if(FEEDS==position){
-                    intent = new Intent(getApplicationContext(),FeedList.class);
+                if (FEEDS == position) {
+                    intent = new Intent(getApplicationContext(), FeedList.class);
                 }
-                if(FEEDBACK==position){
-                    intent = new Intent(getApplicationContext(),Feedback.class);
+                if (FEEDBACK == position) {
+                    intent = new Intent(getApplicationContext(), Feedback.class);
                 }
-                if(INSTALLINFO==position){
+                if (INSTALLINFO == position) {
 
-                    Context context  = getApplicationContext();
+                    Context context = getApplicationContext();
                     final String HOST = "shKeyHost";
                     final String SHGCM_SENDER_KEY_APP = "shgcmsenderkeyapp";
 
@@ -349,25 +369,25 @@ public class MainActivity extends AppCompatActivity implements
                     String authtoken = prefs.getString(KEY_AUTH_TOKEN, "");
 
 
-                    String TIME_LAST_PUSH   = "timeLastPush";
-                    String LAST_SERVER_MSG  = "lastServerMessage";
-                    String APP_SHARED_PREF  = "LAST_SERVER_MSG";
+                    String TIME_LAST_PUSH = "timeLastPush";
+                    String LAST_SERVER_MSG = "lastServerMessage";
+                    String APP_SHARED_PREF = "LAST_SERVER_MSG";
 
-                    final String PREF_NAME        = "shsample_sharedPref";
+                    final String PREF_NAME = "shsample_sharedPref";
                     SharedPreferences prefss = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-                    String lastPingtime  = prefss.getString(TIME_LAST_PUSH,null);
-                    String lastMessageToServer  = prefss.getString(LAST_SERVER_MSG,null);
+                    //String lastPingtime = prefss.getString(TIME_LAST_PUSH, null);
+                    //String lastMessageToServer = prefss.getString(LAST_SERVER_MSG, null);
 
 
-                    String message =    "Install id: "  + installid + NEW_LINE +
-                                        "AppKey :"      + appKey + NEW_LINE +
-                                        "Server :  "    + setServer + NEW_LINE +
-                                        "GCM Sender ID: " + senderId + NEW_LINE +
-                                        "Auth Token: "    + authtoken + NEW_LINE +
-                                        "Last Ping Time"  + lastPingtime + NEW_LINE+
-                                        "Last message to server " + lastMessageToServer ;
+                    String message = "Install id: " + installid + NEW_LINE +
+                            "AppKey :" + appKey + NEW_LINE +
+                            "Server :  " + setServer + NEW_LINE +
+                            "GCM Sender ID: " + senderId + NEW_LINE +
+                            "Auth Token: " + authtoken + NEW_LINE ;
+                            //"Last Ping Time" + lastPingtime + NEW_LINE +
+                            //"Last message to server " + lastMessageToServer
 
-                    AlertDialog.Builder builder = new AlertDialog.Builder(mActivity,R.style.StreetHawkDialogTheme);
+                    AlertDialog.Builder builder = new AlertDialog.Builder(mActivity, R.style.StreetHawkDialogTheme);
                     builder.setTitle("Install Info");
                     builder.setMessage(message);
                     builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
@@ -380,14 +400,14 @@ public class MainActivity extends AppCompatActivity implements
                     });
                     builder.create().show();
                 }
-                if(SETTINGS==position){
-                    intent = new Intent(getApplicationContext(),Setting.class);
+                if (SETTINGS == position) {
+                    intent = new Intent(getApplicationContext(), Setting.class);
                 }
-                if(WEBVIEW==position){
-                    Intent webIntent = new Intent(getApplicationContext(),WebViewPOC.class);
+                if (WEBVIEW == position) {
+                    Intent webIntent = new Intent(getApplicationContext(), WebViewPOC.class);
                     startActivity(webIntent);
                 }
-                if(AUTHORING==position){
+                if (AUTHORING == position) {
 
                     /*
                     Intent authorIntent = new Intent(mActivity, AddButtonService.class);
@@ -397,13 +417,14 @@ public class MainActivity extends AppCompatActivity implements
                     mActivity.startActivity(authorIntent);
                     */
 
+                    /*
                     Authoring authoring = Authoring.getInstance(mActivity);
                     authoring.startAuthoring();
-
+                    */
 
                 }
-                if(GRANT_PERMISSION==position){
-                    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+                if (GRANT_PERMISSION == position) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                         // Show alert dialog to the user saying a separate permission is needed
                         // Launch the settings activity if the user prefers
                         Intent myIntent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
@@ -411,12 +432,8 @@ public class MainActivity extends AppCompatActivity implements
                     }
                 }
 
-                if(PUSH_PING == position){
-                    Intent pushping = new Intent(getApplicationContext(),PushPingService.class);
-                    startService(pushping);
-                }
-
-                if(COLORPICKER == position){
+                if (COLORPICKER == position) {
+                    /*
                     ColorPicker picker = new ColorPicker();
                     picker.showColorPicker(mActivity, new IColorPickerObserver() {
                         @Override
@@ -424,14 +441,18 @@ public class MainActivity extends AppCompatActivity implements
                             Log.e("Anurag","Color selected "+color);
                         }
                     });
+                    */
                 }
 
-                if(SERVER_LOGS==position){
-                    intent = new Intent(getApplicationContext(),Logreport.class);
+                if (SERVER_LOGS == position) {
+                    intent = new Intent(getApplicationContext(), Logreport.class);
 
                 }
+                if (MODAL == position) {
+                    // new Modal().unit_test_tooltip(mActivity);
+                }
 
-                if(null!=intent){
+                if (null != intent) {
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
                 }
@@ -440,7 +461,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void openUrlInBrowser(String url) {
-        if(null==url)
+        if (null == url)
             return;
         Intent docs = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
         startActivity(docs);

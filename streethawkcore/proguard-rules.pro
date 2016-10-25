@@ -34,3 +34,9 @@
 -keep public interface com.streethawk.library.core.ISHEventObserver {
      public *;
 }
+-keep public class com.streethawk.library.core.WidgetDB {
+     public *;
+}
+-keep public class com.streethawk.library.core.WidgetDBHelper {
+     public *;
+}

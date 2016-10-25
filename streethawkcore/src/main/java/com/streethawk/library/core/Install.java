@@ -19,8 +19,10 @@ package com.streethawk.library.core;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Point;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
@@ -29,6 +31,7 @@ import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -472,6 +475,10 @@ class Install extends LoggingBase {
         final String app_key = Util.getAppKey(mContext);
         if (null == app_key) {
             Log.e(Util.TAG, SUBTAG + "Failed to register install as Appkey is null");
+            return;
+        }
+        if(app_key.isEmpty()){
+            Log.e(Util.TAG, SUBTAG + "Failed to register install as Appkey is empty");
             return;
         }
         if (Util.getInstallId(mContext) != null) {

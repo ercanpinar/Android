@@ -25,3 +25,12 @@
 -keep public class com.streethawk.library.feeds.SHFeedItem{
     public *;
 }
+-keep public class com.streethawk.library.feeds.Modal{
+    public *;
+}
+-keep public class com.streethawk.library.feeds.SHTips{
+    public *;
+}
+-keep public class com.streethawk.library.feeds.SHTours{
+    public *;
+}

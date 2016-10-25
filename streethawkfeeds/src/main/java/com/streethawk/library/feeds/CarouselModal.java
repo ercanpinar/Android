@@ -18,7 +18,7 @@ import java.util.ArrayList;
 /**
  * Display group of modals in Carousel view
  */
-public class CarouselModal implements ITipClickEvents,Constants{
+public class CarouselModal implements IPointziClickEventsListener,Constants{
 
     private int mModalStepNumber = 0;
     private ArrayList<TipObject> mModalList;
@@ -130,5 +130,15 @@ public class CarouselModal implements ITipClickEvents,Constants{
             Logging manager = Logging.getLoggingInstance(mActivity.getApplicationContext());
             manager.addLogsForSending(params);
         }
+    }
+
+    @Override
+    public void onButtonClickedOnTour(TipObject object, int[] feedResults) {
+
+    }
+
+    @Override
+    public void onButtonClickedOnModal(TipObject object, int[] feedResults) {
+
     }
 }

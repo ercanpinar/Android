@@ -14,10 +14,9 @@
         <item>Tag Key Value</item>
         <item>Tag CUID</item>
         <item>Tag Phone</item>
+        <item>Tag Date Time</item>
         <item>Increment Tag</item>
         <item>Delete Tag</item>
-
-
     </string-array>
 
     <string-array name="Actions">

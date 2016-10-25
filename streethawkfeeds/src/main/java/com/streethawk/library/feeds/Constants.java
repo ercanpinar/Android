@@ -29,6 +29,11 @@ interface Constants {
     String NEWLINE = "\n";
     String COLON = " : ";
 
+    /*Feed actions*/
+
+    int FLAG_NOTACTIONED = 0;
+    int FLAG_ACTIONED = 1;
+
 
     String BOTTOM = "bottom";
     String TOP = "top";
@@ -73,6 +78,10 @@ interface Constants {
     String TOUR             = "tour";
     String TIP              = "tip";
     String MODAL            = "modal";
+    String CAROUSEL         = "carousel";
+    String ID               = "id";
+
+
     String FEED             = "feed";
     String NEWS             = "news";
     String DATA             = "d";
@@ -109,17 +118,11 @@ interface Constants {
     String SETUP_TOOL_MODAL         = "modal";
 
     /*Trigger clicks*/
-    String TRIGER_CLICK             = "click";
+    String TRIGGER_CLICK            = "click";
     String TRIGER_TOUCH             = "touch";
     String TRIGER_HOVER             = "hover";
+    String TRIGGER_ON_PAGE_OPEN     = "onPageopen";
 
     /*Triger types*/
     String DOT                      = "dot";
-
-
-
-
-
-
-
 }

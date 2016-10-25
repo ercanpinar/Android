@@ -8,132 +8,37 @@ import android.util.Log;
  */
 class SHTriger implements Constants {
 
-    private String mDisplay;
-    private String mTriger;
-    private String mTarget;
-    private String mView;
-    private int mDelay;
-    private String mTool;
-    private String mWidgetType;
-    private String mWidgetLabel;
-    private String mWidgetCss;
-    private String mbgColor;
-    private String mToolId;     //Id of the tour/tip/modal to start
-    private String mPlacement;
+    private String  mFeedID;
+    private String  mTool;
+    private String  mSetup;
+    private String  mView;
+    private int     mActioned;
+    private String  mJson;
+    private String  mTrigger;
 
+    public void setFeedID(String feedID){mFeedID = feedID;}
+    public void setTool(String tool){mTool = tool;}
+    public void setSetup(String setup){mSetup = setup;}
+    public void setView(String view){mView = view;}
+    public void setActioned(int actioned){mActioned = actioned;}
+    public void setJSON(String json){mJson = json;}
+    public void setTrigger(String trigger){mTrigger = trigger;}
 
-    String classDetails = "ToolID" + COLON + mToolId + NEWLINE +
-            "mDisplay" + COLON + mDisplay + NEWLINE +
-            "mTriger" + COLON + mTriger + NEWLINE +
-            "mTarget" + COLON + mTarget + NEWLINE +
-            "mView" + COLON + mView + NEWLINE +
-            "mDelay" + COLON + mDelay + NEWLINE +
-            "mTool" + COLON + mTool + NEWLINE +
-            "mWidgetType" + COLON + mWidgetType + NEWLINE +
-            "mWidgetLabel" + COLON + mWidgetLabel + NEWLINE +
-            "mWidgetCss" + COLON + mWidgetCss + NEWLINE +
-            "mbgColor" + COLON + mbgColor + NEWLINE +
-            "mPlacement" + COLON + mPlacement + NEWLINE;
+    public String getFeedID(){ return mFeedID;}
+    public String getTool(){return mTool;}
+    public String getSetup(){return mSetup;}
+    public String getView(){return mView;}
+    public int getActioned(){return mActioned;}
+    public String getJSON(){return mJson;}
+    public String getTrigger(){return mTrigger;}
 
-
-    /**
-     * Function retuns String of class values for debugging purposes
-     *
-     * @return
-     */
-    public String getClassValuesForDebugging() {
-        return classDetails;
+    public String getDebugString(){
+        return "mFeedID "+mFeedID+" "+
+                "mTool "+mTool+" "+
+                "mSetup "+mSetup+" "+
+                "mView "+mView+" "+
+                "mActioned "+mActioned+" "+
+                "mJson "+mJson+
+                "mTrigger "+mTrigger+" ";
     }
-
-    public void setDisplay(String display) {
-        mDisplay = display;
-    }
-
-    public void setTriger(String trigger) {
-        mTriger = trigger;
-    }
-
-    public void setTarget(String target) {
-        mTarget = target;
-    }
-
-    public void setView(String view) {
-        mView = view;
-    }
-
-    public void setDelay(int delay) {
-        mDelay = delay;
-    }
-
-    public void setTool(String tool) {
-        mTool = tool;
-    }
-
-    public void setWidgetType(String type) {
-        mWidgetType = type;
-    }
-
-    public void setWidgetLabel(String label) {
-        mWidgetLabel = label;
-    }
-
-    public void setWidgetCss(String css) {
-        mWidgetCss = css;
-    }
-
-    public void setBGColor(String bgcolor) {
-        mbgColor = bgcolor;
-    }
-
-    public void setToolID(String id) {
-        mToolId = id;
-    }
-
-    public void setPlacement(String placement) {mPlacement = placement;}
-
-
-    public String getDisplay() {
-        return mDisplay;
-    }
-
-    public String getTriger() {
-        return mTriger;
-    }
-
-    public String getTarget() {
-        return mTarget;
-    }
-
-    public String getView() {
-        return mView;
-    }
-
-    public int getDelay() {
-        return mDelay;
-    }
-
-    public String getTool() {
-        return mTool;
-    }
-
-    public String getWidgetType() {
-        return mWidgetType;
-    }
-
-    public String getWidgetLabel() {
-        return mWidgetLabel;
-    }
-
-    public String getWidgetCss() {
-        return mWidgetCss;
-    }
-
-    public String getBGColor() {
-        return mbgColor;
-    }
-
-    public String getPlacement() {return mPlacement;}
-
-    public String getToolId() {return mToolId;}
-
 }

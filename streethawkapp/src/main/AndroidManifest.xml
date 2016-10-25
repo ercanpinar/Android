@@ -145,7 +145,18 @@
         <activity
             android:name=".FeedList"
             android:label="@string/title_activity_feed_list"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar">
+        <intent-filter android:label="FeedList">
+            <action android:name="android.intent.action.VIEW" />
+
+            <category android:name="android.intent.category.BROWSABLE" />
+            <category android:name="android.intent.category.DEFAULT" />
+
+            <data
+                android:host="feedlist"
+                android:scheme="streethawkapp" />
+        </intent-filter>
+        </activity>
 
         <service
             android:name=".SHFabService"
@@ -161,20 +172,6 @@
             android:name=".Logreport"
             android:label="@string/title_activity_logreport"
             android:theme="@style/AppTheme.NoActionBar" />
-
-        <service
-            android:name=".PushPingService"
-            android:enabled="true"
-            android:exported="true"></service>
-
-        <receiver
-            android:name=".AlarmTaskReceiver"
-            android:enabled="true"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="com.streethawk.pushtester.alarmtask" />
-            </intent-filter>
-        </receiver>
 
     </application>
 

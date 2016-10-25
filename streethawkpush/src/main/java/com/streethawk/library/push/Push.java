@@ -49,7 +49,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-public class Push implements Constants{
+public class Push implements Constants {
     private static Context mContext;
     private static Push mPush;
 
@@ -70,6 +70,7 @@ public class Push implements Constants{
 
     /**
      * Get instance of Push Class
+     *
      * @param context Application context
      * @return instance of push class
      */
@@ -88,7 +89,7 @@ public class Push implements Constants{
      * @param status true to force notification to notification bar. False to reset the setting
      */
     public void forcePushToNotificationBar(boolean status) {
-        if(null==mContext)
+        if (null == mContext)
             return;
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
         SharedPreferences.Editor e = sharedPreferences.edit();
@@ -98,6 +99,7 @@ public class Push implements Constants{
 
     /**
      * Save senderID
+     *
      * @param senderId
      */
     private static void saveSenderId(String senderId) {
@@ -115,8 +117,8 @@ public class Push implements Constants{
     private void updateInstallWithGcmIdIfNeeded(String token) {
         if (isGCMRegistered()) {
             return;
-        }else{
-            if(token==null){
+        } else {
+            if (token == null) {
                 SharedPreferences prefs = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
                 SharedPreferences.Editor e = prefs.edit();
                 e.putBoolean(Util.SHGCMREGISTERED, false);
@@ -152,7 +154,7 @@ public class Push implements Constants{
         try {
             packageManager.getPackageInfo(GSF_PACKAGE, 0);
         } catch (PackageManager.NameNotFoundException e) {
-            Log.e(Util.TAG,"Device does not have package " + GSF_PACKAGE);
+            Log.e(Util.TAG, "Device does not have package " + GSF_PACKAGE);
         }
         return true;
     }
@@ -218,21 +220,22 @@ public class Push implements Constants{
 
     /**
      * Call this API to register for StreetHawk push messaging service
+     *
      * @param project_number Project number as obtained for Google for your project
      */
     public void registerForPushMessaging(final String project_number) {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                if(!checkDevice())
+                if (!checkDevice())
                     return;
 
-                if(!checkManifest()){
+                if (!checkManifest()) {
                     return;
                 }
                 // Get Registration id
                 InstanceID instanceID = InstanceID.getInstance(mContext);
-                String token=null;
+                String token = null;
                 try {
                     token = instanceID.getToken(project_number,
                             GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
@@ -252,24 +255,49 @@ public class Push implements Constants{
         }).start();
 
 
+    }
 
+    /**
+     * Set resid of notification icon (large)
+     * @param resourceName
+     */
+    public void setLargeIconResID(String  resourceName){
+        int id = mContext.getResources().getIdentifier(resourceName, "drawable",
+                mContext.getPackageName());
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
+        SharedPreferences.Editor e = sharedPreferences.edit();
+        e.putInt(RES_ID_FOR_BG_NOTFICATION_LARGE,id);
+        e.commit();
+    }
+
+    /**
+     * Set resid of notification icon (small)
+     * @param resourceName
+     */
+    public void setSmallIconResID(String resourceName){
+
+        int id = mContext.getResources().getIdentifier(resourceName, "drawable",
+                mContext.getPackageName());
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
+        SharedPreferences.Editor e = sharedPreferences.edit();
+        e.putInt(RES_ID_FOR_BG_NOTFICATION_SMALL,id);
+        e.commit();
     }
 
     /**
      * Call addPushModule() to add push modules in installs which have already been released with StreetHawk core module.
      */
-    public void addPushModule(){
+    public void addPushModule() {
         String installId = Util.getInstallId(mContext);
-        if(null==installId) {
+        if (null == installId) {
             // For this case
-            Log.e(Util.TAG,SUBTAG+" install not registered when init was called");
+            Log.e(Util.TAG, SUBTAG + " install not registered when init was called");
             return;
-        }
-        else{
-            if(!isPushRegistered()){
+        } else {
+            if (!isPushRegistered()) {
                 register();
-                if(Util.getPlatformType()== PLATFORM_XAMARIN){
-                    StreetHawk.INSTANCE.tagString("sh_module_push","true");
+                if (Util.getPlatformType() == PLATFORM_XAMARIN) {
+                    StreetHawk.INSTANCE.tagString("sh_module_push", "true");
                 }
             }
             setAppPageReceiver(mISHObserverObject);
@@ -277,7 +305,7 @@ public class Push implements Constants{
         }
     }
 
-    private boolean isPushRegistered(){
+    private boolean isPushRegistered() {
         SharedPreferences prefs = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
         return prefs.getBoolean(Util.SHGCMREGISTERED, false);
     }
@@ -328,12 +356,12 @@ public class Push implements Constants{
                 long backoff = BACKOFF_MILLI_SECONDS + new Random().nextInt(1000);
                 for (int i = 1; i <= MAX_ATTEMPTS; i++) {
                     SharedPreferences prefs = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
-                    String token  = prefs.getString(PUSH_ACCESS_DATA,null);
-                    if(null!=token) {
+                    String token = prefs.getString(PUSH_ACCESS_DATA, null);
+                    if (null != token) {
                         updateInstallWithGcmIdIfNeeded(token);
                         return;
-                    }else{
-                        Log.e(Util.TAG,"Access data is null");
+                    } else {
+                        Log.e(Util.TAG, "Access data is null");
                     }
                     try {
                         Thread.sleep(backoff);
@@ -348,6 +376,7 @@ public class Push implements Constants{
 
     /**
      * return true if push is enabled for the device.
+     *
      * @return
      */
     public boolean isUsePush() {
@@ -360,9 +389,10 @@ public class Push implements Constants{
 
     /**
      * use this function if you want to dont want to use default dialogs theme and instead use you own cutom theme
+     *
      * @param answer
      */
-    public void setUseCustomDialog(boolean answer){
+    public void setUseCustomDialog(boolean answer) {
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
         SharedPreferences.Editor e = sharedPreferences.edit();
         e.putBoolean(SHUSECUSTOMDIALOG_FLAG, answer);
@@ -385,12 +415,13 @@ public class Push implements Constants{
 
     /**
      * Register class which implements ISHObserver
+     *
      * @param object
      */
     public void registerSHObserver(ISHObserver object) {
 
-        if(null==object){
-            Log.e(Util.TAG,"ISHObserver instance cannot be null");
+        if (null == object) {
+            Log.e(Util.TAG, "ISHObserver instance cannot be null");
             return;
         }
         mISHObserverObject = object;
@@ -399,20 +430,9 @@ public class Push implements Constants{
     }
 
 
-    private void displayPendingDialog(Context context) {
+    private void displayPendingDialog(Context context, String msgId) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
-        String msgId = sharedPreferences.getString(PENDING_DIALOG, null);
         boolean isCustomDialog = sharedPreferences.getBoolean(SHUSECUSTOMDIALOG_FLAG, false);
-        if (null == msgId)
-            return;
-        if (msgId.isEmpty())
-            return;
-        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        try {
-            notificationManager.cancel(Integer.parseInt(msgId));
-        } catch (NumberFormatException e) {
-            e.printStackTrace();
-        }
         PushNotificationDB dbObject = PushNotificationDB.getInstance(context);
         dbObject.open();
         PushNotificationData pushData = new PushNotificationData();
@@ -426,7 +446,7 @@ public class Push implements Constants{
         }
         if (isCustomDialog) {
             if (null == mISHObserverObject) {
-                Log.e(Util.TAG,SUBTAG+ "mISHObserverObject cannot be null if implementing pending dialog");
+                Log.e(Util.TAG, SUBTAG + "mISHObserverObject cannot be null if implementing pending dialog");
                 SharedPreferences.Editor e = sharedPreferences.edit();
                 e.putString(PENDING_DIALOG, null);
                 e.commit();
@@ -493,60 +513,87 @@ public class Push implements Constants{
 
     /**
      * Send push result if you are not extending streetHawk's onclicklistener
-     * @param msgID msgID of the push message
+     *
+     * @param msgID      msgID of the push message
      * @param pushResult 1 = accepted | 0 = postponed | -1=decline
      */
-    public void sendPushResult(String msgID,int pushResult){
-        NotificationBase.sendResultBroadcast(mContext, msgID,pushResult);
+    public void sendPushResult(String msgID, int pushResult) {
+        NotificationBase.sendResultBroadcast(mContext, msgID, pushResult);
     }
 
 
     /**
      * Application need not use this call. Notify observers when app is foregrounded
+     *
      * @param activity
      */
     public void notifyAppForegrounded(Activity activity) {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                if(!isPushRegistered()){
+                if (!isPushRegistered()) {
                     register();
                 }
             }
         }).start();
-        displayPendingDialog(activity.getApplicationContext());
+        Context context = activity.getApplicationContext();
+        SharedPreferences sharedPreferences = context.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
+        String msgId = sharedPreferences.getString(PENDING_DIALOG, null);
+        if (null == msgId)
+            return;
+        if (msgId.isEmpty())
+            return;
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        try {
+            notificationManager.cancel(Integer.parseInt(msgId));
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+        }
+        displayPendingDialog(activity.getApplicationContext(), msgId);
     }
 
     /**
      * Application need not use this call. Notify observers when app is paused
+     *
      * @param activity
      */
-    public void onPause(Activity activity){
+    public void onPause(Activity activity) {
         SHForegroundNotification alert = SHForegroundNotification.getDialogInstance(activity.getApplicationContext());
         alert.dismissForegroundDialog();
     }
 
     /**
      * Application need not use this call. Notify observers when app is backgrounded
+     *
      * @param activity
      */
     public void notifyAppBackgrounded(Activity activity) {
         SHForegroundNotification alert = SHForegroundNotification.getDialogInstance(activity.getApplicationContext());
         alert.dismissForegroundDialog();
     }
+
     /**
      * Application need not use this call. Notify observers when orientation is changed
+     *
      * @param activity
      */
-    public void notifyChangeOrientation(Activity activity) {
+    public void notifyChangeOrientation(final Activity activity) {
         final Context context = activity.getApplicationContext();
         activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                displayPendingDialog(context);
+                Context context = activity.getApplicationContext();
+                SharedPreferences sharedPreferences = context.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
+                String msgId = sharedPreferences.getString(PENDING_DIALOG, null);
+                if (null == msgId)
+                    return;
+                if (msgId.isEmpty())
+                    return;
+                displayPendingDialog(activity.getApplicationContext(), msgId);
             }
         });
     }
+
     private void hideSoftKeyboard() {
         Activity activity = StreetHawk.INSTANCE.getCurrentActivity();
         if (activity == null) {
@@ -555,6 +602,7 @@ public class Push implements Constants{
         InputMethodManager manager = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
         manager.hideSoftInputFromWindow((IBinder) activity.getWindow().getDecorView().getWindowToken(), 0);
     }
+
     /**
      * shGetAlertSettings returns the time remaining in minutes before pause minutes set in {@link #shAlertSetting(int)} expires
      *
@@ -622,33 +670,34 @@ public class Push implements Constants{
 
     /**
      * API returns icon identifer. To be used along with API setInteractivePushBtnPairs
+     *
      * @param iconName
      * @return
      */
-    public int getIcon(String iconName){
+    public int getIcon(String iconName) {
         String packageName = mContext.getPackageName();
         return (mContext.getResources().getIdentifier(iconName, "drawable", packageName));
     }
 
     /**
-     * @deprecated
-     * API to return button pair from the given title
+     * @deprecated API to return button pair from the given title
      */
-    public void getButtonPairFromId(final String pairTitle,final InteractivePush obj){
+    public void getButtonPairFromId(final String pairTitle, final InteractivePush obj) {
         InteractivePushDB btnPairdb = InteractivePushDB.getInstance(mContext);
-        btnPairdb.getBtnPairData(pairTitle,obj);
+        btnPairdb.getBtnPairData(pairTitle, obj);
     }
 
     /**
      * Set application specific button pairs for interactive push
+     *
      * @param appPairs
      */
-    public void setInteractivePushBtnPairs( final ArrayList<InteractivePush> appPairs){
+    public void setInteractivePushBtnPairs(final ArrayList<InteractivePush> appPairs) {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                if(null==appPairs){
-                    Log.e(Util.TAG,"app pairs is null in setInteractivePushBtnPairs. returning..");
+                if (null == appPairs) {
+                    Log.e(Util.TAG, "app pairs is null in setInteractivePushBtnPairs. returning..");
                     return;
                 }
                 InteractivePushDB btnPairdb = InteractivePushDB.getInstance(mContext);

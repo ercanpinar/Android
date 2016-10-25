@@ -46,47 +46,28 @@ public class StreethawkBroadcastReceiver extends BroadcastReceiver implements Co
                 }
             }
         }
-        // Flush pending logs to server when device gets network connectivity
-        if (intent.getAction().equals(ConnectivityManager.CONNECTIVITY_ACTION)) {
-            if (!Util.getStreethawkState(context)) {
-                Log.i(Util.TAG, "StreetHawk is disabled, returning");
-            }
-            ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-            if (null != networkInfo) {
-                // Check for app first run task
-                SharedPreferences prefs = context.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
-                if (!prefs.getBoolean(SHINSTALL_STATE, false)) {
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Install install = Install.getInstance(context);
-                            install.registerInstall();
-                        }
-                    }).start();
-                } else {
-                    SharedPreferences sharedPreferences = context.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
-                    int timezonelast = sharedPreferences.getInt(SHTIMEZONE, -1);
-                    int timezoneNow = Util.getTimeZoneOffsetInMinutes();
-                    if ((timezonelast != timezoneNow)) {
-                        SharedPreferences.Editor edit = sharedPreferences.edit();
-                        edit.putInt(SHTIMEZONE, timezoneNow);
-                        edit.commit();
-                        // 8050 is a priority log hence logs will flush
-                        Bundle logParams = new Bundle();
-                        logParams.putInt(Util.CODE,CODE_DEVICE_TIMEZONE);
-                        logParams.putString(Util.SHMESSAGE_ID, null);
-                        logParams.putString(TYPE_NUMERIC, Integer.toString(Util.getTimeZoneOffsetInMinutes()));
-                        Logging manager = Logging.getLoggingInstance(context);
-                        manager.addLogsForSending(logParams);
-                    }
-                    Logging manager = Logging.getLoggingInstance(context);
-                    manager.flushPendingFeedback();
-                    manager.ForceFlushLogsToServer();
 
-                }
+        if (intent.getAction().equals(Intent.ACTION_TIMEZONE_CHANGED)) {
+            SharedPreferences sharedPreferences = context.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
+            int timezonelast = sharedPreferences.getInt(SHTIMEZONE, -1);
+            int timezoneNow = Util.getTimeZoneOffsetInMinutes();
+            if ((timezonelast != timezoneNow)) {
+                SharedPreferences.Editor edit = sharedPreferences.edit();
+                edit.putInt(SHTIMEZONE, timezoneNow);
+                edit.commit();
+                // 8050 is a priority log hence logs will flush
+                Bundle logParams = new Bundle();
+                logParams.putInt(Util.CODE, CODE_DEVICE_TIMEZONE);
+                logParams.putString(Util.SHMESSAGE_ID, null);
+                logParams.putString(TYPE_NUMERIC, Integer.toString(Util.getTimeZoneOffsetInMinutes()));
+                Logging manager = Logging.getLoggingInstance(context);
+                manager.addLogsForSending(logParams);
             }
+            Logging manager = Logging.getLoggingInstance(context);
+            manager.flushPendingFeedback();
+            manager.ForceFlushLogsToServer();
         }
+
         // App status and heartbeat
         if (action.equals(BROADCAST_APP_STATUS_CHK)) {
             Bundle receivedParams = intent.getExtras();

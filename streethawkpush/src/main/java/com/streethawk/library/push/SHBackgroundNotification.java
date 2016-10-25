@@ -80,7 +80,7 @@ class SHBackgroundNotification extends NotificationBase {
      *
      * @param code
      * @return
-     */
+
     private boolean shouldDisplayHeadsUpNotification(int code) {
         switch (code) {
             case CODE_RATE_APP:
@@ -95,7 +95,7 @@ class SHBackgroundNotification extends NotificationBase {
                 return true;
         }
     }
-
+    */
     private Boolean checkInvalidCode(int code) {
         switch (code) {
             case CODE_OPEN_URL:
@@ -251,12 +251,15 @@ class SHBackgroundNotification extends NotificationBase {
             app_name = null;
         }
 
+        /*
         //Floating notification for lolipop
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             if (shouldDisplayHeadsUpNotification(code))
                 builder.setPriority(Notification.PRIORITY_HIGH);
 
         }
+        */
+
         builder.setStyle(new NotificationCompat.BigTextStyle().bigText(msg));
         builder.setContentTitle(title);
        // if (app_name != null)
@@ -286,16 +289,16 @@ class SHBackgroundNotification extends NotificationBase {
                 builder.setSound(soundUri);
         }
 
-        int iconId = sharedPreferences.getInt(RES_ID_FOR_BG_NOTFICATION_LARGE,-1);
+        int iconId = sharedPreferences.getInt(RES_ID_FOR_BG_NOTFICATION_LARGE,0);
 
-        if(-1==iconId){
+        if(0==iconId){
             iconId = Util.getAppIcon(mContext);
         }
         Bitmap icon = BitmapFactory.decodeResource(mContext.getResources(),iconId);
         builder.setLargeIcon(icon);
 
-        int smalliconId = sharedPreferences.getInt(RES_ID_FOR_BG_NOTFICATION_SMALL,-1);
-        if(-1==smalliconId){
+        int smalliconId = sharedPreferences.getInt(RES_ID_FOR_BG_NOTFICATION_SMALL,0);
+        if(0==smalliconId){
             smalliconId = Util.getAppIcon(mContext);
         }
         builder.setSmallIcon(smalliconId);

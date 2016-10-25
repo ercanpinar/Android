@@ -236,68 +236,6 @@ class AppActivityTracking implements Constants {
                 }
             }
         }).start();
-
-        new Thread(new Runnable() {
-
-
-            //TODO
-
-            @Override
-            public void run() {
-                Class noParams[] = {};
-                Class[] paramContext = new Class[1];
-                paramContext[0] = Context.class;
-                Class[] paramActivity = new Class[1];
-                paramActivity[0] = Activity.class;
-
-                Class push = null;
-
-                try {
-                    push = Class.forName("streethawk.com.streethawkauthor.TrigerActivityTracker");
-                    Method pushMethod = push.getMethod("getInstance", noParams);
-                    Object obj = pushMethod.invoke(null);
-                    if (null != obj) {
-                        Method addPushModule = push.getDeclaredMethod("onApplicationBackgrounded", paramActivity);
-                        addPushModule.invoke(obj, activity);
-                    }
-                } catch (ClassNotFoundException e1) {
-                    Log.w(Util.TAG, "Feed module is not present");
-                } catch (IllegalAccessException e1) {
-                    e1.printStackTrace();
-                } catch (NoSuchMethodException e1) {
-                    e1.printStackTrace();
-                } catch (InvocationTargetException e1) {
-                    e1.printStackTrace();
-                }
-            }
-        }).start();
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Class noParams[] = {};
-                Class[] paramContext = new Class[1];
-                paramContext[0] = Context.class;
-                Class[] paramActivity = new Class[1];
-                paramActivity[0] = Activity.class;
-                try {
-                    Class cls = Class.forName("streethawk.com.streethawkauthor.ActivityTracker");
-                    Object obj = cls.newInstance();
-                    Method method = cls.getMethod("onApplicationBackgrounded", paramActivity);
-                    method.invoke(obj,activity);
-                } catch (InstantiationException e) {
-                    e.printStackTrace();
-                } catch (NoSuchMethodException e) {
-                    e.printStackTrace();
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                } catch (InvocationTargetException e) {
-                    e.printStackTrace();
-                } catch (ClassNotFoundException e) {
-                    e.printStackTrace();
-                }
-            }
-
-        }).start();
     }
 
     public void notifyEnteringNewActivityToChildModules(final Activity activity) {
@@ -335,34 +273,6 @@ class AppActivityTracking implements Constants {
                     e1.printStackTrace();
                 }
             }
-        }).start();
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Class noParams[] = {};
-                Class[] paramContext = new Class[1];
-                paramContext[0] = Context.class;
-                Class[] paramActivity = new Class[1];
-                paramActivity[0] = Activity.class;
-                try {
-                    Class cls = Class.forName("streethawk.com.streethawkauthor.ActivityTracker");
-                    Object obj = cls.newInstance();
-                    Method method = cls.getMethod("onEnteringNewActivity", paramActivity);
-                    method.invoke(obj,activity);
-                } catch (InstantiationException e) {
-                    e.printStackTrace();
-                } catch (NoSuchMethodException e) {
-                    e.printStackTrace();
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                } catch (InvocationTargetException e) {
-                    e.printStackTrace();
-                } catch (ClassNotFoundException e) {
-                    e.printStackTrace();
-                }
-            }
-
         }).start();
     }
 
@@ -444,7 +354,6 @@ class AppActivityTracking implements Constants {
                             ex.printStackTrace();
                         }
                     }
-
                 } else {
                     // First run
                     SharedPreferences.Editor e = sharedPreferences.edit();
@@ -634,15 +543,36 @@ class AppActivityTracking implements Constants {
             int childCount = viewGroup.getChildCount();
             for (int i = 0; i < childCount; i++) {
                 fillViewList(activity, viewGroup.getChildAt(i));
-
             }
         }
     }
 
+    /**
+     * Returns true if  viewlist needs to ve saved for a given activity else false
+     * @param activity
+     * @return
+     */
+    private boolean shouldSaveWidgetList(Activity activity){
+        Context context = activity.getApplicationContext();
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREF_ACTIVITY, Context.MODE_PRIVATE);
+        int version = Util.getAppVersion(context);
+        String activityName = getViewName(activity.getClass().getName());
+        activityName = "sh_version_"+activityName;
+        int stored_version = sharedPreferences.getInt(activityName,-1);
+        if(version!=stored_version){
+            SharedPreferences.Editor e = sharedPreferences.edit();
+            e.putInt(activityName,version);
+            e.commit();
+            return true;
+        }
+        return false;
+    }
+
     private void saveWidgetList(Activity activity) {
-        //TODO : add activity level checks to prevent recurssive storing of activity
-        fillViewList(activity);
-        saveWidgetsInfo(activity);
+        if(shouldSaveWidgetList(activity)) {
+            fillViewList(activity);
+            saveWidgetsInfo(activity);
+        }
     }
 
     private void saveWidgetsInfo(Activity activity) {
@@ -674,7 +604,7 @@ class AppActivityTracking implements Constants {
                 extras.putString(TYPE_STRING, friendlyName);
                 final Logging shManager = Logging.getLoggingInstance(context);
                 shManager.addLogsForSending(extras);
-               // saveWidgetList(activity);  //
+                saveWidgetList(activity);
                 notifyEnteringNewActivityToChildModules(activity);
             } else {
                 bg = true; // indicates this is last activity before going to bg

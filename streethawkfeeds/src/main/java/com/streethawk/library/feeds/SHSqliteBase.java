@@ -2,16 +2,14 @@ package com.streethawk.library.feeds;
 
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-
-import com.streethawk.library.core.Util;
+import android.util.Log;
 
 public abstract class SHSqliteBase extends SQLiteOpenHelper {
 
-    private static final String STREETHAWK_DATABASE  = "streethawk_feeds.db";
-    private static final int STREETHAWK_DATABASE_VERSION = 1;
+    private static final String STREETHAWK_DATABASE = "streethawk_feeds.db";
+    private static final int STREETHAWK_DATABASE_VERSION = 2;
 
     private Context mContext;
 
@@ -27,35 +25,23 @@ public abstract class SHSqliteBase extends SQLiteOpenHelper {
     protected final String COMA = ", ";
     protected final String SINGLE_QUOTE = "'";
 
-    protected final static String COLUMN_TOOL_ID           = "id";
-    protected final static String COLUMN_DISPLAY           = "display";
-    protected final static String COLUMN_TRIGER            = "trigger";
-    protected final static String COLUMN_TARGET            = "target";
-    protected final static String COLUMN_VIEW              = "view";
-    protected final static String COLUMN_DELAY             = "delay";
-    protected final static String COLUMN_TOOL              = "tool";
-    protected final static String COLUMN_WIDGET_TYPE       = "widgettype";
-    protected final static String COLUMN_WIDGET_LABEL      = "widgetlabel";
-    protected final static String COLUMN_WIDGET_CSS        = "widgetcss";
-    protected final static String COLUMN_WIDGET_BGCOLOR    = "widgetbgcolor";
-    protected final static String COLUMN_WIDGET_PLACEMENT  = "widgetplacement";
-
-
+    protected final static String COLUMN_FEED_ID        = "feed_id";
+    protected final static String COLUMN_TOOL           = "tool";
+    protected final static String COLUMN_SETUP          = "setup";
+    protected final static String COLUMN_VIEW           = "view";
+    protected final static String COLUMN_ACTIONED       = "actioned";
+    protected final static String COLUMN_JSON           = "rawjson";
+    protected final static String COLUMN_TRIGGER        = "trigger";
 
     final String TRIGGER_TABLE_CREATE = "create table "
-            + TRIGGER_TABLE_NAME + "(" + COLUMN_TOOL_ID
+            + TRIGGER_TABLE_NAME + "(" + COLUMN_FEED_ID
             + TEXT + PRIMARY_KEY + UNIQUE + COMA
-            + COLUMN_DISPLAY + TEXT + COMA
-            + COLUMN_TRIGER + TEXT + COMA
-            + COLUMN_TARGET + TEXT + COMA
             + COLUMN_VIEW + TEXT + COMA
-            + COLUMN_DELAY + INTEGER + COMA
             + COLUMN_TOOL + TEXT + COMA
-            + COLUMN_WIDGET_TYPE + TEXT + COMA
-            + COLUMN_WIDGET_LABEL + TEXT + COMA
-            + COLUMN_WIDGET_CSS + TEXT + COMA
-            + COLUMN_WIDGET_BGCOLOR + TEXT +COMA
-            + COLUMN_WIDGET_PLACEMENT + TEXT
+            + COLUMN_JSON + TEXT + COMA
+            + COLUMN_TRIGGER + TEXT + COMA
+            + COLUMN_ACTIONED + INTEGER + COMA
+            + COLUMN_SETUP + TEXT
             + ")";
 
     public SHSqliteBase(Context context) {
@@ -70,7 +56,7 @@ public abstract class SHSqliteBase extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase database, int oldVersion, int newVersion) {
-        database.execSQL("DROP TABLE IF EXISTS " + TRIGGER_TABLE_CREATE);
+        database.execSQL("DROP TABLE IF EXISTS " + TRIGGER_TABLE_NAME);
         onCreate(database);
     }
 }

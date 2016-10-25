@@ -77,7 +77,7 @@ public abstract class SHSqliteBase extends SQLiteOpenHelper {
     protected static final String COLUMN_B3ICON             = "b3icon";
 
     /* Start ToolTips */
-    public static final String TOOLTIP_TABLE_NAME    = "tooltip";
+    public static final String TOOLTIP_TABLE_NAME       = "tooltip";
     public static final String COLUMN_TEXT_ID           = "textid";
     public static final String COLUMN_RES_ID            = "resid";
     public static final String COLUMN_PARENT_VIEW       = "parentview";

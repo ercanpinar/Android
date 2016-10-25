@@ -81,12 +81,12 @@ public class PushActivity extends AppCompatActivity implements Constants {
     private final String DEFAULT_TITLE_LOC      = "Enable Locations ";
     private final String DEFAULT_MESSAGE_LOC    = " "+StreetHawk.getCurrentFormattedDateTime();
 
-    private final String DEFAULT_URL = "http://www.streethawk.com";
-    private final String DEFAULT_DEEPLINK   =   "streethawkapp://activity=MainActivity";
-    private final String DEFAULT_OP1 = "Yes";
-    private final String DEFAULT_OP2 = "No";
-    private final String DEFAULT_OP3 = "May be";
-    private final String DEFAULT_OP4 = "I don't know";
+    private final String DEFAULT_URL        = "http://www.streethawk.com";
+    private final String DEFAULT_DEEPLINK   = "streethawkapp://activity=MainActivity";
+    private final String DEFAULT_OP1        = "Yes";
+    private final String DEFAULT_OP2        = "No";
+    private final String DEFAULT_OP3        = "May be";
+    private final String DEFAULT_OP4        = "I don't know";
 
     private final String DEFAULT_PHONE_NUMBER = "+61469123456";
     private final String DEFAULT_CUSTOM_JSON  = "";  //TODO add a json list to string here

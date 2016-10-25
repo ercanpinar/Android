@@ -5,6 +5,8 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
+import org.json.JSONObject;
+
 /**
  * Created by anuragkondeya on 31/07/2016.
  */
@@ -31,6 +33,7 @@ public class FeedItem implements Parcelable {
     private String Badge;
     private String Category;
     private int Length;
+    private String mRawJSON;
 
     private Bitmap mImageId;
 
@@ -66,6 +69,10 @@ public class FeedItem implements Parcelable {
 
     public void setFeedId(String id) {
         FeedId = id;
+    }
+
+    public void setRawJSON(String json){
+        mRawJSON = json;
     }
 
     public void setInstallId(String installid) {
@@ -212,20 +219,25 @@ public class FeedItem implements Parcelable {
         return Length;
     }
 
-
-    public String getObjectDetails(){
-        String NEWLINE = "\n";
-        return "Feed ID"+FeedId+NEWLINE
-                +"Title " + mFeedTitle + NEWLINE
-                + "Message " + mFeedMessage + NEWLINE
-                + "URL " + mURL + NEWLINE
-                + "Img " + mImage + NEWLINE
-                + "Video " + mVideo;
+    public String getRawJSON() {
+        return mRawJSON;
     }
 
 
 
+    public String getObjectDetails() {
+        String NEWLINE = "\n";
+        
+        return "Feed ID" + FeedId + NEWLINE
+                + "Title " + mFeedTitle + NEWLINE
+                + "Message " + mFeedMessage + NEWLINE
+                + "URL " + mURL + NEWLINE
+                + "Img " + mImage + NEWLINE
+                + "Video " + mVideo+NEWLINE+NEWLINE
+                + "JSON" + mRawJSON;
 
+
+    }
 
     public void displayForDebugging(String TAG, String MSG) {
 

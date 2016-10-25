@@ -6,6 +6,9 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.database.Cursor;
+import android.database.SQLException;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -27,26 +30,26 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
+
+import com.streethawk.library.core.WidgetDBHelper;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 /**
  * Class to display individual tips
  */
-public class SHTips extends Utils implements Constants {
+public class SHTips implements Constants {
 
 
     private int mImageId = -1;  //TODO
 
     private static PopupWindow tipPopUpWindow;
-    private static ArrayList<ITipClickEvents> mClickEventListeners = null;
+    private static ArrayList<IPointziClickEventsListener> mClickEventListeners = null;
 
     private static volatile Dialog mDialog = null;
     private final int GRAVITY_LEFT = 0;
@@ -70,10 +73,7 @@ public class SHTips extends Utils implements Constants {
         showTip(activity, widget, true);
     }
 
-    public void showTips(){
-
-    }
-
+    public void showTips(){}
 
     private String[] getButtonTextFromButtonPairs(String pairName) {
         String[] btnPairs = new String[2];
@@ -124,13 +124,7 @@ public class SHTips extends Utils implements Constants {
             tipObject.setTarget(null);
         }
         try {
-            JSONArray childArray = object.getJSONArray(CHILD);
-            int size = childArray.length();
-            String[] str = new String[size];
-            for (int i = 0; i < size; i++) {
-                str[i] = childArray.getString(i);
-            }
-            tipObject.setChild(str);
+            tipObject.setChild(object.getJSONArray(CHILD));
         } catch (JSONException e) {
             tipObject.setTarget(null);
         }
@@ -241,6 +235,134 @@ public class SHTips extends Utils implements Constants {
         return 0;
     }
 
+
+    private void parsePayloadToGetObject(SHTriger source, TipObject dest) {
+        if (null == source)
+            return;
+        if (null == dest)
+            return;
+
+        JSONArray tipArray = null;
+        try {
+            tipArray = new JSONArray(source.getJSON());
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return;
+        }
+        JSONObject tips = null;
+        try {
+            tips = tipArray.getJSONObject(0);
+        } catch (JSONException e1) {
+            e1.printStackTrace();
+        }
+        if (null != tips) {
+            try {
+                dest.setId(tips.getString(TIP_ID));
+            } catch (JSONException e1) {
+            }
+            try {
+                dest.setTitle(tips.getString(TITLE));
+            } catch (JSONException e1) {
+            }
+            try {
+                dest.setContent(tips.getString(CONTENT));
+            } catch (JSONException e1) {
+            }
+            try {
+                dest.setPlacement(tips.getString(PLACEMENT));
+            } catch (JSONException e1) {
+            }
+            try {
+                dest.setTarget(tips.getString(TARGET));
+            } catch (JSONException e1) {
+            }
+            try {
+                dest.setBackGroundColor(tips.getString(BG_COLOR));
+            } catch (JSONException e1) {
+            }
+
+            try {
+                dest.setTitleColor(tips.getString(TITLE_COLOR));
+            } catch (JSONException e1) {
+            }
+
+            try {
+                dest.setContentColor(tips.getString(CONTENT_COLOR));
+            } catch (JSONException e1) {
+            }
+
+            try {
+                dest.setDelay(tips.getInt(DELAY));
+            } catch (JSONException e1) {
+            }
+            try {
+                dest.setImageUrl(tips.getString(IMG_URL));
+            } catch (JSONException e1) {
+            }
+            try {
+                dest.setParent(tips.getString(PARENT));
+            } catch (JSONException e1) {
+            }
+
+            JSONObject customData = null;
+            try {
+                customData = tips.getJSONObject(CUSTOM_DATA);
+            } catch (JSONException e) {
+                customData = null;
+            }
+            if (null != customData) {
+                try {
+                    dest.setAcceptedButtonTitle(customData.getString(NEXT_BUTTON));
+                } catch (JSONException e1) {
+                }
+                try {
+                    dest.setDeclinedButtonTitle(customData.getString(PREV_BUTTON));
+                } catch (JSONException e1) {
+                }
+                try {
+                    dest.setCloseButtonTitle(customData.getString(CLOSE_BUTTON));
+                } catch (JSONException e1) {
+                }
+                JSONObject DNDObject = null;
+                try {
+                    DNDObject = customData.getJSONObject(DND);
+                } catch (JSONException e) {
+                    DNDObject = null;
+                }
+                if(null!=DNDObject) {
+                    try {
+                        dest.setDNDTitle(DNDObject.getString(DND_TITLE));
+                    } catch (JSONException e1) {
+                    }
+
+                    try {
+                        dest.setDNDContent(DNDObject.getString(DND_CONTENT));
+                    } catch (JSONException e1) {
+                    }
+                    String DNDB1 = null;
+                    String DNDB2 = null;
+
+                    try {
+                        DNDB1 = DNDObject.getString(DND_B1);
+                        dest.setDNDB1(DNDB1);
+                    } catch (JSONException e1) {
+                    }
+                    try {
+                        DNDB2 = DNDObject.getString(DND_B2);
+                        dest.setDNDB2(DNDB2);
+                    } catch (JSONException e1) {
+                    }
+
+                    if (null == DNDB1 && null == DNDB2) {
+                        dest.setHasDND(false);
+                    } else {
+                        dest.setHasDND(true);
+                    }
+                }
+            }
+        }
+    }
+
     private View getViewByPosition(int pos, AbsListView listView) {
         final int firstListItemPosition = listView.getFirstVisiblePosition();
         final int lastListItemPosition = firstListItemPosition + listView.getChildCount() - 1;
@@ -251,6 +373,16 @@ public class SHTips extends Utils implements Constants {
             final int childIndex = pos - firstListItemPosition;
             return listView.getChildAt(childIndex);
         }
+    }
+
+    public void showTip(Activity currentActivity, SHTriger trigger, boolean sendResult) {
+        if(null==trigger)
+            return;
+        if(null==currentActivity)
+            return;
+        TipObject widget = new TipObject();
+        parsePayloadToGetObject(trigger,widget);
+        showTip(currentActivity,widget,sendResult);
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
@@ -266,8 +398,9 @@ public class SHTips extends Utils implements Constants {
         if (tipPopUpWindow.isShowing())
             tipPopUpWindow.dismiss();
         View tipView = getTipView(currentActivity, widget);
-        if (tipView == null)
+        if (tipView == null) {
             return;
+        }
         tipPopUpWindow.setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
 
         View newPointerView = getPointerView(currentActivity, widget);
@@ -290,26 +423,38 @@ public class SHTips extends Utils implements Constants {
         pointerWrapper.setBackgroundColor(Color.TRANSPARENT);
         int widgetID = getResIdFromWidgetName(currentActivity, widget.getTarget());
         View anchor = currentActivity.findViewById(widgetID);
-        String [] child = widget.getChild();
-        if(null!=child){
-            int length = child.length;
-            if(length>0){
-                Object anchorObject = anchor;
-                String childReferece = child[length-1];
-                if ((anchorObject instanceof ListView)||(anchorObject instanceof GridView)
-                        || (anchorObject instanceof ExpandableListView)) {
-                    AbsListView list = (AbsListView)anchorObject;
-                    int position;
-                    try{
-                        position = Integer.parseInt(childReferece);
-                        list.smoothScrollToPosition(position);
-                        anchor = getViewByPosition(position,list);
-                    }catch (NumberFormatException e){
-                        Log.e("StreetHawk","Android doesnt support setting tips on listview using text value");
-                    }
+
+        JSONArray childArray = widget.getChild();
+        if(null!=childArray) {
+            int size = childArray.length();
+            String[] str = new String[size];
+            for (int i = 0; i < size; i++) {
+                try {
+                    str[i] = childArray.getString(i);
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
             }
+            if (null != str) {
+                int length = str.length;
+                if (length > 0) {
+                    Object anchorObject = anchor;
+                    String childReferece = str[length - 1];
+                    if ((anchorObject instanceof ListView) || (anchorObject instanceof GridView)
+                            || (anchorObject instanceof ExpandableListView)) {
+                        AbsListView list = (AbsListView) anchorObject;
+                        int position;
+                        try {
+                            position = Integer.parseInt(childReferece);
+                            list.smoothScrollToPosition(position);
+                            anchor = getViewByPosition(position, list);
+                        } catch (NumberFormatException e) {
+                            Log.e("StreetHawk", "Android doesnt support setting tips on listview using text value");
+                        }
+                    }
+                }
 
+            }
         }
         String placement = widget.getPlacement();
         if (null != placement) {
@@ -425,9 +570,9 @@ public class SHTips extends Utils implements Constants {
 
 
 
-    public void registerClickListener(ITipClickEvents eventListener) {
+    public void registerClickListener(IPointziClickEventsListener eventListener) {
         if (null == mClickEventListeners) {
-            mClickEventListeners = new ArrayList<ITipClickEvents>();
+            mClickEventListeners = new ArrayList<IPointziClickEventsListener>();
         }
         mClickEventListeners.add(eventListener);
     }
@@ -515,7 +660,7 @@ public class SHTips extends Utils implements Constants {
                     int[] results = new int[2];
                     results[0] = -1;  //FeedResult
                     results[1] = -1;  //Expires
-                    for (ITipClickEvents listener : mClickEventListeners) {
+                    for (IPointziClickEventsListener listener : mClickEventListeners) {
                         listener.onButtonClickedOnTip(widget, results);
                     }
                 } catch (NumberFormatException e) {
@@ -539,7 +684,7 @@ public class SHTips extends Utils implements Constants {
                     int[] results = new int[2];
                     results[0] = 1;  //FeedResult
                     results[1] = -1; //Expires
-                    for (ITipClickEvents listener : mClickEventListeners) {
+                    for (IPointziClickEventsListener listener : mClickEventListeners) {
                         listener.onButtonClickedOnTip(widget, results);
                     }
                 } catch (NumberFormatException e) {
@@ -584,7 +729,7 @@ public class SHTips extends Utils implements Constants {
                                         int[] results = new int[2];
                                         results[0] = -2;  //FeedResult
                                         results[1] = 1; //Dismiss for all
-                                        for (ITipClickEvents listener : mClickEventListeners) {
+                                        for (IPointziClickEventsListener listener : mClickEventListeners) {
                                             listener.onButtonClickedOnTip(widget, results);
                                         }
                                     }
@@ -601,7 +746,7 @@ public class SHTips extends Utils implements Constants {
                                         int[] results = new int[2];
                                         results[0] = -2;  //FeedResult
                                         results[1] = 0;
-                                        for (ITipClickEvents listener : mClickEventListeners) {
+                                        for (IPointziClickEventsListener listener : mClickEventListeners) {
                                             listener.onButtonClickedOnTip(widget, results);
                                         }
                                     }
@@ -621,6 +766,52 @@ public class SHTips extends Utils implements Constants {
         };
     }
 
+    private String getViewName(String fullyQualifiedName) {
+        String className = new StringBuilder(fullyQualifiedName).reverse().toString();
+        int indexOfPeriod = className.indexOf(".");
+        if (-1 != indexOfPeriod) {
+            className = className.subSequence(0, className.indexOf(".")).toString();
+            className = new StringBuilder(className).reverse().toString();
+            return className;
+        }
+        return null;
+    }
+
+
+    private int getResIdFromWidgetName(Activity activity, String widgetName) {
+        if (null == widgetName)
+            return -1;
+        WidgetDBHelper helper = new WidgetDBHelper(activity.getApplicationContext());
+        SQLiteDatabase database = helper.getReadableDatabase();
+
+        String parent = getViewName(activity.getClass().getName());
+        String WHERE = " where ";
+        String EQUALS = " = ";
+        String AND = " and ";
+        String DOUBLE_QUOTE = "\"";
+
+        String query = "select * from " + WidgetDBHelper.TOOLTIP_TABLE_NAME +
+                WHERE + WidgetDBHelper.COLUMN_TEXT_ID + EQUALS + DOUBLE_QUOTE + widgetName.trim() + DOUBLE_QUOTE +
+                AND + WidgetDBHelper.COLUMN_PARENT_VIEW + EQUALS + DOUBLE_QUOTE + parent.trim() + DOUBLE_QUOTE;
+        try {
+            Cursor cursor = database.rawQuery(query, null);
+            if (cursor != null && cursor.moveToFirst()) {
+                return cursor.getInt(cursor.getColumnIndex(WidgetDBHelper.COLUMN_RES_ID));
+            } else {
+                cursor.close();
+                database.close();
+                helper.close();
+                return -1;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            database.close();
+            helper.close();
+            return -1;
+        }
+    }
+
+
     private View.OnClickListener laterButtonListener(final Activity activity, final TipObject widget) {
         return new View.OnClickListener() {
             @Override
@@ -635,7 +826,7 @@ public class SHTips extends Utils implements Constants {
                     results[0] = 0;  //FeedResult
                     results[1] = -1; //Expires
                     if (null != mClickEventListeners) {
-                        for (ITipClickEvents listener : mClickEventListeners) {
+                        for (IPointziClickEventsListener listener : mClickEventListeners) {
                             listener.onButtonClickedOnTip(widget, results);
                         }
                     }
@@ -658,7 +849,6 @@ public class SHTips extends Utils implements Constants {
             if (widgetName.isEmpty()) {
                 return null;
             }
-
             int widgetID = getResIdFromWidgetName(activity, widgetName);
             if (-1 == widgetID) {
                 return null;
@@ -850,7 +1040,6 @@ public class SHTips extends Utils implements Constants {
                 }
             }
         }
-
         String accpetedButtonTitle = widget.getAcceptedButtonTitle();
         if (null != accpetedButtonTitle) {
             if (!accpetedButtonTitle.isEmpty()) {

@@ -18,6 +18,7 @@ package com.streethawk.library.push;
 
 import android.annotation.TargetApi;
 import android.app.ActivityManager;
+import android.app.KeyguardManager;
 import android.app.NotificationManager;
 import android.bluetooth.BluetoothAdapter;
 import android.content.ActivityNotFoundException;
@@ -413,7 +414,7 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver impleme
                     clearPendingDialogFlagAndDB(context, msgID);
                     return;
                 }
-
+                pushData.displayMyData("StreetHawk");
                 ISHObserver instance = SHGcmListenerService.getISHObserver();
                 if(null!=instance){
                     PushDataForApplication obj  = new PushDataForApplication();
@@ -585,6 +586,7 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver impleme
             if (fromBG) {
                 NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
                 notificationManager.cancel(Integer.parseInt(msgId));
+
             }
             try {
                 code = Integer.parseInt(dataObject.getCode());
@@ -714,10 +716,12 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver impleme
         e.commit();
     }
 
+
     private void colapseNotification(Context context) {
         Intent colapseNotificationIntent = new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
         context.sendBroadcast(colapseNotificationIntent);
     }
+
 
     private void bgActionPositive(Context context, String receivedPackageName, PushNotificationData pushObject) {
         int code = 0;

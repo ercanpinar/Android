@@ -34,6 +34,6 @@
 -keep public interface com.streethawk.library.geofence.INotifyGeofenceTransition{
     public *;
 }
--keep public interface com.streethawk.library.geofence.StreetHawkLocationService{
+-keep public class com.streethawk.library.geofence.StreetHawkLocationService{
     public *;
 }

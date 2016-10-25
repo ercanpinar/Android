@@ -188,9 +188,6 @@ public class SHFeedItem implements Constants{
         if (null == mContext) {
             Log.e(Util.TAG, "notifyFeedResult: context==null returning..");
         }
-
-
-
         Bundle params = new Bundle();
         params.putInt(Util.CODE,CODE_FEED_RESULT);
         params.putInt(SHFEEDID, feedId);
@@ -228,12 +225,12 @@ public class SHFeedItem implements Constants{
                                    APP_KEY+EQUALS+Util.getAppKey(mContext)+AND+
                                     OFFSET+EQUALS+offset;
                     URL url = null;
+
                     try {
                         url = new URL(urlParams);
                     } catch (MalformedURLException e) {
                         e.printStackTrace();
                     }
-                    Log.e("StreetHawk","Fetching feed data from server");
                     HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                     connection.setRequestMethod("GET");
                     BufferedReader input = new BufferedReader(
@@ -247,7 +244,6 @@ public class SHFeedItem implements Constants{
                 }catch (IOException e) {
                     e.printStackTrace();
                 }
-
             }
         }).start();
     }

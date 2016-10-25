@@ -1,0 +1,72 @@
+<resources>
+    <string name="app_name">Hawk</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="action_shdotcom">streethawk.com</string>
+    <string name="action_docs">SDK docs</string>
+    <string name="action_sourcecode">Source code</string>
+
+
+    <string name="action_default">Auto Fill</string>
+    <string name="title_activity_analytics">Analytics</string>
+
+    <string-array name="TagOptions">
+        <item>Tag Key Value</item>
+        <item>Tag CUID</item>
+        <item>Tag Phone</item>
+        <item>Tag Date Time</item>
+        <item>Increment Tag</item>
+        <item>Delete Tag</item>
+    </string-array>
+
+
+    <string-array name="Actions">
+        <item>Simple Push</item>
+        <item>Deeplink</item>
+        <item>Web page</item>
+        <item>Rate App</item>
+        <item>Update App</item>
+        <item>Dial Support</item>
+        <item>Feedback</item>
+        <item>Enable Bluetooth</item>
+        <item>Enable Locations</item>
+        <item>Enable Push</item>
+        <item>Interactive Push</item>
+        <item>Custom JSON</item>
+    </string-array>
+
+    <string-array name="Portion">
+        <item>50%</item>
+        <item>75%</item>
+        <item>100%</item>
+    </string-array>
+
+    <string-array name="Orientation">
+        <item>Slide Up</item>
+        <item>Slide down</item>
+        <item>Slide Left</item>
+        <item>Slide Right</item>
+    </string-array>
+
+    <string-array name="Speed">
+        <item>Fast</item>
+        <item>Slow</item>
+        <item>Instant</item>
+    </string-array>
+
+    <string name="title_activity_settings">Reset</string>
+    <string name="ERRMSG_EMPTY_APP_KEY">AppKey cannot be empty</string>
+    <string name="ERRMSG_DEMO_APP_KEY">App cannot use Demo app key. Please register your appkey</string>
+    <string name="WRNMSG_EMPTY_PROJECTNO">App cannot receive push as project number is empty</string>
+    <string name="title_activity_growth">Growth</string>
+    <string name="title_activity_push">Push</string>
+    <string name="title_activity_feeds">Feeds</string>
+    <string name="title_activity_feedback">Feedback</string>
+    <string name="title_activity_feed_viewer">FeedViewerActivity</string>
+    <string name="title_activity_feed_list">FeedList</string>
+
+    <string name="title_activity_web_view_poc">WebViewPOC</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="title_activity_logreport">Logreport</string>
+</resources>

@@ -1,3 +1,7 @@
+android.support.design
+android.support.v7.appcompat
+android.support.v7.recyclerview
+com.google.android.gms
 com.streethawk.library.beacon
 com.streethawk.library.core
 com.streethawk.library.feeds
@@ -7,3 +11,4 @@ com.streethawk.library.locations
 com.streethawk.library.push
 com.streethawk.sdkdebugger
 com.streethawk.streethawkapp
+library.streethawk.com.streethawkpush

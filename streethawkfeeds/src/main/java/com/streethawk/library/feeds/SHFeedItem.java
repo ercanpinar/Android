@@ -237,7 +237,7 @@ public class SHFeedItem implements Constants{
                             new InputStreamReader(connection.getInputStream()));
                     String answer = input.readLine();
                     if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                        Log.e("StreetHawk","Received feed data from server");
+                        Log.i("StreetHawk","Received feed data from server");
                         NotifyFeedItemToApplication(answer);
                     }
                     input.close();

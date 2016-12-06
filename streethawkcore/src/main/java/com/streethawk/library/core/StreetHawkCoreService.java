@@ -321,7 +321,6 @@ public class StreetHawkCoreService extends Service implements Thread.UncaughtExc
         } catch (IllegalAccessException e) {
             os = "Android " + Build.VERSION.RELEASE + " (" + Build.VERSION.SDK + ")";
         }
-
         return os;
     }
 

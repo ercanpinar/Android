@@ -1,12 +1,15 @@
 /* Copyright (c) StreetHawk, All rights reserved. This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation; either version 3.0 of the License, or (at your option) any later version. This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details. You should have received a copy of the GNU Lesser General Public License along with this library. */
 package com.streethawk.library.geofence;
 
+import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -50,6 +53,11 @@ public class SHCoreModuleReceiver extends BroadcastReceiver implements Constants
         storeGeofenceDB.close();
     }
 
+    /**
+     * Fetch geofence list from the server
+     *
+     * @param context
+     */
     private void fetchGeofenceList(final Context context) {
         if (null == context) return;
         if (Util.isNetworkConnected(context)) new Thread(new Runnable() {
@@ -158,22 +166,31 @@ public class SHCoreModuleReceiver extends BroadcastReceiver implements Constants
 
     }
 
+    /**
+     * Check for timestamp of geofence. Return if same as before, else store the received geofence timestamp and fetch geofence tree
+     *
+     * @param context
+     * @param value_geofence
+     */
     private void setGeofenceListTimeStamp(Context context, String value_geofence) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
         String currentTimeStamp = sharedPreferences.getString(KEY_GEOFENCE, null);
-        if (null != currentTimeStamp && value_geofence.equals(currentTimeStamp)) {
+        if (null == value_geofence)
             return;
+        if (currentTimeStamp != null) {
+            if (value_geofence.equals(currentTimeStamp))
+                return;
+            else {
+                SharedPreferences.Editor edit = sharedPreferences.edit();
+                edit.putString(KEY_GEOFENCE, value_geofence);
+                edit.commit();
+                fetchGeofenceList(context);
+            }
         } else {
             SharedPreferences.Editor edit = sharedPreferences.edit();
             edit.putString(KEY_GEOFENCE, value_geofence);
             edit.commit();
-
-            if (KEY_GEOFENCE != null) {
-                fetchGeofenceList(context);
-            } else {
-                // Force clear geofence list if server sends null as timestamp
-                forceClearGeofenceData(context);
-            }
+            fetchGeofenceList(context);
         }
     }
 
@@ -206,6 +223,12 @@ public class SHCoreModuleReceiver extends BroadcastReceiver implements Constants
             }
         }
         if (action.equals("android.location.PROVIDERS_CHANGED")) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (context.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                        context.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    return;
+                }
+            }
             final Handler delay = new Handler();
             delay.postDelayed(new Runnable() {
                                   @Override
@@ -215,7 +238,6 @@ public class SHCoreModuleReceiver extends BroadcastReceiver implements Constants
                                           try {
                                               Bundle extras = new Bundle();
                                               extras.putInt(Util.CODE, CODE_USER_DISABLES_LOCATION);
-                                              StreetHawkLocationService.getInstance(context).resetCurrentLocation(context);
                                               Logging.getLoggingInstance(context).addLogsForSending(extras);
                                               StreetHawkLocationService.getInstance(context).stopMonitoring();
                                               GeofenceService.notifyAllGeofenceExit(context);
@@ -246,7 +268,6 @@ public class SHCoreModuleReceiver extends BroadcastReceiver implements Constants
                                                                         double lng = location.getLongitude();
                                                                         if (lat == 0 && lng == 0)
                                                                             return;
-                                                                        StreetHawkLocationService.getInstance(context).forceStoreCurrentLocation(context);
                                                                         Bundle extras = new Bundle();
                                                                         extras.putInt(Util.CODE, CODE_LOCATION_UPDATES);
                                                                         extras.putString(Util.SHMESSAGE_ID, null);
@@ -282,7 +303,6 @@ public class SHCoreModuleReceiver extends BroadcastReceiver implements Constants
                     double lng = location.getLongitude();
                     if (lat == 0 && lng == 0)
                         return;
-                    StreetHawkLocationService.getInstance(context).forceStoreCurrentLocation(context);
                     Bundle extras = new Bundle();
                     extras.putInt(Util.CODE, CODE_PERIODIC_LOCATION_UPDATE);
                     extras.putString(Util.SHMESSAGE_ID, null);

@@ -46,8 +46,6 @@ public class StreetHawkLocationService extends Service implements Constants,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     private static Context mContext;
     private static StreetHawkLocationService mStreethawkLocationService;
-    //private static GoogleApiClient mGoogleApiClient;
-    //private static ArrayList<com.google.android.gms.location.Geofence> mGeofenceList;
     private PendingIntent mGeofencePendingIntent;
     private final int MAX_GEOFENCE_CNT = 20;
     private GoogleApiClient mGoogleApiClient;
@@ -194,25 +192,29 @@ public class StreetHawkLocationService extends Service implements Constants,
         return super.onStartCommand(intent, flags, startId);
     }
 
-    public void StoreLocationsForLogging(Context context) {
+    public double[] getLocationForLogline(Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (context.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                     context.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                return;
+                return null;
             }
         }
-        Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-        if (location != null) {
-            SharedPreferences sharedPreferences = context.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
-            SharedPreferences.Editor e = sharedPreferences.edit();
-            double lat = location.getLatitude();
-            double lng = location.getLongitude();
-            e.putString(Util.LOG_LAT, Double.toString(lat));
-            e.putString(Util.LOG_LNG, Double.toString(lng));
-            e.commit();
-            if (Util.getSHDebugFlag(context)) {
-                Log.d(Util.TAG, "  " + "*** Stored locations for logging" + lat + "," + lng);
+        if(null!=mGoogleApiClient) {
+            Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+            if (location != null) {
+                double lat = location.getLatitude();
+                double lng = location.getLongitude();
+                if (Util.getSHDebugFlag(context)) {
+                    Log.d(Util.TAG, "  " + "Device Location" + lat + "," + lng);
+                }
+                return new double[]{lat, lng};
             }
+            return null;
+        }
+        else{
+            buildGoogleApiClient();
+            mGoogleApiClient.connect();
+            return null;
         }
     }
 
@@ -226,32 +228,6 @@ public class StreetHawkLocationService extends Service implements Constants,
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
         SharedPreferences.Editor e = sharedPreferences.edit();
         e.putBoolean(IS_GEOFENCE_ENABLE, false);
-        e.commit();
-    }
-
-    public void forceStoreCurrentLocation(Context context) {
-        if (null != context) {
-            if (null != mGoogleApiClient) {
-                if (!mGoogleApiClient.isConnected()) {
-                    mGoogleApiClient.connect();
-                }
-            } else {
-                mGoogleApiClient = new GoogleApiClient.Builder(context)
-                        .addConnectionCallbacks(this)
-                        .addOnConnectionFailedListener(this)
-                        .addApi(LocationServices.API)
-                        .build();
-
-            }
-            StoreLocationsForLogging(context);
-        }
-    }
-
-    public void resetCurrentLocation(Context context) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
-        SharedPreferences.Editor e = sharedPreferences.edit();
-        e.putString(Util.LOG_LAT, "0.0");
-        e.putString(Util.LOG_LNG, "0.0");
         e.commit();
     }
 
@@ -311,38 +287,6 @@ public class StreetHawkLocationService extends Service implements Constants,
         return (dist);
     }
 
-    /**
-     * Returns lat for logigng
-     *
-     * @return
-     */
-    private double getCurrentLat() {
-        SharedPreferences sharedPreferences = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
-        try {
-            return (Double.parseDouble(sharedPreferences.getString(Util.LOG_LAT, null)));
-        } catch (NumberFormatException e) {
-            return 0.0;
-        } catch (NullPointerException e) {
-            return 0.0;
-        }
-    }
-
-    /**
-     * Returns lng for logging
-     *
-     * @return
-     */
-    private double getCurrentLng() {
-        SharedPreferences sharedPreferences = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
-        try {
-            return (Double.parseDouble(sharedPreferences.getString(Util.LOG_LNG, null)));
-        } catch (NumberFormatException e) {
-            return 0.0;
-        } catch (NullPointerException e) {
-            return 0.0;
-        }
-    }
-
     private void parseAndStoreGeofences(String parent, GeofenceDB storeGeofenceDB, JSONArray geofenceArray) {
         for (int i = 0; i < geofenceArray.length(); i++) {
             try {
@@ -398,14 +342,14 @@ public class StreetHawkLocationService extends Service implements Constants,
         if (geofenceList.size() <= MAX_GEOFENCE_CNT)
             return;
         else {
-            // Select MAX_GEOFENCE_CNT closed to current location
-            final double currentLat = getCurrentLat();
-            final double currentLng = getCurrentLng();
+
+            double[] location = getLocationForLogline(mContext);
+
             int size = geofenceList.size();
             //Store distance from current location
             for (int i = 0; i < size; i++) {
                 GeofenceData obj = geofenceList.get(i);
-                double distance = calculateDistanceUsingHaversine(obj.getLatitude(), obj.getLongitude(), currentLat, currentLng);
+                double distance = calculateDistanceUsingHaversine(obj.getLatitude(), obj.getLongitude(), location[0], location[1]);
                 obj.setDistance(distance);
             }
 
@@ -558,7 +502,6 @@ public class StreetHawkLocationService extends Service implements Constants,
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         monitorGeofence();
-        StoreLocationsForLogging(mContext);
     }
 
     @Override

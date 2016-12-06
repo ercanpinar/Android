@@ -24,51 +24,28 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.streethawk.library.beacon.INotifyBeaconTransition;
+import com.streethawk.library.core.ISHEventObserver;
 import com.streethawk.library.core.StreetHawk;
 import com.streethawk.library.core.Util;
 import com.streethawk.library.feeds.ISHFeedItemObserver;
 //import com.streethawk.library.feeds.Modal;
 //import com.streethawk.library.feeds.Modal;
-import com.streethawk.library.feeds.Modal;
 import com.streethawk.library.feeds.SHFeedItem;
-import com.streethawk.library.feeds.SHTips;
 import com.streethawk.library.geofence.INotifyGeofenceTransition;
-import com.streethawk.library.growth.Growth;
 import com.streethawk.library.growth.IGrowth;
 import com.streethawk.library.push.ISHObserver;
 import com.streethawk.library.push.Push;
 import com.streethawk.library.push.PushDataForApplication;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLEncoder;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.TimeZone;
-
-import javax.net.ssl.HttpsURLConnection;
 
 public class MainActivity extends AppCompatActivity implements
         Constants, IGrowth, INotifyGeofenceTransition, INotifyBeaconTransition,
-        ISHObserver, ISHFeedItemObserver {
-
+        ISHObserver, ISHFeedItemObserver,ISHEventObserver {
     int ANALYTICS = 0;
     int GROWTH = ANALYTICS + 1;
     int PUSH = GROWTH + 1;
@@ -84,8 +61,8 @@ public class MainActivity extends AppCompatActivity implements
     int AUTHORING = GRANT_PERMISSION + 1;
     int COLORPICKER = AUTHORING + 1;
     int SERVER_LOGS = COLORPICKER + 1;
-    int MODAL = SERVER_LOGS + 1;
-
+    int MODAL      = SERVER_LOGS + 1;
+    int TEST_TIP    =   MODAL+1;
 
     String mAppKey = null;
     String mSenderKey = null;
@@ -151,6 +128,16 @@ public class MainActivity extends AppCompatActivity implements
 
     }
 
+    @Override
+    public void onInstallRegistered(final String installId) {
+        mActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(mActivity,"Install registered "+installId,Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
     private class StableArrayAdapter extends ArrayAdapter<String> {
         HashMap<String, Integer> mIdMap = new HashMap<String, Integer>();
 
@@ -189,12 +176,12 @@ public class MainActivity extends AppCompatActivity implements
             "Install-Info",
             "Reset ",
             "WebView",
-            "Push Ping",
             "Grant permission",
             "Authoring",
             "ColorPicker",
             "Logging Report",
-            "Modal"
+            "Modal",
+            "TestTip"
     };
 
 
@@ -208,22 +195,33 @@ public class MainActivity extends AppCompatActivity implements
                  //       "","","http://www.streethawk.com",null);
 
 
+                /*
                 SHTips tips = new SHTips();
                 tips.unit_test_tooltip(mActivity,"fabmain");
-
+                */
 
                 //SHTours tours =new SHTours(mActivity);
                 //tours.startTour("454186");
 
 
+               /*
                 Modal modal = new Modal();
                 modal.unit_test_tooltip(mActivity);
+                */
+
+
+/*
+                Pointzi pointzi = new Pointzi(mActivity);
+                pointzi.fetchPointziPayload(mActivity.getApplicationContext());
+                Toast.makeText(getApplicationContext(), "Fetched pointiziPayload", Toast.LENGTH_SHORT).show();
+
+*/
+                //new Authoring().enterAuthoringMode(mActivity);
 
             }
 
         };
     }
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -450,6 +448,9 @@ public class MainActivity extends AppCompatActivity implements
                 }
                 if (MODAL == position) {
                     // new Modal().unit_test_tooltip(mActivity);
+                }
+                if(TEST_TIP==position){
+                    intent = new Intent(getApplicationContext(), TestPointzi.class);
                 }
 
                 if (null != intent) {

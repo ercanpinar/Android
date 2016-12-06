@@ -47,6 +47,7 @@ public class Analytics extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fabAnalytics);
         fab.setOnClickListener(sendTag());
+        //fab.setOnClickListener(unitTestTip());
 
         mTagSpinner = (Spinner) findViewById(R.id.tagSpinner);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
@@ -114,6 +115,15 @@ public class Analytics extends AppCompatActivity {
     }
 
 
+
+    private View.OnClickListener unitTestTip(){
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //new Tip().unit_test_tip(mActivity);
+            }
+        };
+    }
 
 
 

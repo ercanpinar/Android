@@ -19,6 +19,7 @@ package com.streethawk.library.growth;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Point;
 import android.net.Uri;
 import android.os.Build;
@@ -62,7 +63,25 @@ public class Register extends BroadcastReceiver{
     private final String WIDHT = "width";
     private final String HEIGHT = "height";
 
+
     private static IGrowth mGrowthObserver = null;
+
+    private String KEY_GROWTH_HOST      = "shKeyHostGrowth";
+    private final String FALLBACK = "growth.streethawk.com";
+    private String getGrowhtHost(){
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
+        String url = sharedPreferences.getString(KEY_GROWTH_HOST, null);
+        if(null==url){
+            url  = FALLBACK;
+        }
+        int index = url.indexOf("https://");
+        if(index>=0) {
+            url = url.substring(index);
+        }
+        return url;
+
+    }
+
 
     private String getReferrer() {
         String url = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE).getString(REFERRER, null);
@@ -162,7 +181,7 @@ public class Register extends BroadcastReceiver{
             deviceName = deviceName.toLowerCase();
             String uri = new Uri.Builder()
                     .scheme("https")
-                    .authority("pointzi.streethawk.com")
+                    .authority(getGrowhtHost())
                     .path("i/")
                     .appendQueryParameter(APP_KEY,app_key)
                     .appendQueryParameter(DEVICE_UNIQUE, imei)

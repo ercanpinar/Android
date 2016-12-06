@@ -52,6 +52,7 @@ public class LoggingBase implements Constants {
     private final String PRIORITY       = "priority";
     private final String RE_REGISTER    = "reregister";
     protected final String STREETHAWK   = "streethawk";
+    protected final String GROWTH_HOST  =  "growth_host";
     protected final String HOST         = "host";
     private final String ACTIVITY_LIST  = "submit_views";
     private final String DISABLE_LOGS   = "disable_logs";
@@ -63,9 +64,12 @@ public class LoggingBase implements Constants {
 
     /*Member variables*/
     private static String mHostUrl = null;
-    private  static final String PROD_DEFAULT_HOST_URL = "https://api.streethawk.com";
-    //private  static final String PROD_DEFAULT_HOST_URL = "https://staging.streethawk.com";
-    //private  static final String PROD_DEFAULT_HOST_URL = "https://hawk.streethawk.com";
+
+    private static final String SCHEMA = "https://";
+
+    private  static final String PROD_DEFAULT_HOST_URL = SCHEMA+"api.streethawk.com";
+    //private  static final String PROD_DEFAULT_HOST_URL = SCHEMA+"staging.streethawk.com";
+    //private  static final String PROD_DEFAULT_HOST_URL = SCHEMA+"hawk.streethawk.com";
 
     protected enum ApiMethod {
         APP_GET_STATUS,
@@ -90,7 +94,7 @@ public class LoggingBase implements Constants {
         SharedPreferences sharedPreferences = context.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
         mHostUrl = sharedPreferences.getString(KEY_HOST, PROD_DEFAULT_HOST_URL);
         if (null == mHostUrl) {
-            mHostUrl = PROD_DEFAULT_HOST_URL;
+            mHostUrl =  PROD_DEFAULT_HOST_URL;
         }
         if (mHostUrl.isEmpty()) {
             mHostUrl = PROD_DEFAULT_HOST_URL;
@@ -622,9 +626,31 @@ public class LoggingBase implements Constants {
         }
     }
 
+    /**
+     * Returns host url for streethawk state
+     * @return
+     */
     protected boolean getStreethawkState() {
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
         return sharedPreferences.getBoolean(KEY_STREETHAWK, true);
+    }
+
+    /**
+     * Sets host url for growth
+     * @param value_host
+     */
+    protected void setGrowthHost(String value_host){
+        if (value_host == null)
+            return;
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
+        String currentHost = sharedPreferences.getString(KEY_GROWTH_HOST, null);
+        if (null != currentHost && value_host.equals(currentHost))
+            return;
+        else {
+            SharedPreferences.Editor edit = sharedPreferences.edit();
+            edit.putString(KEY_GROWTH_HOST, value_host);
+            edit.commit();
+        }
     }
 
     /**

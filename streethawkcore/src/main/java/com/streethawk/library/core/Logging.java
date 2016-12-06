@@ -35,6 +35,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -57,6 +59,7 @@ import javax.net.ssl.HttpsURLConnection;
 public class Logging extends LoggingBase implements Constants {
 
     private static final String SUBTAG = "Logging ";
+    //private static boolean mFailedLogLine = false;
 
 
     private final int MAX_LOG_CNT = 50;            //Size of log buffer
@@ -107,6 +110,7 @@ public class Logging extends LoggingBase implements Constants {
                 e.commit();
             } catch (ConcurrentModificationException exception) {
                 exception.printStackTrace();
+
             }
             return logIdCounter;
         }
@@ -125,37 +129,6 @@ public class Logging extends LoggingBase implements Constants {
         return result;
     }
 
-    /**
-     * Returns lat for logigng
-     *
-     * @return
-     */
-    private double getLatForLog() {
-        SharedPreferences sharedPreferences = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
-        try {
-            return (Double.parseDouble(sharedPreferences.getString(Util.LOG_LAT, null)));
-        } catch (NumberFormatException e) {
-            return 0.0;
-        } catch (NullPointerException e) {
-            return 0.0;
-        }
-    }
-
-    /**
-     * Returns lng for logging
-     *
-     * @return
-     */
-    private double getLngForLog() {
-        SharedPreferences sharedPreferences = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
-        try {
-            return (Double.parseDouble(sharedPreferences.getString(Util.LOG_LNG, null)));
-        } catch (NumberFormatException e) {
-            return 0.0;
-        } catch (NullPointerException e) {
-            return 0.0;
-        }
-    }
 
     /**
      * Add logs in queue with forced priority
@@ -364,6 +337,38 @@ public class Logging extends LoggingBase implements Constants {
     }
 
 
+    private double[] getLocationForLogging() {
+        Class noParams[] = {};
+        Class[] paramContext = new Class[1];
+        paramContext[0] = Context.class;
+        Class push = null;
+        {
+            try {
+                push = Class.forName("com.streethawk.library.geofence.StreetHawkLocationService");
+                Method pushMethod = push.getMethod("getInstance", paramContext);
+                Object obj = pushMethod.invoke(null, mContext);
+                if (null != obj) {
+                    Method addPushModule = push.getDeclaredMethod("getLocationForLogline", paramContext);
+                    Object value = addPushModule.invoke(obj, mContext);
+                    if (null != value) {
+                        double[] dval = (double[]) value;
+                        return (double[]) value;
+                    }
+                }
+            } catch (ClassNotFoundException e1) {
+                Log.w(Util.TAG, "Geofence module is not  not present");
+            } catch (IllegalAccessException e1) {
+                e1.printStackTrace();
+            } catch (NoSuchMethodException e1) {
+                e1.printStackTrace();
+            } catch (InvocationTargetException e1) {
+                e1.printStackTrace();
+            }
+            return null;
+        }
+    }
+
+
     /**
      * Add logs to buffer
      *
@@ -377,14 +382,21 @@ public class Logging extends LoggingBase implements Constants {
         if (!isInstallLogAllowed(mContext)) {
             return true;
         }
-        double lat = getLatForLog();
-        double lng = getLngForLog();
-        if (0.0 != lat && 0.0 != lng) {
-            params.putDouble(SHLATTITUDE, getLatForLog());
-            params.putDouble(SHLONGITUDE, getLngForLog());
-        }
-        if (Util.getSHDebugFlag(mContext)) {
-            Log.d(Util.TAG, "  " + "Device log location" + lat + "," + lng);
+        double lat = 0;
+        double lng = 0;
+        if (priority) {
+            double[] location = getLocationForLogging();
+            if (null != location) {
+                lat = location[0];
+                lng = location[1];
+                if (0.0 != lat && 0.0 != lng) {
+                    params.putDouble(SHLATTITUDE, lat);
+                    params.putDouble(SHLONGITUDE, lng);
+                }
+                if (Util.getSHDebugFlag(mContext)) {
+                    Log.d(Util.TAG, "  " + "Device log location" + lat + "," + lng);
+                }
+            }
         }
         params.putString(LOCAL_TIME, Util.getFormattedDateTime(System.currentTimeMillis(), false));
         String sessionId = Util.getSessionId(mContext);
@@ -408,42 +420,47 @@ public class Logging extends LoggingBase implements Constants {
             }
         }
         String logid = Integer.toString(getLogId(mContext));
-        params.putString(LOG_ID, logid);
-        params.putString(CREATED, Util.getFormattedDateTime(System.currentTimeMillis(), true));
-        params.putString(SESSION_ID, sessionId);
         JSONObject dictionary = new JSONObject();
         Set<String> names = params.keySet();
         for (String name : names) {
             Object value = params.get(name);
             if (value != null) {
                 if (value != null) {
-                    if(value instanceof String) {
+                    if (value instanceof String) {
                         try {
                             JSONObject obj = new JSONObject((String) value);
                             dictionary.put(name, obj);
                             continue;
-                        } catch (JSONException e) {}
+                        } catch (JSONException e) {
+                        }
                     }
-                    if(value instanceof String) {
+                    if (value instanceof String) {
                         try {
                             JSONArray obj = new JSONArray((String) value);
                             dictionary.put(name, obj);
                             continue;
-                        } catch (JSONException e) {}
+                        } catch (JSONException e) {
+                        }
                     }
                     try {
-                        dictionary.put(name,value);
+                        dictionary.put(name, value);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
                 }
             }
         }
+        if(dictionary.toString().equals("{}")){
+            return false;
+        }
         String keyCount = Integer.toString(getKeyCnt());
         SharedPreferences prefs = mContext.getSharedPreferences(SHSHARED_PREF_LOGGING, Context.MODE_PRIVATE);
         SharedPreferences.Editor e = prefs.edit();
         e.putString(keyCount, dictionary.toString());
         e.commit();
+        params.putString(LOG_ID, logid);
+        params.putString(CREATED, Util.getFormattedDateTime(System.currentTimeMillis(), true));
+        params.putString(SESSION_ID, sessionId);
         if (MAX_LOG_CNT == getBufferCnt() || priority) {
             return copyLogsinCycleBuffer();
         }
@@ -527,11 +544,12 @@ public class Logging extends LoggingBase implements Constants {
 
     /**
      * Anurag remove/comment this code for release
+     *
      * @param activity
      * @param message
      */
 
-    private void saveLogs(String activity,String message){
+    private void saveLogs(String activity, String message) {
 
         String COLON = " : ";
         String NEWLINE = "\n";
@@ -539,15 +557,72 @@ public class Logging extends LoggingBase implements Constants {
         SharedPreferences prefs = mContext.getSharedPreferences("SHLogging", Context.MODE_PRIVATE);
         SharedPreferences.Editor e = prefs.edit();
         DateFormat df = new SimpleDateFormat("EEE, d MMM yyyy, HH:mm");
-        String local_date = " LT: "+df.format(Calendar.getInstance().getTime());
+        String local_date = " LT: " + df.format(Calendar.getInstance().getTime());
         DateFormat df2 = DateFormat.getTimeInstance();
         df2.setTimeZone(TimeZone.getTimeZone("gmt"));
-        String utc = " UTC: " +df2.format(new Date());
-        String logstring = local_date+COMMA+utc+COMMA+activity+COMMA+message+NEWLINE;
-        String prevlog = prefs.getString("logger","");
-        prevlog  = logstring+NEWLINE+NEWLINE+prevlog;
-        e.putString("logger",prevlog);
+        String utc = " UTC: " + df2.format(new Date());
+        String logstring = local_date + COMMA + utc + COMMA + activity + COMMA + message + NEWLINE;
+        String prevlog = prefs.getString("logger", "");
+        prevlog = logstring + NEWLINE + NEWLINE + prevlog;
+        e.putString("logger", prevlog);
         e.commit();
+    }
+
+
+    private void sendFailedLoglines() {
+        SharedPreferences prefs = mContext.getSharedPreferences(SHSHARED_PREF_STAGGING, Context.MODE_PRIVATE);
+        SharedPreferences.Editor staggingEdit = prefs.edit();
+        String records = null;
+        String bundle_id = getBundleId();
+        String mainLogs = "[";
+        Map<String, ?> keysPrefs = prefs.getAll();
+        if (keysPrefs == null) {
+            return;
+        }
+        for (Map.Entry<String, ?> eachKey : keysPrefs.entrySet()) {
+            // Iterate over sharedpreference and collect all keys in array
+            String inUsekey = eachKey.getKey();
+            JSONArray subArray;
+            try {
+                String arryStr = prefs.getString(inUsekey, null);
+                if (arryStr == null)
+                    continue;
+                subArray = new JSONArray(arryStr);
+                for (int i = 0; i < subArray.length(); i++) {
+                    JSONObject subobject = subArray.getJSONObject(i);
+                    //mainArray.put(subobject);
+                    mainLogs += subobject.toString() + ",";
+                }
+                staggingEdit.remove(inUsekey);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            int size = mainLogs.length();
+            if (size > 1) {
+                mainLogs = mainLogs.substring(0, size - 1);
+            }
+            mainLogs += "]";
+            if (mainLogs.equals("[]")) {
+                Log.i(Util.TAG, SUBTAG + "Returning due to empty logs");
+                return;
+            }
+
+            records = mainLogs;
+            staggingEdit.clear();
+            staggingEdit.commit();
+            staggingEdit.putString(bundle_id, records);
+            staggingEdit.commit();
+        }
+        if (records == null) {
+            staggingEdit.remove(bundle_id);
+            staggingEdit.commit();
+            return;
+        }
+        if (records.isEmpty()) {
+            staggingEdit.remove(bundle_id);
+            staggingEdit.commit();
+            return;
+        }
     }
 
 
@@ -715,6 +790,7 @@ public class Logging extends LoggingBase implements Constants {
         }
         return false;
     }
+
 
     public boolean ForceFlushLogsToServer() {
         return flushLogsToServer(null);

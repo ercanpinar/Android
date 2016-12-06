@@ -184,5 +184,4 @@ public class BeaconServiceL extends BeaconServiceBase {
             this.stopSelf();
         }
     }
-
 }

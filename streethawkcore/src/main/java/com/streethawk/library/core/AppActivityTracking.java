@@ -25,15 +25,16 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Locale;
-
-
 class AppActivityTracking implements Constants {
 
     private static AppActivityTracking mActivityTracking = null;
@@ -84,36 +85,6 @@ class AppActivityTracking implements Constants {
             }
         }).start();
 
-        /*Notify orientation change to feeds module*/
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Class noParams[] = {};
-                Class[] paramContext = new Class[1];
-                paramContext[0] = Context.class;
-                Class[] paramActivity = new Class[1];
-                paramActivity[0] = Activity.class;
-                Class push = null;
-                try {
-                    push = Class.forName("com.streethawk.library.feeds.TrigerActivityTracker");
-                    Method pushMethod = push.getMethod("getInstance", noParams);
-                    Object obj = pushMethod.invoke(null);
-                    if (null != obj) {
-                        Method addPushModule = push.getDeclaredMethod("onOrientationChange", paramActivity);
-                        addPushModule.invoke(obj, activity);
-                    }
-                } catch (ClassNotFoundException e1) {
-                    Log.w(Util.TAG, "Feed module is not present");
-                } catch (IllegalAccessException e1) {
-                    e1.printStackTrace();
-                } catch (NoSuchMethodException e1) {
-                    e1.printStackTrace();
-                } catch (InvocationTargetException e1) {
-                    e1.printStackTrace();
-                }
-            }
-        }).start();
     }
 
     private long getSessionTime(Context context) {
@@ -172,74 +143,14 @@ class AppActivityTracking implements Constants {
                 }
             }
         }).start();
-        //Notify foreground to feed modules
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Class noParams[] = {};
-                Class[] paramContext = new Class[1];
-                paramContext[0] = Context.class;
-                Class[] paramActivity = new Class[1];
-                paramActivity[0] = Activity.class;
-
-                Class push = null;
-
-                try {
-                    push = Class.forName("com.streethawk.library.feeds.TrigerActivityTracker");
-                    Method pushMethod = push.getMethod("getInstance", noParams);
-                    Object obj = pushMethod.invoke(null);
-                    if (null != obj) {
-                        Method addPushModule = push.getDeclaredMethod("onApplicationForegronded", paramActivity);
-                        addPushModule.invoke(obj, activity);
-                    }
-                } catch (ClassNotFoundException e1) {
-                    Log.w(Util.TAG, "Feed module is not present");
-                } catch (IllegalAccessException e1) {
-                    e1.printStackTrace();
-                } catch (NoSuchMethodException e1) {
-                    e1.printStackTrace();
-                } catch (InvocationTargetException e1) {
-                    e1.printStackTrace();
-                }
-            }
-        }).start();
     }
 
 
     public void notifyAppBackgroundedToChildModules(final Activity activity) {
-        //Notify foreground to feed modules
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Class noParams[] = {};
-                Class[] paramContext = new Class[1];
-                paramContext[0] = Context.class;
-                Class[] paramActivity = new Class[1];
-                paramActivity[0] = Activity.class;
-                Class push = null;
-                try {
-                    push = Class.forName("com.streethawk.library.feeds.TrigerActivityTracker");
-                    Method pushMethod = push.getMethod("getInstance", noParams);
-                    Object obj = pushMethod.invoke(null);
-                    if (null != obj) {
-                        Method addPushModule = push.getDeclaredMethod("onApplicationBackgrounded", paramActivity);
-                        addPushModule.invoke(obj, activity);
-                    }
-                } catch (ClassNotFoundException e1) {
-                    Log.w(Util.TAG, "Feed module is not present");
-                } catch (IllegalAccessException e1) {
-                    e1.printStackTrace();
-                } catch (NoSuchMethodException e1) {
-                    e1.printStackTrace();
-                } catch (InvocationTargetException e1) {
-                    e1.printStackTrace();
-                }
-            }
-        }).start();
     }
 
     public void notifyEnteringNewActivityToChildModules(final Activity activity) {
-        //Notify foreground to feed modules
+        //Notify foreground to pointzi module
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -248,66 +159,31 @@ class AppActivityTracking implements Constants {
                 paramContext[0] = Context.class;
                 Class[] paramActivity = new Class[1];
                 paramActivity[0] = Activity.class;
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
                 Class push = null;
-
                 try {
-                    push = Class.forName("com.streethawk.library.feeds.TrigerActivityTracker");
-                    Method pushMethod = push.getMethod("getInstance", noParams);
-                    Object obj = pushMethod.invoke(null);
-                    if (null != obj) {
-                        Method addPushModule = push.getDeclaredMethod("onEnteringNewActivity", paramActivity);
-                        addPushModule.invoke(obj, activity);
+                    push = Class.forName("com.streethawk.library.pointzi.Player");
+                    if (null != push) {
+                        Constructor constructor = push.getDeclaredConstructor();
+                        Object clazz = constructor.newInstance();
+                        Method enteringActivity = clazz.getClass().getDeclaredMethod("onEnteringNewActivity", paramActivity);
+                        enteringActivity.invoke(clazz, activity);
                     }
                 } catch (ClassNotFoundException e1) {
-                    Log.w(Util.TAG, "Feed module is not present");
+                    Log.w(Util.TAG, "Pointzi module is not present");
                 } catch (IllegalAccessException e1) {
                     e1.printStackTrace();
                 } catch (NoSuchMethodException e1) {
                     e1.printStackTrace();
                 } catch (InvocationTargetException e1) {
                     e1.printStackTrace();
+                } catch (InstantiationException e) {
+                    e.printStackTrace();
                 }
             }
         }).start();
     }
 
     public void notifyLeavingNewActivityToChildModules(final Activity activity) {
-        //Notify foreground to feed modules
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Class noParams[] = {};
-                Class[] paramContext = new Class[1];
-                paramContext[0] = Context.class;
-                Class[] paramActivity = new Class[1];
-                paramActivity[0] = Activity.class;
-
-                Class push = null;
-
-                try {
-                    push = Class.forName("com.streethawk.library.feeds.TrigerActivityTracker");
-                    Method pushMethod = push.getMethod("getInstance", noParams);
-                    Object obj = pushMethod.invoke(null);
-                    if (null != obj) {
-                        Method addPushModule = push.getDeclaredMethod("onLeavingNewActivity", paramActivity);
-                        addPushModule.invoke(obj, activity);
-                    }
-                } catch (ClassNotFoundException e1) {
-                    Log.w(Util.TAG, "Feed module is not present");
-                } catch (IllegalAccessException e1) {
-                    e1.printStackTrace();
-                } catch (NoSuchMethodException e1) {
-                    e1.printStackTrace();
-                } catch (InvocationTargetException e1) {
-                    e1.printStackTrace();
-                }
-            }
-        }).start();
     }
 
     /**
@@ -319,7 +195,7 @@ class AppActivityTracking implements Constants {
         final Context context = activity.getApplicationContext();
         SaveSessionTime(context);
         Bundle extras = new Bundle();
-        extras.putInt(CODE,CODE_APP_OPENED_FROM_BG);  //Sending 8103
+        extras.putInt(CODE, CODE_APP_OPENED_FROM_BG);  //Sending 8103
         extras.putString(LOCAL_TIME, Util.getFormattedDateTime(System.currentTimeMillis(), false));
         final Logging shManager = Logging.getLoggingInstance(context);
         shManager.addLogsForSending(extras);
@@ -337,7 +213,7 @@ class AppActivityTracking implements Constants {
                 if (null != storedVersion) {
                     if (!storedVersion.equals(currentAppVersion)) {
                         Bundle extras = new Bundle();
-                        extras.putInt(CODE,CODE_CLIENT_UPGRADE);
+                        extras.putInt(CODE, CODE_CLIENT_UPGRADE);
                         extras.putString(TYPE_STRING, currentAppVersion);
                         final Logging shManager = Logging.getLoggingInstance(context);
                         shManager.addLogsForSending(extras);
@@ -421,14 +297,14 @@ class AppActivityTracking implements Constants {
         if (-1 == startSessionTime) {
             return;
         }
-        extras.putInt(CODE,CODE_SESSIONS);                // Sending 8105
+        extras.putInt(CODE, CODE_SESSIONS);                // Sending 8105
         extras.putString(SESSION_START, Util.getFormattedDateTime(startSessionTime, true));
         extras.putString(SESSION_END, Util.getFormattedDateTime(currentTime, true));
         extras.putString(SESSION_LENGTH, Long.toString(Math.round((currentTime - startSessionTime) / 1000.0)));  // length in seconds
         final Logging shManager = Logging.getLoggingInstance(context);
         shManager.addLogsForSending(extras);
         extras.clear();
-        extras.putInt(CODE,CODE_APP_TO_BG);                // Sending 8104
+        extras.putInt(CODE, CODE_APP_TO_BG);                // Sending 8104
         extras.putString(LOCAL_TIME, Util.getFormattedDateTime(currentTime, false));
         shManager.addLogsForSending(extras);
         incrementSessionId(context);
@@ -513,8 +389,8 @@ class AppActivityTracking implements Constants {
     }
 
     private void fillViewList(Activity activity, View view) {
-      if(null==view)
-          return;
+        if (null == view)
+            return;
         JSONObject object = new JSONObject();
         try {
             int id = view.getId();
@@ -522,7 +398,7 @@ class AppActivityTracking implements Constants {
                 String viewTextID = null;
 
                 Resources res = view.getResources();
-                if(null==res)
+                if (null == res)
                     return;
                 viewTextID = res.getResourceName(id);
                 WidgetObject obj = new WidgetObject();
@@ -549,19 +425,20 @@ class AppActivityTracking implements Constants {
 
     /**
      * Returns true if  viewlist needs to ve saved for a given activity else false
+     *
      * @param activity
      * @return
      */
-    private boolean shouldSaveWidgetList(Activity activity){
+    private boolean shouldSaveWidgetList(Activity activity) {
         Context context = activity.getApplicationContext();
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREF_ACTIVITY, Context.MODE_PRIVATE);
         int version = Util.getAppVersion(context);
         String activityName = getViewName(activity.getClass().getName());
-        activityName = "sh_version_"+activityName;
-        int stored_version = sharedPreferences.getInt(activityName,-1);
-        if(version!=stored_version){
+        activityName = "sh_version_" + activityName;
+        int stored_version = sharedPreferences.getInt(activityName, -1);
+        if (version != stored_version) {
             SharedPreferences.Editor e = sharedPreferences.edit();
-            e.putInt(activityName,version);
+            e.putInt(activityName, version);
             e.commit();
             return true;
         }
@@ -569,7 +446,7 @@ class AppActivityTracking implements Constants {
     }
 
     private void saveWidgetList(Activity activity) {
-        if(shouldSaveWidgetList(activity)) {
+        if (shouldSaveWidgetList(activity)) {
             fillViewList(activity);
             saveWidgetsInfo(activity);
         }
@@ -596,15 +473,15 @@ class AppActivityTracking implements Constants {
             if (null != newActivity) { //send 8108
                 String friendlyName = getFriendlyNameFromclassName(context.getApplicationContext(), newActivity);
                 Bundle extras = new Bundle();
-                extras.putInt(CODE,CODE_USER_ENTER_ACTIVITY);
+                extras.putInt(CODE, CODE_USER_ENTER_ACTIVITY);
                 extras.putString(SHMESSAGE_ID, null);
                 SharedPreferences.Editor e = sharedPreferences.edit();
-                e.putLong(newActivity, System.currentTimeMillis());      // Store start time of this activity
+                e.putLong(friendlyName, System.currentTimeMillis());      // Store start time of this activity
                 e.commit();
                 extras.putString(TYPE_STRING, friendlyName);
                 final Logging shManager = Logging.getLoggingInstance(context);
                 shManager.addLogsForSending(extras);
-                saveWidgetList(activity);
+                //saveWidgetList(activity);  Commented for release 1.8.8
                 notifyEnteringNewActivityToChildModules(activity);
             } else {
                 bg = true; // indicates this is last activity before going to bg
@@ -612,7 +489,7 @@ class AppActivityTracking implements Constants {
             if (null != oldActivity) { //send 8109
                 String friendlyName = getFriendlyNameFromclassName(context.getApplicationContext(), oldActivity);
                 Bundle extras = new Bundle();
-                extras.putInt(CODE,CODE_USER_LEAVE_ACTIVITY);
+                extras.putInt(CODE, CODE_USER_LEAVE_ACTIVITY);
                 extras.putString(SHMESSAGE_ID, null);
                 if (null == friendlyName) {
                     friendlyName = oldActivity;
@@ -621,7 +498,7 @@ class AppActivityTracking implements Constants {
                 final Logging shManager = Logging.getLoggingInstance(context);
                 shManager.addLogsForSending(extras);
                 extras.clear();
-                extras.putInt(CODE,CODE_COMPLETE_ACTIVITY);
+                extras.putInt(CODE, CODE_COMPLETE_ACTIVITY);
                 extras.putString(TYPE_STRING, friendlyName);
                 Long storedTime = sharedPreferences.getLong(friendlyName, -1);
                 extras.putString(SESSION_START, Util.getFormattedDateTime(storedTime, true));

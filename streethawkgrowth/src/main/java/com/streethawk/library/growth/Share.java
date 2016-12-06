@@ -20,6 +20,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
@@ -75,12 +76,27 @@ class Share {
     private final String INSTALL_ID = "sh_cuid";
     private final String ID = "utm_campaign";
 
-    private final String SHARE = "https://pointzi.streethawk.com/originate_viral_share/";
+
+
     //private final String SHARE = "https://growth-staging.streethawk.com/originate_viral_share/";
 
     // private static Dialog pickerDialog = null;                          //TODO: Material design for picker dialog
     private Context mContext;
     private Activity mActivity;
+
+
+    private String KEY_GROWTH_HOST      = "shKeyHostGrowth";
+    private final String FALLBACK = "https://growth.streethawk.com";
+    private final String ORIGINATE_VIRAL_SHARE = "originate_viral_share/";
+    private String getGrowhtHost(){
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
+        String url = sharedPreferences.getString(KEY_GROWTH_HOST, null);
+        if(null==url){
+            url  = FALLBACK+"/"+ORIGINATE_VIRAL_SHARE;
+        }
+        return url+"/"+ORIGINATE_VIRAL_SHARE;
+
+    }
 
     public Share(Activity activity) {
         if (null == activity) {
@@ -389,7 +405,7 @@ class Share {
                                 logMap.put(DEFAULT_URL, default_url);
                                 BufferedReader reader = null;
                                 try {
-                                    URL url = new URL(SHARE);
+                                    URL url = new URL(getGrowhtHost());
                                     HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
                                     connection.setReadTimeout(10000);
                                     connection.setConnectTimeout(15000);
@@ -592,7 +608,7 @@ class Share {
         logMap.put(DEFAULT_URL, default_url);
         BufferedReader reader = null;
         try {
-            URL url = new URL(SHARE);
+            URL url = new URL(getGrowhtHost());
             HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
             connection.setReadTimeout(10000);
             connection.setConnectTimeout(15000);

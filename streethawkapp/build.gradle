@@ -25,7 +25,9 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
 
-/*
+
+    /*
+
     compile 'com.streethawk:core:1.8.7'
     compile 'com.streethawk:push:1.8.7'
     compile 'com.streethawk:growth:1.8.7'
@@ -35,24 +37,22 @@ dependencies {
     compile 'com.streethawk:feeds:1.8.7'
     //compile 'com.streethawk:feeds:1.8.4'
    //compile project(':streethawkfeeds')
-*/
+    */
 
-
-
-    compile project(':streethawkcore')
-    compile project(':streethawkgrowth')
+   // compile project(':streethawkcore')
     compile project(':streethawkpush')
+    compile project(':streethawkgrowth')
     compile project(':streethawklocations')
     compile project(':streethawkbeacon')
     compile project(':streethawkgeofence')
     compile project(':streethawkfeeds')
     compile project(':streethawkdebug')
 
-   // compile project(':streethawkauthor')
-
-
+    // compile project(':streethawkauthor')
+    //compile project(':streethawkpointzi')
     compile 'com.android.support:appcompat-v7:24.2.1'
     compile 'com.android.support:design:+'
     compile 'com.android.support:support-v4:24.2.1'
+    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2'
 
 }

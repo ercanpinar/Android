@@ -51,6 +51,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -75,6 +76,8 @@ class Install extends LoggingBase {
 
         public String macaddress;
         public String ipaddress;
+
+
 
         public void fillFromJson(Context context, JSONObject item) throws JSONException {
             if (item == null) {
@@ -204,7 +207,7 @@ class Install extends LoggingBase {
     private final String WIDTH = "width";
     private final String HEIGHT = "height";
 
-    private ISHEventObserver mEventObserver=null;
+    private ISHEventObserver mEventObserver = null;
 
 
     private Install(Context context) {
@@ -227,11 +230,9 @@ class Install extends LoggingBase {
         return modelStr;
     }
 
-    public void registerInstallEventObserver(ISHEventObserver obj){
+    public void registerInstallEventObserver(ISHEventObserver obj) {
         mEventObserver = obj;
     }
-
-
 
 
     /**
@@ -365,20 +366,20 @@ class Install extends LoggingBase {
                                 ed.putString(SHADVERTISEMENTID, advId);
                                 ed.commit();
                                 StreetHawk.INSTANCE.tagString(KEY_ADV_ID, advId);
-                                Bundle extras  = new Bundle();
+                                Bundle extras = new Bundle();
                                 extras.putInt(CODE, CODE_UPDATE_CUSTOM_TAG);
                                 extras.putString(SHMESSAGE_ID, null);
                                 extras.putString(SH_KEY, KEY_ADV_ID);
                                 extras.putString(TYPE_STRING, advId);
                                 Logging manager = Logging.getLoggingInstance(mContext);
                                 manager.addLogsForSending(extras);
-                            }catch(Exception ex){
-                                Log.e(Util.TAG,"Cannot process tagging adv id");
+                            } catch (Exception ex) {
+                                Log.e(Util.TAG, "Cannot process tagging adv id");
                             }
 
-                            if(null!=mEventObserver)
+                            if (null != mEventObserver)
                                 mEventObserver.onInstallRegistered(installInfo.installid);
-                            if(Util.getPlatformType()!=Util.PLATFORM_XAMARIN) {
+                            if (Util.getPlatformType() != Util.PLATFORM_XAMARIN) {
                                 //Init modules available
                                 new Thread(new Runnable() {
                                     @Override
@@ -410,7 +411,7 @@ class Install extends LoggingBase {
                             }
                             int timezone = Util.getTimeZoneOffsetInMinutes();
                             Bundle logParams = new Bundle();
-                            logParams.putInt(CODE,CODE_DEVICE_TIMEZONE);
+                            logParams.putInt(CODE, CODE_DEVICE_TIMEZONE);
                             logParams.putString(SHMESSAGE_ID, null);
                             logParams.putString(TYPE_NUMERIC, Integer.toString(Util.getTimeZoneOffsetInMinutes()));
                             Logging manager = Logging.getLoggingInstance(mContext);
@@ -467,24 +468,8 @@ class Install extends LoggingBase {
         }).start();
     }
 
-    public void registerInstall() {
-        if (!Util.isNetworkConnected(mContext)) {
-            Log.e(Util.TAG, SUBTAG + "Failed to register install No network connection");
-            return;
-        }
-        final String app_key = Util.getAppKey(mContext);
-        if (null == app_key) {
-            Log.e(Util.TAG, SUBTAG + "Failed to register install as Appkey is null");
-            return;
-        }
-        if(app_key.isEmpty()){
-            Log.e(Util.TAG, SUBTAG + "Failed to register install as Appkey is empty");
-            return;
-        }
-        if (Util.getInstallId(mContext) != null) {
-            // Install is already registered
-            return;
-        }
+
+    private void registerInstallToCorrectHost(final String app_key) {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -535,7 +520,8 @@ class Install extends LoggingBase {
                     if (null != telephonyManager) {
                         logMap.put(IDENTIFIER_FOR_VENDOR, telephonyManager.getDeviceId());
                     }
-                } catch (SecurityException e) {}
+                } catch (SecurityException e) {
+                }
                 try {
                     URL url = new URL(buildUri(mContext, ApiMethod.INSTALL_REGISTER, null));
                     flushInstallParamsToServer(url, logMap, INSTALL_CODE_REGISTER);
@@ -545,5 +531,97 @@ class Install extends LoggingBase {
                 }
             }
         }).start();
+    }
+
+    private void setHostFromRoute(String answer) {
+            try {
+                JSONObject object = new JSONObject(answer);
+                if (object.has(Util.APP_STATUS)) {
+                    if (object.get(Util.APP_STATUS) instanceof JSONObject) {
+                        JSONObject app_status = object.getJSONObject(Util.APP_STATUS);
+                        if (app_status.has(STREETHAWK) && !app_status.isNull(STREETHAWK)) {
+                            Object value_streethawk = app_status.get(STREETHAWK);
+                            if (value_streethawk instanceof Boolean) {
+                                setStreethawkState((Boolean) value_streethawk);
+                            }
+                        }
+                        if (app_status.has(HOST) && !app_status.isNull(HOST)) {
+                            Object value_host = app_status.get(HOST);
+                            if (value_host instanceof String) {
+                                setHost((String) value_host);
+                            }
+                        }
+                        if (app_status.has(GROWTH_HOST) && !app_status.isNull(GROWTH_HOST)) {
+                            Object value_host = app_status.get(GROWTH_HOST);
+                            if (value_host instanceof String) {
+                                setGrowthHost((String) value_host);
+                            }
+                        }
+                    }
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+
+    public void registerInstall() {
+        if (!Util.isNetworkConnected(mContext)) {
+            Log.e(Util.TAG, SUBTAG + "Failed to register install No network connection");
+            return;
+        }
+        final String app_key = Util.getAppKey(mContext);
+        if (null == app_key) {
+            Log.e(Util.TAG, SUBTAG + "Failed to register install as Appkey is null");
+            return;
+        }
+        if (app_key.isEmpty()) {
+            Log.e(Util.TAG, SUBTAG + "Failed to register install as Appkey is empty");
+            return;
+        }
+        if (Util.getInstallId(mContext) != null) {
+            // Install is already registered
+            return;
+        }
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                final String ROUTE_HOST = "https://route.streethawk.com/v1/apps/status";
+                try {
+                    Bundle query = new Bundle();
+                    query.putString(Util.SHAPP_KEY, app_key);
+                    URL url = new URL(ROUTE_HOST);
+                    HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+                    connection.setReadTimeout(10000);
+                    connection.setConnectTimeout(15000);
+                    connection.setRequestMethod("GET");
+                    connection.setDoInput(true);
+                    connection.setDoOutput(true);
+                    connection.setRequestProperty("X-App-Key", app_key);
+                    String libVersion = Util.getLibraryVersion();
+                    connection.setRequestProperty("X-Version", libVersion);
+                    connection.setRequestProperty("User-Agent", app_key + "(" + libVersion + ")");
+                    connection.connect();
+                    BufferedReader reader = null;
+                    reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                    String answer = reader.readLine();
+                    if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                        //Log.e("Anurag","Answer for host "+answer);
+                        setHostFromRoute(answer);
+                        if(Util.getStreethawkState(mContext))
+                            registerInstallToCorrectHost(app_key);
+                    } else {
+                        processErrorAckFromServer(answer);
+                    }
+                    connection.disconnect();
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+        }.execute();
+
     }
 }

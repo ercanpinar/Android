@@ -68,4 +68,7 @@
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="title_activity_logreport">Logreport</string>
+    <string name="title_activity_test_pointzi">testPointzi</string>
+    <string name="title_activity_pointzi_create">PointziCreate</string>
+    <string name="title_activity_pointzi">Pointzi</string>
 </resources>

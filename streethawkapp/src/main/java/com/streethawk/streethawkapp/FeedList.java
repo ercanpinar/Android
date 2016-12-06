@@ -88,7 +88,6 @@ public class FeedList extends AppCompatActivity implements ISHFeedItemObserver, 
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            Log.e("Anurag","Notify dataset change");
             mListViewAdapter.notifyDataSetChanged();
         }
     }

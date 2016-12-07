@@ -44,7 +44,7 @@ dependencies {
     // Unit testing dependencies
     //testCompile 'junit:junit:4.12'
     compile project(':streethawkcore')
-    //compile 'com.streethawk:core:1.8.8'
+    //compile 'com.streethawk:core:1.8.9'
     //compile 'com.streethawk:core:1.8.0-SNAPSHOT'
 }
 //apply plugin: 'com.google.gms.google-services'

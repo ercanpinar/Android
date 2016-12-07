@@ -39,7 +39,7 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile project(':streethawkcore')
-    //compile 'com.streethawk:core:1.8.8'
+    //compile 'com.streethawk:core:1.8.9'
     //compile 'com.streethawk:core:1.8.0-SNAPSHOT'
 }
 

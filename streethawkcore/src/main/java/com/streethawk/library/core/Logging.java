@@ -398,8 +398,12 @@ public class Logging extends LoggingBase implements Constants {
                 }
             }
         }
-        params.putString(LOCAL_TIME, Util.getFormattedDateTime(System.currentTimeMillis(), false));
         String sessionId = Util.getSessionId(mContext);
+        String logid = Integer.toString(getLogId(mContext));
+        params.putString(LOCAL_TIME, Util.getFormattedDateTime(System.currentTimeMillis(), false));
+        params.putString(LOG_ID, logid);
+        params.putString(CREATED, Util.getFormattedDateTime(System.currentTimeMillis(), true));
+        params.putString(SESSION_ID, sessionId);
         int code = 0;
         if (Util.isAppBG(mContext)) {
             try {
@@ -419,7 +423,6 @@ public class Logging extends LoggingBase implements Constants {
                     sessionId = null;
             }
         }
-        String logid = Integer.toString(getLogId(mContext));
         JSONObject dictionary = new JSONObject();
         Set<String> names = params.keySet();
         for (String name : names) {
@@ -451,6 +454,7 @@ public class Logging extends LoggingBase implements Constants {
             }
         }
         if(dictionary.toString().equals("{}")){
+            Log.e("Anurag","adding logid "+logid);
             return false;
         }
         String keyCount = Integer.toString(getKeyCnt());
@@ -458,9 +462,6 @@ public class Logging extends LoggingBase implements Constants {
         SharedPreferences.Editor e = prefs.edit();
         e.putString(keyCount, dictionary.toString());
         e.commit();
-        params.putString(LOG_ID, logid);
-        params.putString(CREATED, Util.getFormattedDateTime(System.currentTimeMillis(), true));
-        params.putString(SESSION_ID, sessionId);
         if (MAX_LOG_CNT == getBufferCnt() || priority) {
             return copyLogsinCycleBuffer();
         }

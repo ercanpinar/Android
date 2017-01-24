@@ -76,7 +76,7 @@ public class Util extends LoggingBase {
     /**
      * Android Release Platform
      */
-    public static final int RELEASE_PLATFORM = PLATFORM_ANDROID_NATIVE;
+    public static final int RELEASE_PLATFORM = PLATFORM_XAMARIN;
 
     //public static Activity mActivity;
 

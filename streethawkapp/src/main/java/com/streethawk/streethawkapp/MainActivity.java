@@ -28,14 +28,13 @@ import com.streethawk.library.core.ISHEventObserver;
 import com.streethawk.library.core.StreetHawk;
 import com.streethawk.library.core.Util;
 import com.streethawk.library.feeds.ISHFeedItemObserver;
-//import com.streethawk.library.feeds.Modal;
-//import com.streethawk.library.feeds.Modal;
 import com.streethawk.library.feeds.SHFeedItem;
 import com.streethawk.library.geofence.INotifyGeofenceTransition;
 import com.streethawk.library.growth.IGrowth;
 import com.streethawk.library.push.ISHObserver;
 import com.streethawk.library.push.Push;
 import com.streethawk.library.push.PushDataForApplication;
+import com.streethawk.library.pointzi.Pointzi;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -210,12 +209,12 @@ public class MainActivity extends AppCompatActivity implements
                 */
 
 
-/*
+
                 Pointzi pointzi = new Pointzi(mActivity);
                 pointzi.fetchPointziPayload(mActivity.getApplicationContext());
                 Toast.makeText(getApplicationContext(), "Fetched pointiziPayload", Toast.LENGTH_SHORT).show();
 
-*/
+
                 //new Authoring().enterAuthoringMode(mActivity);
 
             }

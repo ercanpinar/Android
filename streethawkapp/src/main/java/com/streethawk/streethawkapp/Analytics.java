@@ -13,6 +13,8 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.streethawk.library.core.StreetHawk;
+import com.streethawk.library.pointzi.Tip;
+
 /*
 import com.streethawk.library.feeds.SHTips;
 import com.streethawk.library.feeds.SHTours;
@@ -57,7 +59,6 @@ public class Analytics extends AppCompatActivity {
         mTagSpinner.setOnItemSelectedListener(spinnerSelect());
         mKeyet = (EditText) findViewById(R.id.tagKey);
         mValuet = (EditText) findViewById(R.id.tagval);
-
         mActivity = this;
     }
 
@@ -123,6 +124,13 @@ public class Analytics extends AppCompatActivity {
                 //new Tip().unit_test_tip(mActivity);
             }
         };
+    }
+
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        new Tip().showTip_new(mActivity,findViewById(R.id.fabAnalytics));
     }
 
 

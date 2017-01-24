@@ -481,7 +481,7 @@ class AppActivityTracking implements Constants {
                 extras.putString(TYPE_STRING, friendlyName);
                 final Logging shManager = Logging.getLoggingInstance(context);
                 shManager.addLogsForSending(extras);
-                //saveWidgetList(activity);  Commented for release 1.8.8
+                saveWidgetList(activity);
                 notifyEnteringNewActivityToChildModules(activity);
             } else {
                 bg = true; // indicates this is last activity before going to bg

@@ -26,15 +26,14 @@ public class Analytics extends AppCompatActivity {
     EditText mKeyet;
     EditText mValuet;
 
-    String TAG              = "tag";                // 0
-    String TAG_CUID         = "tagcuid";            // 1
-    String TAG_PHONE        = "tagphone";           // 2
-    String TAG_DATETIME     = "tagDatetime";        // 3
-    String TAG_INCREMENT    = "tagincrement";       // 4
-    String TAG_DELETE       = "tagdelete";          // 5
+    String TAG = "tag";                // 0
+    String TAG_CUID = "tagcuid";            // 1
+    String TAG_PHONE = "tagphone";           // 2
+    String TAG_DATETIME = "tagDatetime";        // 3
+    String TAG_INCREMENT = "tagincrement";       // 4
+    String TAG_DELETE = "tagdelete";          // 5
 
     private Activity mActivity;
-
 
 
     @Override
@@ -61,8 +60,8 @@ public class Analytics extends AppCompatActivity {
         mActivity = this;
     }
 
-    private Spinner.OnItemSelectedListener spinnerSelect(){
-        return new Spinner.OnItemSelectedListener(){
+    private Spinner.OnItemSelectedListener spinnerSelect() {
+        return new Spinner.OnItemSelectedListener() {
 
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
@@ -79,14 +78,14 @@ public class Analytics extends AppCompatActivity {
                     mValuet.setHint("");
                     return;
                 }
-                if(2 == position){
+                if (2 == position) {
                     mOptionSelected = TAG_PHONE;
                     mKeyet.setText("sh_phone");
                     mKeyet.setEnabled(false);
                     mValuet.setHint("+61469342981");
                     mValuet.setEnabled(true);
                 }
-                if(3 == position){
+                if (3 == position) {
                     mOptionSelected = TAG_DATETIME;
                     mValuet.setText("2014-07-25 15:33:20");
                 }
@@ -110,13 +109,9 @@ public class Analytics extends AppCompatActivity {
         };
     }
 
-    private void displayToast(String message){
-        Toast.makeText(getApplicationContext(),message,Toast.LENGTH_LONG).show();
+    private void displayToast(String message) {
+        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
     }
-
-
-
-
 
 
     private View.OnClickListener sendTag() {
@@ -155,7 +150,7 @@ public class Analytics extends AppCompatActivity {
                                     StreetHawk.INSTANCE.incrementTag(key);
                                     Toast.makeText(getApplicationContext(), "Increment tag value by 1", Toast.LENGTH_LONG).show();
                                 } else {
-                                     double dval = 1.0;
+                                    double dval = 1.0;
                                     try {
                                         dval = Double.parseDouble(value);
                                         StreetHawk.INSTANCE.incrementTag(key, dval);
@@ -184,24 +179,24 @@ public class Analytics extends AppCompatActivity {
                                 }
                             }
                         }
-                        if(mOptionSelected ==TAG_PHONE){
+                        if (mOptionSelected == TAG_PHONE) {
                             String value = mValuet.getText().toString();
                             if (value != null) {
                                 if (value.isEmpty()) {
                                     Toast.makeText(getApplicationContext(), "Enter a value ", Toast.LENGTH_LONG).show();
                                 } else {
-                                    StreetHawk.INSTANCE.tagString("sh_phone",value);
+                                    StreetHawk.INSTANCE.tagString("sh_phone", value);
                                     Toast.makeText(getApplicationContext(), "Phone number tagged " + key + " : " + value, Toast.LENGTH_LONG).show();
                                 }
                             }
                         }
-                        if(mOptionSelected ==TAG_DATETIME){
+                        if (mOptionSelected == TAG_DATETIME) {
                             String value = mValuet.getText().toString();
                             if (value != null) {
                                 if (value.isEmpty()) {
                                     Toast.makeText(getApplicationContext(), "Enter a value ", Toast.LENGTH_LONG).show();
                                 } else {
-                                    StreetHawk.INSTANCE.tagDatetime(key,value);
+                                    StreetHawk.INSTANCE.tagDatetime(key, value);
                                     Toast.makeText(getApplicationContext(), "Phone number tagged " + key + " : " + value, Toast.LENGTH_LONG).show();
                                 }
                             }

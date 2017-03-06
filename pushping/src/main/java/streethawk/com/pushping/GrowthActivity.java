@@ -31,7 +31,6 @@ public class GrowthActivity extends AppCompatActivity {
     private Activity mActivity;
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,16 +43,17 @@ public class GrowthActivity extends AppCompatActivity {
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(onShare());
 
-        mUtm_campaign = (EditText)findViewById(R.id.utm_campaign);
-        mUtm_source = (EditText)findViewById(R.id.utm_source);
-        mUtm_medium = (EditText)findViewById(R.id.utm_medium);
-        mUtm_term = (EditText)findViewById(R.id.utm_term);
-        mCampaign_Content = (EditText)findViewById(R.id.campaign_content);
-        mDefaultURI = (EditText)findViewById(R.id.defaulturi);
-        mDeepLinkUri = (EditText)findViewById(R.id.deeplinkuri);
+        mUtm_campaign = (EditText) findViewById(R.id.utm_campaign);
+        mUtm_source = (EditText) findViewById(R.id.utm_source);
+        mUtm_medium = (EditText) findViewById(R.id.utm_medium);
+        mUtm_term = (EditText) findViewById(R.id.utm_term);
+        mCampaign_Content = (EditText) findViewById(R.id.campaign_content);
+        mDefaultURI = (EditText) findViewById(R.id.defaulturi);
+        mDeepLinkUri = (EditText) findViewById(R.id.deeplinkuri);
         mActivity = this;
 
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -74,18 +74,18 @@ public class GrowthActivity extends AppCompatActivity {
     }
 
 
-    public void autoFill(){
+    public void autoFill() {
         mUtm_campaign.setText(StreetHawk.INSTANCE.getCurrentFormattedDateTime().toString());
         mUtm_source.setText("Slack");
         mUtm_medium.setText("Slack");
         mUtm_term.setText("Slack");
         mCampaign_Content.setText("Testing on slack");
         mDefaultURI.setText("https://www.streethawk.com");
-        mDeepLinkUri .setText("shsample://setparams?param1=31");
+        mDeepLinkUri.setText("shsample://setparams?param1=31");
     }
 
-    public View.OnClickListener onShare(){
-        return new View.OnClickListener(){
+    public View.OnClickListener onShare() {
+        return new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String Utm_campaign = mUtm_campaign.getText().toString();
@@ -101,14 +101,14 @@ public class GrowthActivity extends AppCompatActivity {
                             public void onReceiveShareUrl(String shareUrl) {
                                 Intent sendIntent = new Intent();
                                 sendIntent.setAction(Intent.ACTION_SEND);
-                                sendIntent.putExtra(Intent.EXTRA_TEXT,shareUrl);
+                                sendIntent.putExtra(Intent.EXTRA_TEXT, shareUrl);
                                 sendIntent.setType("text/plain");
                                 startActivity(sendIntent);
                             }
 
                             @Override
                             public void onReceiveErrorForShareUrl(JSONObject errorResponse) {
-                                Toast.makeText(mActivity, "Error receiving share URL"+errorResponse, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(mActivity, "Error receiving share URL" + errorResponse, Toast.LENGTH_SHORT).show();
                             }
 
                             @Override

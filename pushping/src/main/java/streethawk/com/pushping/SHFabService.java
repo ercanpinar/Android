@@ -27,7 +27,7 @@ public class SHFabService extends Service {
     public void onCreate() {
         super.onCreate();
 
-        windowManager = (WindowManager)getSystemService(WINDOW_SERVICE);
+        windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
         Bitmap icon = BitmapFactory.decodeResource(getApplicationContext().getResources(),
                 R.mipmap.ic_launcher);
         feedNotify = new ImageView(this);
@@ -47,7 +47,8 @@ public class SHFabService extends Service {
             private float initialTouchX;
             private float initialTouchY;
 
-            @Override public boolean onTouch(View v, MotionEvent event) {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                         initialX = params.x;
@@ -69,6 +70,7 @@ public class SHFabService extends Service {
 
         windowManager.addView(feedNotify, params);
     }
+
     @Override
     public void onDestroy() {
         super.onDestroy();

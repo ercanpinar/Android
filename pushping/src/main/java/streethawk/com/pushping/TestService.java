@@ -38,16 +38,16 @@ public class TestService extends Service implements ISHObserver {
     public TestService() {
     }
 
-    private final String PREF_NAME        = "shtestpref";
-    private final String BOOL_SEND_ALERT  = "shsendalert";
-    private final String BOOL_SEM         = "shsemaphore";
+    private final String PREF_NAME = "shtestpref";
+    private final String BOOL_SEND_ALERT = "shsendalert";
+    private final String BOOL_SEM = "shsemaphore";
 
     private final String CONST_PING_TIME = "pingtime";
 
 
-    private final String SERVER_PROD    = "https://api.streethawk.com/v3/debug/?push_android&alert=1";
+    private final String SERVER_PROD = "https://api.streethawk.com/v3/debug/?push_android&alert=1";
     private final String SERVER_STAGING = "https://staging.streethawk.com/v3/debug/?push_android&alert=1";
-    private final String SERVER_HAWK    = "https://hawk.streethawk.com/v3/debug/?push_android&alert=1";
+    private final String SERVER_HAWK = "https://hawk.streethawk.com/v3/debug/?push_android&alert=1";
 
     private final String TEST_SERVER = "http://www.google.com";
 
@@ -68,57 +68,61 @@ public class TestService extends Service implements ISHObserver {
 
     /**
      * Store value of alert flag
+     *
      * @param flag
      */
-    private void setAlertFlag(boolean flag){
+    private void setAlertFlag(boolean flag) {
         SharedPreferences prefs = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-        SharedPreferences.Editor e  = prefs.edit();
-        e.putBoolean(BOOL_SEND_ALERT,flag);
+        SharedPreferences.Editor e = prefs.edit();
+        e.putBoolean(BOOL_SEND_ALERT, flag);
         e.commit();
     }
 
-    private void holdSemaphore(){
+    private void holdSemaphore() {
         SharedPreferences prefs = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-        SharedPreferences.Editor e  = prefs.edit();
-        e.putBoolean(BOOL_SEM,true);
+        SharedPreferences.Editor e = prefs.edit();
+        e.putBoolean(BOOL_SEM, true);
         e.commit();
     }
 
-    private void releaseSemaphore(){
+    private void releaseSemaphore() {
         SharedPreferences prefs = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-        SharedPreferences.Editor e  = prefs.edit();
-        e.putBoolean(BOOL_SEM,false);
+        SharedPreferences.Editor e = prefs.edit();
+        e.putBoolean(BOOL_SEM, false);
         e.commit();
     }
 
-    private boolean getSemaphoreValue(){
+    private boolean getSemaphoreValue() {
         SharedPreferences prefs = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-        return prefs.getBoolean(BOOL_SEM,false);
+        return prefs.getBoolean(BOOL_SEM, false);
     }
 
     /**
      * Get current value of alert flag
+     *
      * @return
      */
-    private boolean getAlertFlag(){
+    private boolean getAlertFlag() {
         SharedPreferences prefs = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-        return prefs.getBoolean(BOOL_SEND_ALERT,true);
+        return prefs.getBoolean(BOOL_SEND_ALERT, true);
     }
 
     /**
      * Generate a new relic alert
+     *
      * @param view
      */
-    public void SendAlert(View view){
+    public void SendAlert(View view) {
         SendAlertToServer();
     }
 
     /**
      * Display a local notification when in error
+     *
      * @param title
      * @param message
      */
-    private void DisplayNotification(String title, String message){
+    private void DisplayNotification(String title, String message) {
 
         Activity activity = StreetHawk.INSTANCE.getCurrentActivity();
         NotificationCompat.Builder builder = new NotificationCompat.Builder(activity);
@@ -126,7 +130,7 @@ public class TestService extends Service implements ISHObserver {
         builder.setContentTitle(title);
         builder.setAutoCancel(true);
 
-        Context context  = activity.getApplicationContext();
+        Context context = activity.getApplicationContext();
         Bitmap icon = BitmapFactory.decodeResource(context.getResources(),
                 Util.getAppIcon(context));
         builder.setLargeIcon(icon);
@@ -140,13 +144,13 @@ public class TestService extends Service implements ISHObserver {
 
     }
 
-    public void SendAlertToServer(){
+    public void SendAlertToServer() {
         new Thread(new Runnable() {
             @Override
             public void run() {
 
                 try {
-                    Log.e("Anurag","Sending alert to server");
+                    Log.e("Anurag", "Sending alert to server");
                     URL url = new URL(SERVER);
                     final HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
                     connection.setRequestMethod("GET");
@@ -156,12 +160,12 @@ public class TestService extends Service implements ISHObserver {
                     connection.getResponseCode();
                     if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
                         Log.e("SH_PING_TEST", "Error reported to server");
-                    }else {
+                    } else {
                         Log.e("SH_PING_TEST", "Alert Failed " + connection.getResponseMessage());
                         DisplayNotification("Error", "NewRelic endpoint down");
                     }
                     connection.disconnect();
-                }catch (ProtocolException e) {
+                } catch (ProtocolException e) {
                     e.printStackTrace();
                 } catch (MalformedURLException e) {
                     e.printStackTrace();
@@ -174,16 +178,15 @@ public class TestService extends Service implements ISHObserver {
     }
 
 
-
     @Override
     public void shReceivedRawJSON(String title, String message, String json) {
         try {
-            Log.e("Anurag",json);
+            Log.e("Anurag", json);
             JSONObject myJson = new JSONObject(json);
             String payload = myJson.getString("ping");
             if (null != payload) {
                 setAlertFlag(false);
-                if(getSemaphoreValue()){
+                if (getSemaphoreValue()) {
                     return;
                 }
                 //Display this in install info
@@ -191,16 +194,16 @@ public class TestService extends Service implements ISHObserver {
                 String timeNow = dtf.format(new Date());
                 SharedPreferences prefs = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
                 SharedPreferences.Editor e = prefs.edit();
-                e.putString(CONST_PING_TIME,timeNow);
+                e.putString(CONST_PING_TIME, timeNow);
                 e.commit();
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        try{
+                        try {
                             holdSemaphore();
                             setAlertFlag(true);
                             wait(WAIT_MINS);
-                            if(getAlertFlag()){
+                            if (getAlertFlag()) {
                                 SendAlertToServer();
                             }
                             releaseSemaphore();

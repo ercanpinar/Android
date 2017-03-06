@@ -6,4 +6,4 @@
     android:textAppearance="?android:attr/textAppearanceMedium"
     android:layout_width="match_parent"
     android:singleLine="true"
-    android:layout_height="wrap_content"/>
+    android:layout_height="wrap_content" />

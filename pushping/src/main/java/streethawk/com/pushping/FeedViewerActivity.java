@@ -17,40 +17,40 @@ public class FeedViewerActivity extends Activity implements Constants {
 
     private int ACCEPTED = 1;
     private int DECLINED = -1;
-    private int LATER   =  0;
+    private int LATER = 0;
 
-    private String mJSON="NODATA";
+    private String mJSON = "NODATA";
 
-    private static String  mFeedId = null;
+    private static String mFeedId = null;
 
-    public void SendLike(View view){
+    public void SendLike(View view) {
         try {
             int id = Integer.parseInt(mFeedId);
-            SHFeedItem.getInstance(getApplicationContext()).notifyFeedResult(id,"accepted",true,true);
+            SHFeedItem.getInstance(getApplicationContext()).notifyFeedResult(id, "accepted", true, true);
 
-            Toast.makeText(getApplicationContext(),"Sent feed result accepted",Toast.LENGTH_LONG).show();
-        }catch(NumberFormatException e){
-            Toast.makeText(getApplicationContext(),"FeedId is not a int",Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "Sent feed result accepted", Toast.LENGTH_LONG).show();
+        } catch (NumberFormatException e) {
+            Toast.makeText(getApplicationContext(), "FeedId is not a int", Toast.LENGTH_LONG).show();
         }
     }
 
-    public void SendDislike(View view){
+    public void SendDislike(View view) {
         try {
             int id = Integer.parseInt(mFeedId);
-            SHFeedItem.getInstance(getApplicationContext()).notifyFeedResult(id,"rejected",true,true);
-            Toast.makeText(getApplicationContext(),"Sent feed result rejected",Toast.LENGTH_LONG).show();
-        }catch(NumberFormatException e){
-            Toast.makeText(getApplicationContext(),"FeedId is not a int",Toast.LENGTH_LONG).show();
+            SHFeedItem.getInstance(getApplicationContext()).notifyFeedResult(id, "rejected", true, true);
+            Toast.makeText(getApplicationContext(), "Sent feed result rejected", Toast.LENGTH_LONG).show();
+        } catch (NumberFormatException e) {
+            Toast.makeText(getApplicationContext(), "FeedId is not a int", Toast.LENGTH_LONG).show();
         }
     }
 
-    public void SendLater(View view){
+    public void SendLater(View view) {
         try {
             int id = Integer.parseInt(mFeedId);
-            SHFeedItem.getInstance(getApplicationContext()).notifyFeedResult(id,"postponed",false,false);
-            Toast.makeText(getApplicationContext(),"Sent feed result postponed",Toast.LENGTH_LONG).show();
-        }catch(NumberFormatException e){
-            Toast.makeText(getApplicationContext(),"FeedId is not a int",Toast.LENGTH_LONG).show();
+            SHFeedItem.getInstance(getApplicationContext()).notifyFeedResult(id, "postponed", false, false);
+            Toast.makeText(getApplicationContext(), "Sent feed result postponed", Toast.LENGTH_LONG).show();
+        } catch (NumberFormatException e) {
+            Toast.makeText(getApplicationContext(), "FeedId is not a int", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -62,20 +62,20 @@ public class FeedViewerActivity extends Activity implements Constants {
         if (null != intent) {
             mFeedItem = intent.getParcelableExtra("FEEDITEM_PARCEL");
             mJSON = intent.getStringExtra("FEEDITEM_PARCEL_JSON");
-            if(null!=mFeedItem) {
+            if (null != mFeedItem) {
 
             }
         }
     }
 
-    private void sendFeedAckLog(){
-        if(mFeedId==null) {
+    private void sendFeedAckLog() {
+        if (mFeedId == null) {
             return;
         }
         try {
             int int_feed_id = Integer.parseInt(mFeedId);
             SHFeedItem.getInstance(this).sendFeedAck(int_feed_id);
-        }catch (NumberFormatException e){
+        } catch (NumberFormatException e) {
             e.printStackTrace();
         }
     }
@@ -86,9 +86,9 @@ public class FeedViewerActivity extends Activity implements Constants {
         if (mFeedItem != null) {
             mFeedId = mFeedItem.getFeedId();
             sendFeedAckLog();
-            TextView feed = (TextView)findViewById(R.id.jsonText);
-            feed.setText(mFeedItem.getObjectDetails()+ "/n" + mJSON);
-            }
+            TextView feed = (TextView) findViewById(R.id.jsonText);
+            feed.setText(mFeedItem.getObjectDetails() + "/n" + mJSON);
         }
-
     }
+
+}

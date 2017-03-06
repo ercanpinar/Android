@@ -47,12 +47,11 @@ public class Setting extends AppCompatActivity implements Constants {
         e.commit();
     }
 
-    public void startPushPing(View view){
-        Intent intent = new Intent(this,PushPingService.class);
+    public void startPushPing(View view) {
+        Intent intent = new Intent(this, PushPingService.class);
         startService(intent);
-        Toast.makeText(this,"Push ping started",Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Push ping started", Toast.LENGTH_SHORT).show();
     }
-
 
 
     public void onRadioButtonClicked(View view) {
@@ -73,18 +72,18 @@ public class Setting extends AppCompatActivity implements Constants {
         }
     }
 
-    public void clearPushSettings(View view){
+    public void clearPushSettings(View view) {
         Context context = getApplicationContext();
         SharedPreferences prefs = context.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
         SharedPreferences.Editor e = prefs.edit();
         e.putString(KEY_AUTH_TOKEN, null);
-        e.putString(KEY_SENDER_ID,null);
+        e.putString(KEY_SENDER_ID, null);
         e.commit();
-        Toast.makeText(context,"Cleared AUTH_TOKEN and Porject Number",Toast.LENGTH_LONG).show();
+        Toast.makeText(context, "Cleared AUTH_TOKEN and Porject Number", Toast.LENGTH_LONG).show();
     }
 
-    public void testAlert(View view){
-        new  TestService().SendAlertToServer();
+    public void testAlert(View view) {
+        new TestService().SendAlertToServer();
     }
 
 
@@ -106,7 +105,7 @@ public class Setting extends AppCompatActivity implements Constants {
                     SharedPreferences.Editor e = prefs.edit();
                     e.putBoolean("install_state", false);
                     e.putString("installid", null);
-                    e.putString(KEY_ACCESS_DATA,null);
+                    e.putString(KEY_ACCESS_DATA, null);
                     e.commit();
                     // kill the app and let user reopen it
                     finish();

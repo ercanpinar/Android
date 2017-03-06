@@ -41,13 +41,15 @@ public class Mail extends javax.mail.Authenticator {
     private Multipart _multipart;
 
 
-    public void setTo(String[] senders){
+    public void setTo(String[] senders) {
         _to = senders;
     }
-    public void setFrom(String from){
+
+    public void setFrom(String from) {
         _from = from;
     }
-    public void setSubject(String subject){
+
+    public void setSubject(String subject) {
         _subject = subject;
     }
 
@@ -87,7 +89,7 @@ public class Mail extends javax.mail.Authenticator {
     public boolean send() throws Exception {
         Properties props = _setProperties();
 
-        if(!_user.equals("") && !_pass.equals("") && _to.length > 0 && !_from.equals("") && !_subject.equals("") && !_body.equals("")) {
+        if (!_user.equals("") && !_pass.equals("") && _to.length > 0 && !_from.equals("") && !_subject.equals("") && !_body.equals("")) {
             Session session = Session.getInstance(props, this);
 
             MimeMessage msg = new MimeMessage(session);
@@ -139,11 +141,11 @@ public class Mail extends javax.mail.Authenticator {
 
         props.put("mail.smtp.host", _host);
 
-        if(_debuggable) {
+        if (_debuggable) {
             props.put("mail.debug", "true");
         }
 
-        if(_auth) {
+        if (_auth) {
             props.put("mail.smtp.auth", "true");
         }
 

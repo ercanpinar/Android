@@ -14,7 +14,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -179,8 +178,8 @@ public class MainActivity extends AppCompatActivity implements
         return new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Growth.getInstance(mActivity).getShareUrlForAppDownload("StreetHawkApp","streethawkapp://activity=MainActivity","StreetHawkApp","inApp",
-                        "","","http://www.streethawk.com",null);
+                Growth.getInstance(mActivity).getShareUrlForAppDownload("StreetHawkApp", "streethawkapp://activity=MainActivity", "StreetHawkApp", "inApp",
+                        "", "", "http://www.streethawk.com", null);
 
             }
 
@@ -340,9 +339,9 @@ public class MainActivity extends AppCompatActivity implements
                             "AppKey :" + appKey + NEW_LINE +
                             "Server :  " + setServer + NEW_LINE +
                             "GCM Sender ID: " + senderId + NEW_LINE +
-                            "Auth Token: " + authtoken + NEW_LINE ;
-                            //"Last Ping Time" + lastPingtime + NEW_LINE +
-                            //"Last message to server " + lastMessageToServer
+                            "Auth Token: " + authtoken + NEW_LINE;
+                    //"Last Ping Time" + lastPingtime + NEW_LINE +
+                    //"Last message to server " + lastMessageToServer
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(mActivity, R.style.StreetHawkDialogTheme);
                     builder.setTitle("Install Info");

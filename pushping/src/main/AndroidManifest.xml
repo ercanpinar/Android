@@ -46,15 +46,17 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="streethawk.com.pushping.MainActivity" />
         </activity>
+
         <receiver
             android:name="com.streethawk.library.push.GCMReceiver"
-            android:permission="com.google.android.c2dm.permission.SEND" >
+            android:permission="com.google.android.c2dm.permission.SEND">
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
                 <!--Add  package_name here-->
                 <category android:name="streethawk.com.pushping" />
             </intent-filter>
         </receiver>
+
         <activity
             android:name=".StartBGL"
             android:theme="@style/AppTheme.NoActionBar">

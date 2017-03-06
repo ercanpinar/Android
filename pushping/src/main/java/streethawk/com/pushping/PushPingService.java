@@ -120,8 +120,8 @@ public class PushPingService extends Service implements ISHObserver {
                         Log.e("Anurag", "Server Pinf " + serverTime);
                         Log.e("Anurag", "Diff " + diff);
                         if (diff > 600) {
-                            long minutes = (currentTime-serverTime)/60;
-                            String message = "Android Didnt received push for last "+minutes + " minutes";
+                            long minutes = (currentTime - serverTime) / 60;
+                            String message = "Android Didnt received push for last " + minutes + " minutes";
                             sendComplaintToserver(message);
                             return;
                         }
@@ -135,8 +135,8 @@ public class PushPingService extends Service implements ISHObserver {
                     Log.e("Anurag", "lastPing " + lastPing);
                     Log.e("Anurag", "Server Pinf " + serverTime);
                     Log.e("Anurag", "Diff " + diff);
-                    long minutes = (currentTime-lastPing)/60;
-                    String message = "Android Didnt received push for last "+minutes + " minutes";
+                    long minutes = (currentTime - lastPing) / 60;
+                    String message = "Android Didnt received push for last " + minutes + " minutes";
                     if (diff > 600) {
                         sendComplaintToserver(message);
                     }
@@ -144,8 +144,8 @@ public class PushPingService extends Service implements ISHObserver {
                     e.printStackTrace();
                 } catch (IOException e) {
                     e.printStackTrace();
-                    Log.e("Anurag","exception "+e.getMessage());
-                    sendComplaintToserver("Android exception "+e.getMessage());
+                    Log.e("Anurag", "exception " + e.getMessage());
+                    sendComplaintToserver("Android exception " + e.getMessage());
                 }
             }
         }).start();
@@ -167,7 +167,7 @@ public class PushPingService extends Service implements ISHObserver {
     }
 
 
-    public void sendSlackMessage(final String channel,final String message){
+    public void sendSlackMessage(final String channel, final String message) {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -183,7 +183,7 @@ public class PushPingService extends Service implements ISHObserver {
                     OutputStream os = conn.getOutputStream();
                     HashMap<String, String> params = new HashMap<String, String>();
                     params.put("token", "xoxp-2189686668-2189426407-96307831140-068dc1354fff25a332141eb090b0cf5a");
-                    params.put("channel",channel);
+                    params.put("channel", channel);
                     params.put("text", message);
                     params.put("username", "pushping");
                     BufferedWriter writer = new BufferedWriter(
@@ -210,7 +210,7 @@ public class PushPingService extends Service implements ISHObserver {
     }
 
 
-    public void sendEmail(final String message){
+    public void sendEmail(final String message) {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -237,7 +237,7 @@ public class PushPingService extends Service implements ISHObserver {
 
     private void sendComplaintToserver(final String message) {
         sendEmail(message);
-        sendSlackMessage("#devops",message+" <@U0KPM4X42|jagguli> <@U02MJ441R|yichang> <@U025KL6KQ|david> <@U025KCJBZ|anurag>  ");
+        sendSlackMessage("#devops", message + " <@U0KPM4X42|jagguli> <@U02MJ441R|yichang> <@U025KL6KQ|david> <@U025KCJBZ|anurag>  ");
     }
 
     @Override

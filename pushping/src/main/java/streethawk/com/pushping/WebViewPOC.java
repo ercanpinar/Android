@@ -22,12 +22,12 @@ public class WebViewPOC extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_web_view_poc);
 
-        baseFrame = (FrameLayout)findViewById(R.id.webframe);
+        baseFrame = (FrameLayout) findViewById(R.id.webframe);
 
     }
 
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
 
         LayoutInflater inflater = (LayoutInflater) getApplicationContext()

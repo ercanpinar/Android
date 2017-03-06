@@ -1,9 +1,8 @@
 package com.streethawk.sdkdebugger;
 
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.TextView;
 
@@ -14,25 +13,26 @@ import java.io.InputStreamReader;
 public class SHLogCat extends AppCompatActivity implements Constants {
 
 
-    class LogCatAsyc extends AsyncTask<String,Void,Void>{
+    class LogCatAsyc extends AsyncTask<String, Void, Void> {
         String mLogs;
+
         @Override
         protected Void doInBackground(String... params) {
             try {
-                Process process = Runtime.getRuntime().exec("logcat -d "+TAG_STREETHAWK+":V *:S");
-                if(params[0].equals("CLEAR"))
+                Process process = Runtime.getRuntime().exec("logcat -d " + TAG_STREETHAWK + ":V *:S");
+                if (params[0].equals("CLEAR"))
                     process = Runtime.getRuntime().exec("logcat -c");
-                if(params[0].equals("LOGS"))
-                    process = Runtime.getRuntime().exec("logcat -d " +params[1]+":V *:S");
+                if (params[0].equals("LOGS"))
+                    process = Runtime.getRuntime().exec("logcat -d " + params[1] + ":V *:S");
                 BufferedReader bufferedReader = new BufferedReader(
                         new InputStreamReader(process.getInputStream()));
 
-                StringBuilder log=new StringBuilder();
+                StringBuilder log = new StringBuilder();
                 String line = "";
                 while ((line = bufferedReader.readLine()) != null) {
                     log.append(line);
                 }
-               mLogs = log.toString();
+                mLogs = log.toString();
             } catch (IOException e) {
             }
             return null;
@@ -41,18 +41,17 @@ public class SHLogCat extends AppCompatActivity implements Constants {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            TextView tv = (TextView)findViewById(R.id.logcat);
+            TextView tv = (TextView) findViewById(R.id.logcat);
             tv.setText("Loading logcat, please wait...");
         }
 
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            TextView tv = (TextView)findViewById(R.id.logcat);
+            TextView tv = (TextView) findViewById(R.id.logcat);
             tv.setText(mLogs);
         }
     }
-
 
 
     @Override
@@ -62,17 +61,15 @@ public class SHLogCat extends AppCompatActivity implements Constants {
 
     }
 
-    public void clearLogs(View view){
-        new LogCatAsyc().execute("CLEAR",TAG_STREETHAWK);
+    public void clearLogs(View view) {
+        new LogCatAsyc().execute("CLEAR", TAG_STREETHAWK);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        new LogCatAsyc().execute("LOGS",TAG_STREETHAWK);
+        new LogCatAsyc().execute("LOGS", TAG_STREETHAWK);
     }
-
-
 
 
 }

@@ -65,7 +65,6 @@
             android:id="@+id/button" />
 
 
-
     </LinearLayout>
 
 </RelativeLayout>

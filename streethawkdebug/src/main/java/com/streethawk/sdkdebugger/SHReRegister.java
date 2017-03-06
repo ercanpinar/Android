@@ -4,9 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RadioButton;
@@ -27,7 +26,7 @@ public class SHReRegister extends Activity implements Constants {
         boolean checked = ((RadioButton) view).isChecked();
 
         String option = ((RadioButton) view).getText().toString();
-        if(option!=null) {
+        if (option != null) {
             switch (option) {
                 case "Prod":
                     if (checked)
@@ -57,7 +56,7 @@ public class SHReRegister extends Activity implements Constants {
         builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                String KEY_ACCESS_DATA  = "pushaccessData";
+                String KEY_ACCESS_DATA = "pushaccessData";
                 EditText customUrlET = (EditText) findViewById(R.id.customUrl);
                 String customUrl = customUrlET.getText().toString();
                 if (null != customUrl) {
@@ -69,7 +68,7 @@ public class SHReRegister extends Activity implements Constants {
                     SharedPreferences.Editor e = prefs.edit();
                     e.putBoolean("install_state", false);
                     e.putString("installid", null);
-                    e.putString(KEY_ACCESS_DATA,null);
+                    e.putString(KEY_ACCESS_DATA, null);
                     e.commit();
                     // kill the app and let user reopen it
                     finish();

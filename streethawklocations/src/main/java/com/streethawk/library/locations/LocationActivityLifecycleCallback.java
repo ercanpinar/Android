@@ -26,13 +26,16 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+
 import com.streethawk.library.core.Util;
+
 import java.util.List;
 
 @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 class LocationActivityLifecycleCallback implements Application.ActivityLifecycleCallbacks {
     private static LocationActivityLifecycleCallback instance = null;
-    private final String SHPGPREVPAGE         = "shpgprevpage";
+    private final String SHPGPREVPAGE = "shpgprevpage";
+
     public static LocationActivityLifecycleCallback getInstance() {
         if (null == instance) {
             instance = new LocationActivityLifecycleCallback();

@@ -23,24 +23,26 @@ import android.content.SharedPreferences;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.util.Log;
 
 import com.streethawk.library.core.Logging;
 import com.streethawk.library.core.Util;
 
-public class LocationReceiver extends BroadcastReceiver implements Constants{
-    private final int CODE_USER_DISABLES_LOCATION 		= 8112;
-    public LocationReceiver() {}
+public class LocationReceiver extends BroadcastReceiver implements Constants {
+    private final int CODE_USER_DISABLES_LOCATION = 8112;
+
+    public LocationReceiver() {
+    }
+
     @Override
     public void onReceive(Context context, Intent intent) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
         boolean status = sharedPreferences.getBoolean(SHLOCATION_FLAG, false);
-        if(!status)
+        if (!status)
             return;
         String action = intent.getAction();
         if (action.equals("android.location.PROVIDERS_CHANGED")) {
             LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-            if(!(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))){
+            if (!(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))) {
                 try {
                     Bundle extras = new Bundle();
                     extras.putString(Util.CODE, Integer.toString(CODE_USER_DISABLES_LOCATION));
@@ -48,7 +50,7 @@ public class LocationReceiver extends BroadcastReceiver implements Constants{
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-            }else {
+            } else {
                 Location location = StreethawkLocationService.getInstance().getLastKnownLocation(context);
                 if (null != location) {
                     double lat = location.getLatitude();
@@ -56,7 +58,7 @@ public class LocationReceiver extends BroadcastReceiver implements Constants{
                     if (lat == 0 && lng == 0)
                         return;
                     Bundle extras = new Bundle();
-                    extras.putInt(Util.CODE,CODE_LOCATION_UPDATES);
+                    extras.putInt(Util.CODE, CODE_LOCATION_UPDATES);
                     extras.putString(Util.SHMESSAGE_ID, null);
                     extras.putString(LOCAL_TIME, Util.getFormattedDateTime(System.currentTimeMillis(), false));
                     extras.putString(SHLATTITUDE, Double.toString(location.getLatitude()));
@@ -66,30 +68,30 @@ public class LocationReceiver extends BroadcastReceiver implements Constants{
             }
         }
         if (action.equals("com.streethawk.intent.action.gcm.STREETHAWK_LOCATIONS")) {
-                if (null != intent) {
-                    try {
-                        String packageName = intent.getStringExtra(SHPACKAGENAME);
-                        if (!packageName.equals(context.getPackageName())) {
-                            return;
-                        }
-                    } catch (Exception e) {
+            if (null != intent) {
+                try {
+                    String packageName = intent.getStringExtra(SHPACKAGENAME);
+                    if (!packageName.equals(context.getPackageName())) {
                         return;
                     }
-                    Location location = StreethawkLocationService.getInstance().getLastKnownLocation(context);
-                    if (null != location) {
-                        double lat = location.getLatitude();
-                        double lng = location.getLongitude();
-                        if (lat == 0 && lng == 0)
-                            return;
-                        Bundle extras = new Bundle();
-                        extras.putInt(Util.CODE,CODE_PERIODIC_LOCATION_UPDATE);
-                        extras.putString(Util.SHMESSAGE_ID, null);
-                        extras.putString(LOCAL_TIME, Util.getFormattedDateTime(System.currentTimeMillis(), false));
-                        extras.putString(SHLATTITUDE, Double.toString(location.getLatitude()));
-                        extras.putString(SHLONGITUDE, Double.toString(location.getLongitude()));
-                        Logging.getLoggingInstance(context).addLogsForSending(extras);
-                    }
+                } catch (Exception e) {
+                    return;
+                }
+                Location location = StreethawkLocationService.getInstance().getLastKnownLocation(context);
+                if (null != location) {
+                    double lat = location.getLatitude();
+                    double lng = location.getLongitude();
+                    if (lat == 0 && lng == 0)
+                        return;
+                    Bundle extras = new Bundle();
+                    extras.putInt(Util.CODE, CODE_PERIODIC_LOCATION_UPDATE);
+                    extras.putString(Util.SHMESSAGE_ID, null);
+                    extras.putString(LOCAL_TIME, Util.getFormattedDateTime(System.currentTimeMillis(), false));
+                    extras.putString(SHLATTITUDE, Double.toString(location.getLatitude()));
+                    extras.putString(SHLONGITUDE, Double.toString(location.getLongitude()));
+                    Logging.getLoggingInstance(context).addLogsForSending(extras);
                 }
             }
         }
     }
+}

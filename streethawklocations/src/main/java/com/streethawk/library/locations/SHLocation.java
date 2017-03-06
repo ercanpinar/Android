@@ -33,7 +33,7 @@ import android.util.Log;
 import com.streethawk.library.core.StreetHawk;
 import com.streethawk.library.core.Util;
 
-public class SHLocation implements Constants{
+public class SHLocation implements Constants {
 
     private static SHLocation mSHLocation;
     private static Context mContext;
@@ -45,7 +45,10 @@ public class SHLocation implements Constants{
     private static int VALUE_UPDATE_DISTANCE_FG = 0;
 
     private static boolean activityLifecycleRegistered = false;
-    private SHLocation() {}
+
+    private SHLocation() {
+    }
+
     private void registerScheduledTask() {
         new Thread(new Runnable() {
             @Override
@@ -63,7 +66,7 @@ public class SHLocation implements Constants{
                 AlarmManager alarmManager = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
                 Intent intent = new Intent(mContext, LocationReceiver.class);
                 intent.setAction(BROADCAST_APP_STATUS_CHK);
-                intent.putExtra(SHPACKAGENAME,mContext.getPackageName());
+                intent.putExtra(SHPACKAGENAME, mContext.getPackageName());
                 PendingIntent appStatusIntent = PendingIntent.getBroadcast(mContext, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
                 alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), AlarmManager.INTERVAL_HOUR, appStatusIntent);
             }
@@ -72,6 +75,7 @@ public class SHLocation implements Constants{
 
     /**
      * Returns Instance of SHLocation Class
+     *
      * @param context application context
      * @return instance of SHLocation class
      */
@@ -86,7 +90,7 @@ public class SHLocation implements Constants{
      * Function to stop application to report location to StreetHawk. The function stops location reporting
      * till startLocationReporting is called again.
      */
-    public void stopLocationReporting(){
+    public void stopLocationReporting() {
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
         SharedPreferences.Editor e = sharedPreferences.edit();
         e.putBoolean(SHLOCATION_FLAG, false);
@@ -98,13 +102,14 @@ public class SHLocation implements Constants{
     /**
      * Use reportWorkHomeLocationsOnly if you want to calculate work and home locations only
      */
-    public void reportWorkHomeLocationsOnly(){
+    public void reportWorkHomeLocationsOnly() {
         updateLocationMonitoringParams(0, WORK_HOME_TIME_INTERVAL, 0, WORK_HOME_TIME_INTERVAL);
         restartLocationReporting();
     }
 
     /**
      * Core uses setActivityLifecycleCallbacks to register to activity lifecycle call backs
+     *
      * @param app
      */
     @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
@@ -122,7 +127,7 @@ public class SHLocation implements Constants{
             if ((coarseLocation == PackageManager.PERMISSION_GRANTED) || (fineLocation == PackageManager.PERMISSION_GRANTED)) {
                 return true;
             } else {
-                    Log.e(Util.TAG,SUBTAG+ "Missing location permissions");
+                Log.e(Util.TAG, SUBTAG + "Missing location permissions");
                 return false;
             }
         } else {
@@ -139,8 +144,8 @@ public class SHLocation implements Constants{
             return;
         registerScheduledTask();
         restartLocationReporting();
-        if(Util.getPlatformType()== Util.PLATFORM_XAMARIN){
-            StreetHawk.INSTANCE.tagString("sh_module_location","true");
+        if (Util.getPlatformType() == Util.PLATFORM_XAMARIN) {
+            StreetHawk.INSTANCE.tagString("sh_module_location", "true");
         }
 
     }
@@ -149,18 +154,18 @@ public class SHLocation implements Constants{
      * Restart location reporting from broadcast when location is enabled on device. Application need not
      * call this function at all.
      */
-    public void restartLocationReporting(){
-        if(!checkForLocationPermission()){
+    public void restartLocationReporting() {
+        if (!checkForLocationPermission()) {
             return;
         }
-        if(null==mContext)
+        if (null == mContext)
             return;
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
         SharedPreferences.Editor e = sharedPreferences.edit();
         e.putBoolean(SHLOCATION_FLAG, true);
         e.commit();
-        if((0==VALUE_UPDATE_INTERVAL_BG) && (0==VALUE_UPDATE_DISTANCE_BG)
-            && (0==VALUE_UPDATE_INTERVAL_FG) && (0==VALUE_UPDATE_DISTANCE_FG)){
+        if ((0 == VALUE_UPDATE_INTERVAL_BG) && (0 == VALUE_UPDATE_DISTANCE_BG)
+                && (0 == VALUE_UPDATE_INTERVAL_FG) && (0 == VALUE_UPDATE_DISTANCE_FG)) {
             Intent locationIntent = new Intent(mContext, StreethawkLocationService.class);
             locationIntent.putExtra(KEY_UPDATE_INTERVAL_BG, VALUE_UPDATE_INTERVAL_BG);
             locationIntent.putExtra(KEY_UPDATE_DISTANCE_BG, VALUE_UPDATE_DISTANCE_BG);
@@ -176,18 +181,20 @@ public class SHLocation implements Constants{
      * Instead
      * 1. set SH_LOC_PERMISSION_BUTTON_TEXT, SH_LOC_PERMISSION_TITLE and SH_LOC_PERMISSION_MESSAGE in res/values/strings.xml of your app
      * 2. Use StartLocationWithPermissionDialog();
+     *
      * @param message
      */
     @Deprecated
     public void startLocationWithPermissionDialog(String message) {
         startLocationWithPermissionDialog();
     }
+
     /**
      * use StartLocationWithPermissionDialog to make SDK ask for location permission from user
      */
-    public void startLocationWithPermissionDialog(){
-        if(Util.PLATFORM_XAMARIN==Util.RELEASE_PLATFORM){
-            Log.i(Util.TAG,"startLocationWithPermissionDialog is not supported on Xamarin");
+    public void startLocationWithPermissionDialog() {
+        if (Util.PLATFORM_XAMARIN == Util.RELEASE_PLATFORM) {
+            Log.i(Util.TAG, "startLocationWithPermissionDialog is not supported on Xamarin");
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             Intent intent = new Intent(mContext, AskLocPermission.class);
@@ -196,13 +203,14 @@ public class SHLocation implements Constants{
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.putExtras(extras);
             mContext.startActivity(intent);
-        }else{
+        } else {
             startLocationReporting();
         }
     }
 
     /**
      * Update intervals for minimum distance and time update for locations.
+     *
      * @param UPDATE_INTERVAL_FG min time between two location reporting calls when app is in foreground
      * @param UPDATE_DISTANCE_FG min distance between two location reporting calls when app is in foreground
      * @param UPDATE_INTERVAL_BG min time between two location reporting calls when app is in backgrond

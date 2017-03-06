@@ -23,12 +23,12 @@ public class AskLocPermission extends Activity implements Constants {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ask_loc_permission);
-        showDialog = getIntent().getBooleanExtra(PERMISSION_BOOL,false);
+        showDialog = getIntent().getBooleanExtra(PERMISSION_BOOL, false);
     }
 
-    public void onResume(){
+    public void onResume() {
         super.onResume();
-        if(showDialog) {
+        if (showDialog) {
             displayPermissionDialog();
         }
         mActivity = this;
@@ -36,6 +36,7 @@ public class AskLocPermission extends Activity implements Constants {
 
     /**
      * Check for location permission for Android MarshMallow
+     *
      * @param context
      * @return
      */
@@ -53,8 +54,8 @@ public class AskLocPermission extends Activity implements Constants {
         }
     }
 
-    private DialogInterface.OnClickListener askPermission(){
-        return new DialogInterface.OnClickListener(){
+    private DialogInterface.OnClickListener askPermission() {
+        return new DialogInterface.OnClickListener() {
             @TargetApi(Build.VERSION_CODES.M)
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
@@ -65,13 +66,13 @@ public class AskLocPermission extends Activity implements Constants {
     }
 
 
-    private void displayPermissionDialog(){
+    private void displayPermissionDialog() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if(!checkForLocationPermission(this)) {
-                if(shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)){
-                    String DEFAULT_PERMISSION_TITLE   = "Permission Required";
+            if (!checkForLocationPermission(this)) {
+                if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
+                    String DEFAULT_PERMISSION_TITLE = "Permission Required";
                     String DEFAULT_PERMISSION_MESSAGE = "Would you like to grant us location permission for monitoring geofences?";
-                    String DEFAULT_BUTTON_TEXT        = "Okay";
+                    String DEFAULT_BUTTON_TEXT = "Okay";
                     int id;
                     String title;
                     String message;
@@ -100,17 +101,17 @@ public class AskLocPermission extends Activity implements Constants {
                     AlertDialog.Builder builder = new AlertDialog.Builder(this);
                     builder.setTitle(title);
                     builder.setMessage(message);
-                    builder.setPositiveButton(buttonTitle,askPermission());
-                }else{
+                    builder.setPositiveButton(buttonTitle, askPermission());
+                } else {
                     this.requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION},
                             PERMISSIONS_LOCATION);
                 }
-            }else{
+            } else {
                 Log.i(Util.TAG, SUBTAG + "App already has the permission");
                 finish();
             }
         } else {
-            Log.e(Util.TAG,SUBTAG+"Not requesting permission "+Build.VERSION.SDK_INT+" "+Build.VERSION_CODES.M);
+            Log.e(Util.TAG, SUBTAG + "Not requesting permission " + Build.VERSION.SDK_INT + " " + Build.VERSION_CODES.M);
             finish();
         }
     }

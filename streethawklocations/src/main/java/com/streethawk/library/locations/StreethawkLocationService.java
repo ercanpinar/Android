@@ -34,7 +34,7 @@ import android.util.Log;
 import com.streethawk.library.core.Logging;
 import com.streethawk.library.core.Util;
 
-public class StreethawkLocationService extends Service implements Constants{
+public class StreethawkLocationService extends Service implements Constants {
     private final int DEFAULT_UPDATE_DISTANCE_BG = 500;                // 	500 meters in background
     private final int DEFAULT_UPDATE_INTERVAL_FG = 2 * 60 * 1000;        // 2 minute in Foreground
     private final int DEFAULT_UPDATE_DISTANCE_FG = 100;                // 	100 meters in background
@@ -103,29 +103,29 @@ public class StreethawkLocationService extends Service implements Constants{
     }
 
 
-    public Location getLastKnownLocation(Context context){
-        locationManager = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
-        String locationProvider=null;
+    public Location getLastKnownLocation(Context context) {
+        locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        String locationProvider = null;
         try {
-            if(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+            if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
                 locationProvider = LocationManager.GPS_PROVIDER;
             }
-        } catch(Exception ex) {
+        } catch (Exception ex) {
             locationProvider = null;
         }
 
         try {
-            if(locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)){
+            if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
                 locationProvider = LocationManager.NETWORK_PROVIDER;
             }
-        } catch(Exception ex) {
+        } catch (Exception ex) {
             locationProvider = null;
         }
-        if(null==locationProvider)
+        if (null == locationProvider)
             return null;
         try {
             return locationManager.getLastKnownLocation(locationProvider);
-        }catch(SecurityException e){
+        } catch (SecurityException e) {
             return null;
         }
     }
@@ -137,7 +137,7 @@ public class StreethawkLocationService extends Service implements Constants{
                     Bundle extras = new Bundle();
                     double lat = location.getLatitude();
                     double lng = location.getLongitude();
-                    extras.putInt(Util.CODE,CODE_LOCATION_UPDATES);
+                    extras.putInt(Util.CODE, CODE_LOCATION_UPDATES);
                     extras.putString(Util.SHMESSAGE_ID, null);
                     extras.putString(LOCAL_TIME, Util.getFormattedDateTime(System.currentTimeMillis(), false));
                     extras.putString(SHLATTITUDE, Double.toString(lat));
@@ -167,24 +167,24 @@ public class StreethawkLocationService extends Service implements Constants{
 
 
     public void startLocationReporting(final Context context) {
-        LocationManager lm = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
-        String locationProvider=null;
+        LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        String locationProvider = null;
         try {
-            if(lm.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+            if (lm.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
                 locationProvider = LocationManager.GPS_PROVIDER;
             }
-        } catch(Exception ex) {
+        } catch (Exception ex) {
             locationProvider = null;
         }
 
         try {
-            if(lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)){
+            if (lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
                 locationProvider = LocationManager.NETWORK_PROVIDER;
             }
-        } catch(Exception ex) {
+        } catch (Exception ex) {
             locationProvider = null;
         }
-        if(null==locationProvider)
+        if (null == locationProvider)
             return;
         try {
             if (null == locationManager) {

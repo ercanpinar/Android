@@ -17,21 +17,21 @@
 package com.streethawk.library.locations;
 
 interface Constants {
-    String KEY_UPDATE_INTERVAL_BG       = "KEY_UPDATE_INTERVAL_BG";
-    String KEY_UPDATE_DISTANCE_BG       = "KEY_UPDATE_DISTANCE_BG";
-    String KEY_UPDATE_INTERVAL_FG       = "KEY_UPDATE_INTERVAL_FG";
-    String KEY_UPDATE_DISTANCE_FG       = "KEY_UPDATE_DISTANCE_FG";
-    String BROADCAST_APP_STATUS_CHK     = "com.streethawk.intent.action.gcm.STREETHAWK_LOCATIONS";
-    String SHTASKTIME                   = "shTaskTime";
-    String SHPACKAGENAME                = "shpackagename";
-    String LOCAL_TIME                   = "created_local_time";
-    String SHLATTITUDE                  = "latitude";
-    String SHLONGITUDE                  = "longitude";
-    String SHLOCATION_FLAG              = "locationFlag";
-    int CODE_LOCATION_UPDATES           = 20;
-    int WORK_HOME_TIME_INTERVAL         = 3480000;  // 58 minutes so that we dont have sync problems
-    int CODE_PERIODIC_LOCATION_UPDATE   = 19;
-    String PERMISSION_MSG               = "msg";
-    String PERMISSION_BOOL              = "permission_bool";
+    String KEY_UPDATE_INTERVAL_BG = "KEY_UPDATE_INTERVAL_BG";
+    String KEY_UPDATE_DISTANCE_BG = "KEY_UPDATE_DISTANCE_BG";
+    String KEY_UPDATE_INTERVAL_FG = "KEY_UPDATE_INTERVAL_FG";
+    String KEY_UPDATE_DISTANCE_FG = "KEY_UPDATE_DISTANCE_FG";
+    String BROADCAST_APP_STATUS_CHK = "com.streethawk.intent.action.gcm.STREETHAWK_LOCATIONS";
+    String SHTASKTIME = "shTaskTime";
+    String SHPACKAGENAME = "shpackagename";
+    String LOCAL_TIME = "created_local_time";
+    String SHLATTITUDE = "latitude";
+    String SHLONGITUDE = "longitude";
+    String SHLOCATION_FLAG = "locationFlag";
+    int CODE_LOCATION_UPDATES = 20;
+    int WORK_HOME_TIME_INTERVAL = 3480000;  // 58 minutes so that we dont have sync problems
+    int CODE_PERIODIC_LOCATION_UPDATE = 19;
+    String PERMISSION_MSG = "msg";
+    String PERMISSION_BOOL = "permission_bool";
 
 }

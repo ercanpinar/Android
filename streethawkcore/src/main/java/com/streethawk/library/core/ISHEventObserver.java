@@ -6,6 +6,7 @@ package com.streethawk.library.core;
 public interface ISHEventObserver {
     /**
      * Function is called when install s registered with the device
+     *
      * @param installId installid for your install
      */
     public void onInstallRegistered(String installId);

@@ -35,6 +35,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Locale;
+
 class AppActivityTracking implements Constants {
 
     private static AppActivityTracking mActivityTracking = null;

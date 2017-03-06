@@ -32,8 +32,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 
-import org.json.JSONObject;
-
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
@@ -42,7 +40,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-public enum StreetHawk implements Constants{
+public enum StreetHawk implements Constants {
     INSTANCE;
 
     private Activity currentActivity;
@@ -81,7 +79,7 @@ public enum StreetHawk implements Constants{
 
 
     private String mAppKey = null;
-    private ISHEventObserver mEventObserver=null;
+    private ISHEventObserver mEventObserver = null;
 
 
     /**
@@ -113,10 +111,9 @@ public enum StreetHawk implements Constants{
     }
 
     /**
-     * @deprecated
-     * Set device's Advertisement ID into StreetHawk SDK
-     * @param context application contect
+     * @param context         application contect
      * @param advertisementId advertisement id
+     * @deprecated Set device's Advertisement ID into StreetHawk SDK
      */
 
     public void setAdvertisementId(final Context context, final String advertisementId) {
@@ -133,7 +130,7 @@ public enum StreetHawk implements Constants{
                 e.putString(SHADVERTISEMENTID, advertisementId);
                 e.commit();
                 if (null != getInstallId(context)) {
-                    if(null!=advertisementId) {
+                    if (null != advertisementId) {
                         tagString(KEY_ADV_ID, advertisementId);
                     }
                 }
@@ -144,7 +141,7 @@ public enum StreetHawk implements Constants{
     /**
      * Store locations to be included in logging
      */
-    private void StoreLocationForLogging(){
+    private void StoreLocationForLogging() {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -155,10 +152,10 @@ public enum StreetHawk implements Constants{
                 try {
                     growth = Class.forName("com.streethawk.library.geofence.StreetHawkLocationService");
                     Method growthMethod = growth.getMethod("getInstance", paramContext);
-                    Object obj = growthMethod.invoke(null,mContext);
+                    Object obj = growthMethod.invoke(null, mContext);
                     if (null != obj) {
                         Method addGrowthModule = growth.getDeclaredMethod("forceStoreCurrentLocation", paramContext);
-                        addGrowthModule.invoke(obj,mContext);
+                        addGrowthModule.invoke(obj, mContext);
                     }
                 } catch (ClassNotFoundException e1) {
                     Log.w(Util.TAG, "Geofence module is not  not present while storing locations for logging");
@@ -215,24 +212,25 @@ public enum StreetHawk implements Constants{
     /**
      * Tag user's languge here. Please note that SDK can automatically detect device's default language and hence use this API only if
      * there is a difference in the application and device's language setttings
+     *
      * @param language
      */
-    public void tagUserLanguage(String language){
-        if(null==language) {
-            Log.e(Util.TAG,"Laungauge is null in tagUserLanguage returning..");
+    public void tagUserLanguage(String language) {
+        if (null == language) {
+            Log.e(Util.TAG, "Laungauge is null in tagUserLanguage returning..");
             return;
         }
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
-        String userLocale = sharedPreferences.getString(USER_LOCALE , null);
-        if(null==userLocale) {
+        String userLocale = sharedPreferences.getString(USER_LOCALE, null);
+        if (null == userLocale) {
             SharedPreferences.Editor e = sharedPreferences.edit();
-            e.putString(USER_LOCALE,language);
+            e.putString(USER_LOCALE, language);
             e.commit();
             tagString("sh_language", language);
-        }else{
-            if(!userLocale.equals(language)){
+        } else {
+            if (!userLocale.equals(language)) {
                 SharedPreferences.Editor e = sharedPreferences.edit();
-                e.putString(USER_LOCALE,language);
+                e.putString(USER_LOCALE, language);
                 e.commit();
             }
         }
@@ -240,6 +238,7 @@ public enum StreetHawk implements Constants{
 
     /**
      * Display badge count on app icon. Note that this function is not supported on all devices.
+     *
      * @param context
      * @param BadgeCount
      */
@@ -329,6 +328,7 @@ public enum StreetHawk implements Constants{
 
     /**
      * Function to set App key if not set in AndroidManifest.xaml
+     *
      * @param app_key
      */
     public void setAppKey(String app_key) {
@@ -359,7 +359,7 @@ public enum StreetHawk implements Constants{
                         e.putString(Util.SHAPP_KEY, mAppKey);
                         e.commit();
                     }
-                    if(null!=mEventObserver){
+                    if (null != mEventObserver) {
                         Install.getInstance(mContext).registerInstallEventObserver(mEventObserver);
                     }
                     Install.getInstance(mContext).registerInstall();
@@ -368,7 +368,7 @@ public enum StreetHawk implements Constants{
                 coreService.putExtra("fromInit", true);
                 mContext.startService(coreService);
                 Logging.getLoggingInstance(mContext).saveActivityNames();
-                Util.setSHDebugFlag(mContext,true);
+                Util.setSHDebugFlag(mContext, true);
             }
         }).start();
     }
@@ -385,7 +385,7 @@ public enum StreetHawk implements Constants{
             @Override
             public void run() {
                 Bundle extras = new Bundle();
-                extras.putInt(CODE,CODE_USER_ENTER_ACTIVITY);
+                extras.putInt(CODE, CODE_USER_ENTER_ACTIVITY);
                 extras.putString(SHMESSAGE_ID, null);
                 extras.putString(TYPE_STRING, viewName);
                 final Logging shManager = Logging.getLoggingInstance(mContext);
@@ -397,10 +397,11 @@ public enum StreetHawk implements Constants{
 
     /**
      * Send simple feedback to server
+     *
      * @param title
      * @param message
      */
-    public void sendSimpleFeedback(final String title, final String message){
+    public void sendSimpleFeedback(final String title, final String message) {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -421,7 +422,7 @@ public enum StreetHawk implements Constants{
             @Override
             public void run() {
                 Bundle extras = new Bundle();
-                extras.putInt(CODE,CODE_USER_LEAVE_ACTIVITY);
+                extras.putInt(CODE, CODE_USER_LEAVE_ACTIVITY);
                 extras.putString(SHMESSAGE_ID, null);
                 extras.putString(TYPE_STRING, viewName);
                 final Logging shManager = Logging.getLoggingInstance(mContext);
@@ -471,7 +472,7 @@ public enum StreetHawk implements Constants{
     /**
      * API to numeric tag a profile
      *
-     * @param key key
+     * @param key           key
      * @param numeric_value value
      * @return true for success false if failed
      */
@@ -500,7 +501,7 @@ public enum StreetHawk implements Constants{
         Future<Boolean> result = executorservice.submit(new Callable<Boolean>() {
             public Boolean call() throws Exception {
                 Bundle extras = new Bundle();
-                extras.putInt(CODE,CODE_UPDATE_CUSTOM_TAG);
+                extras.putInt(CODE, CODE_UPDATE_CUSTOM_TAG);
                 extras.putString(SHMESSAGE_ID, null);
                 extras.putString(SHMESSAGE_ID, null);
                 extras.putString(SH_KEY, checkKey);
@@ -576,7 +577,7 @@ public enum StreetHawk implements Constants{
         Future<Boolean> result = executorservice.submit(new Callable<Boolean>() {
             public Boolean call() throws Exception {
                 Bundle extras = new Bundle();
-                extras.putInt(CODE,CODE_UPDATE_CUSTOM_TAG);
+                extras.putInt(CODE, CODE_UPDATE_CUSTOM_TAG);
                 extras.putString(SHMESSAGE_ID, null);
                 extras.putString(SH_KEY, checkKey);
                 extras.putString(TYPE_STRING, checkValue);
@@ -797,12 +798,10 @@ public enum StreetHawk implements Constants{
                             e.commit();
                             appActivityTracking.notifyNewActivity(activity, currentActivity, storedActivity);
                             appActivityTracking.onAppForegrounded(activity);
-                        }
-                        else if (currentActivity.equals(storedActivity)) {
-                                appActivityTracking.notifyChangedOrientation(activity);
+                        } else if (currentActivity.equals(storedActivity)) {
+                            appActivityTracking.notifyChangedOrientation(activity);
                             return;
-                        }
-                        else {
+                        } else {
                             // transact to new activity
                             SharedPreferences.Editor e = prefs.edit();
                             e.putString(SHPGPREVPAGE, currentActivity);
@@ -951,7 +950,7 @@ public enum StreetHawk implements Constants{
         Future<Boolean> result = executorservice.submit(new Callable<Boolean>() {
             public Boolean call() throws Exception {
                 Bundle extras = new Bundle();
-                extras.putInt(CODE,CODE_UPDATE_CUSTOM_TAG);
+                extras.putInt(CODE, CODE_UPDATE_CUSTOM_TAG);
                 extras.putString(SHMESSAGE_ID, null);
                 extras.putString(SH_KEY, checkKey);
                 extras.putString(TYPE_DATETIME, checkValue);
@@ -980,7 +979,7 @@ public enum StreetHawk implements Constants{
     /**
      * API to increment or decrement value of given tag by the given value
      *
-     * @param key key
+     * @param key   key
      * @param value value
      */
     public void incrementTag(String key, int value) {
@@ -1005,7 +1004,7 @@ public enum StreetHawk implements Constants{
             extras.putString(SH_KEY, key);
             extras.putString(TYPE_NUMERIC, Integer.toString(value));
             manager.addLogsForSending(extras);
-        }catch(NumberFormatException e){
+        } catch (NumberFormatException e) {
             e.printStackTrace();
         }
     }
@@ -1013,7 +1012,7 @@ public enum StreetHawk implements Constants{
     /**
      * API to increment or decrement value of given tag by the given value
      *
-     * @param key key
+     * @param key   key
      * @param value value
      */
     public void incrementTag(String key, double value) {
@@ -1038,7 +1037,7 @@ public enum StreetHawk implements Constants{
             extras.putString(SH_KEY, key);
             extras.putString(TYPE_NUMERIC, Double.toString(value));
             manager.addLogsForSending(extras);
-        }catch(NumberFormatException e){
+        } catch (NumberFormatException e) {
             e.printStackTrace();
         }
     }
@@ -1046,11 +1045,12 @@ public enum StreetHawk implements Constants{
 
     /**
      * Use registerEventObserver to register
+     *
      * @param instance
      */
-    public void registerEventObserver(ISHEventObserver instance){
+    public void registerEventObserver(ISHEventObserver instance) {
         this.mEventObserver = instance;
-        if(null!=mContext){
+        if (null != mContext) {
             Install.getInstance(mContext).registerInstallEventObserver(mEventObserver);
         }
     }
@@ -1080,7 +1080,7 @@ public enum StreetHawk implements Constants{
         }
         Bundle extras = new Bundle();
         Logging manager = Logging.getLoggingInstance(mContext);
-        extras.putInt(CODE,CODE_DELETE_CUSTOM_TAG);
+        extras.putInt(CODE, CODE_DELETE_CUSTOM_TAG);
         extras.putString(SHMESSAGE_ID, null);
         extras.putString(SH_KEY, key);
         manager.addLogsForSending(extras);

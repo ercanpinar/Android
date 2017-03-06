@@ -2,7 +2,6 @@ package com.streethawk.library.core;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 
@@ -14,17 +13,21 @@ public class WidgetDB implements Constants {
     private SQLiteDatabase mDatabase;
     private WidgetDBHelper mDbHelper;
     private Context mContext;
+
     public WidgetDB(Context context) {
         this.mContext = context;
         mDbHelper = new WidgetDBHelper(context);
     }
+
     public void open() throws SQLException {
         mDatabase = mDbHelper.getWritableDatabase();
     }
+
     public void close() {
         mDbHelper.close();
         mDatabase.close();
     }
+
     public void storeWidgetData(WidgetObject object) {
         ContentValues values = new ContentValues();
         values.put(WidgetDBHelper.COLUMN_TEXT_ID, object.getTextID());
@@ -36,7 +39,7 @@ public class WidgetDB implements Constants {
     /**
      * Call forceDeleteAllRecords when app status states to reset data
      */
-    public void forceDeleteAllRecords(){
+    public void forceDeleteAllRecords() {
         mDatabase.execSQL("delete from " + WidgetDBHelper.TOOLTIP_TABLE_NAME);
     }
 }

@@ -11,40 +11,40 @@ public class WidgetObject {
     int mID;
 
 
+    public WidgetObject() {
+    }
 
-    public WidgetObject(){}
-
-    public void setParentViewName(String viewName){
+    public void setParentViewName(String viewName) {
         mParentView = viewName;
     }
 
-    public void setTextID(String textID){
+    public void setTextID(String textID) {
         mTextID = textID;
     }
 
-    public void setResID(int resID){
+    public void setResID(int resID) {
         mID = resID;
     }
 
 
-    public String getTextID(){
+    public String getTextID() {
         return mTextID;
     }
 
-    public int getResID(){
+    public int getResID() {
         return mID;
     }
 
 
-    public String getParentViewName(){
+    public String getParentViewName() {
         return mParentView;
     }
 
-    public void displayMyData(String tag){
+    public void displayMyData(String tag) {
         String NEWLINE = "\n";
-        String myData = "TextID: "+this.mTextID + NEWLINE +
-                "ParentView: "+this.mParentView + NEWLINE +
-                "ResID: "+this.mID;
-        Log.d(tag,myData);
+        String myData = "TextID: " + this.mTextID + NEWLINE +
+                "ParentView: " + this.mParentView + NEWLINE +
+                "ResID: " + this.mID;
+        Log.d(tag, myData);
     }
 }

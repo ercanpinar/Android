@@ -65,10 +65,10 @@ import java.util.UUID;
 
 import javax.net.ssl.HttpsURLConnection;
 
-public class StreetHawkCoreService extends Service implements Thread.UncaughtExceptionHandler,Constants{
+public class StreetHawkCoreService extends Service implements Thread.UncaughtExceptionHandler, Constants {
 
     private Context mContext;
-    private final String SHTASKTIME  = "shTaskTime";
+    private final String SHTASKTIME = "shTaskTime";
 
 
     private void registerScheduledTask(final Context context) {
@@ -89,7 +89,7 @@ public class StreetHawkCoreService extends Service implements Thread.UncaughtExc
                 AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
                 Intent intent = new Intent(context, StreethawkBroadcastReceiver.class);
                 intent.setAction(BROADCAST_APP_STATUS_CHK);
-                intent.putExtra(SHPACKAGENAME,context.getPackageName());
+                intent.putExtra(SHPACKAGENAME, context.getPackageName());
                 PendingIntent appStatusIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
                 alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), AlarmManager.INTERVAL_HOUR/*60000*/, appStatusIntent);
             }
@@ -101,9 +101,9 @@ public class StreetHawkCoreService extends Service implements Thread.UncaughtExc
 
     @Override
     public IBinder onBind(Intent intent) {
-        if(null!=intent){
-            boolean flag = intent.getBooleanExtra("fromInit",false);
-            if(flag){
+        if (null != intent) {
+            boolean flag = intent.getBooleanExtra("fromInit", false);
+            if (flag) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
                     final Application app = getApplication();
                     app.registerActivityLifecycleCallbacks(StreetHawkActivityLifecycleCallback.getInstance());
@@ -118,7 +118,7 @@ public class StreetHawkCoreService extends Service implements Thread.UncaughtExc
                             try {
                                 growth = Class.forName("com.streethawk.library.growth.Growth");
                                 Method growthMethod = growth.getMethod("setActivityLifecycleCallbacks", appParams);
-                                growthMethod.invoke(null,app);
+                                growthMethod.invoke(null, app);
                             } catch (ClassNotFoundException e1) {
                                 Log.w(Util.TAG, "Growth module is not  not present");
                             } catch (IllegalAccessException e1) {
@@ -132,7 +132,7 @@ public class StreetHawkCoreService extends Service implements Thread.UncaughtExc
                             try {
                                 push = Class.forName("com.streethawk.library.push.Push");
                                 Method pushMethod = push.getMethod("setActivityLifecycleCallbacks", appParams);
-                                pushMethod.invoke(null,app);
+                                pushMethod.invoke(null, app);
                             } catch (ClassNotFoundException e1) {
                                 Log.w(Util.TAG, "Push module is not  not present");
                             } catch (IllegalAccessException e1) {
@@ -146,7 +146,7 @@ public class StreetHawkCoreService extends Service implements Thread.UncaughtExc
                             try {
                                 location = Class.forName("com.streethawk.library.locations.SHLocation");
                                 Method locationMethod = location.getMethod("setActivityLifecycleCallbacks", appParams);
-                                locationMethod.invoke(null,app);
+                                locationMethod.invoke(null, app);
                             } catch (ClassNotFoundException e1) {
                                 Log.w(Util.TAG, "Push module is not  not present");
                             } catch (IllegalAccessException e1) {
@@ -186,10 +186,13 @@ public class StreetHawkCoreService extends Service implements Thread.UncaughtExc
     private static final String TAB = "\t";
     private static final String COLON = ":";
     private Thread.UncaughtExceptionHandler defaultUncaughtExceptionHandler;
+
     private String getCpuInfo() {
         return System.getProperty("os.arch") + " | " + Build.CPU_ABI + " | " + Build.CPU_ABI2 + " | " + Build.BOARD;
     }
+
     public static final String CRASH_CACHE_DIR_NAME = "sh_crash_cache";
+
     private static File getCacheDir(Context context) {
         File cacheDir;
         cacheDir = new File(context.getCacheDir().toString() + File.separator + CRASH_CACHE_DIR_NAME);
@@ -198,6 +201,7 @@ public class StreetHawkCoreService extends Service implements Thread.UncaughtExc
         }
         return cacheDir;
     }
+
     private String getProcessName(Context context) {
         int id = android.os.Process.myPid();
         String myProcessName = context.getPackageName();
@@ -212,6 +216,7 @@ public class StreetHawkCoreService extends Service implements Thread.UncaughtExc
         }
         return Util.getAppName(context) + " [" + id + " : " + myProcessName + "]";
     }
+
     private String formRow(String title, String value, int tabs, boolean valueOnNextRow) {
 
         final String NEXT_ROW = "\n";
@@ -252,6 +257,7 @@ public class StreetHawkCoreService extends Service implements Thread.UncaughtExc
         String strlevel = Double.toString(level * 100) + "%";
         return strlevel;
     }
+
     private static String getApplicationFilePath(Context context) {
         final File filesDir = context.getFilesDir();
         if (filesDir != null) {
@@ -348,9 +354,11 @@ public class StreetHawkCoreService extends Service implements Thread.UncaughtExc
         }
         return str;
     }
+
     private static String floatForm(double d) {
         return new DecimalFormat("#.##").format(d);
     }
+
     private static String bytesToHuman(long size) {
         long Kb = 1 * 1024;
         long Mb = Kb * 1024;
@@ -364,6 +372,7 @@ public class StreetHawkCoreService extends Service implements Thread.UncaughtExc
 
     /**
      * Function returns memory information
+     *
      * @return
      */
     private String getMemInfo() {
@@ -388,17 +397,17 @@ public class StreetHawkCoreService extends Service implements Thread.UncaughtExc
 
     /**
      * Returns true if device supports Telephony
+     *
      * @param context
      * @return
      */
-    private boolean isTelephonySupported(Context context){
+    private boolean isTelephonySupported(Context context) {
         PackageManager packageManager = context.getPackageManager();
-        if(packageManager.hasSystemFeature(PackageManager.FEATURE_TELEPHONY)){
+        if (packageManager.hasSystemFeature(PackageManager.FEATURE_TELEPHONY)) {
             return true;
         }
         return false;
     }
-
 
 
     /**
@@ -429,7 +438,7 @@ public class StreetHawkCoreService extends Service implements Thread.UncaughtExc
         report.append(formRow("Supports calling", Boolean.toString(isTelephonySupported(context)), 2));
         report.append(NEXT_ROW);
         report.append(formRow("BatteryLevel", getBatteryLevel(context), 2));
-        report.append(formRow("MemInfo",getMemInfo(), 2));
+        report.append(formRow("MemInfo", getMemInfo(), 2));
         report.append(NEXT_ROW);
         report.append(formRow("Date/Time", Util.getFormattedDateTime(System.currentTimeMillis(), true), 2));
         report.append(formRow("OS Version", getOSVersion(), 2));
@@ -497,19 +506,19 @@ public class StreetHawkCoreService extends Service implements Thread.UncaughtExc
         }
 
         // Create the byte array to hold the data
-        byte[] bytes = new byte[(int)length];
+        byte[] bytes = new byte[(int) length];
 
         // Read in the bytes
         int offset = 0;
         int numRead = 0;
         while (offset < bytes.length
-                && (numRead = is.read(bytes, offset, Math.min(bytes.length - offset, 512*1024))) >= 0) {
+                && (numRead = is.read(bytes, offset, Math.min(bytes.length - offset, 512 * 1024))) >= 0) {
             offset += numRead;
         }
 
         // Ensure all the bytes have been read in
         if (offset < bytes.length) {
-            throw new IOException("Could not completely read file "+file.getName());
+            throw new IOException("Could not completely read file " + file.getName());
         }
 
         // Close the input stream and return bytes
@@ -520,7 +529,7 @@ public class StreetHawkCoreService extends Service implements Thread.UncaughtExc
 
     private void flushIndividualCrashReportToServer(final File file) {
         final Context context = getApplicationContext();
-        if(null==context)
+        if (null == context)
             return;
         final String EXCEPTION_FILE = "exception_file";
         if (Util.isNetworkConnected(context)) {
@@ -537,10 +546,10 @@ public class StreetHawkCoreService extends Service implements Thread.UncaughtExc
                         FileInputStream fileInputStream = new FileInputStream(file);
                         URL url = Util.getCrashReportingUrl(context);
                         HttpsURLConnection conn = null;
-                        final String installId =Util.getInstallId(context);
-                        if(null==installId)
+                        final String installId = Util.getInstallId(context);
+                        if (null == installId)
                             return;
-                        final String app_key  = Util.getAppKey(context);
+                        final String app_key = Util.getAppKey(context);
                         String time = getTimeFromFileName(file.getName());
                         conn = (HttpsURLConnection) url.openConnection();
                         conn.setRequestMethod("POST");
@@ -549,7 +558,7 @@ public class StreetHawkCoreService extends Service implements Thread.UncaughtExc
                         conn.setRequestProperty("X-Installid", installId);
                         conn.setRequestProperty("X-App-Key", app_key);
                         String libVersion = Util.getLibraryVersion();
-                        conn.setRequestProperty("X-Version",libVersion);
+                        conn.setRequestProperty("X-Version", libVersion);
                         conn.setRequestProperty("User-Agent", app_key + "(" + libVersion + ")");
                         conn.setRequestProperty("Connection", "Keep-Alive");
                         conn.setRequestProperty("Cache-Control", "no-cache");
@@ -557,7 +566,7 @@ public class StreetHawkCoreService extends Service implements Thread.UncaughtExc
                         conn.setRequestProperty("charset", "utf-8");
                         DataOutputStream request = new DataOutputStream(conn.getOutputStream());
                         request.writeBytes(twoHyphens + boundary + lineEnd);
-                        request.writeBytes("Content-Disposition: form-data; name=\"installid \""+ lineEnd);
+                        request.writeBytes("Content-Disposition: form-data; name=\"installid \"" + lineEnd);
                         request.writeBytes(lineEnd);
                         request.writeBytes(installId);
                         request.writeBytes(lineEnd);
@@ -586,7 +595,7 @@ public class StreetHawkCoreService extends Service implements Thread.UncaughtExc
                         request.flush();
                         request.close();
                         InputStream error = conn.getErrorStream();
-                        if(null==error){
+                        if (null == error) {
                             BufferedReader reader = null;
                             reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
                             String answer = reader.readLine();
@@ -657,9 +666,8 @@ public class StreetHawkCoreService extends Service implements Thread.UncaughtExc
     public int onStartCommand(Intent intent, int flags, int startId) {
         Thread.setDefaultUncaughtExceptionHandler(this);
         flushCrashReportToServer(getCacheDir(getApplicationContext()));
-        if ((intent != null) && (intent.getBooleanExtra("ALARM_RESTART_SERVICE_DIED", false)))
-        {
-            if (Util.isServiceRunning(getApplicationContext(),StreetHawkCoreService.class)) {
+        if ((intent != null) && (intent.getBooleanExtra("ALARM_RESTART_SERVICE_DIED", false))) {
+            if (Util.isServiceRunning(getApplicationContext(), StreetHawkCoreService.class)) {
                 ensureServiceStaysRunning();
                 return START_STICKY;
             }
@@ -669,16 +677,14 @@ public class StreetHawkCoreService extends Service implements Thread.UncaughtExc
 
 
     private void ensureServiceStaysRunning() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
-        {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             // A restart intent - this never changes...
-            final int restartAlarmInterval = 20*60*1000;
-            final int resetAlarmTimer = 2*60*1000;
+            final int restartAlarmInterval = 20 * 60 * 1000;
+            final int resetAlarmTimer = 2 * 60 * 1000;
             final Intent restartIntent = new Intent(this, StreetHawkCoreService.class);
             restartIntent.putExtra("ALARM_RESTART_SERVICE_DIED", true);
-            final AlarmManager alarmMgr = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
-            Handler restartServiceHandler = new Handler()
-            {
+            final AlarmManager alarmMgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+            Handler restartServiceHandler = new Handler() {
                 @Override
                 public void handleMessage(Message msg) {
                     // Create a pending intent
@@ -741,8 +747,6 @@ public class StreetHawkCoreService extends Service implements Thread.UncaughtExc
         flushCrashReportToServer(getCacheDir(getApplicationContext()));
         defaultUncaughtExceptionHandler.uncaughtException(thread, exception);
     }
-
-
 
 
 }

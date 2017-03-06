@@ -62,15 +62,15 @@ public class Util extends LoggingBase {
     public static final String SHGCMREGISTERED = "shgcmregistered";
 
     //Msg from core to be sent as json data in boradcast receiver
-    public static final String MSG_FROM_CORE            = "coremsg";
-    public static final String KEY_UPDATE_VERSION       = "versionupdate";
+    public static final String MSG_FROM_CORE = "coremsg";
+    public static final String KEY_UPDATE_VERSION = "versionupdate";
 
     //Platform types
     public static final int PLATFORM_ANDROID_NATIVE = 0;
-    public static final int PLATFORM_PHONEGAP       = 1;
-    public static final int PLATFORM_TITANIUM       = 2;
-    public static final int PLATFORM_XAMARIN        = 3;
-    public static final int PLATFORM_UNITY          = 4;
+    public static final int PLATFORM_PHONEGAP = 1;
+    public static final int PLATFORM_TITANIUM = 2;
+    public static final int PLATFORM_XAMARIN = 3;
+    public static final int PLATFORM_UNITY = 4;
 
 
     /**
@@ -87,11 +87,11 @@ public class Util extends LoggingBase {
 
 
     /*Shared preferences*/
-    public static final String SHSHARED_PREF_PERM       = "shstoreperm";      // stores data associated with install permanently
-    public static final String SHSHARED_PREF_FRNDLST    = "shstorefrndlist";  // Stores names of activity in an application
+    public static final String SHSHARED_PREF_PERM = "shstoreperm";      // stores data associated with install permanently
+    public static final String SHSHARED_PREF_FRNDLST = "shstorefrndlist";  // Stores names of activity in an application
 
     public static final String BROADCAST_SH_APP_STATUS_NOTIFICATION = "com.streethawk.intent.action.APP_STATUS_NOTIFICATION";
-    public static final String BROADCAST_MSG_FROM_CORE              = "com.streethawk.intent.action.MSG_FROM_CORE";
+    public static final String BROADCAST_MSG_FROM_CORE = "com.streethawk.intent.action.MSG_FROM_CORE";
 
     Util(Context context) {
         super(context);
@@ -133,26 +133,28 @@ public class Util extends LoggingBase {
 
     /**
      * Set true to see debug logs
+     *
      * @param context
      * @param flag
      */
-    public static void setSHDebugFlag(Context context , boolean flag){
-        String SH_DEBUG_FLAG        = "shdebugflag";
+    public static void setSHDebugFlag(Context context, boolean flag) {
+        String SH_DEBUG_FLAG = "shdebugflag";
         SharedPreferences prefs = context.getSharedPreferences(SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
         SharedPreferences.Editor e = prefs.edit();
-        e.putBoolean(SH_DEBUG_FLAG,flag);
+        e.putBoolean(SH_DEBUG_FLAG, flag);
         e.commit();
     }
 
     /**
      * Returns status of debug flags
+     *
      * @param context
      * @return
      */
-    public static boolean getSHDebugFlag(Context context){
-        String SH_DEBUG_FLAG        = "shdebugflag";
+    public static boolean getSHDebugFlag(Context context) {
+        String SH_DEBUG_FLAG = "shdebugflag";
         SharedPreferences prefs = context.getSharedPreferences(SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
-        return prefs.getBoolean(SH_DEBUG_FLAG,false);
+        return prefs.getBoolean(SH_DEBUG_FLAG, false);
     }
 
     /**
@@ -178,10 +180,11 @@ public class Util extends LoggingBase {
 
     /**
      * Returns url for fetching alert settings
+     *
      * @param context
      * @return
      */
-    public static URL getAlertSettingUrl(Context context){
+    public static URL getAlertSettingUrl(Context context) {
         try {
             return new URL(buildUri(context, ApiMethod.USER_ALERT_SETTINGS, null));
         } catch (MalformedURLException e) {
@@ -193,6 +196,7 @@ public class Util extends LoggingBase {
 
     /**
      * Returns URL for submitting feedback
+     *
      * @param context
      * @return
      */
@@ -207,10 +211,11 @@ public class Util extends LoggingBase {
 
     /**
      * Returns URL for submitting button pair for interactive push
+     *
      * @param context
      * @return
      */
-    public static URL getInteractivePushUrl(Context context){
+    public static URL getInteractivePushUrl(Context context) {
         try {
             return new URL(buildUri(context, ApiMethod.SUBMIT_INTERACTIVE_PUSH, null));
         } catch (MalformedURLException e) {
@@ -221,6 +226,7 @@ public class Util extends LoggingBase {
 
     /**
      * Returns url for fetching geofence tree
+     *
      * @param context
      * @return
      */
@@ -236,6 +242,7 @@ public class Util extends LoggingBase {
 
     /**
      * Returns url for fetching beacon list
+     *
      * @param context
      * @return
      */
@@ -251,11 +258,12 @@ public class Util extends LoggingBase {
 
     /**
      * Returns true is a given service is running
+     *
      * @param context
      * @param serviceClass
      * @return
      */
-    public static boolean isServiceRunning(Context context,Class<?> serviceClass) {
+    public static boolean isServiceRunning(Context context, Class<?> serviceClass) {
         ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
             if (serviceClass.getName().equals(service.service.getClassName())) {
@@ -268,10 +276,11 @@ public class Util extends LoggingBase {
 
     /**
      * Returns url for fetching feed data from streethawk server
+     *
      * @param context
      * @return
      */
-    public static URL getFeedUrl(Context context){
+    public static URL getFeedUrl(Context context) {
         try {
             return new URL(buildUri(context, ApiMethod.FETCH_FEED_ITEMS, null));
         } catch (MalformedURLException e) {
@@ -282,6 +291,7 @@ public class Util extends LoggingBase {
 
     /**
      * Returns url for submitting crash report to StreetHawk server
+     *
      * @param context
      * @return
      */
@@ -332,6 +342,7 @@ public class Util extends LoggingBase {
 
     /**
      * Returns distribution type
+     *
      * @return AAR for android archive and reference library for jar
      */
     public static final String getDistributionType() {
@@ -546,7 +557,7 @@ public class Util extends LoggingBase {
 
     public static String getAdvertisingIdentifier(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
-        return sharedPreferences.getString(SHADVERTISEMENTID,null);
+        return sharedPreferences.getString(SHADVERTISEMENTID, null);
     }
 
     /*
@@ -590,7 +601,7 @@ public class Util extends LoggingBase {
             return ((c2.getTimeZone().getRawOffset() / (1000 * 60)));
     }
 
-    public static void updateAccessData(Context context, String registrationId){
+    public static void updateAccessData(Context context, String registrationId) {
         Install.getInstance(context).updateInstall(ACCESS_DATA, registrationId, Install.INSTALL_CODE_PUSH_TOKEN);
     }
 

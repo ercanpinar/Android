@@ -19,7 +19,6 @@ package com.streethawk.library.core;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Point;
 import android.os.AsyncTask;
@@ -31,7 +30,6 @@ import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -51,7 +49,6 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -76,7 +73,6 @@ class Install extends LoggingBase {
 
         public String macaddress;
         public String ipaddress;
-
 
 
         public void fillFromJson(Context context, JSONObject item) throws JSONException {
@@ -534,35 +530,35 @@ class Install extends LoggingBase {
     }
 
     private void setHostFromRoute(String answer) {
-            try {
-                JSONObject object = new JSONObject(answer);
-                if (object.has(Util.APP_STATUS)) {
-                    if (object.get(Util.APP_STATUS) instanceof JSONObject) {
-                        JSONObject app_status = object.getJSONObject(Util.APP_STATUS);
-                        if (app_status.has(STREETHAWK) && !app_status.isNull(STREETHAWK)) {
-                            Object value_streethawk = app_status.get(STREETHAWK);
-                            if (value_streethawk instanceof Boolean) {
-                                setStreethawkState((Boolean) value_streethawk);
-                            }
+        try {
+            JSONObject object = new JSONObject(answer);
+            if (object.has(Util.APP_STATUS)) {
+                if (object.get(Util.APP_STATUS) instanceof JSONObject) {
+                    JSONObject app_status = object.getJSONObject(Util.APP_STATUS);
+                    if (app_status.has(STREETHAWK) && !app_status.isNull(STREETHAWK)) {
+                        Object value_streethawk = app_status.get(STREETHAWK);
+                        if (value_streethawk instanceof Boolean) {
+                            setStreethawkState((Boolean) value_streethawk);
                         }
-                        if (app_status.has(HOST) && !app_status.isNull(HOST)) {
-                            Object value_host = app_status.get(HOST);
-                            if (value_host instanceof String) {
-                                setHost((String) value_host);
-                            }
+                    }
+                    if (app_status.has(HOST) && !app_status.isNull(HOST)) {
+                        Object value_host = app_status.get(HOST);
+                        if (value_host instanceof String) {
+                            setHost((String) value_host);
                         }
-                        if (app_status.has(GROWTH_HOST) && !app_status.isNull(GROWTH_HOST)) {
-                            Object value_host = app_status.get(GROWTH_HOST);
-                            if (value_host instanceof String) {
-                                setGrowthHost((String) value_host);
-                            }
+                    }
+                    if (app_status.has(GROWTH_HOST) && !app_status.isNull(GROWTH_HOST)) {
+                        Object value_host = app_status.get(GROWTH_HOST);
+                        if (value_host instanceof String) {
+                            setGrowthHost((String) value_host);
                         }
                     }
                 }
-            } catch (JSONException e) {
-                e.printStackTrace();
             }
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
+    }
 
 
     public void registerInstall() {
@@ -608,7 +604,7 @@ class Install extends LoggingBase {
                     if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
                         //Log.e("Anurag","Answer for host "+answer);
                         setHostFromRoute(answer);
-                        if(Util.getStreethawkState(mContext))
+                        if (Util.getStreethawkState(mContext))
                             registerInstallToCorrectHost(app_key);
                     } else {
                         processErrorAckFromServer(answer);

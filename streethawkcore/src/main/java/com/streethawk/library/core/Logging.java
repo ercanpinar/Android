@@ -19,7 +19,6 @@ package com.streethawk.library.core;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -453,8 +452,8 @@ public class Logging extends LoggingBase implements Constants {
                 }
             }
         }
-        if(dictionary.toString().equals("{}")){
-            Log.e("Anurag","adding logid "+logid);
+        if (dictionary.toString().equals("{}")) {
+            Log.e("Anurag", "adding logid " + logid);
             return false;
         }
         String keyCount = Integer.toString(getKeyCnt());
@@ -750,12 +749,12 @@ public class Logging extends LoggingBase implements Constants {
                             }
                             writer.write(logs);
                             writer.flush();
-                            saveLogs("SEND_REQUEST",records);
+                            saveLogs("SEND_REQUEST", records);
                             writer.close();
                             os.close();
                             reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
                             String answer = reader.readLine();
-                            saveLogs("RESPONSE",answer);
+                            saveLogs("RESPONSE", answer);
                             if (Util.getSHDebugFlag(mContext)) {
                                 Log.d(Util.TAG, "Response " + answer);
                             }

@@ -2,6 +2,7 @@ package com.streethawk.library.core;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+
 public class WidgetDBHelper extends SHSqliteBase {
 
 

@@ -16,6 +16,7 @@
  */
 
 package com.streethawk.library.core;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -48,15 +49,15 @@ import javax.net.ssl.HttpsURLConnection;
 
 public class LoggingBase implements Constants {
     private Context mContext;
-    private final String SUBTAG         = "LoggingBase";
-    private final String PRIORITY       = "priority";
-    private final String RE_REGISTER    = "reregister";
-    protected final String STREETHAWK   = "streethawk";
-    protected final String GROWTH_HOST  =  "growth_host";
-    protected final String HOST         = "host";
-    private final String ACTIVITY_LIST  = "submit_views";
-    private final String DISABLE_LOGS   = "disable_logs";
-    private final String POINTZI_HOST   = "pointzi_host";
+    private final String SUBTAG = "LoggingBase";
+    private final String PRIORITY = "priority";
+    private final String RE_REGISTER = "reregister";
+    protected final String STREETHAWK = "streethawk";
+    protected final String GROWTH_HOST = "growth_host";
+    protected final String HOST = "host";
+    private final String ACTIVITY_LIST = "submit_views";
+    private final String DISABLE_LOGS = "disable_logs";
+    private final String POINTZI_HOST = "pointzi_host";
 
     protected LoggingBase(Context context) {
         this.mContext = context;
@@ -67,7 +68,7 @@ public class LoggingBase implements Constants {
 
     private static final String SCHEMA = "https://";
 
-    private  static final String PROD_DEFAULT_HOST_URL = SCHEMA+"api.streethawk.com";
+    private static final String PROD_DEFAULT_HOST_URL = SCHEMA + "api.streethawk.com";
     //private  static final String PROD_DEFAULT_HOST_URL = SCHEMA+"staging.streethawk.com";
     //private  static final String PROD_DEFAULT_HOST_URL = SCHEMA+"hawk.streethawk.com";
 
@@ -94,7 +95,7 @@ public class LoggingBase implements Constants {
         SharedPreferences sharedPreferences = context.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
         mHostUrl = sharedPreferences.getString(KEY_HOST, PROD_DEFAULT_HOST_URL);
         if (null == mHostUrl) {
-            mHostUrl =  PROD_DEFAULT_HOST_URL;
+            mHostUrl = PROD_DEFAULT_HOST_URL;
         }
         if (mHostUrl.isEmpty()) {
             mHostUrl = PROD_DEFAULT_HOST_URL;
@@ -126,7 +127,7 @@ public class LoggingBase implements Constants {
      * @param query   query parameters
      * @return
      */
-    protected  static String buildUri(Context context, ApiMethod method, Bundle query) {
+    protected static String buildUri(Context context, ApiMethod method, Bundle query) {
         Uri.Builder uriBuilder = getHostUri(context, method).buildUpon();
         switch (method) {
             case APP_GET_STATUS: {
@@ -236,6 +237,7 @@ public class LoggingBase implements Constants {
 
     /**
      * Set list of codes for priority log lines
+     *
      * @param array
      */
     private void setPriority(JSONArray array) {
@@ -250,6 +252,7 @@ public class LoggingBase implements Constants {
 
     /**
      * Set list of codes for disabled log line
+     *
      * @param array
      */
     private void setDisableLogs(JSONArray array) {
@@ -285,7 +288,7 @@ public class LoggingBase implements Constants {
             case CODE_INCREMENT_TAG:            // 8997
             case CODE_UPDATE_CUSTOM_TAG:        // 8999
             case CODE_DELETE_CUSTOM_TAG:        // 8998
-            //Added for tips and tours
+                //Added for tips and tours
             case CODE_FEED_RESULT:
             case CODE_FEED_ACK:
                 return true;
@@ -310,7 +313,7 @@ public class LoggingBase implements Constants {
                 JSONArray array = new JSONArray(priority);
                 for (int i = 0; i < array.length(); i++) {
                     try {
-                        if (code == (int)array.get(i)) {
+                        if (code == (int) array.get(i)) {
                             return true;
                         }
                     } catch (JSONException e) {
@@ -326,10 +329,11 @@ public class LoggingBase implements Constants {
 
     /**
      * Function checks logline code with list of disabled codes
+     *
      * @param code
      * @return
      */
-    protected boolean isDisabledCode(int code){
+    protected boolean isDisabledCode(int code) {
         SharedPreferences prefs = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
         String disabledLogs = prefs.getString(SHDISABLELOG, null);
         if (null == disabledLogs) {
@@ -339,7 +343,7 @@ public class LoggingBase implements Constants {
                 JSONArray array = new JSONArray(disabledLogs);
                 for (int i = 0; i < array.length(); i++) {
                     try {
-                        if (code ==(int) array.get(i)) {
+                        if (code == (int) array.get(i)) {
                             return true;  // disabled code return true˜
                         }
                     } catch (JSONException e) {
@@ -439,7 +443,7 @@ public class LoggingBase implements Constants {
         return className;
     }
 
-    protected void saveActivityNames(){
+    protected void saveActivityNames() {
         try {
             PackageInfo packageInfo = mContext.getPackageManager().getPackageInfo(mContext.getPackageName(), PackageManager.GET_ACTIVITIES);
             ActivityInfo[] activityInfo = packageInfo.activities;
@@ -455,7 +459,7 @@ public class LoggingBase implements Constants {
                         className = new StringBuilder(className).reverse().toString();
                     }
                     String friendlyName = getFriendlyNameFromclassName(mContext, className);
-                    e.putString(friendlyName,fullyQualifiedName);
+                    e.putString(friendlyName, fullyQualifiedName);
                 }
                 e.commit();
                 e = null;
@@ -480,14 +484,14 @@ public class LoggingBase implements Constants {
                     String installId = Util.getInstallId(context);
                     String app_key = Util.getAppKey(context);
                     //JSONArray list = new JSONArray();
-                    String list="[";
+                    String list = "[";
                     try {
                         PackageInfo packageInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), PackageManager.GET_ACTIVITIES);
                         ActivityInfo[] activityInfo = packageInfo.activities;
                         if (activityInfo != null) {
                             for (ActivityInfo activity : activityInfo) {
                                 String fullyQualifiedName = activity.name;
-                                if(fullyQualifiedName.contains("com.streethawk.library.")){
+                                if (fullyQualifiedName.contains("com.streethawk.library.")) {
                                     continue;
                                 }
                                 String className = new StringBuilder(fullyQualifiedName).reverse().toString();
@@ -498,24 +502,24 @@ public class LoggingBase implements Constants {
                                 }
                                 String friendlyName = getFriendlyNameFromclassName(context, className);
                                 //list.put(getFriendlyNameFromclassName(context, className));
-                                list+="\""+friendlyName+"\""+",";
+                                list += "\"" + friendlyName + "\"" + ",";
                             }
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                     int size = list.length();
-                    if(size>1) {
-                        list = list.substring(0,size-1);
+                    if (size > 1) {
+                        list = list.substring(0, size - 1);
                     }
-                    list+="]";
-                    if(list.equals("[]")) {
-                        Log.i(Util.TAG,SUBTAG+"Returning due to empty logs");
+                    list += "]";
+                    if (list.equals("[]")) {
+                        Log.i(Util.TAG, SUBTAG + "Returning due to empty logs");
                         return;
                     }
                     HashMap<String, String> logMap = new HashMap<String, String>();
                     logMap.put(INSTALL_ID, installId);
-                    logMap.put(NAMES,list);
+                    logMap.put(NAMES, list);
                     try {
                         URL url = new URL(buildUri(context, LoggingBase.ApiMethod.SEND_ACTIVITY_LIST, null));
                         HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
@@ -531,7 +535,7 @@ public class LoggingBase implements Constants {
                         BufferedWriter writer = new BufferedWriter(
                                 new OutputStreamWriter(os, "UTF-8"));
                         //String logs = Util.getPostDataString(logMap);
-                        String logs="";
+                        String logs = "";
                         boolean first = true;
                         for (Map.Entry<String, String> entry : logMap.entrySet()) {
                             StringBuilder result = new StringBuilder();
@@ -539,18 +543,18 @@ public class LoggingBase implements Constants {
                                 first = false;
                             else
                                 result.append("&");
-                            String key      = entry.getKey();
-                            String value    = entry.getValue();
-                            if(null!=key) {
+                            String key = entry.getKey();
+                            String value = entry.getValue();
+                            if (null != key) {
                                 result.append(URLEncoder.encode(entry.getKey(), "UTF-8"));
                                 result.append("=");
-                                if(null!=value) {
+                                if (null != value) {
                                     result.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
-                                }else{
+                                } else {
                                     result.append(URLEncoder.encode("", "UTF-8"));
                                 }
                             }
-                            logs+=result.toString();
+                            logs += result.toString();
                             result = null; //Force GC
                         }
                         writer.write(logs);
@@ -628,6 +632,7 @@ public class LoggingBase implements Constants {
 
     /**
      * Returns host url for streethawk state
+     *
      * @return
      */
     protected boolean getStreethawkState() {
@@ -637,9 +642,10 @@ public class LoggingBase implements Constants {
 
     /**
      * Sets host url for growth
+     *
      * @param value_host
      */
-    protected void setGrowthHost(String value_host){
+    protected void setGrowthHost(String value_host) {
         if (value_host == null)
             return;
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);

@@ -20,8 +20,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -95,7 +93,7 @@ public class StreethawkBroadcastReceiver extends BroadcastReceiver implements Co
             // send heartbeat every 6 hrs
             if (difference >= DURATION_SIX_HRS) {
                 Bundle extras = new Bundle();
-                extras.putInt(Util.CODE,CODE_HEARTBEAT);
+                extras.putInt(Util.CODE, CODE_HEARTBEAT);
                 extras.putString(Util.SHMESSAGE_ID, null);
                 Logging manager = Logging.getLoggingInstance(context);
                 manager.addLogsForSending(extras);

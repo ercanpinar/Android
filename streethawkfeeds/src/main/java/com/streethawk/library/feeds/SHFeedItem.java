@@ -43,26 +43,26 @@ import java.net.URL;
  * 3. App to call StreetHawk.INSTANCE.shGetFeedDataFromServer(context) for fetching feed data from server. This is the place where he can start displaying progress bar
  * 4. App to notify result with feedID
  */
-public class SHFeedItem implements Constants{
+public class SHFeedItem implements Constants {
     private static Context mContext;
 
 
-    protected static final String BROADCAST_NEW_FEED ="com.streethawk.intent.action.newfeed";
+    protected static final String BROADCAST_NEW_FEED = "com.streethawk.intent.action.newfeed";
     private static ISHFeedItemObserver mObserver = null;
     private static SHFeedItem mSHFeedItem;
 
 
-    public void registerFeedItemObserver(ISHFeedItemObserver observer){
+    public void registerFeedItemObserver(ISHFeedItemObserver observer) {
         mObserver = observer;
     }
 
     public static SHFeedItem getInstance(Context context) {
         mContext = context;
-        if(null==mSHFeedItem){
+        if (null == mSHFeedItem) {
             mSHFeedItem = new SHFeedItem();
         }
-        if(Util.getPlatformType()== PLATFORM_XAMARIN){
-            StreetHawk.INSTANCE.tagString("sh_module_feeds","true");
+        if (Util.getPlatformType() == PLATFORM_XAMARIN) {
+            StreetHawk.INSTANCE.tagString("sh_module_feeds", "true");
         }
         return mSHFeedItem;
     }
@@ -76,7 +76,7 @@ public class SHFeedItem implements Constants{
         try {
             JSONObject jsonObject = new JSONObject(answer);
             JSONArray value = jsonObject.getJSONArray(Util.JSON_VALUE);
-            if(null!=mObserver) {
+            if (null != mObserver) {
                 mObserver.shFeedReceived(value);
             }
             return true;
@@ -88,6 +88,7 @@ public class SHFeedItem implements Constants{
 
     /**
      * Send acknowledgement for the received feed item
+     *
      * @param feedId
      */
     public void sendFeedAck(int feedId) {
@@ -95,112 +96,109 @@ public class SHFeedItem implements Constants{
             Log.e(Util.TAG, "notifyFeedResult: context==null returning..");
         }
         Bundle params = new Bundle();
-        params.putInt(Util.CODE,CODE_FEED_ACK);
+        params.putInt(Util.CODE, CODE_FEED_ACK);
         params.putInt(SHFEEDID, feedId);
         Logging manager = Logging.getLoggingInstance(mContext);
         manager.addLogsForSending(params);
     }
 
     /**
-     *
      * Notify feed result for user action on feed item.
+     *
      * @param feedId Id of feed item associated with result
      * @param result 1 Accepted, 0 postponed, -1 decline
      */
     @Deprecated
     public void notifyFeedResult(int feedId, int result) {
-        if(1==result){
-            notifyFeedResult(feedId,"accepted",true,false);
+        if (1 == result) {
+            notifyFeedResult(feedId, "accepted", true, false);
             return;
         }
-        if(0==result){
-            notifyFeedResult(feedId,"postponed",false,false);
+        if (0 == result) {
+            notifyFeedResult(feedId, "postponed", false, false);
             return;
         }
-        if(-1==result){
-            notifyFeedResult(feedId,"rejected",true,false);
+        if (-1 == result) {
+            notifyFeedResult(feedId, "rejected", true, false);
             return;
         }
     }
 
     /**
-     *
      * @param feedId Id of the feed item associated with the result
      * @param result Feed result in String
      */
-    private void notifyFeedResult_Old(int feedId,String result){
+    private void notifyFeedResult_Old(int feedId, String result) {
         if (null == mContext) {
             Log.e(Util.TAG, "notifyFeedResult: context==null returning..");
         }
         Bundle params = new Bundle();
-        params.putInt(Util.CODE,CODE_FEED_RESULT);
+        params.putInt(Util.CODE, CODE_FEED_RESULT);
         params.putInt(SHFEEDID, feedId);
 
-        if(result.equals("accepted")){
-            params.putInt(STATUS,1);
+        if (result.equals("accepted")) {
+            params.putInt(STATUS, 1);
         }
-        if(result.equals("postponed")){
-            params.putInt(STATUS,0);
+        if (result.equals("postponed")) {
+            params.putInt(STATUS, 0);
         }
-        if(result.equals("rejected")){
-            params.putInt(STATUS,1);
+        if (result.equals("rejected")) {
+            params.putInt(STATUS, 1);
         }
         Logging manager = Logging.getLoggingInstance(mContext);
         manager.addLogsForSending(params);
     }
 
     /**
-     *
-     * @param feedId Id of the feed item associated with the result
-     * @param result Feed result in String
+     * @param feedId     Id of the feed item associated with the result
+     * @param result     Feed result in String
      * @param feedDelete set to true if feed items should be deleted from server for the given install
      */
-    public void notifyFeedResult(int feedId,String result,boolean feedDelete,boolean completed){
+    public void notifyFeedResult(int feedId, String result, boolean feedDelete, boolean completed) {
         if (null == mContext) {
             Log.e(Util.TAG, "notifyFeedResult: context==null returning..");
         }
         Bundle params = new Bundle();
-        params.putInt(Util.CODE,CODE_FEED_RESULT);
+        params.putInt(Util.CODE, CODE_FEED_RESULT);
         params.putInt(SHFEEDID, feedId);
-        JSONObject status  =  new JSONObject();
+        JSONObject status = new JSONObject();
         try {
-            status.put(RESULT_RESULT,result);
-            status.put(RESULT_FEED_DELETE,feedDelete);
-            status.put(RESULT_FEED_COMPLETED,completed);
+            status.put(RESULT_RESULT, result);
+            status.put(RESULT_FEED_DELETE, feedDelete);
+            status.put(RESULT_FEED_COMPLETED, completed);
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        params.putString(STATUS,status.toString());
+        params.putString(STATUS, status.toString());
         Logging manager = Logging.getLoggingInstance(mContext);
         manager.addLogsForSending(params);
     }
 
 
     /**
-     *
-     * @param feedId  Identifier for the feeditem
-     * @param step_id Step identifier
-     * @param result  accepted|rejected|postponed
+     * @param feedId     Identifier for the feeditem
+     * @param step_id    Step identifier
+     * @param result     accepted|rejected|postponed
      * @param feedDelete true is feed items needs to be deleted on server
      * @param completed  true if
      */
-    public void notifyFeedResult(int feedId,String step_id,String result,boolean feedDelete,boolean completed){
+    public void notifyFeedResult(int feedId, String step_id, String result, boolean feedDelete, boolean completed) {
         if (null == mContext) {
             Log.e(Util.TAG, "notifyFeedResult: context==null returning..");
         }
         Bundle params = new Bundle();
-        params.putInt(Util.CODE,CODE_FEED_RESULT);
+        params.putInt(Util.CODE, CODE_FEED_RESULT);
         params.putInt(SHFEEDID, feedId);
-        JSONObject status  =  new JSONObject();
+        JSONObject status = new JSONObject();
         try {
-            status.put(RESULT_ID,step_id);
-            status.put(RESULT_RESULT,result);
-            status.put(RESULT_FEED_DELETE,feedDelete);
-            status.put(RESULT_FEED_COMPLETED,completed);
+            status.put(RESULT_ID, step_id);
+            status.put(RESULT_RESULT, result);
+            status.put(RESULT_FEED_DELETE, feedDelete);
+            status.put(RESULT_FEED_COMPLETED, completed);
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        params.putString(STATUS,status.toString());
+        params.putString(STATUS, status.toString());
         Logging manager = Logging.getLoggingInstance(mContext);
         manager.addLogsForSending(params);
     }
@@ -208,7 +206,7 @@ public class SHFeedItem implements Constants{
     //TODO: change this to return feed from locally stored String
     //May be later
 
-    public void readFeedData(final int offset){
+    public void readFeedData(final int offset) {
         if (null == mContext)
             return;
         final String INSTALL_ID = "installid";
@@ -221,9 +219,9 @@ public class SHFeedItem implements Constants{
                 try {
                     URL baseurl = Util.getFeedUrl(mContext);
                     String urlParams = baseurl.toString();
-                    urlParams+="?"+INSTALL_ID+EQUALS+Util.getInstallId(mContext)+AND+
-                                   APP_KEY+EQUALS+Util.getAppKey(mContext)+AND+
-                                    OFFSET+EQUALS+offset;
+                    urlParams += "?" + INSTALL_ID + EQUALS + Util.getInstallId(mContext) + AND +
+                            APP_KEY + EQUALS + Util.getAppKey(mContext) + AND +
+                            OFFSET + EQUALS + offset;
                     URL url = null;
 
                     try {
@@ -237,11 +235,11 @@ public class SHFeedItem implements Constants{
                             new InputStreamReader(connection.getInputStream()));
                     String answer = input.readLine();
                     if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                        Log.i("StreetHawk","Received feed data from server");
+                        Log.i("StreetHawk", "Received feed data from server");
                         NotifyFeedItemToApplication(answer);
                     }
                     input.close();
-                }catch (IOException e) {
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
             }

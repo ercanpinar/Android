@@ -29,15 +29,15 @@ public interface ISHFeedItemObserver {
     public static final String NEWS_MESSAGE = "message";
 
     /*TYPE_OFFER*/
-    public static final String TYPE_OFFER           = "offer";
-    public static final String OFFER_TITLE          = "title";
-    public static final String OFFER_DESCRIPTION    = "description";
-    public static final String OFFER_DISCOUNT       = "discount";
-    public static final String OFFER_IMAGE_URL      = "image_url";
+    public static final String TYPE_OFFER = "offer";
+    public static final String OFFER_TITLE = "title";
+    public static final String OFFER_DESCRIPTION = "description";
+    public static final String OFFER_DISCOUNT = "discount";
+    public static final String OFFER_IMAGE_URL = "image_url";
 
 
     /*TYPE_CUSTOM*/
-    public static final String TYPE_CUSTOM           = "custom";
+    public static final String TYPE_CUSTOM = "custom";
 
 
     public final int RESULT_ACCEPTED = 1;

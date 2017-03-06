@@ -44,7 +44,8 @@ class IncreaseClicks {
     private Context mContext;
     private final String SUBTAG = "IncreaseClicks";
     private final String INCREASE_CLICKS = "https://pointzi.streethawk.com/increase_clicks/";
-    public IncreaseClicks(Context context){
+
+    public IncreaseClicks(Context context) {
         this.mContext = context;
     }
 
@@ -60,7 +61,7 @@ class IncreaseClicks {
         if (null == mContext)
             return false;
         if (!Util.isNetworkConnected(mContext)) {
-            Log.w(Util.TAG,SUBTAG+ "Device is not connected to network");
+            Log.w(Util.TAG, SUBTAG + "Device is not connected to network");
             return false;
         }
         String installId = Util.getInstallId(mContext);
@@ -95,13 +96,13 @@ class IncreaseClicks {
             connection.setRequestProperty("X-Installid", installId);
             connection.setRequestProperty("X-App-Key", app_key);
             String libVersion = Util.getLibraryVersion();
-            connection.setRequestProperty("X-Version",libVersion);
+            connection.setRequestProperty("X-Version", libVersion);
             connection.setRequestProperty("User-Agent", app_key + "(" + libVersion + ")");
             OutputStream os = connection.getOutputStream();
             BufferedWriter writer = new BufferedWriter(
                     new OutputStreamWriter(os, "UTF-8"));
             //String logs = Util.getPostDataString(logMap);
-            String logs="";
+            String logs = "";
             boolean first = true;
             for (Map.Entry<String, String> entry : logMap.entrySet()) {
                 StringBuilder result = new StringBuilder();
@@ -109,18 +110,18 @@ class IncreaseClicks {
                     first = false;
                 else
                     result.append("&");
-                String key      = entry.getKey();
-                String value    = entry.getValue();
-                if(null!=key) {
+                String key = entry.getKey();
+                String value = entry.getValue();
+                if (null != key) {
                     result.append(URLEncoder.encode(entry.getKey(), "UTF-8"));
                     result.append("=");
-                    if(null!=value) {
+                    if (null != value) {
                         result.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
-                    }else{
+                    } else {
                         result.append(URLEncoder.encode("", "UTF-8"));
                     }
                 }
-                logs+=result.toString();
+                logs += result.toString();
                 result = null; //Force GC
             }
             writer.write(logs);
@@ -130,9 +131,9 @@ class IncreaseClicks {
             reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             String answer = reader.readLine();
             if (connection.getResponseCode() == HttpURLConnection.HTTP_OK)
-                Log.i(Util.TAG, "increaseClicks response" + connection.getResponseCode() + " "+answer);
+                Log.i(Util.TAG, "increaseClicks response" + connection.getResponseCode() + " " + answer);
             connection.disconnect();
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return false;
         }

@@ -36,11 +36,10 @@ public class Growth {
 
     //Platform types
     int PLATFORM_ANDROID_NATIVE = 0;
-    int PLATFORM_PHONEGAP       = 1;
-    int PLATFORM_TITANIUM       = 2;
+    int PLATFORM_PHONEGAP = 1;
+    int PLATFORM_TITANIUM = 2;
     static int PLATFORM_XAMARIN = 3;
-    int PLATFORM_UNITY          = 4;
-
+    int PLATFORM_UNITY = 4;
 
 
     private Growth() {
@@ -58,8 +57,8 @@ public class Growth {
         if (null == mGrowth)
             mGrowth = new Growth();
 
-        if(Util.getPlatformType()== PLATFORM_XAMARIN){
-            StreetHawk.INSTANCE.tagString("sh_module_growth","true");
+        if (Util.getPlatformType() == PLATFORM_XAMARIN) {
+            StreetHawk.INSTANCE.tagString("sh_module_growth", "true");
         }
 
         return mGrowth;
@@ -69,6 +68,7 @@ public class Growth {
 
     /**
      * For StreetHawk SDK use by core module set Activity Lifecycle Callbacks.
+     *
      * @param application
      */
     @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
@@ -80,17 +80,17 @@ public class Growth {
 
     /**
      * Register IGrowthObserver
+     *
      * @param observer
      */
-    public void registerIGrowth(IGrowth observer){
-        if(null!=observer){
-            Register register =  new Register();
+    public void registerIGrowth(IGrowth observer) {
+        if (null != observer) {
+            Register register = new Register();
             register.registerIGrowthObserver(observer);
-        }else{
-            Log.e(Util.TAG,"observer is null in registerIGrowth returning...");
+        } else {
+            Log.e(Util.TAG, "observer is null in registerIGrowth returning...");
         }
     }
-
 
 
     /**
@@ -179,10 +179,10 @@ public class Growth {
             @Override
             public void run() {
                 Share share = new Share(mActivity);
-                if(null==IGrowth) {
-                    share.displaySourceChooser(IDTmp, schemeTmp, DLUrlTmp,utm_mediumTmp,
+                if (null == IGrowth) {
+                    share.displaySourceChooser(IDTmp, schemeTmp, DLUrlTmp, utm_mediumTmp,
                             utm_termTmp, campaign_contentTmp, default_urlTmp);
-                }else{
+                } else {
                     share.originateShare(IDTmp, schemeTmp, DLUrlTmp, utm_sourceTmp, utm_mediumTmp,
                             utm_termTmp, campaign_contentTmp, default_urlTmp, IGrowth);
                 }

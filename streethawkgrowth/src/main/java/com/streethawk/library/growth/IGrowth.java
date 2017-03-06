@@ -19,21 +19,24 @@ package com.streethawk.library.growth;
 
 import org.json.JSONObject;
 
-public interface IGrowth{
+public interface IGrowth {
     /**
      * Returns shareUrl for user to share with friends
+     *
      * @param shareUrl
      */
     public void onReceiveShareUrl(final String shareUrl);
 
     /**
      * returns error response
+     *
      * @param errorResponse
      */
     public void onReceiveErrorForShareUrl(final JSONObject errorResponse);
 
     /**
-     *Function returns deeplink url to be launched on successful match
+     * Function returns deeplink url to be launched on successful match
+     *
      * @param deeplinkUrl
      */
     public void onReceiveDeepLinkUrl(final String deeplinkUrl);

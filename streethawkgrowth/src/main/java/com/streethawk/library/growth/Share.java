@@ -77,7 +77,6 @@ class Share {
     private final String ID = "utm_campaign";
 
 
-
     //private final String SHARE = "https://growth-staging.streethawk.com/originate_viral_share/";
 
     // private static Dialog pickerDialog = null;                          //TODO: Material design for picker dialog
@@ -85,16 +84,17 @@ class Share {
     private Activity mActivity;
 
 
-    private String KEY_GROWTH_HOST      = "shKeyHostGrowth";
+    private String KEY_GROWTH_HOST = "shKeyHostGrowth";
     private final String FALLBACK = "https://growth.streethawk.com";
     private final String ORIGINATE_VIRAL_SHARE = "originate_viral_share/";
-    private String getGrowhtHost(){
+
+    private String getGrowhtHost() {
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
         String url = sharedPreferences.getString(KEY_GROWTH_HOST, null);
-        if(null==url){
-            url  = FALLBACK+"/"+ORIGINATE_VIRAL_SHARE;
+        if (null == url) {
+            url = FALLBACK + "/" + ORIGINATE_VIRAL_SHARE;
         }
-        return url+"/"+ORIGINATE_VIRAL_SHARE;
+        return url + "/" + ORIGINATE_VIRAL_SHARE;
 
     }
 
@@ -234,30 +234,31 @@ class Share {
     } //End of PickerView class
 
 
-    class CustomDialog{
+    class CustomDialog {
         private Dialog mDialog;
         private View mDialogView;
         private Activity mActivity;
         private Context mContext;
 
-        public CustomDialog(Activity activity){
+        public CustomDialog(Activity activity) {
             mActivity = activity;
             mContext = activity.getApplicationContext();
 
         }
-        public void setView(View view){
+
+        public void setView(View view) {
             Rect outRect = new Rect();
             mActivity.getWindow().getDecorView().getWindowVisibleDisplayFrame(outRect);
-            int height = (outRect.height())/2;
+            int height = (outRect.height()) / 2;
             LinearLayout baseLayout = new LinearLayout(mContext);
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,height);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height);
             baseLayout.setLayoutParams(params);
             baseLayout.addView(view);
             mDialogView = baseLayout;
         }
 
 
-        public void build(){
+        public void build() {
             mDialog = new Dialog(mActivity);
             String title = "Share using..";
             int id = mContext.getResources().getIdentifier("SHARE_PICKER_TITLE", "string", mContext.getPackageName());
@@ -273,8 +274,8 @@ class Share {
             mDialogView.startAnimation(animation);
         }
 
-        public void show(){
-            if(null!=mDialog){
+        public void show() {
+            if (null != mDialog) {
                 mActivity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -285,8 +286,8 @@ class Share {
             }
         }
 
-        public void dismiss(){
-            if(null!=mDialog)
+        public void dismiss() {
+            if (null != mDialog)
                 mDialog.dismiss();
         }
 

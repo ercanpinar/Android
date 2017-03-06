@@ -45,7 +45,7 @@ import java.util.Observable;
 
 import javax.net.ssl.HttpsURLConnection;
 
-public class Register extends BroadcastReceiver{
+public class Register extends BroadcastReceiver {
 
     private Context mContext;
     private String REFERRER = "referrer";
@@ -66,16 +66,17 @@ public class Register extends BroadcastReceiver{
 
     private static IGrowth mGrowthObserver = null;
 
-    private String KEY_GROWTH_HOST      = "shKeyHostGrowth";
+    private String KEY_GROWTH_HOST = "shKeyHostGrowth";
     private final String FALLBACK = "growth.streethawk.com";
-    private String getGrowhtHost(){
+
+    private String getGrowhtHost() {
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
         String url = sharedPreferences.getString(KEY_GROWTH_HOST, null);
-        if(null==url){
-            url  = FALLBACK;
+        if (null == url) {
+            url = FALLBACK;
         }
         int index = url.indexOf("https://");
-        if(index>=0) {
+        if (index >= 0) {
             url = url.substring(index);
         }
         return url;
@@ -91,21 +92,24 @@ public class Register extends BroadcastReceiver{
         return url;
     }
 
-    public Register(){}
+    public Register() {
+    }
 
     /**
      * Register IGrowthObserver
+     *
      * @param observer
      */
-    public void registerIGrowthObserver(IGrowth observer){
+    public void registerIGrowthObserver(IGrowth observer) {
         mGrowthObserver = observer;
     }
 
     /**
      * Constructor
+     *
      * @param context
      */
-    public Register(Context context){
+    public Register(Context context) {
         this.mContext = context;
     }
 
@@ -116,13 +120,13 @@ public class Register extends BroadcastReceiver{
         if (null == mContext)
             return;
         if (!Util.isNetworkConnected(mContext)) {
-            Log.w(Util.TAG,SUBTAG+ "Device is not connected to network");
+            Log.w(Util.TAG, SUBTAG + "Device is not connected to network");
             return;
         }
         final String app_key = Util.getAppKey(mContext);
         final String installId = Util.getInstallId(mContext);
         if (null == installId) {
-            Log.w(Util.TAG,SUBTAG+ "App is not registered with StreetHawk server");
+            Log.w(Util.TAG, SUBTAG + "App is not registered with StreetHawk server");
             return;
         }
         int mWidth = 0;
@@ -158,21 +162,21 @@ public class Register extends BroadcastReceiver{
             TelephonyManager telephonyManager = (TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE);
             imei = telephonyManager.getDeviceId();
         } catch (SecurityException exception) {
-            Log.w(Util.TAG,SUBTAG+ "Add  android.permission.READ_PHONE_STATE in AndroidManifest.xml");
-            imei= Util.getAdvertisingIdentifier(mContext);
+            Log.w(Util.TAG, SUBTAG + "Add  android.permission.READ_PHONE_STATE in AndroidManifest.xml");
+            imei = Util.getAdvertisingIdentifier(mContext);
         }
-        if(null==imei){
-            imei=""; // imei is empty String
+        if (null == imei) {
+            imei = ""; // imei is empty String
         }
         String share_guid_url = getReferrer();
         BufferedReader reader = null;
         try {
             if (null == app_key) {
-                Log.e(Util.TAG,SUBTAG+ "Appkey is not defined.. returning");
+                Log.e(Util.TAG, SUBTAG + "Appkey is not defined.. returning");
                 return;
             }
             if (null == installId) {
-                Log.w(Util.TAG,SUBTAG+ "App is not registered with StreetHawk server");
+                Log.w(Util.TAG, SUBTAG + "App is not registered with StreetHawk server");
                 return;
             }
             String deviceName = Build.MANUFACTURER + " " + Build.MODEL;
@@ -183,7 +187,7 @@ public class Register extends BroadcastReceiver{
                     .scheme("https")
                     .authority(getGrowhtHost())
                     .path("i/")
-                    .appendQueryParameter(APP_KEY,app_key)
+                    .appendQueryParameter(APP_KEY, app_key)
                     .appendQueryParameter(DEVICE_UNIQUE, imei)
                     .appendQueryParameter(INSTALL_ID, Util.getInstallId(mContext))
                     .appendQueryParameter(OS, "Android")
@@ -203,7 +207,7 @@ public class Register extends BroadcastReceiver{
             connection.setInstanceFollowRedirects(true);
             reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             String answer = reader.readLine();
-            if (connection.getResponseCode() == HttpURLConnection.HTTP_OK){
+            if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
                 mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE).
                         edit().putBoolean(REGISTERED, true).commit();
                 try {
@@ -220,7 +224,7 @@ public class Register extends BroadcastReceiver{
                             }
                         }
                         if (null != Url) {
-                            if(null!=mGrowthObserver){
+                            if (null != mGrowthObserver) {
                                 mGrowthObserver.onReceiveDeepLinkUrl(Url);
                             }
                             Intent deepLinkIntent = new Intent();
@@ -233,7 +237,7 @@ public class Register extends BroadcastReceiver{
                 } catch (JSONException e) {
                     try {
                         JSONObject object = new JSONObject(answer);
-                        Log.e(Util.TAG,SUBTAG+object.getString("message"));
+                        Log.e(Util.TAG, SUBTAG + object.getString("message"));
                     } catch (JSONException e1) {
                         e1.printStackTrace();
                     }
@@ -242,10 +246,10 @@ public class Register extends BroadcastReceiver{
                     return;
                 }
             } else {
-                Log.e(Util.TAG,SUBTAG+"Growth register install Response" + connection.getResponseCode());
+                Log.e(Util.TAG, SUBTAG + "Growth register install Response" + connection.getResponseCode());
                 String line;
-                while((line=reader.readLine())!=null){
-                    Log.e(Util.TAG,SUBTAG+" "+line);
+                while ((line = reader.readLine()) != null) {
+                    Log.e(Util.TAG, SUBTAG + " " + line);
                 }
                 mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE).
                         edit().putBoolean(REGISTERED, false).commit();
@@ -266,6 +270,7 @@ public class Register extends BroadcastReceiver{
             return true;
         }
     }
+
     private static final ObservableChanged _observable = new ObservableChanged();
 
 

@@ -26,16 +26,19 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.streethawk.library.core.Util;
+
 @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 class GrowthActivityLifecycleCallback implements Application.ActivityLifecycleCallbacks {
     private String REGISTERED = "flaggrowthregister";
     private static GrowthActivityLifecycleCallback instance = null;
+
     public static GrowthActivityLifecycleCallback getInstance() {
         if (null == instance) {
             instance = new GrowthActivityLifecycleCallback();
         }
         return instance;
     }
+
     @Override
     public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
 
@@ -48,7 +51,7 @@ class GrowthActivityLifecycleCallback implements Application.ActivityLifecycleCa
 
     @Override
     public void onActivityResumed(Activity activity) {
-        if(null==activity)
+        if (null == activity)
             return;
 
         Growth.getInstance(activity);
@@ -66,7 +69,7 @@ class GrowthActivityLifecycleCallback implements Application.ActivityLifecycleCa
                 }
             }
         }).start();
-        if(null!=intent) {
+        if (null != intent) {
             String scheme = intent.getScheme();
             String deeplink_uri = intent.getDataString();
             String share_guidTmp = null;
@@ -105,7 +108,7 @@ class GrowthActivityLifecycleCallback implements Application.ActivityLifecycleCa
                 }).start();
 
             } else {
-                Log.i(Util.TAG,"App not launched using a deeplink URI");
+                Log.i(Util.TAG, "App not launched using a deeplink URI");
             }
         }
     }

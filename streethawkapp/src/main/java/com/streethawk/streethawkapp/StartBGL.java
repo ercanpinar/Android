@@ -34,15 +34,15 @@ public class StartBGL extends AppCompatActivity implements Constants {
             switch (activity) {
                 case ACTiVITY_BEACON:
                     toolbar.setTitle("Beacon");
-                    showBtnText(BEACON,getFlagStatus(STATUS_BEACON));
+                    showBtnText(BEACON, getFlagStatus(STATUS_BEACON));
                     break;
                 case ACTiVITY_LOCATION:
                     toolbar.setTitle("Location");
-                    showBtnText(LOCATION,getFlagStatus(STATUS_LOCATION));
+                    showBtnText(LOCATION, getFlagStatus(STATUS_LOCATION));
                     break;
                 case ACTiVITY_GEOFENCE:
                     toolbar.setTitle("Geofence");
-                    showBtnText(GEOFENCE,getFlagStatus(STATUS_GEOFENCE));
+                    showBtnText(GEOFENCE, getFlagStatus(STATUS_GEOFENCE));
                     break;
                 default:
                     break;
@@ -61,57 +61,57 @@ public class StartBGL extends AppCompatActivity implements Constants {
     }
 
 
-    private void showBtnText(String activity,boolean flag){
-        if(flag)
-            mBtn.setText(STOP+activity);
+    private void showBtnText(String activity, boolean flag) {
+        if (flag)
+            mBtn.setText(STOP + activity);
         else
-            mBtn.setText(START+activity);
+            mBtn.setText(START + activity);
     }
 
-    public void toggleStatus(View v){
-        boolean flag=false;
+    public void toggleStatus(View v) {
+        boolean flag = false;
         switch (mActivityName) {
             case ACTiVITY_BEACON:
                 flag = getFlagStatus(STATUS_BEACON);
-                if(flag){
+                if (flag) {
                     Beacons.getInstance(getApplicationContext()).stopBeaconMonitoring();
-                    mBtn.setText(STOP+ACTiVITY_BEACON);
-                    setFlagStatus(STATUS_BEACON,false);
-                    showBtnText(ACTiVITY_BEACON,false);
-                }else{
+                    mBtn.setText(STOP + ACTiVITY_BEACON);
+                    setFlagStatus(STATUS_BEACON, false);
+                    showBtnText(ACTiVITY_BEACON, false);
+                } else {
                     Beacons.getInstance(getApplicationContext()).startBeaconMonitoring();
-                    mBtn.setText(START+ACTiVITY_BEACON);
-                    setFlagStatus(STATUS_BEACON,true);
-                    showBtnText(ACTiVITY_BEACON,true);
+                    mBtn.setText(START + ACTiVITY_BEACON);
+                    setFlagStatus(STATUS_BEACON, true);
+                    showBtnText(ACTiVITY_BEACON, true);
                 }
                 break;
             case ACTiVITY_LOCATION:
                 flag = getFlagStatus(STATUS_LOCATION);
-                if(flag){
+                if (flag) {
                     SHLocation.getInstance(getApplicationContext()).stopLocationReporting();
-                    mBtn.setText(STOP+ACTiVITY_LOCATION);
-                    setFlagStatus(STATUS_LOCATION,false);
-                    showBtnText(ACTiVITY_LOCATION,false);
-                }else{
+                    mBtn.setText(STOP + ACTiVITY_LOCATION);
+                    setFlagStatus(STATUS_LOCATION, false);
+                    showBtnText(ACTiVITY_LOCATION, false);
+                } else {
                     SHLocation.getInstance(getApplicationContext()).startLocationWithPermissionDialog();
-                    mBtn.setText(START+ACTiVITY_LOCATION);
-                    setFlagStatus(STATUS_LOCATION,true);
-                    showBtnText(ACTiVITY_LOCATION,true);
+                    mBtn.setText(START + ACTiVITY_LOCATION);
+                    setFlagStatus(STATUS_LOCATION, true);
+                    showBtnText(ACTiVITY_LOCATION, true);
                 }
                 break;
             case ACTiVITY_GEOFENCE:
                 flag = getFlagStatus(STATUS_GEOFENCE);
-                if(flag){
+                if (flag) {
                     SHGeofence.getInstance(getApplicationContext()).stopMonitoring();
-                    mBtn.setText(STOP+ACTiVITY_GEOFENCE);
-                    setFlagStatus(STATUS_GEOFENCE,false);
-                    showBtnText(ACTiVITY_GEOFENCE,false);
-                }else{
-                    Log.e("Anurag","Start geofence with permission dialog");
+                    mBtn.setText(STOP + ACTiVITY_GEOFENCE);
+                    setFlagStatus(STATUS_GEOFENCE, false);
+                    showBtnText(ACTiVITY_GEOFENCE, false);
+                } else {
+                    Log.e("Anurag", "Start geofence with permission dialog");
                     SHGeofence.getInstance(getApplicationContext()).startGeofenceWithPermissionDialog();
-                    mBtn.setText(START+ACTiVITY_GEOFENCE);
-                    setFlagStatus(STATUS_GEOFENCE,true);
-                    showBtnText(ACTiVITY_GEOFENCE,true);
+                    mBtn.setText(START + ACTiVITY_GEOFENCE);
+                    setFlagStatus(STATUS_GEOFENCE, true);
+                    showBtnText(ACTiVITY_GEOFENCE, true);
                 }
                 break;
             default:

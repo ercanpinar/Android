@@ -1,19 +1,11 @@
 package com.streethawk.streethawkapp;
 
 import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 public class Pointzi extends AppCompatActivity {
 
@@ -56,7 +48,7 @@ public class Pointzi extends AppCompatActivity {
         fab.setOnClickListener(add());
     }
 
-    private View.OnClickListener add(){
+    private View.OnClickListener add() {
         return new View.OnClickListener() {
             @Override
             public void onClick(View view) {

@@ -1,33 +1,16 @@
 package com.streethawk.streethawkapp;
 
-import android.app.Activity;
-import android.app.ActivityManager;
-import android.app.Application;
 import android.app.Service;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.PixelFormat;
-import android.os.AsyncTask;
 import android.os.IBinder;
-import android.util.Log;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.webkit.WebView;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
-
-import com.streethawk.library.core.StreetHawk;
-
-import java.util.List;
-
-import static com.streethawk.streethawkapp.R.mipmap.ic_launcher;
 
 public class SHFabService extends Service {
 
@@ -44,7 +27,7 @@ public class SHFabService extends Service {
     public void onCreate() {
         super.onCreate();
 
-        windowManager = (WindowManager)getSystemService(WINDOW_SERVICE);
+        windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
         Bitmap icon = BitmapFactory.decodeResource(getApplicationContext().getResources(),
                 R.mipmap.ic_launcher);
         feedNotify = new ImageView(this);
@@ -64,7 +47,8 @@ public class SHFabService extends Service {
             private float initialTouchX;
             private float initialTouchY;
 
-            @Override public boolean onTouch(View v, MotionEvent event) {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                         initialX = params.x;
@@ -86,6 +70,7 @@ public class SHFabService extends Service {
 
         windowManager.addView(feedNotify, params);
     }
+
     @Override
     public void onDestroy() {
         super.onDestroy();

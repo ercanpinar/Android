@@ -5,8 +5,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
-import org.json.JSONObject;
-
 /**
  * Created by anuragkondeya on 31/07/2016.
  */
@@ -25,7 +23,7 @@ public class FeedItem implements Parcelable {
     private String mExpires;
     private String mModified;
     private String Activates;
-    private int    mCode;
+    private int mCode;
     private String App;
     private String FeedId;
 
@@ -38,7 +36,9 @@ public class FeedItem implements Parcelable {
     private Bitmap mImageId;
 
 
-    public FeedItem() {}
+    public FeedItem() {
+    }
+
     public void setImageId(Bitmap id) {
         mImageId = id;
     }
@@ -71,7 +71,7 @@ public class FeedItem implements Parcelable {
         FeedId = id;
     }
 
-    public void setRawJSON(String json){
+    public void setRawJSON(String json) {
         mRawJSON = json;
     }
 
@@ -224,16 +224,15 @@ public class FeedItem implements Parcelable {
     }
 
 
-
     public String getObjectDetails() {
         String NEWLINE = "\n";
-        
+
         return "Feed ID" + FeedId + NEWLINE
                 + "Title " + mFeedTitle + NEWLINE
                 + "Message " + mFeedMessage + NEWLINE
                 + "URL " + mURL + NEWLINE
                 + "Img " + mImage + NEWLINE
-                + "Video " + mVideo+NEWLINE+NEWLINE
+                + "Video " + mVideo + NEWLINE + NEWLINE
                 + "JSON" + mRawJSON;
 
 
@@ -266,7 +265,7 @@ public class FeedItem implements Parcelable {
         Badge = in.readString();
         Category = in.readString();
         Length = in.readInt();
-       // mImageId = (Bitmap) in.readValue(Bitmap.class.getClassLoader());
+        // mImageId = (Bitmap) in.readValue(Bitmap.class.getClassLoader());
     }
 
     @Override

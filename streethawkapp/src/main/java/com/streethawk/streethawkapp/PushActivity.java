@@ -69,33 +69,29 @@ public class PushActivity extends AppCompatActivity implements Constants {
     private final int ACTION_CUSTOM_JSON = ACTION_INTERACTIVE_PUSH + 1;
 
 
+    private final String DEFAULT_TITLE = "Test from AutoFill ";
+    private final String DEFAULT_MESSAGE = "Message: date time now is " + StreetHawk.getCurrentFormattedDateTime();
 
+    private final String DEFAULT_TITLE_BT = "Enable Bluetooth for beacons";
+    private final String DEFAULT_MESSAGE_BT = " " + StreetHawk.getCurrentFormattedDateTime();
 
+    private final String DEFAULT_TITLE_LOC = "Enable Locations ";
+    private final String DEFAULT_MESSAGE_LOC = " " + StreetHawk.getCurrentFormattedDateTime();
 
-    private final String DEFAULT_TITLE      = "Test from AutoFill ";
-    private final String DEFAULT_MESSAGE    = "Message: date time now is "+StreetHawk.getCurrentFormattedDateTime();
-
-    private final String DEFAULT_TITLE_BT      = "Enable Bluetooth for beacons";
-    private final String DEFAULT_MESSAGE_BT    = " "+StreetHawk.getCurrentFormattedDateTime();
-
-    private final String DEFAULT_TITLE_LOC      = "Enable Locations ";
-    private final String DEFAULT_MESSAGE_LOC    = " "+StreetHawk.getCurrentFormattedDateTime();
-
-    private final String DEFAULT_URL        = "http://www.streethawk.com";
-    private final String DEFAULT_DEEPLINK   = "streethawkapp://activity=MainActivity";
-    private final String DEFAULT_OP1        = "Yes";
-    private final String DEFAULT_OP2        = "No";
-    private final String DEFAULT_OP3        = "May be";
-    private final String DEFAULT_OP4        = "I don't know";
+    private final String DEFAULT_URL = "http://www.streethawk.com";
+    private final String DEFAULT_DEEPLINK = "streethawkapp://activity=MainActivity";
+    private final String DEFAULT_OP1 = "Yes";
+    private final String DEFAULT_OP2 = "No";
+    private final String DEFAULT_OP3 = "May be";
+    private final String DEFAULT_OP4 = "I don't know";
 
     private final String DEFAULT_PHONE_NUMBER = "+61469123456";
-    private final String DEFAULT_CUSTOM_JSON  = "";  //TODO add a json list to string here
-
+    private final String DEFAULT_CUSTOM_JSON = "";  //TODO add a json list to string here
 
 
     private final String TAG = "PushActivity";
 
-    private Spinner     mActionSpinner;
+    private Spinner mActionSpinner;
     private FrameLayout mFrameLayout;
     private Activity mActivity;
 
@@ -175,11 +171,9 @@ public class PushActivity extends AppCompatActivity implements Constants {
     }
 
 
-
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch(item.getItemId()) {
+        switch (item.getItemId()) {
             case R.id.action_autofill:
                 int position = mActionSpinner.getSelectedItemPosition();
                 switch (position) {
@@ -194,23 +188,22 @@ public class PushActivity extends AppCompatActivity implements Constants {
                         EditText mDataET = (EditText) findViewById(R.id.data);
                         mDataET.setText(DEFAULT_DEEPLINK);
                     }
-                        break;
+                    break;
                     case ACTION_DIALNUMBER: {
                         EditText mDataET = (EditText) findViewById(R.id.data);
                         mDataET.setText(DEFAULT_PHONE_NUMBER);
                     }
-                        break;
-                    case ACTION_CUSTOM_JSON:
-                    {
+                    break;
+                    case ACTION_CUSTOM_JSON: {
                         EditText mDataET = (EditText) findViewById(R.id.data);
                         mDataET.setText(DEFAULT_CUSTOM_JSON);
                     }
-                        break;
-                    case ACTION_WEBPAGE:{
+                    break;
+                    case ACTION_WEBPAGE: {
                         EditText mDataET = (EditText) findViewById(R.id.data);
                         mDataET.setText(DEFAULT_URL);
                     }
-                        break;
+                    break;
                     case ACTION_FEEDBACK: {
                         EditText o1ET = (EditText) findViewById(R.id.option1);
                         o1ET.setText(DEFAULT_OP1);
@@ -221,7 +214,7 @@ public class PushActivity extends AppCompatActivity implements Constants {
                         EditText o4ET = (EditText) findViewById(R.id.option4);
                         o4ET.setText(DEFAULT_OP4);
                     }
-                        break;
+                    break;
                     case ACTION_INTERACTIVE_PUSH:
                         break;
                     default:
@@ -472,8 +465,8 @@ public class PushActivity extends AppCompatActivity implements Constants {
         SharedPreferences prefs = getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
         String setServer = prefs.getString(HOST, "undefined");
 
-        if(setServer.contains("staging.streethawk.com")){
-            Log.e("Anurag","Staging publish");
+        if (setServer.contains("staging.streethawk.com")) {
+            Log.e("Anurag", "Staging publish");
             return "https://staging.streethawk.com/v1/installs/publish";
         }
         return "https://api.streethawk.com/v1/installs/publish";
@@ -639,8 +632,8 @@ public class PushActivity extends AppCompatActivity implements Constants {
                     ScheduledExecutorService worker = Executors.newSingleThreadScheduledExecutor();
                     worker.schedule(task, 2, TimeUnit.SECONDS);
                 }
-                Toast.makeText(getApplicationContext(),"You will be receiving a push notification shortly",Toast.LENGTH_SHORT).show();
-                if(mAppBG.isChecked()){
+                Toast.makeText(getApplicationContext(), "You will be receiving a push notification shortly", Toast.LENGTH_SHORT).show();
+                if (mAppBG.isChecked()) {
                     Intent startMain = new Intent(Intent.ACTION_MAIN);
                     startMain.addCategory(Intent.CATEGORY_HOME);
                     startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

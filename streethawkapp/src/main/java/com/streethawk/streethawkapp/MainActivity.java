@@ -31,20 +31,21 @@ import com.streethawk.library.feeds.ISHFeedItemObserver;
 import com.streethawk.library.feeds.SHFeedItem;
 import com.streethawk.library.geofence.INotifyGeofenceTransition;
 import com.streethawk.library.growth.IGrowth;
+import com.streethawk.library.pointzi.Pointzi;
 import com.streethawk.library.push.ISHObserver;
 import com.streethawk.library.push.Push;
 import com.streethawk.library.push.PushDataForApplication;
-import com.streethawk.library.pointzi.Pointzi;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements
         Constants, IGrowth, INotifyGeofenceTransition, INotifyBeaconTransition,
-        ISHObserver, ISHFeedItemObserver,ISHEventObserver {
+        ISHObserver, ISHFeedItemObserver, ISHEventObserver {
     int ANALYTICS = 0;
     int GROWTH = ANALYTICS + 1;
     int PUSH = GROWTH + 1;
@@ -60,8 +61,8 @@ public class MainActivity extends AppCompatActivity implements
     int AUTHORING = GRANT_PERMISSION + 1;
     int COLORPICKER = AUTHORING + 1;
     int SERVER_LOGS = COLORPICKER + 1;
-    int MODAL      = SERVER_LOGS + 1;
-    int TEST_TIP    =   MODAL+1;
+    int MODAL = SERVER_LOGS + 1;
+    int TEST_TIP = MODAL + 1;
 
     String mAppKey = null;
     String mSenderKey = null;
@@ -132,7 +133,7 @@ public class MainActivity extends AppCompatActivity implements
         mActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(mActivity,"Install registered "+installId,Toast.LENGTH_LONG).show();
+                Toast.makeText(mActivity, "Install registered " + installId, Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -191,7 +192,7 @@ public class MainActivity extends AppCompatActivity implements
 
 
                 //Growth.getInstance(mActivity).getShareUrlForAppDownload("StreetHawkApp","streethawkapp://activity=MainActivity","StreetHawkApp","inApp",
-                 //       "","","http://www.streethawk.com",null);
+                //       "","","http://www.streethawk.com",null);
 
 
                 /*
@@ -207,7 +208,6 @@ public class MainActivity extends AppCompatActivity implements
                 Modal modal = new Modal();
                 modal.unit_test_tooltip(mActivity);
                 */
-
 
 
                 Pointzi pointzi = new Pointzi(mActivity);
@@ -380,9 +380,9 @@ public class MainActivity extends AppCompatActivity implements
                             "AppKey :" + appKey + NEW_LINE +
                             "Server :  " + setServer + NEW_LINE +
                             "GCM Sender ID: " + senderId + NEW_LINE +
-                            "Auth Token: " + authtoken + NEW_LINE ;
-                            //"Last Ping Time" + lastPingtime + NEW_LINE +
-                            //"Last message to server " + lastMessageToServer
+                            "Auth Token: " + authtoken + NEW_LINE;
+                    //"Last Ping Time" + lastPingtime + NEW_LINE +
+                    //"Last message to server " + lastMessageToServer
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(mActivity, R.style.StreetHawkDialogTheme);
                     builder.setTitle("Install Info");
@@ -448,7 +448,7 @@ public class MainActivity extends AppCompatActivity implements
                 if (MODAL == position) {
                     // new Modal().unit_test_tooltip(mActivity);
                 }
-                if(TEST_TIP==position){
+                if (TEST_TIP == position) {
                     intent = new Intent(getApplicationContext(), TestPointzi.class);
                 }
 

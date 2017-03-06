@@ -2,14 +2,10 @@ package com.streethawk.streethawkapp;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -63,12 +59,10 @@ public class FeedList extends AppCompatActivity implements ISHFeedItemObserver, 
     private final String CONTENT = "content";
 
 
-
-
     private ListView mFeedItemListView;
     FeedItemAdapter mListViewAdapter;
 
-    class fetchFeedListTask extends AsyncTask<JSONArray,Void,Void>{
+    class fetchFeedListTask extends AsyncTask<JSONArray, Void, Void> {
         @Override
         protected Void doInBackground(JSONArray... jsonArrays) {
             JSONArray feeds = jsonArrays[0];
@@ -260,6 +254,7 @@ public class FeedList extends AppCompatActivity implements ISHFeedItemObserver, 
             }
         }
     }
+
     class FeedItemAdapter extends ArrayAdapter<FeedItem> {
         Context context;
 
@@ -274,7 +269,7 @@ public class FeedList extends AppCompatActivity implements ISHFeedItemObserver, 
             LayoutInflater inflater = (LayoutInflater) getApplicationContext()
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             View rowView = inflater.inflate(R.layout.feedsummarydisplay, parent, false);
-            if(mFeedList.size()==0)
+            if (mFeedList.size() == 0)
                 return rowView;
             FeedItem obj = mFeedList.get(position);
             TextView title = (TextView) rowView.findViewById(R.id.feedtitle);
@@ -298,11 +293,11 @@ public class FeedList extends AppCompatActivity implements ISHFeedItemObserver, 
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 FeedItem obj = mFeedList.get(position);
-                obj.displayForDebugging("Anurag","OnItemClick");
+                obj.displayForDebugging("Anurag", "OnItemClick");
                 Context context = getApplicationContext();
                 Intent intent = new Intent(context, FeedViewerActivity.class);
-                intent.putExtra("FEEDITEM_PARCEL",obj);
-                intent.putExtra("FEEDITEM_PARCEL_JSON",obj.getObjectDetails());
+                intent.putExtra("FEEDITEM_PARCEL", obj);
+                intent.putExtra("FEEDITEM_PARCEL_JSON", obj.getObjectDetails());
                 startActivity(intent);
             }
         };

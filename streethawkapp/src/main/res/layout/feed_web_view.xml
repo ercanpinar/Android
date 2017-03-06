@@ -2,5 +2,4 @@
 <WebView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:id="@+id/feed_web_view"
-    android:layout_height="match_parent">
-</WebView>
+    android:layout_height="match_parent"></WebView>

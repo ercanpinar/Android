@@ -38,7 +38,7 @@ dependencies {
    //compile project(':streethawkfeeds')
 
 */
-   // compile project(':streethawkcore')
+    // compile project(':streethawkcore')
     compile project(':streethawkpush')
     compile project(':streethawkgrowth')
     compile project(':streethawklocations')
@@ -46,7 +46,6 @@ dependencies {
     compile project(':streethawkgeofence')
     compile project(':streethawkfeeds')
     compile project(':streethawkdebug')
-
 
     // compile project(':streethawkauthor')
     compile project(':streethawkpointzi')

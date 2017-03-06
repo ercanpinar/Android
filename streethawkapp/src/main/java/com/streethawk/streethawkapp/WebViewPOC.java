@@ -1,15 +1,9 @@
 package com.streethawk.streethawkapp;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
-import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
@@ -28,12 +22,12 @@ public class WebViewPOC extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_web_view_poc);
 
-        baseFrame = (FrameLayout)findViewById(R.id.webframe);
+        baseFrame = (FrameLayout) findViewById(R.id.webframe);
 
     }
 
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
 
         LayoutInflater inflater = (LayoutInflater) getApplicationContext()

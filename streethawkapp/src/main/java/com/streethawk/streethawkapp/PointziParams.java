@@ -21,9 +21,6 @@ public class PointziParams {
     private String launcher_file_name;
 
 
-
-
-
     /*meta*/
     private String feedID;
     private String ID;

@@ -57,42 +57,43 @@ public class WidgetObject {
         this.height = height;
     }
 
-    public void setParentViewName(String viewName){
+    public void setParentViewName(String viewName) {
         mParentView = viewName;
     }
 
-    public String getParentViewName(){
+    public String getParentViewName() {
         return mParentView;
     }
 
-    public void setTextID(String textID){
+    public void setTextID(String textID) {
         mTextID = textID;
     }
 
-    public String getTextID(){
+    public String getTextID() {
         return mTextID;
     }
 
-    public void setResID(int resID){
+    public void setResID(int resID) {
         mID = resID;
     }
 
-    public int getResID(){
+    public int getResID() {
         return mID;
     }
 
-    public WidgetObject(){}
+    public WidgetObject() {
+    }
 
-    public void displayMyData(String tag){
+    public void displayMyData(String tag) {
         String NEWLINE = "\n";
-        String myData = "TextID: "+this.mTextID + NEWLINE +
-                "ParentView: "+this.mParentView + NEWLINE +
-                "ResID: "+this.mID + NEWLINE +
-                "Type : "+this.type + NEWLINE +
-                "StartX: "+this.startX + NEWLINE +
-                "StartY: "+this.startY + NEWLINE +
-                "Width: "+this.width + NEWLINE +
-                "Height: "+this.height;
-        Log.d(tag,myData);
+        String myData = "TextID: " + this.mTextID + NEWLINE +
+                "ParentView: " + this.mParentView + NEWLINE +
+                "ResID: " + this.mID + NEWLINE +
+                "Type : " + this.type + NEWLINE +
+                "StartX: " + this.startX + NEWLINE +
+                "StartY: " + this.startY + NEWLINE +
+                "Width: " + this.width + NEWLINE +
+                "Height: " + this.height;
+        Log.d(tag, myData);
     }
 }

@@ -10,10 +10,10 @@
             android:name=".SHCoreModuleReceiver"
             android:enabled="true"
             android:exported="true"></receiver>
-        <activity android:name=".DisplayActivity"
+        <activity
+            android:name=".DisplayActivity"
             android:noHistory="true"
-            android:theme="@style/Theme.Transparent">
-        </activity>
+            android:theme="@style/Theme.Transparent"></activity>
 
         <provider
             android:name="android.support.v4.content.FileProvider"

@@ -31,10 +31,14 @@ import java.util.HashSet;
 * */
 public class Pointzi implements Constants {
     private Activity mActivity;
+
     public Pointzi(Activity activity) {
         mActivity = activity;
     }
-    public Pointzi() {}
+
+    public Pointzi() {
+    }
+
     private void parseAndSaveResponse(Context context, String answer) {
         PointziDB db = new PointziDB(context);
         db.open();
@@ -62,9 +66,9 @@ public class Pointzi implements Constants {
                         trigger.setView(init.getString(VIEW));
                         trigger.setTarget(init.getString(TARGET));
                         trigger.setLauncherJSON(trgr);
-                            JSONArray toolObject = data.getJSONArray(PAYLOAD);
-                            String toolArary = toolObject.toString();
-                            trigger.setJSON(toolArary);
+                        JSONArray toolObject = data.getJSONArray(PAYLOAD);
+                        String toolArary = toolObject.toString();
+                        trigger.setJSON(toolArary);
                         trigger.setActioned(0);
                     }
                     db.storeTriggerData(trigger);
@@ -100,7 +104,7 @@ public class Pointzi implements Constants {
                     URL url = null;
                     try {
                         url = new URL(urlParams);
-                        Log.e("Anurag","URL "+url);
+                        Log.e("Anurag", "URL " + url);
                     } catch (MalformedURLException e) {
                         e.printStackTrace();
                     }
@@ -111,7 +115,7 @@ public class Pointzi implements Constants {
                     String answer = input.readLine();
                     if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
                         parseAndSaveResponse(context, answer);
-                        Log.e("Anurag","answer "+answer);
+                        Log.e("Anurag", "answer " + answer);
                     }
                     input.close();
                 } catch (IOException e) {
@@ -121,6 +125,7 @@ public class Pointzi implements Constants {
             }
         }).start();
     }
+
     private class displayTriggerAsyncTask extends AsyncTask<HashSet<Trigger>, Void, Void> {
         private HashSet<Trigger> objSet;
 

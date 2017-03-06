@@ -61,20 +61,22 @@ public class Tip extends PointziBase {
             return listView.getChildAt(childIndex);
         }
     }
-    private EditText.OnFocusChangeListener etFocusChangeListener(final PopupWindow tipPopUpWindow){
+
+    private EditText.OnFocusChangeListener etFocusChangeListener(final PopupWindow tipPopUpWindow) {
         return new View.OnFocusChangeListener() {
 
             @Override
             public void onFocusChange(View view, boolean hasFocus) {
-                if(!hasFocus){
-                    if(tipPopUpWindow.isShowing()){
+                if (!hasFocus) {
+                    if (tipPopUpWindow.isShowing()) {
                         tipPopUpWindow.dismiss();
                     }
                 }
             }
         };
     }
-    private TextWatcher etTextWatcher(final PopupWindow tipPopUpWindow){
+
+    private TextWatcher etTextWatcher(final PopupWindow tipPopUpWindow) {
         return new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -83,10 +85,11 @@ public class Tip extends PointziBase {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                    if(tipPopUpWindow.isShowing()){
-                        tipPopUpWindow.dismiss();
-                    }
+                if (tipPopUpWindow.isShowing()) {
+                    tipPopUpWindow.dismiss();
+                }
             }
+
             @Override
             public void afterTextChanged(Editable editable) {
 
@@ -95,7 +98,7 @@ public class Tip extends PointziBase {
     }
 
 
-    public View.OnClickListener DNDButtonOnClickListener(){
+    public View.OnClickListener DNDButtonOnClickListener() {
         return new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -104,8 +107,8 @@ public class Tip extends PointziBase {
         };
     }
 
-    public View.OnClickListener prevButtonOnClickListener(){
-        return new View.OnClickListener(){
+    public View.OnClickListener prevButtonOnClickListener() {
+        return new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {
@@ -114,8 +117,8 @@ public class Tip extends PointziBase {
         };
     }
 
-    public View.OnClickListener nextButtonOnClickListener(){
-        return new View.OnClickListener(){
+    public View.OnClickListener nextButtonOnClickListener() {
+        return new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {
@@ -125,22 +128,17 @@ public class Tip extends PointziBase {
     }
 
 
-
-    public void showTip_new(final Activity currentActivity, final PointziBase widget, final boolean sendResult){
+    public void showTip_new(final Activity currentActivity, final PointziBase widget, final boolean sendResult) {
         if (null == currentActivity)
             return;
         if (widget == null)
             return;
 
-        View DNDButtonView  = getDNDButtonView(currentActivity,widget,DNDButtonOnClickListener());
-        View titleView      = getTitleView(currentActivity,widget);
-        View contentView    = getContentView(currentActivity,widget);
-        View URLContentView = getUrlContentView(currentActivity,widget.getURL_Content());
-        View ButtonContentView = getCTAButtonView(currentActivity,widget,nextButtonOnClickListener(),prevButtonOnClickListener());
-
-
-
-
+        View DNDButtonView = getDNDButtonView(currentActivity, widget, DNDButtonOnClickListener());
+        View titleView = getTitleView(currentActivity, widget);
+        View contentView = getContentView(currentActivity, widget);
+        View URLContentView = getUrlContentView(currentActivity, widget.getURL_Content());
+        View ButtonContentView = getCTAButtonView(currentActivity, widget, nextButtonOnClickListener(), prevButtonOnClickListener());
 
 
     }
@@ -200,7 +198,7 @@ public class Tip extends PointziBase {
                         //TODO support listview with text
                     }
                 }
-                if(anchorObject instanceof EditText){
+                if (anchorObject instanceof EditText) {
                     ((EditText) anchorObject).setOnFocusChangeListener(etFocusChangeListener(tipPopUpWindow));
                     ((EditText) anchorObject).addTextChangedListener(etTextWatcher(tipPopUpWindow));
                 }
@@ -341,7 +339,7 @@ public class Tip extends PointziBase {
                             } else {
                                 container = (View) tipPopUpWindow.getContentView().getParent();
                             }
-                            dimBackground(currentActivity, container,widget.getDim(),widget.getDim_color());
+                            dimBackground(currentActivity, container, widget.getDim(), widget.getDim_color());
 
                             rootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                                 @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
@@ -438,7 +436,7 @@ public class Tip extends PointziBase {
                             break;
                         }
                     }
-                    if(null!=widget.isTouch_out()) {
+                    if (null != widget.isTouch_out()) {
                         if (widget.isTouch_out().equals(TRUE)) {
                             View container = currentActivity.findViewById(android.R.id.content);
                             container.setOnClickListener(new View.OnClickListener() {
@@ -450,7 +448,7 @@ public class Tip extends PointziBase {
                             });
                         }
                     }
-                    if(null!=widget.isTouch_in()) {
+                    if (null != widget.isTouch_in()) {
                         if (widget.isTouch_in().equals(TRUE)) {
                             tipPopUpWindow.getContentView().setOnClickListener(new View.OnClickListener() {
                                 @Override
@@ -624,17 +622,17 @@ public class Tip extends PointziBase {
         Context context = activity.getApplicationContext();
         final LinearLayout rootView = new LinearLayout(context);
 
-        int viewWidth = getWidth(activity,widget.getViewWidth());
-        int viewHeight = getWidth(activity,widget.getViewHeight());
+        int viewWidth = getWidth(activity, widget.getViewWidth());
+        int viewHeight = getWidth(activity, widget.getViewHeight());
 
-        if(0==viewWidth){
+        if (0 == viewWidth) {
             viewWidth = ViewGroup.LayoutParams.WRAP_CONTENT;
         }
-        if(0==viewHeight){
+        if (0 == viewHeight) {
             viewHeight = ViewGroup.LayoutParams.WRAP_CONTENT;
         }
 
-        LinearLayout.LayoutParams rootParams = new LinearLayout.LayoutParams(viewWidth,viewHeight);
+        LinearLayout.LayoutParams rootParams = new LinearLayout.LayoutParams(viewWidth, viewHeight);
         rootView.setOrientation(LinearLayout.VERTICAL);
         rootView.setLayoutParams(rootParams);
         rootView.setBackgroundColor(Color.parseColor(backGroundColor));
@@ -658,9 +656,9 @@ public class Tip extends PointziBase {
             if (!title.isEmpty()) {
                 TextView titletv = new TextView(context);
                 String fontFamily = widget.getTitleFontFamily();
-                if(null!=fontFamily){
-                    Typeface typeface = getTypeface(activity,fontFamily);
-                    if(null!=typeface) {
+                if (null != fontFamily) {
+                    Typeface typeface = getTypeface(activity, fontFamily);
+                    if (null != typeface) {
                         titletv.setTypeface(typeface);
                     }
                 }
@@ -692,9 +690,9 @@ public class Tip extends PointziBase {
                 TextView messageTv = new TextView(context);
                 int[] padding = widget.getTitlePadding();
                 String fontFamily = widget.getTitleFontFamily();
-                if(null!=fontFamily){
-                    Typeface typeface = getTypeface(activity,fontFamily);
-                    if(null!=typeface)
+                if (null != fontFamily) {
+                    Typeface typeface = getTypeface(activity, fontFamily);
+                    if (null != typeface)
                         messageTv.setTypeface(typeface);
                 }
                 messageTv.setPadding(padding[0], padding[1], padding[2], padding[3]);
@@ -714,10 +712,10 @@ public class Tip extends PointziBase {
 
         String url_content = widget.getURL_Content();
         if (null != url_content) {
-            LinearLayout.LayoutParams webViewPaneParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,0);
-            webViewPaneParams.weight=1;
+            LinearLayout.LayoutParams webViewPaneParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0);
+            webViewPaneParams.weight = 1;
             webViewPane.setLayoutParams(webViewPaneParams);
-            webViewPane.addView(getUrlContentView(activity,url_content));
+            webViewPane.addView(getUrlContentView(activity, url_content));
         }
 
         //Buttons
@@ -755,7 +753,7 @@ public class Tip extends PointziBase {
                         public void onClick(View view) {
                             tipPopUpWindow.dismiss();
                             if (null != mClickEventListeners) {
-                                boolean[] results ={false,false};
+                                boolean[] results = {false, false};
                                 mClickEventListeners.onButtonClicked(widget, DISMISS_BUTTON, results);
                             }
                         }
@@ -771,14 +769,14 @@ public class Tip extends PointziBase {
                     btn.setTextColor(Color.parseColor(widget.getPrevButtonTitleColor()));
                     LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT);
                     params.setMargins(width, width, width, width);
-                    params.weight=1;
+                    params.weight = 1;
                     btn.setLayoutParams(params);
                     btn.setTextSize(widget.getPrevButtonFontSize());
                     btn.setText(declineButtonTitle);
                     String fontFamily = widget.getPrevButtonFontFamily();
-                    if(null!=fontFamily){
-                        Typeface typeface = getTypeface(activity,fontFamily);
-                        if(null!=typeface)
+                    if (null != fontFamily) {
+                        Typeface typeface = getTypeface(activity, fontFamily);
+                        if (null != typeface)
                             btn.setTypeface(typeface);
                     }
                     btn.setBackgroundColor(Color.parseColor(widget.getPrevButtonBackgroundColor()));
@@ -787,7 +785,7 @@ public class Tip extends PointziBase {
                         public void onClick(View view) {
                             tipPopUpWindow.dismiss();
                             if (null != mClickEventListeners) {
-                                boolean[] results ={false,false};
+                                boolean[] results = {false, false};
                                 mClickEventListeners.onButtonClicked(widget, DISMISS_BUTTON, results);
                             }
                         }
@@ -816,7 +814,7 @@ public class Tip extends PointziBase {
                         public void onClick(View view) {
                             tipPopUpWindow.dismiss();
                             if (null != mClickEventListeners) {
-                                final boolean[] result = {false,false};
+                                final boolean[] result = {false, false};
                                 mClickEventListeners.onButtonClicked(widget, ACCEPTED_BUTTON, result);
                             }
                         }
@@ -830,7 +828,7 @@ public class Tip extends PointziBase {
                     LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(0,
                             LinearLayout.LayoutParams.WRAP_CONTENT);
                     params.setMargins(width, width, width, width);
-                    params.weight=1;
+                    params.weight = 1;
                     btn.setTextSize(widget.getNextButtonFontSize());
                     btn.setLayoutParams(params);
                     btn.setBackgroundColor(Color.parseColor(backGroundColor));
@@ -838,9 +836,9 @@ public class Tip extends PointziBase {
                     btn.setText(accpetedButtonTitle);
                     btn.setBackgroundColor(Color.parseColor(widget.getNextButtonBackgroundColor()));
                     String fontFamily = widget.getNextButtonFontFamily();
-                    if(null!=fontFamily){
-                        Typeface typeface = getTypeface(activity,fontFamily);
-                        if(null!=typeface)
+                    if (null != fontFamily) {
+                        Typeface typeface = getTypeface(activity, fontFamily);
+                        if (null != typeface)
                             btn.setTypeface(typeface);
                     }
                     btn.setOnClickListener(new View.OnClickListener() {
@@ -848,7 +846,7 @@ public class Tip extends PointziBase {
                         public void onClick(View view) {
                             tipPopUpWindow.dismiss();
                             if (null != mClickEventListeners) {
-                                final boolean[] result = {false,false};
+                                final boolean[] result = {false, false};
                                 mClickEventListeners.onButtonClicked(widget, ACCEPTED_BUTTON, result);
                             }
                         }
@@ -865,31 +863,31 @@ public class Tip extends PointziBase {
         LinearLayout.LayoutParams DNDBarParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         DNDBar.setLayoutParams(DNDBarParams);
         DNDBar.setGravity(Gravity.RIGHT);
-        DNDBar.addView(getDNDButtonView(activity,widget,new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                tipPopUpWindow.dismiss();
-                                boolean [] result = {false,false};
-                                if (mSendFeedResultForEachTip) {
-                                    dismissButtonOnClickListener(activity, widget, result);
-                                } else {
-                                    doNothing();
-                                }
-                            }
+        DNDBar.addView(getDNDButtonView(activity, widget, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        tipPopUpWindow.dismiss();
+                        boolean[] result = {false, false};
+                        if (mSendFeedResultForEachTip) {
+                            dismissButtonOnClickListener(activity, widget, result);
+                        } else {
+                            doNothing();
                         }
+                    }
+                }
 
-                ));
+        ));
         rootView.addView(DNDBar);
         rootView.addView(LL_titleBar);
         rootView.addView(LL_MessageBar);
         rootView.addView(webViewPane);
-        String url =widget.getURL();
-        if(null!=url) {
+        String url = widget.getURL();
+        if (null != url) {
             LinearLayout webViewPaneLL = new LinearLayout(activity);
-            LinearLayout.LayoutParams webViewPaneParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,0);
-            webViewPaneParams.weight=1;
+            LinearLayout.LayoutParams webViewPaneParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0);
+            webViewPaneParams.weight = 1;
             webViewPane.setLayoutParams(webViewPaneParams);
-            webViewPaneLL.addView(getWebView(activity,url));
+            webViewPaneLL.addView(getWebView(activity, url));
             rootView.addView(webViewPaneLL);
         }
         rootView.addView(LL_ButtonBar);

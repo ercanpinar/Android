@@ -9,7 +9,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.text.Html;
 import android.text.Spanned;
-import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +21,9 @@ import android.widget.TextView;
  * Class displays modals
  */
 public class Modal extends PointziBase {
-    public Modal() {}
+    public Modal() {
+    }
+
     public View getModalView(final Activity activity, final PointziBase widget) {
         if (null == activity)
             return null;
@@ -32,18 +33,18 @@ public class Modal extends PointziBase {
         String content = widget.getContent();
         String viewBackGroundColor = widget.getViewBackGroundColor();
         int elevation = widget.getViewElevation();
-        int viewWidth = getWidth(activity,widget.getViewWidth());
-        int viewHeight = getWidth(activity,widget.getViewHeight());
+        int viewWidth = getWidth(activity, widget.getViewWidth());
+        int viewHeight = getWidth(activity, widget.getViewHeight());
 
-        if(0==viewWidth){
+        if (0 == viewWidth) {
             viewWidth = ViewGroup.LayoutParams.WRAP_CONTENT;
         }
-        if(0==viewHeight){
+        if (0 == viewHeight) {
             viewHeight = ViewGroup.LayoutParams.WRAP_CONTENT;
         }
 
         FrameLayout baseFrame = new FrameLayout(activity);
-        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams((int)viewWidth, (int)viewHeight);
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams((int) viewWidth, (int) viewHeight);
         baseFrame.setLayoutParams(params);
         baseFrame.setBackgroundColor(Color.TRANSPARENT);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -70,9 +71,9 @@ public class Modal extends PointziBase {
             LinearLayout.LayoutParams titleTVParams = new LinearLayout.LayoutParams(0,
                     ViewGroup.LayoutParams.WRAP_CONTENT);
             String fontFamily = widget.getTitleFontFamily();
-            if(null!=fontFamily){
-                Typeface typeface = getTypeface(activity,fontFamily);
-                if(null!=typeface)
+            if (null != fontFamily) {
+                Typeface typeface = getTypeface(activity, fontFamily);
+                if (null != typeface)
                     titleTv.setTypeface(typeface);
             }
             titleTVParams.weight = 1;
@@ -95,7 +96,7 @@ public class Modal extends PointziBase {
             DNDToolBar.addView(titleTv);
         }
         if (widget.isHasDND()) {
-            DNDToolBar.addView(getDNDButtonView(activity,widget,new View.OnClickListener() {
+            DNDToolBar.addView(getDNDButtonView(activity, widget, new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
 
@@ -127,9 +128,9 @@ public class Modal extends PointziBase {
                 contentTv.setElevation(widget.getContentElevation());
             }
             String fontFamily = widget.getContentFontFamily();
-            if(null!=fontFamily){
-                Typeface typeface = getTypeface(activity,fontFamily);
-                if(null!=typeface)
+            if (null != fontFamily) {
+                Typeface typeface = getTypeface(activity, fontFamily);
+                if (null != typeface)
                     contentTv.setTypeface(typeface);
             }
             contentTv.setPadding(padding[0], padding[1], padding[2], padding[3]);
@@ -141,19 +142,19 @@ public class Modal extends PointziBase {
         String url = widget.getURL();
         if (null != url) {
             LinearLayout webViewPane = new LinearLayout(activity);
-            LinearLayout.LayoutParams webViewPaneParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,0);
-            webViewPaneParams.weight=1;
+            LinearLayout.LayoutParams webViewPaneParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0);
+            webViewPaneParams.weight = 1;
             webViewPane.setLayoutParams(webViewPaneParams);
-            webViewPane.addView(getWebView(activity,url)); //TODO add view after page load
+            webViewPane.addView(getWebView(activity, url)); //TODO add view after page load
             linearBase.addView(webViewPane);
         }
         String url_content = widget.getURL_Content();
         if (null != url_content) {
             LinearLayout webViewPane = new LinearLayout(activity);
-            LinearLayout.LayoutParams webViewPaneParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,0);
-            webViewPaneParams.weight=1;
+            LinearLayout.LayoutParams webViewPaneParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0);
+            webViewPaneParams.weight = 1;
             webViewPane.setLayoutParams(webViewPaneParams);
-            webViewPane.addView(getUrlContentView(activity,url_content));
+            webViewPane.addView(getUrlContentView(activity, url_content));
             linearBase.addView(webViewPane);
         }
         String nextButtonTitle = widget.getNextButtonTitle();
@@ -172,9 +173,9 @@ public class Modal extends PointziBase {
             prevButton.setLayoutParams(prevButtonParams);
             prevButton.setTextSize(widget.getPrevButtonFontSize());
             String fontFamily = widget.getPrevButtonFontFamily();
-            if(null!=fontFamily){
-                Typeface typeface = getTypeface(activity,fontFamily);
-                if(null!=typeface)
+            if (null != fontFamily) {
+                Typeface typeface = getTypeface(activity, fontFamily);
+                if (null != typeface)
                     prevButton.setTypeface(typeface);
             }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -183,9 +184,9 @@ public class Modal extends PointziBase {
             prevButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if(null!=mClickEventListeners){
-                        boolean result[]={false,false};
-                        mClickEventListeners.onButtonClicked(widget,DISMISS_BUTTON,result);
+                    if (null != mClickEventListeners) {
+                        boolean result[] = {false, false};
+                        mClickEventListeners.onButtonClicked(widget, DISMISS_BUTTON, result);
                     }
                     if (null != widget.getPrevButtonCTA()) {
                         String deeplink_url = widget.getNextButtonCTA();
@@ -196,7 +197,7 @@ public class Modal extends PointziBase {
                                 intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                                 intent.setData(Uri.parse(deeplink_url));
                                 activity.startActivity(intent);
-                            }catch(Exception e){
+                            } catch (Exception e) {
                                 e.printStackTrace();
                             }
                         }
@@ -211,14 +212,14 @@ public class Modal extends PointziBase {
             nextButtonParams.weight = 0.5f;
             nextButton.setLayoutParams(nextButtonParams);
             int[] padding = widget.getNextButtonPadding();
-            nextButton.setPadding(padding[0],padding[1],padding[2],padding[3]);
+            nextButton.setPadding(padding[0], padding[1], padding[2], padding[3]);
             nextButton.setTextColor(Color.parseColor(widget.getNextButtonTitleColor()));
             nextButton.setBackgroundColor(Color.parseColor(widget.getNextButtonBackgroundColor()));
             nextButton.setTextSize(widget.getNextButtonFontSize());
             String fontFamily = widget.getNextButtonFontFamily();
-            if(null!=fontFamily){
-                Typeface typeface = getTypeface(activity,fontFamily);
-                if(null!=typeface)
+            if (null != fontFamily) {
+                Typeface typeface = getTypeface(activity, fontFamily);
+                if (null != typeface)
                     nextButton.setTypeface(typeface);
             }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -227,20 +228,20 @@ public class Modal extends PointziBase {
             nextButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if(null!=mClickEventListeners){
-                        boolean result[]={false,false};
-                        mClickEventListeners.onButtonClicked(widget,ACCEPTED_BUTTON,result);
+                    if (null != mClickEventListeners) {
+                        boolean result[] = {false, false};
+                        mClickEventListeners.onButtonClicked(widget, ACCEPTED_BUTTON, result);
                     }
                     if (null != widget.getNextButtonCTA()) {
                         String deeplink_url = widget.getNextButtonCTA();
                         if (null != deeplink_url) {
                             try {
-                            Intent intent = new Intent();
-                            intent.setAction(Intent.ACTION_VIEW);
-                            intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                            intent.setData(Uri.parse(deeplink_url));
-                            activity.startActivity(intent);
-                            }catch(Exception e){
+                                Intent intent = new Intent();
+                                intent.setAction(Intent.ACTION_VIEW);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                                intent.setData(Uri.parse(deeplink_url));
+                                activity.startActivity(intent);
+                            } catch (Exception e) {
                                 e.printStackTrace();
                             }
                         }

@@ -25,7 +25,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
-import java.net.URL;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -40,19 +39,20 @@ public class Authoring extends WidgetList {
 
     /**
      * Function displayes simple toast messages
+     *
      * @param message
      */
-    private void displayToastMessage(String message){
-        if(null==mActivity)
+    private void displayToastMessage(String message) {
+        if (null == mActivity)
             return;
-        if(null==message)
+        if (null == message)
             return;
         Context context = mActivity.getApplicationContext();
-        Toast.makeText(context,message,Toast.LENGTH_LONG).show();
+        Toast.makeText(context, message, Toast.LENGTH_LONG).show();
     }
 
-    private void sendScreenShotToServer(final Context context, final File file,final String json) {
-        if(null==context)
+    private void sendScreenShotToServer(final Context context, final File file, final String json) {
+        if (null == context)
             return;
         final String EXCEPTION_FILE = "exception_file";
         if (Util.isNetworkConnected(context)) {
@@ -71,10 +71,10 @@ public class Authoring extends WidgetList {
                         java.net.URL url = Util.getCrashReportingUrl(context);
 
                         HttpsURLConnection conn = null;
-                        final String installId =Util.getInstallId(context);
-                        if(null==installId)
+                        final String installId = Util.getInstallId(context);
+                        if (null == installId)
                             return;
-                        final String app_key  = Util.getAppKey(context);
+                        final String app_key = Util.getAppKey(context);
                         conn = (HttpsURLConnection) url.openConnection();
                         conn.setRequestMethod("POST");
                         conn.setDoInput(true);
@@ -82,7 +82,7 @@ public class Authoring extends WidgetList {
                         conn.setRequestProperty("X-Installid", installId);
                         conn.setRequestProperty("X-App-Key", app_key);
                         String libVersion = Util.getLibraryVersion();
-                        conn.setRequestProperty("X-Version",libVersion);
+                        conn.setRequestProperty("X-Version", libVersion);
                         conn.setRequestProperty("User-Agent", app_key + "(" + libVersion + ")");
                         conn.setRequestProperty("Connection", "Keep-Alive");
                         conn.setRequestProperty("Cache-Control", "no-cache");
@@ -90,7 +90,7 @@ public class Authoring extends WidgetList {
                         conn.setRequestProperty("charset", "utf-8");
                         DataOutputStream request = new DataOutputStream(conn.getOutputStream());
                         request.writeBytes(twoHyphens + boundary + lineEnd);
-                        request.writeBytes("Content-Disposition: form-data; name=\"installid \""+ lineEnd);
+                        request.writeBytes("Content-Disposition: form-data; name=\"installid \"" + lineEnd);
                         request.writeBytes(lineEnd);
                         request.writeBytes(installId);
                         request.writeBytes(lineEnd);
@@ -118,7 +118,7 @@ public class Authoring extends WidgetList {
                         request.flush();
                         request.close();
                         InputStream error = conn.getErrorStream();
-                        if(null==error){
+                        if (null == error) {
                             BufferedReader reader = null;
                             reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
                             String answer = reader.readLine();
@@ -152,8 +152,8 @@ public class Authoring extends WidgetList {
 
 
     @RequiresApi(api = Build.VERSION_CODES.HONEYCOMB)
-    public void enterAuthoringMode(Activity activity){
-        if(null==activity)
+    public void enterAuthoringMode(Activity activity) {
+        if (null == activity)
             return;
         mActivity = activity;
         fillViewList(activity);
@@ -182,13 +182,13 @@ public class Authoring extends WidgetList {
         File imagePath = new File(context.getCacheDir(), "images");
         File newFile = new File(imagePath, "image.png");
 
-        String authority = context.getPackageName()+"pointzi.fileprovider";
+        String authority = context.getPackageName() + "pointzi.fileprovider";
 
-        Uri contentUri = FileProvider.getUriForFile(context,authority, newFile);
+        Uri contentUri = FileProvider.getUriForFile(context, authority, newFile);
 
         if (contentUri != null) {
 
-            sendScreenShotToServer(context,newFile,null);  //TODO
+            sendScreenShotToServer(context, newFile, null);  //TODO
 
             Intent shareIntent = new Intent();
             shareIntent.setAction(Intent.ACTION_SEND);

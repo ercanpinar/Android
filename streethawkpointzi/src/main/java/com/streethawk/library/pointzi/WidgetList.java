@@ -35,74 +35,75 @@ public class WidgetList implements Constants {
     final String ID = "id";
 
     private final String LIST_VIEW = "ListView";
-    private final String SPINNER   = "Spinner";
-    private final String GRIDVIEW  = "GridView";
-    private final String GENERIC   = "generic";
-    private final String UNKNOWN   = "UNKNOWN";
+    private final String SPINNER = "Spinner";
+    private final String GRIDVIEW = "GridView";
+    private final String GENERIC = "generic";
+    private final String UNKNOWN = "UNKNOWN";
 
 
-    private final String TEXTID    = "id";
-    private final String PARENT    = "parent";
-    private final String TYPE      = "type";
-    private final String STARTX    = "x";
-    private final String STARTY    = "y";
-    private final String WIDTH     = "width";
-    private final String HEIGHT    = "height";
+    private final String TEXTID = "id";
+    private final String PARENT = "parent";
+    private final String TYPE = "type";
+    private final String STARTX = "x";
+    private final String STARTY = "y";
+    private final String WIDTH = "width";
+    private final String HEIGHT = "height";
 
     /*Meta*/
-    private final String DEVICE_NAME    = "device";
-    private final String VIEW           = "view";
-    private final String ORIENTATION    = "orientation";
-    private final String SCREEN_X       = "x";
-    private final String SCREEN_Y       = "y";
-    private final String APP_VERSION    = "version";
-    private final String OS             = "os";
-    private final String ANDROID        = "android";
+    private final String DEVICE_NAME = "device";
+    private final String VIEW = "view";
+    private final String ORIENTATION = "orientation";
+    private final String SCREEN_X = "x";
+    private final String SCREEN_Y = "y";
+    private final String APP_VERSION = "version";
+    private final String OS = "os";
+    private final String ANDROID = "android";
 
-    private final String JSON_PARAM_META    = "meta";
-    private final String JSON_PARAM_WIDGET  = "widget";
-    private final String ORIENTATION_PORTRAIT    = "portrait";
-    private final String ORIENTATION_LANDSCAPE  = "landscape";
+    private final String JSON_PARAM_META = "meta";
+    private final String JSON_PARAM_WIDGET = "widget";
+    private final String ORIENTATION_PORTRAIT = "portrait";
+    private final String ORIENTATION_LANDSCAPE = "landscape";
 
 
     /**
      * Function converts the widgetlist into JSONArray string for sending to server
+     *
      * @return
      */
-    private String convertArrayListToJSON(){
-        if(null==mWidgetListForSaving){
+    private String convertArrayListToJSON() {
+        if (null == mWidgetListForSaving) {
             return null;
-        }else{
+        } else {
             try {
                 JSONArray array = new JSONArray();
                 for (WidgetObject widget : mWidgetListForSaving) {
                     JSONObject jsonObject = new JSONObject();
-                    jsonObject.put(TEXTID,widget.getTextID());
-                    jsonObject.put(PARENT,widget.getParentViewName());
-                    jsonObject.put(TYPE,widget.getType());
-                    jsonObject.put(STARTX,widget.getStartX());
-                    jsonObject.put(STARTY,widget.getStartY());
-                    jsonObject.put(WIDTH,widget.getWidth());
-                    jsonObject.put(HEIGHT,widget.getHeight());
+                    jsonObject.put(TEXTID, widget.getTextID());
+                    jsonObject.put(PARENT, widget.getParentViewName());
+                    jsonObject.put(TYPE, widget.getType());
+                    jsonObject.put(STARTX, widget.getStartX());
+                    jsonObject.put(STARTY, widget.getStartY());
+                    jsonObject.put(WIDTH, widget.getWidth());
+                    jsonObject.put(HEIGHT, widget.getHeight());
                     array.put(jsonObject);
                 }
                 return array.toString();
-            }catch (JSONException e) {
+            } catch (JSONException e) {
                 return null;
             }
         }
     }
 
 
-    private String getMeta(Activity activity){
-        if(null==activity)
+    private String getMeta(Activity activity) {
+        if (null == activity)
             return null;
 
         JSONObject meta = new JSONObject();
         try {
             int orientation_code = activity.getResources().getConfiguration().orientation;
             String orientation = null;
-            switch(orientation_code){
+            switch (orientation_code) {
                 case Configuration.ORIENTATION_PORTRAIT:
                     orientation = ORIENTATION_PORTRAIT;
                     break;
@@ -114,15 +115,15 @@ public class WidgetList implements Constants {
                     break;
             }
 
-            meta.put(DEVICE_NAME,getDeviceName());
-            meta.put(VIEW,getViewName(activity.getClass().getName()));
-            meta.put(ORIENTATION,orientation);
+            meta.put(DEVICE_NAME, getDeviceName());
+            meta.put(VIEW, getViewName(activity.getClass().getName()));
+            meta.put(ORIENTATION, orientation);
             Context context = activity.getApplicationContext();
             int[] dimensions = getScreenDimensions(context);
-            meta.put(SCREEN_X,dimensions[0]);
-            meta.put(SCREEN_Y,dimensions[1]);
-            meta.put(APP_VERSION,getAppVersionName(context));
-            meta.put(OS,ANDROID);
+            meta.put(SCREEN_X, dimensions[0]);
+            meta.put(SCREEN_Y, dimensions[1]);
+            meta.put(APP_VERSION, getAppVersionName(context));
+            meta.put(OS, ANDROID);
             return meta.toString();
         } catch (JSONException e) {
             e.printStackTrace();
@@ -132,26 +133,28 @@ public class WidgetList implements Constants {
 
     /**
      * Returns names of the views which can have child views
+     *
      * @param view
      * @return
      */
-    private String getViewType(View view){
-        if(view instanceof ListView)
+    private String getViewType(View view) {
+        if (view instanceof ListView)
             return LIST_VIEW;
-        if(view instanceof Spinner)
+        if (view instanceof Spinner)
             return SPINNER;
-        if(view instanceof GridView)
+        if (view instanceof GridView)
             return GRIDVIEW;
         return GENERIC;
     }
 
     /**
      * Returns screen dimensions of the device
+     *
      * @param context
      * @return
      */
-    private int[] getScreenDimensions(Context context){
-        final WindowManager windowManager = (WindowManager)context.getSystemService(Context.WINDOW_SERVICE);
+    private int[] getScreenDimensions(Context context) {
+        final WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         Display display = windowManager.getDefaultDisplay();
         int[] dimensions = new int[2];
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR1) {
@@ -198,6 +201,7 @@ public class WidgetList implements Constants {
 
     /**
      * Returns model String
+     *
      * @return
      */
     private String getDeviceName() {
@@ -238,9 +242,9 @@ public class WidgetList implements Constants {
         return null;
     }
 
-    protected void displayWidgetListForSaving(){
-        if(mWidgetListForSaving!=null){
-            for(WidgetObject obj:mWidgetListForSaving){
+    protected void displayWidgetListForSaving() {
+        if (mWidgetListForSaving != null) {
+            for (WidgetObject obj : mWidgetListForSaving) {
                 obj.displayMyData("Anurag");
             }
         }

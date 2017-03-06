@@ -15,6 +15,7 @@
  * License along with this library.
  */
 package com.streethawk.library.beacon;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -31,11 +32,10 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class Beacons implements Constants{
+public class Beacons implements Constants {
     private final String SUBTAG = "Beacons ";
     private static Beacons mInstance = null;
     private static Context mContext;
-
 
 
     private Beacons() {
@@ -52,9 +52,10 @@ public class Beacons implements Constants{
     /**
      * Use registerForBeaconStatus to be notified when device is near a beacon region
      * Implement {@link INotifyBeaconTransition}
+     *
      * @param observer
      */
-    public void registerForBeaconStatus(INotifyBeaconTransition observer){
+    public void registerForBeaconStatus(INotifyBeaconTransition observer) {
         BeaconServiceBase.registerForBeaconStatus(observer);
     }
 
@@ -85,7 +86,7 @@ public class Beacons implements Constants{
         } else {
             final JSONObject object = new JSONObject();
             try {
-                object.put(beaconId,distance);
+                object.put(beaconId, distance);
             } catch (JSONException e) {
                 e.printStackTrace();
                 return -1;
@@ -95,7 +96,7 @@ public class Beacons implements Constants{
                 public void run() {
                     Logging manager = Logging.getLoggingInstance(mContext);
                     Bundle params = new Bundle();
-                    params.putInt(Util.CODE,CODE_IBEACON_UPDATES);
+                    params.putInt(Util.CODE, CODE_IBEACON_UPDATES);
                     params.putString(Util.SHMESSAGE_ID, null);
                     params.putString("json", object.toString());
                     manager.addLogsForSending(params);
@@ -130,7 +131,7 @@ public class Beacons implements Constants{
         } else {
             final JSONObject object = new JSONObject();
             try {
-                object.put(beaconId,-1);
+                object.put(beaconId, -1);
             } catch (JSONException e) {
                 e.printStackTrace();
                 return -1;
@@ -151,17 +152,16 @@ public class Beacons implements Constants{
     }
 
 
-
     //TODO create a new function which return json as detected beacon list
     //for xamarin
 
 
-
     /**
      * Function returns list of beacons detected
+     *
      * @return
      */
-    public ArrayList<BeaconData> getDetectedBeaconList(){
+    public ArrayList<BeaconData> getDetectedBeaconList() {
         return BeaconServiceBase.getBeaconList();
     }
 
@@ -175,19 +175,19 @@ public class Beacons implements Constants{
     /**
      * Use stopBeaconService API to stop scanning of beacons
      */
-    public void stopBeaconMonitoring(){
+    public void stopBeaconMonitoring() {
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
         SharedPreferences.Editor e = sharedPreferences.edit();
-        e.putBoolean(BEACON_MONITOR_FLAG,false);
+        e.putBoolean(BEACON_MONITOR_FLAG, false);
         e.commit();
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             Intent beaconService = new Intent(mContext, BeaconServiceKK.class);
-            Log.e(Util.TAG,SUBTAG +" Stopping beacon monitoring service");
+            Log.e(Util.TAG, SUBTAG + " Stopping beacon monitoring service");
             mContext.stopService(beaconService);
             new BeaconServiceKK(mContext).unRegisterBeconTask(mContext);
         } else {
             Intent beaconService = new Intent(mContext, BeaconServiceL.class);
-            Log.e(Util.TAG,SUBTAG +" Stopping beacon monitoring service");
+            Log.e(Util.TAG, SUBTAG + " Stopping beacon monitoring service");
             mContext.stopService(beaconService);
             new BeaconServiceKK(mContext).unRegisterBeconTask(mContext);
         }
@@ -195,6 +195,7 @@ public class Beacons implements Constants{
 
     /**
      * Use startBeaconService API to start scanning of beacons
+     *
      * @return
      */
     public boolean startBeaconService() {
@@ -203,13 +204,13 @@ public class Beacons implements Constants{
         e.putBoolean(BEACON_MONITOR_FLAG, true);
         e.commit();
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            Log.e(Util.TAG,SUBTAG +" Starting beacon monitoring service");
+            Log.e(Util.TAG, SUBTAG + " Starting beacon monitoring service");
             Intent beaconService = new Intent(mContext, BeaconServiceKK.class);
             mContext.startService(beaconService);
             BeaconServiceKK beaconServiceObj = new BeaconServiceKK(mContext);
             beaconServiceObj.initiateFirstScan();
         } else {
-            Log.e(Util.TAG,SUBTAG +" Starting beacon monitoring service");
+            Log.e(Util.TAG, SUBTAG + " Starting beacon monitoring service");
             Intent beaconService = new Intent(mContext, BeaconServiceL.class);
             mContext.startService(beaconService);
             BeaconServiceL beaconServiceObj = new BeaconServiceL(mContext);
@@ -220,15 +221,16 @@ public class Beacons implements Constants{
 
     /**
      * StartBeaconMonitoring by application
+     *
      * @return
      */
-    public boolean startBeaconMonitoring(){
+    public boolean startBeaconMonitoring() {
         if (!isDeviceSupportBLE()) {
             Log.e(Util.TAG, SUBTAG + "Device doesn't support BLE");
             return false;
         }
-        if(Util.getPlatformType()== PLATFORM_XAMARIN){
-            StreetHawk.INSTANCE.tagString("sh_module_beacon","true");
+        if (Util.getPlatformType() == PLATFORM_XAMARIN) {
+            StreetHawk.INSTANCE.tagString("sh_module_beacon", "true");
         }
         return startBeaconService();
     }

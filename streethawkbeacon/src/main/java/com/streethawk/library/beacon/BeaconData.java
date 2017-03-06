@@ -29,63 +29,93 @@ public class BeaconData {
 
     /**
      * Set UUID of the beacon to be monitored
+     *
      * @param UUID UUID of beacon
      */
-    public void setUUID(String UUID){ this.mUUID = UUID;}
+    public void setUUID(String UUID) {
+        this.mUUID = UUID;
+    }
 
     /**
      * Set ID of beaon to be monitored
+     *
      * @param beaconId ID of beacon as assigned by StreetHawk server
      */
-    public void setBeaconId(String beaconId){ this.mBeaconId = beaconId;}
+    public void setBeaconId(String beaconId) {
+        this.mBeaconId = beaconId;
+    }
 
     /**
      * set major number of beaon to be monitored
+     *
      * @param major major nmber of beacon
      */
-    public void setMajorNumber(int major){this.mMajorNumber = major;}
+    public void setMajorNumber(int major) {
+        this.mMajorNumber = major;
+    }
 
     /**
      * set minor number of beacon to be monitored
+     *
      * @param minor minor number of beacon
      */
-    public void setMinorNumber(int minor){this.mMinorNumber = minor;}
+    public void setMinorNumber(int minor) {
+        this.mMinorNumber = minor;
+    }
 
     /**
      * Set distance of the beacon to be monitored
+     *
      * @param distance
      */
-    public void setDistance(double distance){this.mDistance = distance;}
+    public void setDistance(double distance) {
+        this.mDistance = distance;
+    }
 
 
     /**
      * Function returns UUID of beacon
+     *
      * @return UUID
      */
-    public String getUUID(){return mUUID;}
+    public String getUUID() {
+        return mUUID;
+    }
 
     /**
      * Function returns beacon ID assigned by StreetHawk server
+     *
      * @return beaconID
      */
-    public String getBeaconId(){return mBeaconId;}
+    public String getBeaconId() {
+        return mBeaconId;
+    }
 
     /**
      * Function returns major number of the beacon
+     *
      * @return majorNumber
      */
-    public int getMajorNumber(){return mMajorNumber;}
+    public int getMajorNumber() {
+        return mMajorNumber;
+    }
 
     /**
      * Function returns minor number of beacon
+     *
      * @return minor number
      */
-    public int getMinorNumber(){return mMinorNumber;}
+    public int getMinorNumber() {
+        return mMinorNumber;
+    }
 
     /**
      * Return distance of the beacon
+     *
      * @return distance
      */
-    public double getDistance(){return mDistance;}
+    public double getDistance() {
+        return mDistance;
+    }
 
 }

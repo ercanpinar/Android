@@ -32,7 +32,7 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-           // proguardFile '/Users/anuragkondeya/AndroidWorkspace/opensourceSDK/Android/streethawkbeacon/proguard-rules.pro'
+            // proguardFile '/Users/anuragkondeya/AndroidWorkspace/opensourceSDK/Android/streethawkbeacon/proguard-rules.pro'
         }
     }
 

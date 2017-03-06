@@ -130,12 +130,12 @@ public class SHBeaconModuleBC extends BroadcastReceiver implements Constants {
                             connection.setDoOutput(true);
                             connection.setRequestProperty("X-Installid", installId);
                             connection.setRequestProperty("X-App-Key", app_key);
-                            connection.setRequestProperty("X-Version",libVersion);
+                            connection.setRequestProperty("X-Version", libVersion);
                             connection.setRequestProperty("User-Agent", app_key + "(" + libVersion + ")");
                             OutputStream os = connection.getOutputStream();
                             BufferedWriter writer = new BufferedWriter(
                                     new OutputStreamWriter(os, "UTF-8"));
-                            String logs="";
+                            String logs = "";
                             boolean first = true;
                             for (Map.Entry<String, String> entry : logMap.entrySet()) {
                                 StringBuilder result = new StringBuilder();
@@ -143,18 +143,18 @@ public class SHBeaconModuleBC extends BroadcastReceiver implements Constants {
                                     first = false;
                                 else
                                     result.append("&");
-                                String key      = entry.getKey();
-                                String value    = entry.getValue();
-                                if(null!=key) {
+                                String key = entry.getKey();
+                                String value = entry.getValue();
+                                if (null != key) {
                                     result.append(URLEncoder.encode(entry.getKey(), "UTF-8"));
                                     result.append("=");
-                                    if(null!=value) {
+                                    if (null != value) {
                                         result.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
-                                    }else{
+                                    } else {
                                         result.append(URLEncoder.encode("", "UTF-8"));
                                     }
                                 }
-                                logs+=result.toString();
+                                logs += result.toString();
                                 result = null; //Force GC
                             }
                             writer.write(logs);
@@ -280,8 +280,8 @@ public class SHBeaconModuleBC extends BroadcastReceiver implements Constants {
         if (action.equals(BluetoothAdapter.ACTION_STATE_CHANGED)) {
             final BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
             SharedPreferences sharedPreferences = context.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
-            boolean beaconMonitor = sharedPreferences.getBoolean(BEACON_MONITOR_FLAG,false);
-            if(!beaconMonitor)
+            boolean beaconMonitor = sharedPreferences.getBoolean(BEACON_MONITOR_FLAG, false);
+            if (!beaconMonitor)
                 return;
             if (bluetoothAdapter.isEnabled()) {
                 Log.i(Util.TAG, "Starting beacon service");
@@ -302,7 +302,7 @@ public class SHBeaconModuleBC extends BroadcastReceiver implements Constants {
                     BeaconServiceKK obj = new BeaconServiceKK(context);
                     obj.forceClearBeaconList(context);
                     obj.unRegisterBeconTask(context);
-                    obj=null;
+                    obj = null;
                     Intent beaconService = new Intent(context, BeaconServiceKK.class);
                     context.stopService(beaconService);
 
@@ -310,7 +310,7 @@ public class SHBeaconModuleBC extends BroadcastReceiver implements Constants {
                     BeaconServiceL obj = new BeaconServiceL(context);
                     obj.forceClearBeaconList(context);
                     obj.unRegisterBeconTask(context);
-                    obj=null;
+                    obj = null;
                     Intent beaconService = new Intent(context, BeaconServiceL.class);
                     context.stopService(beaconService);
                 }

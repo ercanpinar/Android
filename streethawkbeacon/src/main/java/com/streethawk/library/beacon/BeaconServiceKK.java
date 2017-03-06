@@ -36,25 +36,34 @@ import java.util.concurrent.TimeUnit;
 public class BeaconServiceKK extends BeaconServiceBase {
 
     private Context mContext;
-    public BeaconServiceKK(){super();}
-    BeaconServiceKK(Context context){
+
+    public BeaconServiceKK() {
+        super();
+    }
+
+    BeaconServiceKK(Context context) {
         super(context);
         this.mContext = context;
     }
 
     public IBinder onBind(Intent intent) {
         return super.onBind(intent);
-    };
-    @Override
-    public void onDestroy() { super.onDestroy();}
+    }
 
-    public void forceClearBeaconList(Context context){
+    ;
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
+
+    public void forceClearBeaconList(Context context) {
         super.forceClearBeaconList(context);
     }
 
 
     @Override
-    public  void initiateFirstScan(){
+    public void initiateFirstScan() {
         final int scanInterval = (Util.isAppBG(mContext) ? BLE_SCAN_INTERVAL_BG : BLE_SCAN_INTERVAL_FG);
         registerBeaconTask(mContext, scanInterval);
         new Thread(new Runnable() {
@@ -84,7 +93,7 @@ public class BeaconServiceKK extends BeaconServiceBase {
             };
             ScheduledFuture<?> oneShotFuture = sch.schedule(oneShotTask, BLE_ACTIVE_SCAN_PERIOD, TimeUnit.SECONDS);
             mBluetoothAdapter.startLeScan(mLeScanCallback);
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             this.stopSelf();
         }

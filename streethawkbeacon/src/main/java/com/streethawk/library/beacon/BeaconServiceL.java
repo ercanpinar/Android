@@ -47,16 +47,26 @@ public class BeaconServiceL extends BeaconServiceBase {
     private final String SUBTAG = "BeaconServiceL ";
 
     private Context mContext;
-    public BeaconServiceL(){super();}
-    BeaconServiceL(Context context){
+
+    public BeaconServiceL() {
+        super();
+    }
+
+    BeaconServiceL(Context context) {
         super(context);
         this.mContext = context;
     }
+
     public IBinder onBind(Intent intent) {
         return super.onBind(intent);
-    };
+    }
+
+    ;
+
     @Override
-    public void onDestroy() { super.onDestroy();}
+    public void onDestroy() {
+        super.onDestroy();
+    }
 
     @Override
     public void onCreate() {
@@ -85,7 +95,7 @@ public class BeaconServiceL extends BeaconServiceBase {
 
         @Override
         public void onScanFailed(int errorCode) {
-            Log.w(Util.TAG,SUBTAG+ "LE Scan Failed: " + errorCode);
+            Log.w(Util.TAG, SUBTAG + "LE Scan Failed: " + errorCode);
         }
 
     };
@@ -97,6 +107,7 @@ public class BeaconServiceL extends BeaconServiceBase {
             super.onScanResult(callbackType, result);
 
         }
+
         @Override
         public void onBatchScanResults(List<ScanResult> results) {
 
@@ -104,7 +115,7 @@ public class BeaconServiceL extends BeaconServiceBase {
 
         @Override
         public void onScanFailed(int errorCode) {
-            Log.w(Util.TAG,SUBTAG+ "LE Scan Failed: " + errorCode);
+            Log.w(Util.TAG, SUBTAG + "LE Scan Failed: " + errorCode);
         }
 
     };
@@ -121,7 +132,7 @@ public class BeaconServiceL extends BeaconServiceBase {
         }).start();
     }
 
-    public void forceClearBeaconList(Context context){
+    public void forceClearBeaconList(Context context) {
         super.forceClearBeaconList(context);
     }
 
@@ -168,14 +179,14 @@ public class BeaconServiceL extends BeaconServiceBase {
             Runnable oneShotTask = new Runnable() {
                 @Override
                 public void run() {
-                    Log.i(Util.TAG,"Stopping beacon scan");
+                    Log.i(Util.TAG, "Stopping beacon scan");
                     bleScanner.stopScan(mScanCallback);
                     processDetectedBeacons(mContext);
 
                 }
             };
             ScheduledFuture<?> oneShotFuture = sch.schedule(oneShotTask, BLE_ACTIVE_SCAN_PERIOD, TimeUnit.SECONDS);
-            Log.i(Util.TAG,"Starting actual scanning of beacons");
+            Log.i(Util.TAG, "Starting actual scanning of beacons");
             bleScanner.startScan(null, scanSettings, mScanCallback);
 
 

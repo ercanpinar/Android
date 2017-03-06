@@ -45,7 +45,7 @@ import java.util.Set;
 /**
  * Base class for service to detect beacons in proxmity
  */
-public abstract class BeaconServiceBase extends Service implements Constants{
+public abstract class BeaconServiceBase extends Service implements Constants {
     public BeaconServiceBase() {
     }
 
@@ -68,35 +68,38 @@ public abstract class BeaconServiceBase extends Service implements Constants{
 
     public abstract void scanForBeacon();
 
-    public IBinder onBind(Intent intent){return null;}
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
 
     public void onDestroy() {
         super.onDestroy();
     }
 
-    private static INotifyBeaconTransition mINotifyBeaconStatus=null;
+    private static INotifyBeaconTransition mINotifyBeaconStatus = null;
     final static ArrayList<BeaconData> mDetectedBeaconList = new ArrayList<BeaconData>();
 
 
-    public static void registerForBeaconStatus(INotifyBeaconTransition observer){
+    public static void registerForBeaconStatus(INotifyBeaconTransition observer) {
         mINotifyBeaconStatus = observer;
     }
 
     /**
      * Returns list of beacons detected
+     *
      * @return
      */
-    public static ArrayList<BeaconData> getBeaconList(){
+    public static ArrayList<BeaconData> getBeaconList() {
         return mDetectedBeaconList;
     }
 
 
-
     /**
      * Notify server when all beacons are invisible due to turning off bluetooth
+     *
      * @param context
      */
-    protected void forceClearBeaconList(Context context){
+    protected void forceClearBeaconList(Context context) {
         if (mOldBeacons == null) {
             return;
         }
@@ -128,6 +131,7 @@ public abstract class BeaconServiceBase extends Service implements Constants{
 
     /**
      * Check if BLE permission is granted.
+     *
      * @return
      */
     private boolean isPermissionAvailable() {
@@ -143,6 +147,7 @@ public abstract class BeaconServiceBase extends Service implements Constants{
 
     /**
      * Function to check if BT is enable
+     *
      * @param context
      * @return true if enable otherwise returns false
      */
@@ -150,7 +155,8 @@ public abstract class BeaconServiceBase extends Service implements Constants{
         /*
         if (!isPermissionAvailable()) {
             return false;
-        } else */{
+        } else */
+        {
             BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
             if (null == bluetoothAdapter)
                 return false;
@@ -203,6 +209,7 @@ public abstract class BeaconServiceBase extends Service implements Constants{
 
     /**
      * Unregister periodic task which triggers beacon scanning
+     *
      * @param context
      */
     protected void unRegisterBeconTask(Context context) {
@@ -218,6 +225,7 @@ public abstract class BeaconServiceBase extends Service implements Constants{
 
     /**
      * Register periodic task which triggers beacon scanning.
+     *
      * @param context
      * @param scanInterval
      */
@@ -238,6 +246,7 @@ public abstract class BeaconServiceBase extends Service implements Constants{
 
     /**
      * Parse for data from ble scanned packet
+     *
      * @param scanRecord
      * @param txPower
      */
@@ -292,6 +301,7 @@ public abstract class BeaconServiceBase extends Service implements Constants{
 
     /**
      * Compute approx distance of beacon from device
+     *
      * @param txPower
      * @param rssi
      * @return distance in meters
@@ -308,6 +318,7 @@ public abstract class BeaconServiceBase extends Service implements Constants{
 
     /**
      * Function notifies SH server about beacons detected in vicinity
+     *
      * @param context
      */
     protected void processDetectedBeacons(Context context) {
@@ -342,7 +353,7 @@ public abstract class BeaconServiceBase extends Service implements Constants{
             if (object.toString().equals("{ }")) {
                 return;
             }
-            params.putInt(Util.CODE,CODE_IBEACON_UPDATES);
+            params.putInt(Util.CODE, CODE_IBEACON_UPDATES);
             params.putString(Util.SHMESSAGE_ID, null);
             params.putString("json", object.toString());
             Log.i(Util.TAG, SUBTAG + "Notifying beacons detected" + object.toString());
@@ -353,12 +364,12 @@ public abstract class BeaconServiceBase extends Service implements Constants{
     }
 
     private void notifyObserver() {
-        if(null!=mINotifyBeaconStatus){
-           if(null!=mDetectedBeaconList){
-               if(!mDetectedBeaconList.isEmpty()){
-                   mINotifyBeaconStatus.notifyBeaconDetected();
-               }
-           }
+        if (null != mINotifyBeaconStatus) {
+            if (null != mDetectedBeaconList) {
+                if (!mDetectedBeaconList.isEmpty()) {
+                    mINotifyBeaconStatus.notifyBeaconDetected();
+                }
+            }
         }
     }
 }

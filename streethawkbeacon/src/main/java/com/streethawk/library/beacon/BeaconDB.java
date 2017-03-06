@@ -23,6 +23,7 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -41,6 +42,7 @@ class BeaconDB {
         public static final String COLUMN_UUID = "uuid";
         public static final String COLUMN_MAJOR_NUMBER = "majorno";
         public static final String COLUMN_MINOR_NUMBER = "minorno";
+
         private BeaconDBHelper(Context context) {
             super(context);
 
@@ -68,11 +70,12 @@ class BeaconDB {
 
     /**
      * get instance of BeaconDB class
+     *
      * @param context application context
      * @return instance of BeaconDB class
      */
-    public static BeaconDB getInstance(Context context){
-        if(null==instance){
+    public static BeaconDB getInstance(Context context) {
+        if (null == instance) {
             instance = new BeaconDB(context);
         }
         return instance;
@@ -94,17 +97,17 @@ class BeaconDB {
 
     public void storeBeaconData(List<BeaconData> objectList) {
         ContentValues values = new ContentValues();
-        for(BeaconData object:objectList){
-            values.put(BeaconDBHelper.COLUMN_BEACONID,object.getBeaconId());
-            values.put(BeaconDBHelper.COLUMN_UUID,object.getUUID().toLowerCase());
-            values.put(BeaconDBHelper.COLUMN_MAJOR_NUMBER,object.getMajorNumber());
-            values.put(BeaconDBHelper.COLUMN_MINOR_NUMBER,object.getMinorNumber());
+        for (BeaconData object : objectList) {
+            values.put(BeaconDBHelper.COLUMN_BEACONID, object.getBeaconId());
+            values.put(BeaconDBHelper.COLUMN_UUID, object.getUUID().toLowerCase());
+            values.put(BeaconDBHelper.COLUMN_MAJOR_NUMBER, object.getMajorNumber());
+            values.put(BeaconDBHelper.COLUMN_MINOR_NUMBER, object.getMinorNumber());
             mDatabase.insert(BeaconDBHelper.BEACON_TABLE_NAME, null, values);
         }
         mDatabase.close();
     }
 
-    public void deleteBeaconData(){
+    public void deleteBeaconData() {
         mDatabase.delete(BeaconDBHelper.BEACON_TABLE_NAME, null, null);
     }
 
@@ -128,32 +131,32 @@ class BeaconDB {
     }
 
 
-    public String getBeaconId(String UUID,int major,int minor){
+    public String getBeaconId(String UUID, int major, int minor) {
         BeaconDBHelper helper = new BeaconDBHelper(mContext);
         SQLiteDatabase database = helper.getReadableDatabase();
         if (null == UUID) {
             database.close();
             helper.close();
             return null;
-        }else{
+        } else {
             UUID = UUID.toLowerCase();
             String query = "select * from " + BeaconDBHelper.BEACON_TABLE_NAME +
-                    " where " + BeaconDBHelper.COLUMN_UUID + " = " + DOUBLE_QUOTE+UUID.trim()+DOUBLE_QUOTE +
-                    " and "+ BeaconDBHelper.COLUMN_MAJOR_NUMBER + " = "+SINGLE_QUOTE+Integer.toString(major) +SINGLE_QUOTE+
-                    " and "+BeaconDBHelper.COLUMN_MINOR_NUMBER + " = "+SINGLE_QUOTE+Integer.toString(minor)+SINGLE_QUOTE;
+                    " where " + BeaconDBHelper.COLUMN_UUID + " = " + DOUBLE_QUOTE + UUID.trim() + DOUBLE_QUOTE +
+                    " and " + BeaconDBHelper.COLUMN_MAJOR_NUMBER + " = " + SINGLE_QUOTE + Integer.toString(major) + SINGLE_QUOTE +
+                    " and " + BeaconDBHelper.COLUMN_MINOR_NUMBER + " = " + SINGLE_QUOTE + Integer.toString(minor) + SINGLE_QUOTE;
             try {
                 Cursor cursor = database.rawQuery(query, null);
                 if (cursor != null && cursor.moveToFirst()) {
                     String beaconId = cursor.getString(cursor.getColumnIndex(BeaconDBHelper.COLUMN_BEACONID));
                     database.close();
                     return beaconId;
-            } else {
-                cursor.close();
-                database.close();
-                helper.close();
-                return null;
-            }
-            }catch(SQLiteException e){
+                } else {
+                    cursor.close();
+                    database.close();
+                    helper.close();
+                    return null;
+                }
+            } catch (SQLiteException e) {
                 e.printStackTrace();
                 database.close();
                 helper.close();

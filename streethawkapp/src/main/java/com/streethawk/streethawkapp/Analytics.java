@@ -130,7 +130,8 @@ public class Analytics extends AppCompatActivity {
     @Override
     public void onResume(){
         super.onResume();
-        new Tip().showTip_new(mActivity,findViewById(R.id.fabAnalytics));
+        //TODO: This method is not working and parameter problem.
+        //new Tip().showTip_new(mActivity,findViewById(R.id.fabAnalytics));
     }
 
 

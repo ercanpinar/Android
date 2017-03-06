@@ -13,7 +13,7 @@ import com.streethawk.library.core.Util;
 
 import java.io.IOException;
 
-public class SHInstanceIDListenerService extends InstanceIDListenerService implements Constants{
+public class SHInstanceIDListenerService extends InstanceIDListenerService implements Constants {
     public SHInstanceIDListenerService() {
     }
 
@@ -21,6 +21,7 @@ public class SHInstanceIDListenerService extends InstanceIDListenerService imple
     public IBinder onBind(Intent intent) {
         return null;
     }
+
     @Override
     public void onTokenRefresh() {
         new Thread(new Runnable() {
@@ -29,17 +30,17 @@ public class SHInstanceIDListenerService extends InstanceIDListenerService imple
                 Context context = getApplicationContext();
                 SharedPreferences sharedPreferences = context.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
                 String projectNumber = sharedPreferences.getString(SHGCM_SENDER_KEY_APP, null);
-                if(null==projectNumber) {
+                if (null == projectNumber) {
                     Log.e(Util.TAG, "Project number is missing");
                     return;
                 }
-                if(projectNumber.isEmpty()){
+                if (projectNumber.isEmpty()) {
                     Log.e(Util.TAG, "Project number is empty");
                     return;
                 }
                 // Get Registration id
                 InstanceID instanceID = InstanceID.getInstance(context);
-                String token=null;
+                String token = null;
                 try {
                     token = instanceID.getToken(projectNumber,
                             GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);

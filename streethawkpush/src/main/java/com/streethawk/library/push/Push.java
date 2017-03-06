@@ -259,28 +259,30 @@ public class Push implements Constants {
 
     /**
      * Set resid of notification icon (large)
+     *
      * @param resourceName
      */
-    public void setLargeIconResID(String  resourceName){
+    public void setLargeIconResID(String resourceName) {
         int id = mContext.getResources().getIdentifier(resourceName, "drawable",
                 mContext.getPackageName());
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
         SharedPreferences.Editor e = sharedPreferences.edit();
-        e.putInt(RES_ID_FOR_BG_NOTFICATION_LARGE,id);
+        e.putInt(RES_ID_FOR_BG_NOTFICATION_LARGE, id);
         e.commit();
     }
 
     /**
      * Set resid of notification icon (small)
+     *
      * @param resourceName
      */
-    public void setSmallIconResID(String resourceName){
+    public void setSmallIconResID(String resourceName) {
 
         int id = mContext.getResources().getIdentifier(resourceName, "drawable",
                 mContext.getPackageName());
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
         SharedPreferences.Editor e = sharedPreferences.edit();
-        e.putInt(RES_ID_FOR_BG_NOTFICATION_SMALL,id);
+        e.putInt(RES_ID_FOR_BG_NOTFICATION_SMALL, id);
         e.commit();
     }
 

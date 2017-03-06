@@ -79,25 +79,25 @@ class StreetHawkDialog extends NotificationBase {
         this.mPushData = pushData;
         try {
             Float portion = Float.parseFloat(pushData.getPortion());
-            this.mPortion = (portion>0&&portion<1)?portion:1.0f;
+            this.mPortion = (portion > 0 && portion < 1) ? portion : 1.0f;
         } catch (Exception e) {
             this.mPortion = 1.0f;
         }
         try {
             int orientation = Integer.parseInt(pushData.getOrientation());
-            this.mOrientation = (orientation>=0&&orientation<=3)?orientation:0;
+            this.mOrientation = (orientation >= 0 && orientation <= 3) ? orientation : 0;
         } catch (Exception e) {
             this.mOrientation = 0;
         }
         try {
             float fSpeed = Float.parseFloat(pushData.getSpeed());
             int speed;
-            if(fSpeed>0 && fSpeed<1)
+            if (fSpeed > 0 && fSpeed < 1)
                 speed = 1;
             else {
                 speed = (int) Float.parseFloat(pushData.getSpeed());
             }
-            this.mSpeed = speed>0?speed:0;
+            this.mSpeed = speed > 0 ? speed : 0;
         } catch (Exception e) {
             this.mSpeed = 0;
         }
@@ -111,7 +111,7 @@ class StreetHawkDialog extends NotificationBase {
      */
     private boolean isValidUrl(String url) {
         if (!(Patterns.WEB_URL.matcher(url).matches())) {
-                Log.e(Util.TAG, "received invalid URL" + url);
+            Log.e(Util.TAG, "received invalid URL" + url);
             return false;
         }
         return true;
@@ -121,8 +121,8 @@ class StreetHawkDialog extends NotificationBase {
         final Builder builder = new Builder(true);
         builder.setSlide(mOrientation, mSpeed, mPortion);
         String url = mPushData.getData();
-        if (!url.startsWith("http://") && !url.startsWith("https://")){
-            url = "http://"+url;
+        if (!url.startsWith("http://") && !url.startsWith("https://")) {
+            url = "http://" + url;
         }
         //TODO: Add check for valid url here.
         builder.setUrl(url);
@@ -135,7 +135,7 @@ class StreetHawkDialog extends NotificationBase {
                 SharedPreferences.Editor e = sharedPreferences.edit();
                 e.putString(PENDING_DIALOG, null);
                 e.commit();
-                sendResultBroadcast(mContext, mPushData.getMsgId(),STREETHAWK_ACCEPTED);
+                sendResultBroadcast(mContext, mPushData.getMsgId(), STREETHAWK_ACCEPTED);
                 builder.stopWebview();
                 builder.clearCache();
             }
@@ -481,11 +481,11 @@ class StreetHawkDialog extends NotificationBase {
             final String msgStr = mPushData.getMsg();
             Spanned titleTmp = null;
             Spanned msgTmp = null;
-            if(null!=titleStr) {
+            if (null != titleStr) {
                 if (!titleStr.isEmpty())
                     titleTmp = Html.fromHtml(titleStr);
             }
-            if(null!=msgStr) {
+            if (null != msgStr) {
                 if (!msgStr.isEmpty())
                     msgTmp = Html.fromHtml(msgStr);
             }

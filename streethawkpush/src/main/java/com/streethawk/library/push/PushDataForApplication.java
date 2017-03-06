@@ -27,11 +27,11 @@ import com.streethawk.library.core.Util;
 /**
  * For push handling at by applications
  */
-public class PushDataForApplication extends NotificationBase{
+public class PushDataForApplication extends NotificationBase {
 
     private final String SUBTAG = "PushDataForApplication ";
 
-    public PushDataForApplication(){
+    public PushDataForApplication() {
         super();
     }
 
@@ -103,28 +103,28 @@ public class PushDataForApplication extends NotificationBase{
      */
     public static final int RESULT_POSTPONED = 0;
 
-    private int     mAction;
-    private String  mMsgID;
-    private String  mTitle;
-    private String  mMessage;
-    private String  mData;
-    private Float   mPortion;
-    private int     mOrientation;
-    private int     mSpeed;
+    private int mAction;
+    private String mMsgID;
+    private String mTitle;
+    private String mMessage;
+    private String mData;
+    private Float mPortion;
+    private int mOrientation;
+    private int mSpeed;
     private boolean mDisplayWithoutDialog;
-    private String  mSound;
-    private int     mBadge;
-    private String  mContentAvailable   = null;  // For interactive push
-    private String  mCategory           = null;  // for interactive push
+    private String mSound;
+    private int mBadge;
+    private String mContentAvailable = null;  // For interactive push
+    private String mCategory = null;  // for interactive push
 
     /*We are not using custom button as of now*/
 
-    private String  mBtn1Title     = null;      // Custom button 1 title
-    private String  mBtn2Title     = null;      // Custom button 2 title
-    private String  mBtn3Title     = null;      // Custom button 3 title
-    private int  mIC1              = -1;     // Icon code for button 1
-    private int  mIC2              = -1;     // Icon code for button 2
-    private int  mIC3              = -1;     // Icon code for button 3
+    private String mBtn1Title = null;      // Custom button 1 title
+    private String mBtn2Title = null;      // Custom button 2 title
+    private String mBtn3Title = null;      // Custom button 3 title
+    private int mIC1 = -1;     // Icon code for button 1
+    private int mIC2 = -1;     // Icon code for button 2
+    private int mIC3 = -1;     // Icon code for button 3
 
     public void convertPushDataToPushDataForApp(PushNotificationData data, PushDataForApplication dataForApplication) {
         if (null == dataForApplication)
@@ -249,10 +249,9 @@ public class PushDataForApplication extends NotificationBase{
     }
 
 
-
-
     /**
      * API for getting action code associated with a push message from StreetHawk service
+     *
      * @return action code
      */
     public int getAction() {
@@ -261,6 +260,7 @@ public class PushDataForApplication extends NotificationBase{
 
     /**
      * API for getting message ID associated with a push message from StreetHawk service
+     *
      * @return msgID
      */
     public String getMsgId() {
@@ -269,6 +269,7 @@ public class PushDataForApplication extends NotificationBase{
 
     /**
      * API to get title associated with a push message from StreetHawk server
+     *
      * @return title
      */
     public String getTitle() {
@@ -277,6 +278,7 @@ public class PushDataForApplication extends NotificationBase{
 
     /**
      * API for get message associated with a push message from StreetHawk server
+     *
      * @return message
      */
     public String getMessage() {
@@ -285,8 +287,8 @@ public class PushDataForApplication extends NotificationBase{
 
     /**
      * API to get data associated with a push message from StreetHawk server
-     * @return data
      *
+     * @return data
      */
     public String getData() {
         return mData;
@@ -295,7 +297,8 @@ public class PushDataForApplication extends NotificationBase{
     /**
      * API to get portion associated with a push message from StreetHawk server
      * Portion defines percentage of screen covered by the animated webview frame as displayed when action equals ACTION_OPEN_URL
-     *  portion can take a value between 0 and 1
+     * portion can take a value between 0 and 1
+     *
      * @return portion
      */
     public float getPortion() {
@@ -306,6 +309,7 @@ public class PushDataForApplication extends NotificationBase{
      * API to get orientation associated with a push message from StreetHawk server
      * orientation defines direction from which web view will pop out of screen action  = ACTION_OPEN_URL
      * Valid values are 0 =bottom, 1 = top 2 = left 3 = right
+     *
      * @return orientation
      */
     public int getOrientation() {
@@ -315,6 +319,7 @@ public class PushDataForApplication extends NotificationBase{
     /**
      * API to get speed associated with a push message from StreetHawk server
      * Speed defines time takes for completing animation of webview for action  = ACTION_OPEN_URL
+     *
      * @return speed
      */
     public int getSpeed() {
@@ -324,6 +329,7 @@ public class PushDataForApplication extends NotificationBase{
     /**
      * API to get boolea value for displaying confirmation dialog when action = ACTION_OPEN_URL
      * if set to true, user will not be prompted for confirmation dialog and in app webview will pop up directly
+     *
      * @return true to display confirmation doalog else return false
      */
     public Boolean getDisplayWithoutConfirmation() {
@@ -332,6 +338,7 @@ public class PushDataForApplication extends NotificationBase{
 
     /**
      * API returns name of sound file associated with push message
+     *
      * @return name of sound file to be played for notification
      */
     public String getSound() {
@@ -341,6 +348,7 @@ public class PushDataForApplication extends NotificationBase{
     /**
      * API returns number to be displayed as batch when push message arrives.
      * Not all android devices can display badge.
+     *
      * @return badge number
      */
     public int getBadge() {
@@ -349,58 +357,81 @@ public class PushDataForApplication extends NotificationBase{
 
     /**
      * API to get value of content available
+     *
      * @return
      */
-    public String getContentAvailable(){return mContentAvailable;}
+    public String getContentAvailable() {
+        return mContentAvailable;
+    }
 
     /**
      * API to get value of category
+     *
      * @return
      */
-    public String getCategory(){return mCategory;}
-
+    public String getCategory() {
+        return mCategory;
+    }
 
 
     /**
      * get custom title for button 1
+     *
      * @return title for button 1
      */
-    public String getBtn1Title(){return this.mBtn1Title;}
+    public String getBtn1Title() {
+        return this.mBtn1Title;
+    }
 
     /**
      * get title for button 2
+     *
      * @return title for button 2
      */
-    public String getBtn2Title(){return this.mBtn2Title;}
+    public String getBtn2Title() {
+        return this.mBtn2Title;
+    }
 
     /**
      * get title for button 3
+     *
      * @return title for button 3
      */
-    public String getBtn3Title(){return this.mBtn3Title;}
+    public String getBtn3Title() {
+        return this.mBtn3Title;
+    }
 
     /**
      * get icon for button 1
+     *
      * @return icon name for button 1
      */
-    public int getBtn1Icon(){return this.mIC1;}
+    public int getBtn1Icon() {
+        return this.mIC1;
+    }
 
     /**
      * get icon for button 2
+     *
      * @return icon for button 2
      */
-    public int getBtn2Icon(){return this.mIC2;}
+    public int getBtn2Icon() {
+        return this.mIC2;
+    }
 
     /**
      * get icon for button 3
+     *
      * @return icon for button 3
      */
-    public int getBtn3Icon(){return this.mIC3;}
-
+    public int getBtn3Icon() {
+        return this.mIC3;
+    }
 
 
     /**
      * API for setting action code
+     *
      * @param action
      */
     public void setAction(int action) {
@@ -409,6 +440,7 @@ public class PushDataForApplication extends NotificationBase{
 
     /**
      * API for setting msgID
+     *
      * @param msgID
      */
     public void setMsgId(String msgID) {
@@ -417,6 +449,7 @@ public class PushDataForApplication extends NotificationBase{
 
     /**
      * API for setting title
+     *
      * @param title
      */
     public void setTitle(String title) {
@@ -425,6 +458,7 @@ public class PushDataForApplication extends NotificationBase{
 
     /**
      * API for setting message
+     *
      * @param message
      */
     public void setMessage(String message) {
@@ -433,6 +467,7 @@ public class PushDataForApplication extends NotificationBase{
 
     /**
      * API for setting data
+     *
      * @param data
      */
     public void setData(String data) {
@@ -441,6 +476,7 @@ public class PushDataForApplication extends NotificationBase{
 
     /**
      * API for setting portion for in app url display
+     *
      * @param portion
      */
     public void setPortion(float portion) {
@@ -449,6 +485,7 @@ public class PushDataForApplication extends NotificationBase{
 
     /**
      * API for setting orientation in app url display
+     *
      * @param orientation
      */
     public void setOrientation(int orientation) {
@@ -457,6 +494,7 @@ public class PushDataForApplication extends NotificationBase{
 
     /**
      * API for setting speed for in app url display
+     *
      * @param speed
      */
     public void setSpeed(int speed) {
@@ -465,6 +503,7 @@ public class PushDataForApplication extends NotificationBase{
 
     /**
      * API for setting no dialog for in app url display
+     *
      * @param displayWithoutDialog
      */
     public void setDisplayWithoutConfirmation(Boolean displayWithoutDialog) {
@@ -473,6 +512,7 @@ public class PushDataForApplication extends NotificationBase{
 
     /**
      * API for setting sound
+     *
      * @param sound
      */
     public void setSound(String sound) {
@@ -481,6 +521,7 @@ public class PushDataForApplication extends NotificationBase{
 
     /**
      * API for setting badge
+     *
      * @param badge
      */
     public void setBadge(int badge) {
@@ -489,52 +530,76 @@ public class PushDataForApplication extends NotificationBase{
 
     /**
      * API for setting content available for payload
+     *
      * @param contentAvailable
      */
-    public void setContentAvailable(String contentAvailable){this.mContentAvailable=contentAvailable;}
+    public void setContentAvailable(String contentAvailable) {
+        this.mContentAvailable = contentAvailable;
+    }
 
-    public void setCategory(String category){this.mCategory = category;}
+    public void setCategory(String category) {
+        this.mCategory = category;
+    }
 
 
     /**
      * Set title for notification button 1
+     *
      * @param title title for notification button 1
      */
-    public void setBtn1Title(String title){this.mBtn1Title = title;}
+    public void setBtn1Title(String title) {
+        this.mBtn1Title = title;
+    }
 
     /**
      * Set title for notification button 2
+     *
      * @param title title for notification button 2
      */
-    public void setBtn2Title(String title){this.mBtn2Title = title;}
+    public void setBtn2Title(String title) {
+        this.mBtn2Title = title;
+    }
 
     /**
      * Set title for notification button 3
+     *
      * @param title title for notification button 3
      */
-    public void setBtn3Title(String title){this.mBtn3Title = title;}
+    public void setBtn3Title(String title) {
+        this.mBtn3Title = title;
+    }
 
     /**
      * Set icon title for button 1
+     *
      * @param icon icon for button 1
      */
-    public void setBtn1Icon(int icon){this.mIC1 = icon;}
+    public void setBtn1Icon(int icon) {
+        this.mIC1 = icon;
+    }
 
     /**
      * Set icon title for button 2
+     *
      * @param icon for button 2
      */
-    public void setBtn2Icon(int icon){this.mIC2 = icon;}
+    public void setBtn2Icon(int icon) {
+        this.mIC2 = icon;
+    }
 
     /**
      * Set title for button 3
+     *
      * @param icon for button 3
      */
-    public void setBtn3Icon(int icon){this.mIC3 = icon;}
+    public void setBtn3Icon(int icon) {
+        this.mIC3 = icon;
+    }
 
 
     /**
      * Display push data received from applicaton.
+     *
      * @param LogTag
      */
     public void displayDataForDebugging(String LogTag) {
@@ -544,11 +609,11 @@ public class PushDataForApplication extends NotificationBase{
         String myData = "displayMyData" + NEWLINE +
                 "MsgId " + this.mMsgID + NEWLINE +
                 "Action " + mAction + NEWLINE +
-                "Title "+ mTitle + NEWLINE +
+                "Title " + mTitle + NEWLINE +
                 "Msg " + this.mMessage + NEWLINE +
                 "Data " + mData + NEWLINE +
-                "Portion "+  mPortion + NEWLINE +
-                "Orientation "+ mOrientation + NEWLINE +
+                "Portion " + mPortion + NEWLINE +
+                "Orientation " + mOrientation + NEWLINE +
                 "Speed " + mSpeed + NEWLINE +
                 "NoDialog " + this.mDisplayWithoutDialog + NEWLINE +
                 "Sound " + mSound + NEWLINE +
@@ -561,26 +626,26 @@ public class PushDataForApplication extends NotificationBase{
                 "Icon_Btn1" + mIC1 + NEWLINE +
                 "Icon_Btn2" + mIC2 + NEWLINE +
                 "Icon_Btn3" + mIC3
-                /*End interactive push*/
-                ;
+                /*End interactive push*/;
         Log.i(LogTag, myData);
     }
 
     /**
      * Notify push result to StreetHawk SDK. Use this API if you are not using StreetHawks on click listeners
+     *
      * @param context
      * @param result
      */
     public void sendPushResult(Context context, int result) {
         if (this.mMsgID == null) {
-            Log.e(Util.TAG,SUBTAG+ "Invalid msgId" + mMsgID);
+            Log.e(Util.TAG, SUBTAG + "Invalid msgId" + mMsgID);
             return;
         } else {
             if ((result != RESULT_ACCEPTED) && (result != RESULT_DECLINED) && (result != RESULT_POSTPONED)) {
-                Log.e(Util.TAG,SUBTAG+ "Invalid result code" + result + "valid values are RESULT_ACCEPTED or RESULT_DECLINED or RESULT_POSTPONED");
+                Log.e(Util.TAG, SUBTAG + "Invalid result code" + result + "valid values are RESULT_ACCEPTED or RESULT_DECLINED or RESULT_POSTPONED");
                 return;
             }
-            sendResultBroadcast(context,this.getMsgId(),result);
+            sendResultBroadcast(context, this.getMsgId(), result);
         }
     }
 
@@ -673,36 +738,39 @@ public class PushDataForApplication extends NotificationBase{
 
     /**
      * Handles onclick event on Positive button. If you are using custom dialog,associate this positive listener with your custom dialogs positive button
-     * @param dialog custom dialog instance
+     *
+     * @param dialog  custom dialog instance
      * @param context application context
      * @return positive onClicklistener
      */
-    public View.OnClickListener getPositiveButtonOnClickListener(Dialog dialog,Context context) {
+    public View.OnClickListener getPositiveButtonOnClickListener(Dialog dialog, Context context) {
         SHForegroundNotification shForegroundNotification = new SHForegroundNotification(context);
-        return shForegroundNotification.getPositiveButtonListenerForApplication(dialog,copyToPushNotificationDataObject());
+        return shForegroundNotification.getPositiveButtonListenerForApplication(dialog, copyToPushNotificationDataObject());
     }
 
     /**
      * Handles onclick event on neutral button. If you are using custom dialog,associate this positive listener with your custom dialogs neutral button
-     * @param dialog custom dialog instance
+     *
+     * @param dialog  custom dialog instance
      * @param context application context
      * @return neutral onClicklistener
      */
-    public View.OnClickListener getNeutralButtonOnClickListener(Dialog dialog,Context context) {
+    public View.OnClickListener getNeutralButtonOnClickListener(Dialog dialog, Context context) {
         SHForegroundNotification shForegroundNotification = new SHForegroundNotification(context);
-        return shForegroundNotification.getNeutralButtonListenerForApplication(dialog,copyToPushNotificationDataObject());
+        return shForegroundNotification.getNeutralButtonListenerForApplication(dialog, copyToPushNotificationDataObject());
 
     }
 
     /**
      * Handles onclick event on negative button. If you are using custom dialog,associate this positive listener with your custom dialogs negative button
-     * @param dialog custom dialog instance
+     *
+     * @param dialog  custom dialog instance
      * @param context application context
      * @return negative onclick listener
      */
-    public View.OnClickListener getNegativeButtonOnClickListener(Dialog dialog,Context context) {
+    public View.OnClickListener getNegativeButtonOnClickListener(Dialog dialog, Context context) {
         SHForegroundNotification shForegroundNotification = new SHForegroundNotification(context);
-        return shForegroundNotification.getNegativeButtonListenerForApplication(dialog,copyToPushNotificationDataObject());
+        return shForegroundNotification.getNegativeButtonListenerForApplication(dialog, copyToPushNotificationDataObject());
 
     }
 

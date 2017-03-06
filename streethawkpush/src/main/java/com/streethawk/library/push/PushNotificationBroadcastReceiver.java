@@ -18,7 +18,6 @@ package com.streethawk.library.push;
 
 import android.annotation.TargetApi;
 import android.app.ActivityManager;
-import android.app.KeyguardManager;
 import android.app.NotificationManager;
 import android.bluetooth.BluetoothAdapter;
 import android.content.ActivityNotFoundException;
@@ -39,6 +38,7 @@ import android.os.PowerManager;
 import android.provider.Settings;
 import android.util.Log;
 import android.widget.Toast;
+
 import com.streethawk.library.core.Logging;
 import com.streethawk.library.core.StreetHawk;
 import com.streethawk.library.core.Util;
@@ -47,15 +47,17 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class PushNotificationBroadcastReceiver extends BroadcastReceiver implements Constants{
+public class PushNotificationBroadcastReceiver extends BroadcastReceiver implements Constants {
 
     private final String SUBTAG = "PushNotificationBroadcastReceiver";
-    public PushNotificationBroadcastReceiver() {}
+
+    public PushNotificationBroadcastReceiver() {
+    }
+
     private final String PROJECT_NUMBER = "project_number";  // project number as in GCM
     private final String SUBMIT_BTN_PAIR = "submit_interactive_button";  // interactive push
     private final String PUSH = "push";   //Smart push
@@ -151,6 +153,7 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver impleme
 
     /**
      * Function returns true is permission is available in manifest
+     *
      * @param context
      * @param code
      * @return
@@ -179,11 +182,12 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver impleme
 
     /**
      * API returns icon identifer. To be used along with API setInteractivePushBtnPairs
+     *
      * @param context
      * @param iconName
      * @return
      */
-    private int getIcon(Context context,String iconName){
+    private int getIcon(Context context, String iconName) {
         String packageName = context.getPackageName();
         return (context.getResources().getIdentifier(iconName, "drawable", packageName));
     }
@@ -191,9 +195,10 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver impleme
 
     /**
      * Set application specific button pairs for interactive push
+     *
      * @param context
      */
-    public void setInteractivePushBtnPairs( final Context context){
+    public void setInteractivePushBtnPairs(final Context context) {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -227,17 +232,17 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver impleme
 
     @Override
     public void onReceive(final Context context, Intent intent) {
-        if(intent.getAction() == Util.BROADCAST_MSG_FROM_CORE){
+        if (intent.getAction() == Util.BROADCAST_MSG_FROM_CORE) {
             //Check for msg from core
             String objAsJson = intent.getStringExtra(Util.MSG_FROM_CORE);
-            if(null!=objAsJson){
-                try{
+            if (null != objAsJson) {
+                try {
                     JSONObject obj = new JSONObject(objAsJson);
-                    String version =(String)obj.get(Util.KEY_UPDATE_VERSION);
-                    if(null!=version){
+                    String version = (String) obj.get(Util.KEY_UPDATE_VERSION);
+                    if (null != version) {
                         setInteractivePushBtnPairs(context);
                     }
-                }catch(JSONException w){
+                } catch (JSONException w) {
                     w.printStackTrace();
                 }
             }
@@ -245,7 +250,7 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver impleme
         // Check for appStatus
         if (intent.getAction() == Util.BROADCAST_SH_APP_STATUS_NOTIFICATION) {
             String installId = intent.getStringExtra(Util.INSTALL_ID);
-            if(null==installId)
+            if (null == installId)
                 return;
             if (installId.equals(Util.getInstallId(context))) {
                 String answer = intent.getStringExtra(Util.APP_STATUS_ANSWER);
@@ -257,10 +262,10 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver impleme
                             if (app_status.has(PROJECT_NUMBER) && !app_status.isNull(PROJECT_NUMBER)) {
                                 final Object value_project_number = app_status.get(PROJECT_NUMBER);
                                 if (value_project_number instanceof String) {
-                                    final String newSenderID = (String)value_project_number;
-                                    if(value_project_number==null)
+                                    final String newSenderID = (String) value_project_number;
+                                    if (value_project_number == null)
                                         return;
-                                    if(newSenderID.isEmpty())
+                                    if (newSenderID.isEmpty())
                                         return;
                                    /*
                                     new Thread(new Runnable() {
@@ -376,8 +381,8 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver impleme
                             if (app_status.has(SUBMIT_BTN_PAIR) && !app_status.isNull(SUBMIT_BTN_PAIR)) {
                                 final Object value_submit_btn_par = app_status.get(SUBMIT_BTN_PAIR);
                                 if (value_submit_btn_par instanceof Boolean) {
-                                    final boolean isSubmitBtnPair = (Boolean)value_submit_btn_par;
-                                    if(isSubmitBtnPair){
+                                    final boolean isSubmitBtnPair = (Boolean) value_submit_btn_par;
+                                    if (isSubmitBtnPair) {
                                         InteractivePushDB.getInstance(context).submitButtonPairsToServer();
                                     }
                                 }
@@ -416,14 +421,14 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver impleme
                 }
                 pushData.displayMyData("StreetHawk");
                 ISHObserver instance = SHGcmListenerService.getISHObserver();
-                if(null!=instance){
-                    PushDataForApplication obj  = new PushDataForApplication();
-                    obj.convertPushDataToPushDataForApp(pushData,obj);
+                if (null != instance) {
+                    PushDataForApplication obj = new PushDataForApplication();
+                    obj.convertPushDataToPushDataForApp(pushData, obj);
                     instance.onReceivePushData(obj);
-                }else{
-                    if(Util.getSHDebugFlag(context)){
-                        Log.e(Util.TAG,"ISHObserver Instance is null");
-                        isCustomDialog=false;
+                } else {
+                    if (Util.getSHDebugFlag(context)) {
+                        Log.e(Util.TAG, "ISHObserver Instance is null");
+                        isCustomDialog = false;
                     }
                 }
 
@@ -441,11 +446,11 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver impleme
                 } catch (NumberFormatException e) {
                     return;
                 }
-                if (code == CODE_GHOST_PUSH){
+                if (code == CODE_GHOST_PUSH) {
                     sendAcknowledgement(context, msgID);
                     return;
                 }
-                if (code == CODE_REQUEST_THE_APP_STATUS){
+                if (code == CODE_REQUEST_THE_APP_STATUS) {
                     Logging.getLoggingInstance(context).checkAppState();
                     return;
                 }
@@ -514,7 +519,7 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver impleme
                             }
                         } else {
                             if (!isCustomDialog) {
-                            switch (code) {
+                                switch (code) {
                                     case CODE_IBEACON:
                                         BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
                                         if (bluetoothAdapter != null) {
@@ -545,11 +550,11 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver impleme
                                         alert.display(pushData);
                                         break;
                                 }
-                            }else{
-                                if(null!=instance){
-                                        PushDataForApplication obj  = new PushDataForApplication();
-                                        obj.convertPushDataToPushDataForApp(pushData,obj);
-                                        instance.onReceivePushData(obj);
+                            } else {
+                                if (null != instance) {
+                                    PushDataForApplication obj = new PushDataForApplication();
+                                    obj.convertPushDataToPushDataForApp(pushData, obj);
+                                    instance.onReceivePushData(obj);
                                 }
                             }
                         }
@@ -837,17 +842,18 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver impleme
 
     /**
      * Just launch application in error condition
+     *
      * @param context
      */
-    private void startLauncherActivity(Context context){
+    private void startLauncherActivity(Context context) {
         Intent LauncherIntent = context.getPackageManager().getLaunchIntentForPackage(context.getApplicationContext().getPackageName());
-        LauncherIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK );
+        LauncherIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         LauncherIntent.putExtra(SHOW_PENDING_DIALOG, true);
         context.startActivity(LauncherIntent);
 
     }
 
-    private void launchActivity(final Context mContext,String friendlyName) {
+    private void launchActivity(final Context mContext, String friendlyName) {
         if (null == friendlyName)
             friendlyName = mContext.getApplicationContext().getPackageName();
         final SharedPreferences activityPrefs = mContext.getSharedPreferences(Util.SHSHARED_PREF_FRNDLST, Context.MODE_PRIVATE);
@@ -869,11 +875,11 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver impleme
                             startLauncherActivity(mContext);
                         }
                     }
-                },100);
+                }, 100);
 
                 // Either we have received FQName or ""
                 tempActivityName = friendlyName;
-            }else{
+            } else {
                 startLauncherActivity(mContext);
             }
         } else {
@@ -964,8 +970,9 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver impleme
         e.putString(PHONEGAP_URL, tempactivityName);
         e.commit();
         ISHObserver instance = SHGcmListenerService.getISHObserver();
-        if(null!=instance)
-            instance.shNotifyAppPage(tempactivityName);;
+        if (null != instance)
+            instance.shNotifyAppPage(tempactivityName);
+        ;
         startApp(context);
     }
 
@@ -995,7 +1002,7 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver impleme
         try {
             Bundle params = new Bundle();
             params.putString(Util.SHMESSAGE_ID, msgId);
-            params.putInt(Util.CODE,CODE_PUSH_ACK);
+            params.putInt(Util.CODE, CODE_PUSH_ACK);
             Logging manager = Logging.getLoggingInstance(context);
             manager.addLogsForSending(params);
         } catch (Exception e) {
@@ -1007,8 +1014,8 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver impleme
         ISHObserver instance = SHGcmListenerService.getISHObserver();
         if (null != instance) {
             instance.shReceivedRawJSON(title, msg, json);
-        }else{
-            Log.e(Util.TAG,SUBTAG+"no ISHObserver registered");
+        } else {
+            Log.e(Util.TAG, SUBTAG + "no ISHObserver registered");
         }
     }
 
@@ -1018,7 +1025,7 @@ public class PushNotificationBroadcastReceiver extends BroadcastReceiver impleme
             params.putString(Util.SHMESSAGE_ID, msgId);
             params.putString(Util.TYPE_NUMERIC, Integer.toString(code));
             params.putString(NotificationBase.SHRESULT, Integer.toString(result));
-            params.putInt(Util.CODE,CODE_PUSH_RESULT);
+            params.putInt(Util.CODE, CODE_PUSH_RESULT);
             Logging manager = Logging.getLoggingInstance(context);
             manager.addLogsForSending(params);
         } catch (Exception e) {

@@ -10,6 +10,7 @@ class PushNotificationHelper extends SHSqliteBase {
     public PushNotificationHelper(Context context) {
         super(context);
     }
+
     @Override
     public void onCreate(SQLiteDatabase database) {
         super.onCreate(database);
@@ -17,6 +18,6 @@ class PushNotificationHelper extends SHSqliteBase {
 
     @Override
     public void onUpgrade(SQLiteDatabase database, int oldVersion, int newVersion) {
-        super.onUpgrade(database,oldVersion,newVersion);
+        super.onUpgrade(database, oldVersion, newVersion);
     }
 }

@@ -35,21 +35,25 @@ import com.streethawk.library.core.Logging;
 import com.streethawk.library.core.StreetHawk;
 import com.streethawk.library.core.Util;
 
-public class SHFeedbackActivity extends Activity implements Constants{
+public class SHFeedbackActivity extends Activity implements Constants {
 
     private EditText mTitleEt;
     private EditText mFeedbackEt;
     private Button mSendButton;
     private Button mCancelButton;
-    private String mTitleText=null;
-    private String mContextText=null;
-    private final int focus_title =0;
-    private final int focus_content = focus_title+1;
+    private String mTitleText = null;
+    private String mContextText = null;
+    private final int focus_title = 0;
+    private final int focus_content = focus_title + 1;
     private Bundle mExtras;
     private String mMessageId = null;
 
     private int mCurrentFocus = 0;
-    public SHFeedbackActivity(){};
+
+    public SHFeedbackActivity() {
+    }
+
+    ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,22 +64,22 @@ public class SHFeedbackActivity extends Activity implements Constants{
         setContentView(getFeedbackView());
         SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
         SharedPreferences.Editor e = sharedPreferences.edit();
-        e.putString(PENDING_DIALOG,null);
+        e.putString(PENDING_DIALOG, null);
         e.commit();
     }
 
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
             StreetHawk.INSTANCE.shActivityResumed(this);
         }
-        if(mTitleText!=null)
+        if (mTitleText != null)
             mTitleEt.setText(mTitleText);
-        if(mContextText!=null)
+        if (mContextText != null)
             mFeedbackEt.setText(mContextText);
 
-        switch(mCurrentFocus){
+        switch (mCurrentFocus) {
             case focus_title:
                 mTitleEt.requestFocus();
                 break;
@@ -89,8 +93,9 @@ public class SHFeedbackActivity extends Activity implements Constants{
         PushNotificationBroadcastReceiver obj = new PushNotificationBroadcastReceiver();
         obj.clearPendingDialogFlagAndDB(getApplicationContext(), this.mMessageId);
     }
+
     @Override
-    public void onPause(){
+    public void onPause() {
         super.onPause();
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
             StreetHawk.INSTANCE.shActivityPaused(this);
@@ -99,17 +104,17 @@ public class SHFeedbackActivity extends Activity implements Constants{
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
-        String title,content;
+        String title, content;
         title = mTitleEt.getText().toString();
         content = mFeedbackEt.getText().toString();
-        savedInstanceState.putString("SHFeedbackActyTitle",title);
-        savedInstanceState.putString("SHFeedbackActyContent",content);
-        savedInstanceState.putString("SHMESSAGEID",mMessageId);
+        savedInstanceState.putString("SHFeedbackActyTitle", title);
+        savedInstanceState.putString("SHFeedbackActyContent", content);
+        savedInstanceState.putString("SHMESSAGEID", mMessageId);
 
-        if(mTitleEt.isFocused())
-            savedInstanceState.putInt("SHFeedbackFocus",focus_title);
-        if(mFeedbackEt.isFocused())
-            savedInstanceState.putInt("SHFeedbackFocus",focus_content);
+        if (mTitleEt.isFocused())
+            savedInstanceState.putInt("SHFeedbackFocus", focus_title);
+        if (mFeedbackEt.isFocused())
+            savedInstanceState.putInt("SHFeedbackFocus", focus_content);
         super.onSaveInstanceState(savedInstanceState);
     }
 
@@ -130,7 +135,7 @@ public class SHFeedbackActivity extends Activity implements Constants{
 
 
     @SuppressLint("InlinedApi")
-    private View getFeedbackView(){
+    private View getFeedbackView() {
         Context context = getApplicationContext();
         LinearLayout mMainLayout = new LinearLayout(getApplicationContext());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
@@ -143,23 +148,23 @@ public class SHFeedbackActivity extends Activity implements Constants{
         mButtonLinearLayout.setOrientation(LinearLayout.HORIZONTAL);
         mButtonLinearLayout.setLayoutParams(new LinearLayout.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.WRAP_CONTENT));
         mButtonLinearLayout.setBackgroundColor(0xffffffff);
-        mButtonLinearLayout.setPadding(10,10,10,10);
+        mButtonLinearLayout.setPadding(10, 10, 10, 10);
 
-        LinearLayout.LayoutParams buttonLayoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.MATCH_PARENT);
-        buttonLayoutParams.weight=1;
+        LinearLayout.LayoutParams buttonLayoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+        buttonLayoutParams.weight = 1;
         mSendButton = new Button(context);
         mSendButton.setLayoutParams(buttonLayoutParams);
         mSendButton.setText(NotificationBase.getStringtoDisplay(context, NotificationBase.TYPE_FEEDBACK_SUBMIT));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
-            mSendButton.setLayoutParams(new LinearLayout.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.MATCH_PARENT,1.0f));
+            mSendButton.setLayoutParams(new LinearLayout.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.MATCH_PARENT, 1.0f));
         mSendButton.setPadding(1, 1, 1, 1);
-        mSendButton.setOnClickListener( saveButtonListener);
+        mSendButton.setOnClickListener(saveButtonListener);
 
         mCancelButton = new Button(context);
         mCancelButton.setLayoutParams(buttonLayoutParams);
         mCancelButton.setText(NotificationBase.getStringtoDisplay(context, NotificationBase.TYPE_FEEDBACK_CANCEL));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
-            mCancelButton.setLayoutParams(new LinearLayout.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.MATCH_PARENT,1.0f));
+            mCancelButton.setLayoutParams(new LinearLayout.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.MATCH_PARENT, 1.0f));
         mCancelButton.setPadding(1, 1, 1, 1);
         mCancelButton.setOnClickListener(cancelButtonListener);
 
@@ -172,13 +177,13 @@ public class SHFeedbackActivity extends Activity implements Constants{
         mTitleLinearLayout.setOrientation(LinearLayout.HORIZONTAL);
         mTitleLinearLayout.setLayoutParams(new LinearLayout.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.WRAP_CONTENT));
         mTitleLinearLayout.setBackgroundColor(0xffffffff);
-        mTitleLinearLayout.setPadding(10,10,10,10);
+        mTitleLinearLayout.setPadding(10, 10, 10, 10);
 
         mTitleEt = new EditText(context);
         mTitleEt.setBackgroundColor(0xFFCCCCCC);
         mTitleEt.setTextColor(Color.BLACK);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
-            mTitleEt.setLayoutParams(new LinearLayout.LayoutParams(0, ActionBar.LayoutParams.MATCH_PARENT,1.0F));
+            mTitleEt.setLayoutParams(new LinearLayout.LayoutParams(0, ActionBar.LayoutParams.MATCH_PARENT, 1.0F));
         mTitleEt.setHint(NotificationBase.getStringtoDisplay(context, NotificationBase.TYPE_FEEDBACK_HINT_TITLE));
         mTitleEt.setPadding(10, 20, 20, 20);
         mTitleLinearLayout.addView(mTitleEt);
@@ -189,11 +194,11 @@ public class SHFeedbackActivity extends Activity implements Constants{
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
             mContentLinearLayout.setLayoutParams(new LinearLayout.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.WRAP_CONTENT));
         mContentLinearLayout.setBackgroundColor(0xffffffff);
-        mContentLinearLayout.setPadding(10,10,10,10);
+        mContentLinearLayout.setPadding(10, 10, 10, 10);
         mFeedbackEt = new EditText(context);
         mFeedbackEt.setBackgroundColor(0xFFCCCCCC);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
-            mFeedbackEt.setLayoutParams(new LinearLayout.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.MATCH_PARENT,1.0F));
+            mFeedbackEt.setLayoutParams(new LinearLayout.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.MATCH_PARENT, 1.0F));
         mFeedbackEt.setTextColor(Color.BLACK);
         mFeedbackEt.setLines(100);
         mFeedbackEt.setGravity(Gravity.TOP);
@@ -206,27 +211,27 @@ public class SHFeedbackActivity extends Activity implements Constants{
         return mMainLayout;
     }
 
-    private void sendPushResult(int result){
+    private void sendPushResult(int result) {
         NotificationBase.sendResultBroadcast(getApplicationContext(), this.mMessageId, result);
     }
 
     private View.OnClickListener saveButtonListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            String title=null;
-            String content=null;
-            if(mTitleEt!=null){
+            String title = null;
+            String content = null;
+            if (mTitleEt != null) {
                 title = mTitleEt.getText().toString();
             }
-            if(mTitleEt!=null){
+            if (mTitleEt != null) {
                 content = mFeedbackEt.getText().toString();
             }
-            if(title.isEmpty() && content.isEmpty()){
+            if (title.isEmpty() && content.isEmpty()) {
                 Toast.makeText(getApplicationContext(), NotificationBase.getStringtoDisplay(getApplicationContext(), NotificationBase.TYPE_FEEDBACK_TOAST_ERROR), Toast.LENGTH_LONG).show();
-            }else{
-                Logging.getLoggingInstance(getApplicationContext()).sendFeedbackToServer(title,content,0);
+            } else {
+                Logging.getLoggingInstance(getApplicationContext()).sendFeedbackToServer(title, content, 0);
                 sendPushResult(STREETHAWK_ACCEPTED);
-                Toast.makeText(getApplicationContext(),NotificationBase.getStringtoDisplay(getApplicationContext(),NotificationBase.TYPE_FEEDBACK_TOAST_SUCCESS),Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), NotificationBase.getStringtoDisplay(getApplicationContext(), NotificationBase.TYPE_FEEDBACK_TOAST_SUCCESS), Toast.LENGTH_LONG).show();
                 finish();
             }
         }

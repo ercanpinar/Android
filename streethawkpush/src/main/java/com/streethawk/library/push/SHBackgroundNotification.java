@@ -79,23 +79,21 @@ class SHBackgroundNotification extends NotificationBase {
      * For android Lollipop, code decides to display heads up notification
      *
      * @param code
-     * @return
-
-    private boolean shouldDisplayHeadsUpNotification(int code) {
-        switch (code) {
-            case CODE_RATE_APP:
-            case CODE_UPDATE_APP:
-            case CODE_LAUNCH_ACTIVITY:
-            case CODE_CALL_TELEPHONE_NUMBER:
-            case CODE_USER_REGISTRATION_SCREEN:
-            case CODE_USER_LOGIN_SCREEN:
-            case CODE_CUSTOM_ACTIONS:
-                return false;
-            default:
-                return true;
-        }
-    }
-    */
+     * @return private boolean shouldDisplayHeadsUpNotification(int code) {
+     * switch (code) {
+     * case CODE_RATE_APP:
+     * case CODE_UPDATE_APP:
+     * case CODE_LAUNCH_ACTIVITY:
+     * case CODE_CALL_TELEPHONE_NUMBER:
+     * case CODE_USER_REGISTRATION_SCREEN:
+     * case CODE_USER_LOGIN_SCREEN:
+     * case CODE_CUSTOM_ACTIONS:
+     * return false;
+     * default:
+     * return true;
+     * }
+     * }
+     */
     private Boolean checkInvalidCode(int code) {
         switch (code) {
             case CODE_OPEN_URL:
@@ -188,7 +186,7 @@ class SHBackgroundNotification extends NotificationBase {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext);
         String positiveButtonTitle = pushData.getBtn1Title();
         int positiveButtonIcon = pushData.getBtn1Icon();
-        if(null==positiveButtonTitle) {
+        if (null == positiveButtonTitle) {
             // get default button title if title is not set from StreetHawk console
             if (code == CODE_SIMPLE_PROMPT) {
                 positiveButtonTitle = getStringtoDisplay(mContext, TYPE_SIMPLE_PUSH_NOTIFICATION_POSITIVE);
@@ -206,7 +204,7 @@ class SHBackgroundNotification extends NotificationBase {
         }
         String negativeButtonTitle = pushData.getBtn2Title();
         int negativeButtonIcon = pushData.getBtn2Icon();
-        if(null==negativeButtonTitle) {
+        if (null == negativeButtonTitle) {
             // get default button title if title is not set from StreetHawk console
             negativeButtonTitle = getNegativeButtonTitle(mContext, code);
         }
@@ -262,8 +260,8 @@ class SHBackgroundNotification extends NotificationBase {
 
         builder.setStyle(new NotificationCompat.BigTextStyle().bigText(msg));
         builder.setContentTitle(title);
-       // if (app_name != null)
-       //     builder.setSubText(app_name);
+        // if (app_name != null)
+        //     builder.setSubText(app_name);
 
         if (msg != null) {
             builder.setContentText(msg);
@@ -289,16 +287,16 @@ class SHBackgroundNotification extends NotificationBase {
                 builder.setSound(soundUri);
         }
 
-        int iconId = sharedPreferences.getInt(RES_ID_FOR_BG_NOTFICATION_LARGE,0);
+        int iconId = sharedPreferences.getInt(RES_ID_FOR_BG_NOTFICATION_LARGE, 0);
 
-        if(0==iconId){
+        if (0 == iconId) {
             iconId = Util.getAppIcon(mContext);
         }
-        Bitmap icon = BitmapFactory.decodeResource(mContext.getResources(),iconId);
+        Bitmap icon = BitmapFactory.decodeResource(mContext.getResources(), iconId);
         builder.setLargeIcon(icon);
 
-        int smalliconId = sharedPreferences.getInt(RES_ID_FOR_BG_NOTFICATION_SMALL,0);
-        if(0==smalliconId){
+        int smalliconId = sharedPreferences.getInt(RES_ID_FOR_BG_NOTFICATION_SMALL, 0);
+        if (0 == smalliconId) {
             smalliconId = Util.getAppIcon(mContext);
         }
         builder.setSmallIcon(smalliconId);
@@ -310,20 +308,20 @@ class SHBackgroundNotification extends NotificationBase {
                 builder.setDeleteIntent(negativePendingIntent);
                 break;
             case CODE_RATE_APP:
-                if(-1==negativeButtonIcon){
+                if (-1 == negativeButtonIcon) {
                     negativeButtonIcon = getIcon(mContext, code, STREETHAWK_DECLINED);
                 }
                 builder.addAction(negativeButtonIcon, negativeButtonTitle, neutralPendingIntent);
                 builder.setDeleteIntent(neutralPendingIntent);
                 break;
             default:
-                if(-1==negativeButtonIcon){
+                if (-1 == negativeButtonIcon) {
                     negativeButtonIcon = getIcon(mContext, code, STREETHAWK_DECLINED);
                 }
                 builder.addAction(negativeButtonIcon, negativeButtonTitle, negativePendingIntent);
                 builder.setDeleteIntent(negativePendingIntent);
         }
-        if(-1==positiveButtonIcon){
+        if (-1 == positiveButtonIcon) {
             positiveButtonIcon = getIcon(mContext, code, STREETHAWK_ACCEPTED);
         }
 

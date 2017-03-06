@@ -32,7 +32,7 @@ import android.widget.TextView;
 
 import com.streethawk.library.core.Util;
 
-class SHFeedbackListModelView extends View implements Constants{
+class SHFeedbackListModelView extends View implements Constants {
     private Context context;
     private TextView textView;
     private LinearLayout linearLayout;
@@ -40,40 +40,40 @@ class SHFeedbackListModelView extends View implements Constants{
     @SuppressWarnings("deprecation")
     @SuppressLint("NewApi")
     // For listview, the below function setText is the actual function which fill in the data
-    public void setText(String value){
+    public void setText(String value) {
         linearLayout.removeView(textView);
         textView = new TextView(context);
         final WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         Display display = windowManager.getDefaultDisplay();
-        int maxDimen=0;
-        int padding_value=0;
+        int maxDimen = 0;
+        int padding_value = 0;
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            maxDimen = display.getWidth() > display.getHeight()?display.getWidth():display.getHeight();
+            maxDimen = display.getWidth() > display.getHeight() ? display.getWidth() : display.getHeight();
         } else {
             try {
                 Point size = new Point();
                 display.getRealSize(size);
-                maxDimen = size.x >size.y?size.x:size.y;
+                maxDimen = size.x > size.y ? size.x : size.y;
             } catch (Exception e) {
-                    Log.e(Util.TAG, "Exception in SHFeedbackListModelView" + e);
+                Log.e(Util.TAG, "Exception in SHFeedbackListModelView" + e);
                 maxDimen = 0;
             }
         }
-        if(maxDimen<320){
+        if (maxDimen < 320) {
             padding_value = 0;
-        }else if(maxDimen>=320 && maxDimen<480){
+        } else if (maxDimen >= 320 && maxDimen < 480) {
             padding_value = 5;
-        }else{
+        } else {
             padding_value = 10;
         }
         float density = context.getResources().getDisplayMetrics().density;
-        int padding = (int)(padding_value*density);
-        textView.setPadding(0,padding,0,padding);
-        if ((Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) || (Util.getPlatformType()==PLATFORM_PHONEGAP)){
+        int padding = (int) (padding_value * density);
+        textView.setPadding(0, padding, 0, padding);
+        if ((Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) || (Util.getPlatformType() == PLATFORM_PHONEGAP)) {
             textView.setBackgroundColor(Color.WHITE);
         }
-        textView.setTextAppearance(context,android.R.style.TextAppearance_DeviceDefault_Medium);
+        textView.setTextAppearance(context, android.R.style.TextAppearance_DeviceDefault_Medium);
         textView.setTextColor(Color.parseColor("#33b5e5"));
         textView.setGravity(Gravity.CENTER);
         textView.setText(value);
@@ -84,8 +84,9 @@ class SHFeedbackListModelView extends View implements Constants{
         super(context);
         this.context = context;
     }
+
     @SuppressLint("NewApi")
-    public View getFeedbackView(){
+    public View getFeedbackView() {
         linearLayout = new LinearLayout(context);
         textView = new TextView(context);
         textView.setGravity(Gravity.CENTER_VERTICAL);

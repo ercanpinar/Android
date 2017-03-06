@@ -31,39 +31,43 @@ class ShFeedbackAdapter extends BaseAdapter {
     private ArrayList mOptions;
     private SHFeedbackListModel temp;
 
-    public ShFeedbackAdapter(Context context, ArrayList options){
+    public ShFeedbackAdapter(Context context, ArrayList options) {
         this.mContext = context;
         this.mOptions = options;
     }
+
     @Override
     public int getCount() {
-        if(mOptions.size()<=0)
+        if (mOptions.size() <= 0)
             return 1;
         return mOptions.size();
     }
+
     @Override
     public Object getItem(int position) {
         return position;
     }
+
     @Override
     public long getItemId(int position) {
         return position;
     }
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View view = convertView;
         SHFeedbackListModelView holder = new SHFeedbackListModelView(mContext);
-        if(convertView==null){
+        if (convertView == null) {
             view = holder.getFeedbackView();
             view.setTag(holder);
-        }else{
+        } else {
             holder = (SHFeedbackListModelView) view.getTag();
         }
-        if(mOptions.size()<=0){
-                Log.i(Util.TAG, "Feedback list is empty");
-        }else{
-            temp=null;
-            temp = (SHFeedbackListModel)mOptions.get(position);
+        if (mOptions.size() <= 0) {
+            Log.i(Util.TAG, "Feedback list is empty");
+        } else {
+            temp = null;
+            temp = (SHFeedbackListModel) mOptions.get(position);
             holder.setText(temp.getOption());
         }
         return view;

@@ -49,7 +49,7 @@ import javax.net.ssl.HttpsURLConnection;
 /**
  * Class hosts function for alert settings. Alert settings can be used to disable and re enable push messaging on user's device.
  */
-class AlertSettings implements Constants{
+class AlertSettings implements Constants {
     public static class AlertSettingsInfo {
 
         public Long pause_minutes;
@@ -118,29 +118,30 @@ class AlertSettings implements Constants{
     private static final String COOKIE_KEY = "Cookie";
     public static final String INSTALL_ID = "installid";
 
-    private static AlertSettings mUserManager=null;
+    private static AlertSettings mUserManager = null;
+
     private AlertSettings(Context context) {
         mContext = context;
     }
 
     private static Context mContext;
 
-    public static AlertSettings getInstance(Context context){
+    public static AlertSettings getInstance(Context context) {
         mContext = context;
-        if(null==mUserManager){
+        if (null == mUserManager) {
             mUserManager = new AlertSettings(context);
         }
         return mUserManager;
     }
 
-    public AlertSettingsInfo getAlertSettings(){
-        if(!Util.getStreethawkState(mContext)){
+    public AlertSettingsInfo getAlertSettings() {
+        if (!Util.getStreethawkState(mContext)) {
             return null;
         }
         Bundle query = new Bundle();
         String installId = Util.getInstallId(mContext);
         String app_key = Util.getAppKey(mContext);
-        query.putString(Util.INSTALL_ID,installId);
+        query.putString(Util.INSTALL_ID, installId);
         BufferedReader reader = null;
         try {
             URL url = Util.getAlertSettingUrl(mContext);
@@ -153,8 +154,8 @@ class AlertSettings implements Constants{
             String libVersion = Util.getLibraryVersion();
             connection.setRequestProperty("X-Installid", installId);
             connection.setRequestProperty("X-App-Key", app_key);
-            connection.setRequestProperty("X-Version",libVersion);
-            connection.setRequestProperty("User-Agent", app_key + "(" + libVersion+ ")");
+            connection.setRequestProperty("X-Version", libVersion);
+            connection.setRequestProperty("User-Agent", app_key + "(" + libVersion + ")");
             connection.connect();
 
             if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
@@ -167,7 +168,8 @@ class AlertSettings implements Constants{
                 }
             }
             connection.disconnect();
-        }catch(Exception e){}
+        } catch (Exception e) {
+        }
         return null;
     }
 
@@ -193,14 +195,15 @@ class AlertSettings implements Constants{
         }
         return false;
     }
-    public boolean setAlertSettings(int pauseMinutes){
-        if(!Util.getStreethawkState(mContext))
+
+    public boolean setAlertSettings(int pauseMinutes) {
+        if (!Util.getStreethawkState(mContext))
             return false;
-        if(pauseMinutes>129600)
-            pauseMinutes=-1;
+        if (pauseMinutes > 129600)
+            pauseMinutes = -1;
 
         String installId = Util.getInstallId(mContext);
-        String app_key =Util.getAppKey(mContext);
+        String app_key = Util.getAppKey(mContext);
         try {
             HashMap<String, String> logMap = new HashMap<String, String>();
             logMap.put(INSTALL_ID, installId);
@@ -215,7 +218,7 @@ class AlertSettings implements Constants{
             String libVersion = Util.getLibraryVersion();
             connection.setRequestProperty("X-Installid", installId);
             connection.setRequestProperty("X-App-Key", app_key);
-            connection.setRequestProperty("X-Version",libVersion);
+            connection.setRequestProperty("X-Version", libVersion);
             connection.setRequestProperty("User-Agent", app_key + "(" + libVersion + ")");
             connection.setRequestProperty(COOKIE_KEY, SESSION_ID_KEY + "=" + Util.getSessionId(mContext));
             connection.connect();
@@ -223,7 +226,7 @@ class AlertSettings implements Constants{
             BufferedWriter writer = new BufferedWriter(
                     new OutputStreamWriter(os, "UTF-8"));
             //String logs = Util.getPostDataString(logMap);
-            String logs="";
+            String logs = "";
             boolean first = true;
             for (Map.Entry<String, String> entry : logMap.entrySet()) {
                 StringBuilder result = new StringBuilder();
@@ -231,18 +234,18 @@ class AlertSettings implements Constants{
                     first = false;
                 else
                     result.append("&");
-                String key      = entry.getKey();
-                String value    = entry.getValue();
-                if(null!=key) {
+                String key = entry.getKey();
+                String value = entry.getValue();
+                if (null != key) {
                     result.append(URLEncoder.encode(entry.getKey(), "UTF-8"));
                     result.append("=");
-                    if(null!=value) {
+                    if (null != value) {
                         result.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
-                    }else{
+                    } else {
                         result.append(URLEncoder.encode("", "UTF-8"));
                     }
                 }
-                logs+=result.toString();
+                logs += result.toString();
                 result = null; //Force GC
             }
             writer.write(logs);
@@ -253,11 +256,11 @@ class AlertSettings implements Constants{
             reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             String answer = reader.readLine();
             if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                SharedPreferences sharedPreferences = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM,Context.MODE_PRIVATE);
+                SharedPreferences sharedPreferences = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putInt(SHPAUSETIME, pauseMinutes);
-                long savedMins  = (long)(System.currentTimeMillis() / 60000);
-                editor.putLong(SHSAVEDTIME,savedMins);
+                long savedMins = (long) (System.currentTimeMillis() / 60000);
+                editor.putLong(SHSAVEDTIME, savedMins);
                 editor.apply();
                 return true;
             }
@@ -271,8 +274,6 @@ class AlertSettings implements Constants{
         }
         return false;
     }
-
-
 
 
 }

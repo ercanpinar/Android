@@ -27,7 +27,7 @@ import android.util.Log;
 
 import com.streethawk.library.core.Util;
 
-class PushNotificationDB implements Constants{
+class PushNotificationDB implements Constants {
     private SQLiteDatabase mDatabase;
     private PushNotificationHelper mDbHelper;
     private Context mContext;
@@ -46,25 +46,26 @@ class PushNotificationDB implements Constants{
     private static final String COLUMN_SOUND = "sound";
     private static final String COLUMN_BADGE = "badge";
     // Interactive push
-    private static final String COLUMN_CONTENT_AVAILABLE    = "contentavailable";
-    private static final String COLUMN_CATEGORY             = "category";
+    private static final String COLUMN_CONTENT_AVAILABLE = "contentavailable";
+    private static final String COLUMN_CATEGORY = "category";
 
     /* Start custom buttons */
     private static final String COLOUMN_BT1Title = "btn1title";
     private static final String COLOUMN_BT2Title = "btn2title";
     private static final String COLOUMN_BT3Title = "btn3title";
 
-    private static final String COLUMN_BT1ICON  = "btn1icon";
-    private static final String COLUMN_BT2ICON  = "btn2icon";
-    private static final String COLUMN_BT3ICON  = "btn3icon";
+    private static final String COLUMN_BT1ICON = "btn1icon";
+    private static final String COLUMN_BT2ICON = "btn2icon";
+    private static final String COLUMN_BT3ICON = "btn3icon";
     /* End custom  buttons*/
 
-    public static PushNotificationDB getInstance(Context context){
-        if(null==instance){
+    public static PushNotificationDB getInstance(Context context) {
+        if (null == instance) {
             instance = new PushNotificationDB(context);
         }
         return instance;
     }
+
     private PushNotificationDB(Context context) {
         this.mContext = context;
         mDbHelper = new PushNotificationHelper(context);
@@ -76,7 +77,7 @@ class PushNotificationDB implements Constants{
 
     public void close() {
         mDbHelper.close();
-        if(mDatabase.isOpen())
+        if (mDatabase.isOpen())
             mDatabase.close();
     }
 
@@ -94,21 +95,21 @@ class PushNotificationDB implements Constants{
         values.put(COLUMN_SOUND, object.getSound());
         values.put(COLUMN_BADGE, object.getBadge());
         String contentAvailable = object.getContentAvailable();
-        values.put(COLUMN_CONTENT_AVAILABLE, contentAvailable );
+        values.put(COLUMN_CONTENT_AVAILABLE, contentAvailable);
         String category = object.getCategory();
-        values.put(COLUMN_CATEGORY, category );
+        values.put(COLUMN_CATEGORY, category);
         /* Start Interactive push */
-        if(null!=category){
+        if (null != category) {
             // Take from preexisting button pairs
             InteractivePush interactivePushObject = new InteractivePush();
-            InteractivePushDB.getInstance(mContext).getBtnPairData(category,interactivePushObject);
+            InteractivePushDB.getInstance(mContext).getBtnPairData(category, interactivePushObject);
             values.put(COLOUMN_BT1Title, interactivePushObject.getB1Title());
             values.put(COLOUMN_BT2Title, interactivePushObject.getB2Title());
             values.put(COLOUMN_BT3Title, interactivePushObject.getB3Title());
             values.put(COLUMN_BT1ICON, interactivePushObject.getB1Icon());
             values.put(COLUMN_BT2ICON, interactivePushObject.getB2Icon());
             values.put(COLUMN_BT3ICON, interactivePushObject.getB3Icon());
-        }else {
+        } else {
         /*Start custom buttons
         * Feature not implemented. Take custom buttons from server
         * */
@@ -122,19 +123,19 @@ class PushNotificationDB implements Constants{
         }
         // Checking agian as it crashed once due to sync issue.
 
-        if(!mDatabase.isOpen()){
+        if (!mDatabase.isOpen()) {
             mDatabase.isOpen();
         }
         try {
             mDatabase.insert(PushNotificationHelper.PUSH_NOTIFICATION_TABLE_NAME, null, values);
-        }catch(IllegalStateException e){
+        } catch (IllegalStateException e) {
             e.printStackTrace();
             return;
         }
         mDatabase.close();
     }
 
-    public void forceDeleteAllRecords(){
+    public void forceDeleteAllRecords() {
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(Util.SHSHARED_PREF_PERM, Context.MODE_PRIVATE);
         SharedPreferences.Editor e = sharedPreferences.edit();
         e.putString(PENDING_DIALOG, null);
@@ -142,18 +143,18 @@ class PushNotificationDB implements Constants{
         mDatabase.execSQL("delete from " + PushNotificationHelper.PUSH_NOTIFICATION_TABLE_NAME);
     }
 
-    public void forceStoreNoDialog(String MsgID){
-        ContentValues values=new ContentValues();
-        values.put(COLUMN_N,"true");
-        mDatabase.update(PushNotificationHelper.PUSH_NOTIFICATION_TABLE_NAME,values,COLUMN_MSGID+" = "+MsgID,null);
+    public void forceStoreNoDialog(String MsgID) {
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_N, "true");
+        mDatabase.update(PushNotificationHelper.PUSH_NOTIFICATION_TABLE_NAME, values, COLUMN_MSGID + " = " + MsgID, null);
     }
 
     public void deleteEntry(String MsgID) {
-        mDatabase.delete(PushNotificationHelper.PUSH_NOTIFICATION_TABLE_NAME,COLUMN_MSGID
+        mDatabase.delete(PushNotificationHelper.PUSH_NOTIFICATION_TABLE_NAME, COLUMN_MSGID
                 + " = " + MsgID, null);
     }
 
-    public boolean getPushNotificationData(final String MsgId,final PushNotificationData obj) {
+    public boolean getPushNotificationData(final String MsgId, final PushNotificationData obj) {
         PushNotificationHelper helper = new PushNotificationHelper(mContext);
         SQLiteDatabase database = helper.getReadableDatabase();
         if (null == MsgId) {
@@ -177,7 +178,7 @@ class PushNotificationDB implements Constants{
                 String Badge = cursor.getString(cursor.getColumnIndex(COLUMN_BADGE));
                 // For interactive push
                 String content_available = cursor.getString(cursor.getColumnIndex(COLUMN_CONTENT_AVAILABLE));
-                String category  = cursor.getString(cursor.getColumnIndex(COLUMN_CATEGORY));
+                String category = cursor.getString(cursor.getColumnIndex(COLUMN_CATEGORY));
 
                 /*Start custom buttons*/
                 String btn1Title = cursor.getString(cursor.getColumnIndex(COLOUMN_BT1Title));
@@ -212,7 +213,7 @@ class PushNotificationDB implements Constants{
                 obj.setBtn2Icon(btn2Icon);
                 obj.setBtn3Icon(btn3Icon);
             } else {
-                Log.e(Util.TAG,"getPushNotificationData msgId " + MsgId + " Not found");
+                Log.e(Util.TAG, "getPushNotificationData msgId " + MsgId + " Not found");
                 cursor.close();
                 database.close();
                 helper.close();

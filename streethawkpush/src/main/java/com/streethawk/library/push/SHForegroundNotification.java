@@ -39,7 +39,6 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.streethawk.library.core.ISHEventObserver;
 import com.streethawk.library.core.Logging;
 import com.streethawk.library.core.StreetHawk;
 import com.streethawk.library.core.Util;
@@ -65,7 +64,6 @@ class SHForegroundNotification extends NotificationBase {
 
     /**
      * API to dismiss Streethawk dialog dialog
-     *
      */
     public void dismissForegroundDialog() {
         if (null != mForegroundDialog) {
@@ -81,10 +79,10 @@ class SHForegroundNotification extends NotificationBase {
     }
 
 
-    public static void dismissCurrentShowingDialog(){
-        if(MyDialog==null)
+    public static void dismissCurrentShowingDialog() {
+        if (MyDialog == null)
             return;
-        if(MyDialog.isShowing())
+        if (MyDialog.isShowing())
             MyDialog.dismiss();
     }
 
@@ -253,11 +251,11 @@ class SHForegroundNotification extends NotificationBase {
                     }
 
                     String positiveButtonTitle = pushData.getBtn1Title();
-                    if(null==positiveButtonTitle){
+                    if (null == positiveButtonTitle) {
                         positiveButtonTitle = getPositiveButtonTitle(mContext, code);
                     }
                     String NegativeButtonTitle = pushData.getBtn2Title();
-                    if(null==NegativeButtonTitle){
+                    if (null == NegativeButtonTitle) {
                         NegativeButtonTitle = getNegativeButtonTitle(mContext, code);
                     }
                     String neutralButtonTitle = pushData.getBtn3Title();
@@ -310,19 +308,19 @@ class SHForegroundNotification extends NotificationBase {
                             String b1Title = pushData.getBtn1Title();
                             String b2Title = pushData.getBtn2Title();
                             String b3Title = pushData.getBtn3Title();
-                            if(null==b1Title)
-                                b1Title = getPositiveButtonTitle(mContext,CODE_CUSTOM_ACTIONS);
+                            if (null == b1Title)
+                                b1Title = getPositiveButtonTitle(mContext, CODE_CUSTOM_ACTIONS);
                             builder.setPositiveButton(b1Title, getPositiveOnClickListener(pushData.getMsgId()));
-                            if(null!=b2Title) {
-                                if(!b2Title.isEmpty())
+                            if (null != b2Title) {
+                                if (!b2Title.isEmpty())
                                     builder.setNegativeButton(b2Title, getNegativeOnClickListener(pushData.getMsgId()));
-                            }else{
-                                b2Title = getNegativeButtonTitle(mContext,CODE_CUSTOM_ACTIONS);
+                            } else {
+                                b2Title = getNegativeButtonTitle(mContext, CODE_CUSTOM_ACTIONS);
                                 builder.setNegativeButton(b2Title, getNegativeOnClickListener(pushData.getMsgId()));
                             }
 
-                            if(null!=b3Title) {
-                                if(!b3Title.isEmpty())
+                            if (null != b3Title) {
+                                if (!b3Title.isEmpty())
                                     builder.setNeutralButton(b3Title, getNeutralOnClickListener(pushData.getMsgId()));
                             }
                             break;
@@ -748,7 +746,7 @@ class SHForegroundNotification extends NotificationBase {
     private void SendErrorLog(String comment) {
         try {
             Bundle params = new Bundle();
-            params.putInt(Util.CODE,CODE_ERROR);
+            params.putInt(Util.CODE, CODE_ERROR);
             params.putString(Util.TYPE_STRING, comment);
             Logging manager = Logging.getLoggingInstance(mContext);
             manager.addLogsForSending(params);

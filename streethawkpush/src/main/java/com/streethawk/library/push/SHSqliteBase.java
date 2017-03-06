@@ -10,7 +10,7 @@ import com.streethawk.library.core.Util;
 
 public abstract class SHSqliteBase extends SQLiteOpenHelper {
 
-    private static final String STREETHAWK_DATABASE  = "streethawk.db";
+    private static final String STREETHAWK_DATABASE = "streethawk.db";
     private static final int STREETHAWK_DATABASE_VERSION = 9;
     public static final String PUSH_NOTIFICATION_TABLE_NAME = "pushnotification";
     private final String KEY_IBEACON = "shKeyIBeacon";
@@ -30,16 +30,16 @@ public abstract class SHSqliteBase extends SQLiteOpenHelper {
     protected static final String COLUMN_BADGE = "badge";
     // Interactive push
     private static final String COLUMN_CONTENT_AVAILABLE = "contentavailable";
-    private static final String COLUMN_CATEGORY          = "category";
+    private static final String COLUMN_CATEGORY = "category";
 
     /* Start custom button */
     private static final String COLOUMN_BT1Title = "btn1title";
     private static final String COLOUMN_BT2Title = "btn2title";
     private static final String COLOUMN_BT3Title = "btn3title";
 
-    private static final String COLUMN_BT1ICON  = "btn1icon";
-    private static final String COLUMN_BT2ICON  = "btn2icon";
-    private static final String COLUMN_BT3ICON  = "btn3icon";
+    private static final String COLUMN_BT1ICON = "btn1icon";
+    private static final String COLUMN_BT2ICON = "btn2icon";
+    private static final String COLUMN_BT3ICON = "btn3icon";
     /* End custom  button*/
 
 
@@ -54,29 +54,29 @@ public abstract class SHSqliteBase extends SQLiteOpenHelper {
     protected final String COMA = ", ";
     protected final String SINGLE_QUOTE = "'";
 
-    protected static final String BEACON_TABLE_NAME    = "beacondata";
-    protected static final String COLUMN_BEACONID      = "beaconid";
-    protected static final String COLUMN_UUID          = "uuid";
-    protected static final String COLUMN_MAJOR_NUMBER  = "majorno";
-    protected static final String COLUMN_MINOR_NUMBER  = "minorno";
+    protected static final String BEACON_TABLE_NAME = "beacondata";
+    protected static final String COLUMN_BEACONID = "beaconid";
+    protected static final String COLUMN_UUID = "uuid";
+    protected static final String COLUMN_MAJOR_NUMBER = "majorno";
+    protected static final String COLUMN_MINOR_NUMBER = "minorno";
 
 
-    protected static final String GEOFENCE_TABLE_NAME  = "geofence";
-    protected static final String COLUMN_GEOFENCEID    = "id";
-    protected static final String COLUMN_LATITUDE      = "latitude";
-    protected static final String COLUMN_LONGITUDE     = "longitude";
-    protected static final String COLUMN_RADIUS        = "radius";
-    protected static final String COLUMN_PARENT        = "parent";
-    protected static final String COLUMN_NODE          = "geofences";
+    protected static final String GEOFENCE_TABLE_NAME = "geofence";
+    protected static final String COLUMN_GEOFENCEID = "id";
+    protected static final String COLUMN_LATITUDE = "latitude";
+    protected static final String COLUMN_LONGITUDE = "longitude";
+    protected static final String COLUMN_RADIUS = "radius";
+    protected static final String COLUMN_PARENT = "parent";
+    protected static final String COLUMN_NODE = "geofences";
 
-    protected static final String BUTTON_PAIR_TABLE_NAME    = "interactivepush";
-    protected static final String COLUMN_BTNPAIRID          = "id";
-    protected static final String COLUMN_B1TITLE            = "b1title";
-    protected static final String COLUMN_B1ICON             = "b1icon";
-    protected static final String COLUMN_B2TITLE            = "b2title";
-    protected static final String COLUMN_B2ICON             = "b2icon";
-    protected static final String COLUMN_B3TITLE            = "b3title";
-    protected static final String COLUMN_B3ICON             = "b3icon";
+    protected static final String BUTTON_PAIR_TABLE_NAME = "interactivepush";
+    protected static final String COLUMN_BTNPAIRID = "id";
+    protected static final String COLUMN_B1TITLE = "b1title";
+    protected static final String COLUMN_B1ICON = "b1icon";
+    protected static final String COLUMN_B2TITLE = "b2title";
+    protected static final String COLUMN_B2ICON = "b2icon";
+    protected static final String COLUMN_B3TITLE = "b3title";
+    protected static final String COLUMN_B3ICON = "b3icon";
 
     public SHSqliteBase(Context context) {
         super(context, STREETHAWK_DATABASE, null, STREETHAWK_DATABASE_VERSION);
@@ -84,9 +84,9 @@ public abstract class SHSqliteBase extends SQLiteOpenHelper {
     }
 
     @Override
-    public  void onCreate(SQLiteDatabase database){
+    public void onCreate(SQLiteDatabase database) {
 
-         final String PUSH_NOTIFICATION_DATABASE_CREATE = "create table "
+        final String PUSH_NOTIFICATION_DATABASE_CREATE = "create table "
                 + PUSH_NOTIFICATION_TABLE_NAME + "(" + COLUMN_MSGID
                 + TEXT + PRIMARY_KEY + UNIQUE + COMA
                 + COLUMN_CODE + TEXT + COMA
@@ -109,15 +109,15 @@ public abstract class SHSqliteBase extends SQLiteOpenHelper {
                 + COLUMN_BT3ICON + INTEGER
                 + ")";
 
-         final String BEACON_DATABASE_CREATE = "create table "
+        final String BEACON_DATABASE_CREATE = "create table "
                 + BEACON_TABLE_NAME + "(" + COLUMN_BEACONID
                 + TEXT + PRIMARY_KEY + UNIQUE + COMA
-                + COLUMN_UUID + TEXT + NOT+NULL+COMA
-                + COLUMN_MAJOR_NUMBER + INTEGER +NOT+NULL + COMA
-                + COLUMN_MINOR_NUMBER + INTEGER +NOT+NULL
+                + COLUMN_UUID + TEXT + NOT + NULL + COMA
+                + COLUMN_MAJOR_NUMBER + INTEGER + NOT + NULL + COMA
+                + COLUMN_MINOR_NUMBER + INTEGER + NOT + NULL
                 + ")";
 
-         final String GEOFENCE_DATABASE_CREATE = "create table "
+        final String GEOFENCE_DATABASE_CREATE = "create table "
                 + GEOFENCE_TABLE_NAME + "(" + COLUMN_GEOFENCEID
                 + TEXT + PRIMARY_KEY + UNIQUE + COMA
                 + COLUMN_LATITUDE + TEXT + COMA
@@ -127,7 +127,7 @@ public abstract class SHSqliteBase extends SQLiteOpenHelper {
                 + COLUMN_NODE + TEXT
                 + ")";
 
-         final String BTNPAIR_DATABASE_CREATE = "create table "
+        final String BTNPAIR_DATABASE_CREATE = "create table "
                 + BUTTON_PAIR_TABLE_NAME + "(" + COLUMN_BTNPAIRID
                 + TEXT + PRIMARY_KEY + UNIQUE + COMA
                 + COLUMN_B1TITLE + TEXT + COMA

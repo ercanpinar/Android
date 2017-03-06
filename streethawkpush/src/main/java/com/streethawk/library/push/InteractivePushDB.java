@@ -41,26 +41,26 @@ import java.util.ArrayList;
 
 import javax.net.ssl.HttpsURLConnection;
 
-class InteractivePushDB implements Constants{
+class InteractivePushDB implements Constants {
     private SQLiteDatabase mDatabase;
     private PushNotificationHelper mDbHelper;
     private Context mContext;
     private static InteractivePushDB instance = null;
 
-    private static final String BUTTON_PAIR_TABLE_NAME    = "interactivepush";
-    private static final String COLUMN_BTNPAIRID          = "id";
+    private static final String BUTTON_PAIR_TABLE_NAME = "interactivepush";
+    private static final String COLUMN_BTNPAIRID = "id";
 
-    private static final String COLUMN_B1TITLE            = "b1title";
-    private static final String COLUMN_B1ICON             = "b1icon";
+    private static final String COLUMN_B1TITLE = "b1title";
+    private static final String COLUMN_B1ICON = "b1icon";
 
-    private static final String COLUMN_B2TITLE            = "b2title";
-    private static final String COLUMN_B2ICON             = "b2icon";
+    private static final String COLUMN_B2TITLE = "b2title";
+    private static final String COLUMN_B2ICON = "b2icon";
 
-    private static final String COLUMN_B3TITLE            = "b3title";
-    private static final String COLUMN_B3ICON             = "b3icon";
+    private static final String COLUMN_B3TITLE = "b3title";
+    private static final String COLUMN_B3ICON = "b3icon";
 
-    public static InteractivePushDB getInstance(Context context){
-        if(null==instance){
+    public static InteractivePushDB getInstance(Context context) {
+        if (null == instance) {
             instance = new InteractivePushDB(context);
         }
         return instance;
@@ -77,7 +77,7 @@ class InteractivePushDB implements Constants{
 
     public void close() {
         mDbHelper.close();
-        if(mDatabase.isOpen())
+        if (mDatabase.isOpen())
             mDatabase.close();
     }
 
@@ -85,26 +85,26 @@ class InteractivePushDB implements Constants{
      * TODO: Implement this function
      * Function returns true if database is empty
      */
-    public boolean checkForEmptyDB(){
+    public boolean checkForEmptyDB() {
         return false;
     }
 
     public void storeBtnPairsFromList(ArrayList<InteractivePush> objectList) {
         ContentValues values = new ContentValues();
-        if(!mDatabase.isOpen()){
+        if (!mDatabase.isOpen()) {
             mDatabase.isOpen();
         }
-        for(InteractivePush object:objectList){
-            values.put(COLUMN_BTNPAIRID,object.getPairTitle());
+        for (InteractivePush object : objectList) {
+            values.put(COLUMN_BTNPAIRID, object.getPairTitle());
 
-            values.put(COLUMN_B1TITLE,object.getB1Title());
-            values.put(COLUMN_B1ICON,object.getB1Icon());
+            values.put(COLUMN_B1TITLE, object.getB1Title());
+            values.put(COLUMN_B1ICON, object.getB1Icon());
 
-            values.put(COLUMN_B2TITLE,object.getB2Title());
-            values.put(COLUMN_B2ICON,object.getB2Icon());
+            values.put(COLUMN_B2TITLE, object.getB2Title());
+            values.put(COLUMN_B2ICON, object.getB2Icon());
 
-            values.put(COLUMN_B3TITLE,object.getB3Title());
-            values.put(COLUMN_B3ICON,object.getB3Icon());
+            values.put(COLUMN_B3TITLE, object.getB3Title());
+            values.put(COLUMN_B3ICON, object.getB3Icon());
 
             mDatabase.insert(BUTTON_PAIR_TABLE_NAME, null, values);
         }
@@ -113,6 +113,7 @@ class InteractivePushDB implements Constants{
 
     /**
      * Function stores single object
+     *
      * @param object
      * @throws IllegalStateException
      */
@@ -127,30 +128,31 @@ class InteractivePushDB implements Constants{
         values.put(COLUMN_B3ICON, object.getB3Icon());
 
         // Checking agian as it crashed once due to sync issue.
-        if(!mDatabase.isOpen()){
+        if (!mDatabase.isOpen()) {
             mDatabase.isOpen();
         }
         try {
             mDatabase.insert(BUTTON_PAIR_TABLE_NAME, null, values);
-        }catch(IllegalStateException e){
+        } catch (IllegalStateException e) {
             e.printStackTrace();
             return;
         }
         mDatabase.close();
     }
 
-    public void forceDeleteAllRecords(){
+    public void forceDeleteAllRecords() {
         mDatabase.execSQL("delete from " + BUTTON_PAIR_TABLE_NAME);
     }
 
 
     /**
      * Function returns button pair based on pair title. Apps will require this function to know button pair
+     *
      * @param pairTitle par title as in content type
      * @param obj
      * @return
      */
-    public boolean getBtnPairData(final String pairTitle,final InteractivePush obj) {
+    public boolean getBtnPairData(final String pairTitle, final InteractivePush obj) {
         PushNotificationHelper helper = new PushNotificationHelper(mContext);
         SQLiteDatabase database = helper.getReadableDatabase();
         if (null == pairTitle) {
@@ -186,7 +188,7 @@ class InteractivePushDB implements Constants{
                 obj.setB3Title(B3Title);
                 obj.setB3Icon(B3Icon);
             } else {
-                Log.e(Util.TAG,"Interactive push button pair  " + pairTitle + " Not found");
+                Log.e(Util.TAG, "Interactive push button pair  " + pairTitle + " Not found");
                 cursor.close();
                 database.close();
                 helper.close();
@@ -201,7 +203,7 @@ class InteractivePushDB implements Constants{
      * Function when called send button pairs to server
      * call this function from access_data
      */
-    public void submitButtonPairsToServer(){
+    public void submitButtonPairsToServer() {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -214,6 +216,7 @@ class InteractivePushDB implements Constants{
 
     /**
      * Functions returns json in a format which can be sent to server
+     *
      * @param btnPairs
      */
     private void getButtonPairsForSending(JSONObject btnPairs) {
@@ -226,7 +229,7 @@ class InteractivePushDB implements Constants{
         String query = "select * from " + BUTTON_PAIR_TABLE_NAME;
         Cursor cursor = database.rawQuery(query, null);
         if (cursor != null && cursor.moveToFirst()) {
-            while(!cursor.isAfterLast()) {
+            while (!cursor.isAfterLast()) {
                 String pairName = cursor.getString(cursor.getColumnIndex(COLUMN_BTNPAIRID));
                 String b1 = cursor.getString(cursor.getColumnIndex(COLUMN_B1TITLE));
                 String b2 = cursor.getString(cursor.getColumnIndex(COLUMN_B2TITLE));
@@ -245,12 +248,13 @@ class InteractivePushDB implements Constants{
 
     /**
      * Function send button pairs to server
+     *
      * @param btnPairs
      */
     private void sendButtonPairsToServer(final JSONObject btnPairs) {
         if (null == mContext)
             return;
-        if(null==btnPairs)
+        if (null == btnPairs)
             return;
         final String BUTTONPAIR = "button";
         if (Util.isNetworkConnected(mContext)) {
@@ -260,12 +264,12 @@ class InteractivePushDB implements Constants{
                     String app_key = Util.getAppKey(mContext);
                     String installid = Util.getInstallId(mContext);
 
-                    JSONObject payload  = new JSONObject();
+                    JSONObject payload = new JSONObject();
                     try {
                         payload.put(BUTTONPAIR, btnPairs);
                         payload.put(Util.INSTALL_ID, installid);
-                    }catch(JSONException e){
-                        Log.e(Util.TAG,"Exception while sending button pairs to server. returning");
+                    } catch (JSONException e) {
+                        Log.e(Util.TAG, "Exception while sending button pairs to server. returning");
                         e.printStackTrace();
                         return;
                     }
@@ -284,7 +288,7 @@ class InteractivePushDB implements Constants{
                         OutputStream os = connection.getOutputStream();
                         BufferedWriter writer = new BufferedWriter(
                                 new OutputStreamWriter(os, "UTF-8"));
-                        if(payload.length()<=0){
+                        if (payload.length() <= 0) {
                             return;
                         }
                         writer.write(payload.toString());

@@ -40,7 +40,7 @@
             android:enabled="true"
             android:exported="true">
             <intent-filter>
-                <action android:name="com.google.android.gms.iid.InstanceID"/>
+                <action android:name="com.google.android.gms.iid.InstanceID" />
             </intent-filter>
         </service>
     </application>

@@ -20,21 +20,24 @@ package com.streethawk.library.push;
 import android.os.Bundle;
 
 /**
- *  Interface for handling Raw JSON. App developer can implement this interface in activity or service
- *  to handle Raw JSON sent from Streethawk web console.
+ * Interface for handling Raw JSON. App developer can implement this interface in activity or service
+ * to handle Raw JSON sent from Streethawk web console.
  */
 public interface ISHObserver {
     /**
      * This function is called when Raw JSON is received by Streethawk Library in form of Bundle. This method needs to be implemented
      * in application
-     * @param title    Title can be displayed as title of alert dialog
-     * @param message  Message can be displayed as message in alert dialog
-     * @param json     Raw json to be handled by application
+     *
+     * @param title   Title can be displayed as title of alert dialog
+     * @param message Message can be displayed as message in alert dialog
+     * @param json    Raw json to be handled by application
      */
     public void shReceivedRawJSON(String title, String message, String json);
+
     /**
      * API to support launch app page feature in cross platforms. Ignore this method in you are developing on Native
      * This function is called when streethawk library receives app page request from server
+     *
      * @param pageName to be diaplayed
      */
     public void shNotifyAppPage(String pageName);
@@ -48,10 +51,11 @@ public interface ISHObserver {
     /**
      * API is called when application receives push result for a push message
      */
-    public void onReceiveResult(PushDataForApplication resultData,int result);
+    public void onReceiveResult(PushDataForApplication resultData, int result);
 
     /**
      * Function returns third party push payload sent using StreetHawk push notification service
+     *
      * @param pushPayload
      */
     public void onReceiveNonSHPushPayload(Bundle pushPayload);

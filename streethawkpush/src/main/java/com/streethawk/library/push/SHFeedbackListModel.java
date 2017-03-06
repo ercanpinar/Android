@@ -20,10 +20,11 @@ class SHFeedbackListModel {
 
     private String mOption;
 
-    public void setOption(String option){
+    public void setOption(String option) {
         this.mOption = option;
     }
-    public String getOption(){
+
+    public String getOption() {
         return this.mOption;
     }
 }

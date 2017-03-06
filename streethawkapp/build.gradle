@@ -3,12 +3,12 @@ apply plugin: 'com.android.application'
 android {
     signingConfigs {
     }
-    compileSdkVersion 24
-    buildToolsVersion "24.0.0"
+    compileSdkVersion 25
+    buildToolsVersion "25.0.2"
     defaultConfig {
         applicationId "com.streethawk.streethawkapp"
         minSdkVersion 11
-        targetSdkVersion 24
+        targetSdkVersion 25
         versionCode 2
         versionName "1.1"
         multiDexEnabled true
@@ -50,9 +50,12 @@ dependencies {
 
     // compile project(':streethawkauthor')
     compile project(':streethawkpointzi')
-    compile 'com.android.support:appcompat-v7:24.2.1'
-    compile 'com.android.support:design:+'
-    compile 'com.android.support:support-v4:24.2.1'
+
+    compile 'com.android.support:appcompat-v7:25.2.0'
+    compile 'com.android.support:design:25.2.0'
+    compile 'com.android.support:support-v4:25.2.0'
+
     androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2'
+    androidTestCompile 'com.android.support:support-annotations:25.2.0'
 
 }

@@ -2,7 +2,7 @@ apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion "25.0.1"
+    buildToolsVersion "25.0.2"
 
     defaultConfig {
         minSdkVersion 10
@@ -41,7 +41,7 @@ dependencies {
     compile project(':streethawkcore')
     //compile 'com.streethawk:core:1.8.9'
     // compile 'com.streethawk:core:1.8.0-SNAPSHOT'
-    compile 'com.android.support:appcompat-v7:25.0.1'
+    compile 'com.android.support:appcompat-v7:25.2.0'
 }
 
 //apply from: '../sh_maven_push.gradle'

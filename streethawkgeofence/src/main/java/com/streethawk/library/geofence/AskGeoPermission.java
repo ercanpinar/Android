@@ -1,4 +1,3 @@
-
 package com.streethawk.library.geofence;
 
 import android.Manifest;
@@ -20,16 +19,17 @@ public class AskGeoPermission extends Activity implements Constants {
     boolean showDialog = false;
     private final String SUBTAG = "AskGeoPermission ";
     private final int PERMISSIONS_LOCATION = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ask_geo_permission);
-        showDialog = getIntent().getBooleanExtra(PERMISSION_BOOL,false);
+        showDialog = getIntent().getBooleanExtra(PERMISSION_BOOL, false);
     }
 
-    public void onResume(){
+    public void onResume() {
         super.onResume();
-        if(showDialog) {
+        if (showDialog) {
             displayPermissionDialog();
         }
         mActivity = this;
@@ -50,8 +50,8 @@ public class AskGeoPermission extends Activity implements Constants {
         }
     }
 
-    private DialogInterface.OnClickListener askPermission(){
-        return new DialogInterface.OnClickListener(){
+    private DialogInterface.OnClickListener askPermission() {
+        return new DialogInterface.OnClickListener() {
             @TargetApi(Build.VERSION_CODES.M)
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
@@ -62,13 +62,13 @@ public class AskGeoPermission extends Activity implements Constants {
     }
 
 
-    private void displayPermissionDialog(){
+    private void displayPermissionDialog() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if(!checkForLocationPermission(this)) {
-                if(shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)){
-                    String DEFAULT_PERMISSION_TITLE   = "Permission Required";
+            if (!checkForLocationPermission(this)) {
+                if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
+                    String DEFAULT_PERMISSION_TITLE = "Permission Required";
                     String DEFAULT_PERMISSION_MESSAGE = "Would you like to grant us location permission for monitoring geofences?";
-                    String DEFAULT_BUTTON_TEXT        = "Okay";
+                    String DEFAULT_BUTTON_TEXT = "Okay";
                     int id;
                     String title;
                     String message;
@@ -97,17 +97,17 @@ public class AskGeoPermission extends Activity implements Constants {
                     AlertDialog.Builder builder = new AlertDialog.Builder(this);
                     builder.setTitle(title);
                     builder.setMessage(message);
-                    builder.setPositiveButton(buttonTitle,askPermission());
-                }else{
+                    builder.setPositiveButton(buttonTitle, askPermission());
+                } else {
                     this.requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION},
                             PERMISSIONS_LOCATION);
                 }
-            }else{
+            } else {
                 Log.i(Util.TAG, SUBTAG + "App already has the permission");
                 finish();
             }
         } else {
-            Log.e(Util.TAG,SUBTAG+"Not requesting permission "+Build.VERSION.SDK_INT+" "+Build.VERSION_CODES.M);
+            Log.e(Util.TAG, SUBTAG + "Not requesting permission " + Build.VERSION.SDK_INT + " " + Build.VERSION_CODES.M);
             finish();
         }
     }
@@ -119,7 +119,7 @@ public class AskGeoPermission extends Activity implements Constants {
             case PERMISSIONS_LOCATION: {
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                   SHGeofence.getInstance(this).startGeofenceMonitoring();
+                    SHGeofence.getInstance(this).startGeofenceMonitoring();
                 } else {
                     Log.d(Util.TAG, "Permission not granted by user");
                 }

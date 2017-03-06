@@ -1,7 +1,6 @@
 package com.streethawk.library.geofence;
 
 import android.Manifest;
-import android.annotation.TargetApi;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -11,7 +10,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -19,13 +17,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import com.google.android.gms.common.api.Status;
-
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.Result;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationServices;
 import com.streethawk.library.core.StreetHawk;
@@ -36,8 +29,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Location service to fetch user's location
@@ -199,7 +190,7 @@ public class StreetHawkLocationService extends Service implements Constants,
                 return null;
             }
         }
-        if(null!=mGoogleApiClient) {
+        if (null != mGoogleApiClient) {
             Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
             if (location != null) {
                 double lat = location.getLatitude();
@@ -210,8 +201,7 @@ public class StreetHawkLocationService extends Service implements Constants,
                 return new double[]{lat, lng};
             }
             return null;
-        }
-        else{
+        } else {
             buildGoogleApiClient();
             mGoogleApiClient.connect();
             return null;
@@ -364,7 +354,7 @@ public class StreetHawkLocationService extends Service implements Constants,
                     }
                 }
             }
-            geofenceList.subList(MAX_GEOFENCE_CNT,size).clear();
+            geofenceList.subList(MAX_GEOFENCE_CNT, size).clear();
             return;
         }
     }
@@ -383,12 +373,13 @@ public class StreetHawkLocationService extends Service implements Constants,
 
     /**
      * Return time required to travel that distance
+     *
      * @param distance
      * @return
      */
-    private double getTimeToTravel(double distance){
+    private double getTimeToTravel(double distance) {
         final double avgSpeed = 16.6667;
-        return (distance/avgSpeed);
+        return (distance / avgSpeed);
 
     }
 
@@ -401,7 +392,7 @@ public class StreetHawkLocationService extends Service implements Constants,
                 int size = mGeofenceList.size();
                 if (size >= MAX_GEOFENCE_CNT) {
                     GeofenceData obj = geofenceList.get(size - 1);
-                    if(getTimeToTravel(obj.getDistance())< 3600){
+                    if (getTimeToTravel(obj.getDistance()) < 3600) {
                         new Thread(new Runnable() {
                             @Override
                             public void run() {

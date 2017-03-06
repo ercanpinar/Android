@@ -15,6 +15,7 @@
  * License along with this library.
  */
 package com.streethawk.library.geofence;
+
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -23,18 +24,19 @@ import android.os.Bundle;
 
 import java.util.ArrayList;
 
-public class SHGeofence implements Constants
-{
+public class SHGeofence implements Constants {
     private static Context mContext;
     private static SHGeofence mInstance;
 
 
     private PendingIntent mGeofencePendingIntent;
 
-    private SHGeofence() {}
+    private SHGeofence() {
+    }
 
     /**
      * Returns instance of SHGeofence class
+     *
      * @param context
      * @return
      */
@@ -55,15 +57,15 @@ public class SHGeofence implements Constants
     /**
      * Stop geofence monitoring
      */
-    public void stopGeofenceMonitoring(){
+    public void stopGeofenceMonitoring() {
         StreetHawkLocationService.getInstance(mContext).stopMonitoring();
     }
 
     /**
      * Start geofence monitoring
      */
-    public void startGeofenceMonitoring(){
-        Intent intent = new Intent(mContext,StreetHawkLocationService.class);
+    public void startGeofenceMonitoring() {
+        Intent intent = new Intent(mContext, StreetHawkLocationService.class);
         mContext.startService(intent);
         StreetHawkLocationService.getInstance(mContext).startGeofenceMonitoring();
 
@@ -72,25 +74,28 @@ public class SHGeofence implements Constants
 
     /**
      * Use registerForGoefenceTransition when a device enters a geofence registered with StreetHawk
+     *
      * @param observer
      */
-    public void registerForGoefenceTransition(INotifyGeofenceTransition observer){
+    public void registerForGoefenceTransition(INotifyGeofenceTransition observer) {
         GeofenceService.registerGeofenceObserver(observer);
     }
 
     /**
      * Function retruns list of geofences a device entered
+     *
      * @return
      */
-    public ArrayList<GeofenceData> getGeofenceEnteredList(){
+    public ArrayList<GeofenceData> getGeofenceEnteredList() {
         return GeofenceService.getGeoEnterList();
     }
 
     /**
      * Function returns list of geofences device left
+     *
      * @return
      */
-    public ArrayList<GeofenceData> getGeofenceExitList(){
+    public ArrayList<GeofenceData> getGeofenceExitList() {
         return GeofenceService.getGeoExitList();
     }
 
@@ -99,6 +104,7 @@ public class SHGeofence implements Constants
      * Instead
      * 1. set SH_GEO_PERMISSION_BUTTON_TEXT, SH_GEO_PERMISSION_TITLE and SH_GEO_PERMISSION_MESSAGE in res/values/strings.xml of your app
      * 2. Use startGeofenceWithPermissionDialog();
+     *
      * @param message
      */
     @Deprecated
@@ -109,7 +115,7 @@ public class SHGeofence implements Constants
     /**
      * use startGeofenceWithPermissionDialog to make SDK ask for location permission from user.
      */
-    public void startGeofenceWithPermissionDialog(){
+    public void startGeofenceWithPermissionDialog() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             Intent intent = new Intent(mContext, AskGeoPermission.class);
             Bundle extras = new Bundle();
@@ -117,7 +123,7 @@ public class SHGeofence implements Constants
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.putExtras(extras);
             mContext.startActivity(intent);
-        }else{
+        } else {
             startGeofenceMonitoring();
         }
     }

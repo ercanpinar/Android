@@ -20,15 +20,11 @@ import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
-import android.widget.Toast;
 
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingEvent;
-//import com.streethawk.library.core.Logging;
 import com.streethawk.library.core.Util;
 
 import org.json.JSONException;
@@ -38,6 +34,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+//import com.streethawk.library.core.Logging;
 
 public class GeofenceService extends IntentService {
     private static final String TAG = "geofenceService";
@@ -123,7 +121,7 @@ public class GeofenceService extends IntentService {
                     return;
                 }
                 Bundle params = new Bundle();
-                params.putInt(Util.CODE,Constants.CODE_GEOFENCE_UPDATES);
+                params.putInt(Util.CODE, Constants.CODE_GEOFENCE_UPDATES);
                 params.putString(Util.SHMESSAGE_ID, null);
                 params.putString("json", logs);
                 GeofenceLogging.getInstance().sendLogs(context, params);
@@ -132,15 +130,16 @@ public class GeofenceService extends IntentService {
         if (null != triggeredParent)
             triggeredParent.clear();
     }
+
     /**
      * Register new geofence list for monitoring when the user exists geofence
      */
-    private void refreshGeofenceMonitoring(){
+    private void refreshGeofenceMonitoring() {
         new Thread(new Runnable() {
             @Override
             public void run() {
                 ArrayList<GeofenceData> geofenceList = new ArrayList<GeofenceData>();
-                StreetHawkLocationService client= StreetHawkLocationService.getInstance(getApplicationContext());
+                StreetHawkLocationService client = StreetHawkLocationService.getInstance(getApplicationContext());
                 client.stopMonitoring();
                 try {
                     Thread.sleep(1000);
@@ -182,7 +181,7 @@ public class GeofenceService extends IntentService {
                 database.getMatchedGeofenceData(geofenceID, object);
                 try {
                     Bundle params = new Bundle();
-                    params.putInt(Util.CODE,Constants.CODE_GEOFENCE_UPDATES);
+                    params.putInt(Util.CODE, Constants.CODE_GEOFENCE_UPDATES);
                     params.putString(Util.SHMESSAGE_ID, null);
                     JSONObject matchGeofence = new JSONObject();
                     geofenceID = spitGeofenceId(geofenceID);
@@ -214,7 +213,7 @@ public class GeofenceService extends IntentService {
                 database.getMatchedGeofenceData(geofenceID, object);
                 try {
                     Bundle params = new Bundle();
-                    params.putInt(Util.CODE,Constants.CODE_GEOFENCE_UPDATES);
+                    params.putInt(Util.CODE, Constants.CODE_GEOFENCE_UPDATES);
                     params.putString(Util.SHMESSAGE_ID, null);
                     JSONObject matchGeofence = new JSONObject();
                     geofenceID = spitGeofenceId(geofenceID);

@@ -22,7 +22,6 @@ package com.streethawk.library.geofence;
 public interface INotifyGeofenceTransition {
 
     /**
-     *
      * Function called when device enters a geofence region registered with StreetHawk
      * call getGeofenceEnteredList to get the list of geofences entered by the device.
      */

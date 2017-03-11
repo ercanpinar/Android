@@ -1,4 +1,4 @@
-package com.streethawk.streethawkapp;
+package com.streethawk.streethawkapp.activity;
 
 import android.app.Activity;
 import android.content.Context;
@@ -16,7 +16,9 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-public class SetupActivity extends AppCompatActivity implements Constants {
+import com.streethawk.streethawkapp.R;
+
+public class SetupActivity extends AppCompatActivity implements ConstantsInterface {
 
     private Activity mActivity;
 

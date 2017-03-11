@@ -1,4 +1,4 @@
-package com.streethawk.streethawkapp;
+package com.streethawk.streethawkapp.activity;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -12,8 +12,9 @@ import android.widget.Button;
 import com.streethawk.library.beacon.Beacons;
 import com.streethawk.library.geofence.SHGeofence;
 import com.streethawk.library.locations.SHLocation;
+import com.streethawk.streethawkapp.R;
 
-public class StartBGL extends AppCompatActivity implements Constants {
+public class StartBGLActivity extends AppCompatActivity implements ConstantsInterface {
 
 
     private Button mBtn;

@@ -1,9 +1,9 @@
-package com.streethawk.streethawkapp;
+package com.streethawk.streethawkapp.activity;
 
 /**
  * Created by anuragkondeya on 13/04/2016.
  */
-interface Constants {
+interface ConstantsInterface {
 
     String APP_PREF = "shdemopref";
     String KEY_SETUP = "setup";

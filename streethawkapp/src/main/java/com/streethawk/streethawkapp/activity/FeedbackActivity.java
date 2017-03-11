@@ -1,4 +1,4 @@
-package com.streethawk.streethawkapp;
+package com.streethawk.streethawkapp.activity;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -9,8 +9,9 @@ import android.view.View;
 import android.widget.EditText;
 
 import com.streethawk.library.core.StreetHawk;
+import com.streethawk.streethawkapp.R;
 
-public class Feedback extends AppCompatActivity {
+public class FeedbackActivity extends AppCompatActivity {
     EditText mTitleET;
     EditText mContentET;
 

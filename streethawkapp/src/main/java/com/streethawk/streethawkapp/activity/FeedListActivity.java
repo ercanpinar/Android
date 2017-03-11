@@ -1,4 +1,4 @@
-package com.streethawk.streethawkapp;
+package com.streethawk.streethawkapp.activity;
 
 import android.content.Context;
 import android.content.Intent;
@@ -18,6 +18,8 @@ import android.widget.TextView;
 
 import com.streethawk.library.feeds.ISHFeedItemObserver;
 import com.streethawk.library.feeds.SHFeedItem;
+import com.streethawk.streethawkapp.R;
+import com.streethawk.streethawkapp.model.FeedItem;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -27,7 +29,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FeedList extends AppCompatActivity implements ISHFeedItemObserver, Constants {
+public class FeedListActivity extends AppCompatActivity implements ISHFeedItemObserver, ConstantsInterface {
 
     private List<FeedItem> mFeedList;
 

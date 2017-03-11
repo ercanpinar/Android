@@ -1,4 +1,4 @@
-package com.streethawk.streethawkapp;
+package com.streethawk.streethawkapp.activity;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -7,7 +7,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
-public class Pointzi extends AppCompatActivity {
+import com.streethawk.streethawkapp.R;
+
+public class PointziActivity extends AppCompatActivity {
 
     private Activity mActivity;
 
@@ -68,7 +70,7 @@ public class Pointzi extends AppCompatActivity {
         for (int i = 0; i < mOptions.length; i++) {
 
         }
-        final Pointzi.PointziArrayAdapter adapter = new MainActivity.PointziArrayAdapter(this,
+        final PointziActivity.PointziArrayAdapter adapter = new MainActivity.PointziArrayAdapter(this,
                 R.layout.customlistview, list);
         listview.setAdapter(adapter);
         listview.setOnItemClickListener();

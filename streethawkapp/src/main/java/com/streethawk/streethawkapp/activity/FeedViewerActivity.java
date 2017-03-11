@@ -1,4 +1,4 @@
-package com.streethawk.streethawkapp;
+package com.streethawk.streethawkapp.activity;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -9,8 +9,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.streethawk.library.feeds.SHFeedItem;
+import com.streethawk.streethawkapp.R;
+import com.streethawk.streethawkapp.model.FeedItem;
 
-public class FeedViewerActivity extends Activity implements Constants {
+public class FeedViewerActivity extends Activity implements ConstantsInterface {
 
     private FeedItem mFeedItem = null;
     private FrameLayout mBaseFrame;

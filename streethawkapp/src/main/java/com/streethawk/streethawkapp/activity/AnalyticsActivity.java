@@ -1,4 +1,4 @@
-package com.streethawk.streethawkapp;
+package com.streethawk.streethawkapp.activity;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -13,12 +13,13 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.streethawk.library.core.StreetHawk;
+import com.streethawk.streethawkapp.R;
 
 /*
 import com.streethawk.library.feeds.SHTips;
 import com.streethawk.library.feeds.SHTours;
 */
-public class Analytics extends AppCompatActivity {
+public class AnalyticsActivity extends AppCompatActivity {
 
 
     private Spinner mTagSpinner;

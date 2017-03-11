@@ -1,4 +1,4 @@
-package com.streethawk.streethawkapp;
+package com.streethawk.streethawkapp.activity;
 
 import android.app.Activity;
 import android.content.Context;
@@ -33,6 +33,7 @@ import android.widget.Toast;
 import com.streethawk.library.core.StreetHawk;
 import com.streethawk.library.core.Util;
 import com.streethawk.library.push.Push;
+import com.streethawk.streethawkapp.R;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -53,7 +54,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.HttpsURLConnection;
 
-public class PushActivity extends AppCompatActivity implements Constants {
+public class PushActivity extends AppCompatActivity implements ConstantsInterface {
 
     private final int ACTION_SIMPLE_PUSH = 0;
     private final int ACTION_DEEPLINK = ACTION_SIMPLE_PUSH + 1;

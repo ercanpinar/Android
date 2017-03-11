@@ -1,4 +1,4 @@
-package com.streethawk.streethawkapp;
+package com.streethawk.streethawkapp.activity;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -35,6 +35,9 @@ import com.streethawk.library.pointzi.Pointzi;
 import com.streethawk.library.push.ISHObserver;
 import com.streethawk.library.push.Push;
 import com.streethawk.library.push.PushDataForApplication;
+import com.streethawk.streethawkapp.R;
+import com.streethawk.streethawkapp.service.SHFabService;
+import com.streethawk.streethawkapp.service.TestService;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -44,7 +47,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements
-        Constants, IGrowth, INotifyGeofenceTransition, INotifyBeaconTransition,
+        ConstantsInterface, IGrowth, INotifyGeofenceTransition, INotifyBeaconTransition,
         ISHObserver, ISHFeedItemObserver, ISHEventObserver {
     int ANALYTICS = 0;
     int GROWTH = ANALYTICS + 1;
@@ -165,14 +168,14 @@ public class MainActivity extends AppCompatActivity implements
     private ListView mListView = null;
     private View mView = null;
     private final String[] mOptions = new String[]{
-            "Analytics",
+            "AnalyticsActivity",
             "Growth",
             "Push",
             "Beacons",
             "Geofence",
             "Locations",
             "Feeds",
-            "Feedback",
+            "FeedbackActivity",
             "Install-Info",
             "Reset ",
             "WebView",
@@ -325,7 +328,7 @@ public class MainActivity extends AppCompatActivity implements
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 Intent intent = null;
                 if (ANALYTICS == position) {
-                    intent = new Intent(getApplicationContext(), Analytics.class);
+                    intent = new Intent(getApplicationContext(), AnalyticsActivity.class);
                 }
                 if (GROWTH == position) {
                     intent = new Intent(getApplicationContext(), GrowthActivity.class);
@@ -334,22 +337,22 @@ public class MainActivity extends AppCompatActivity implements
                     intent = new Intent(getApplicationContext(), PushActivity.class);
                 }
                 if (BEACONS == position) {
-                    intent = new Intent(getApplicationContext(), StartBGL.class);
+                    intent = new Intent(getApplicationContext(), StartBGLActivity.class);
                     intent.putExtra(ACTIVITY, ACTiVITY_BEACON);
                 }
                 if (GEOFENCE == position) {
-                    intent = new Intent(getApplicationContext(), StartBGL.class);
+                    intent = new Intent(getApplicationContext(), StartBGLActivity.class);
                     intent.putExtra(ACTIVITY, ACTiVITY_GEOFENCE);
                 }
                 if (LOCATIONS == position) {
-                    intent = new Intent(getApplicationContext(), StartBGL.class);
+                    intent = new Intent(getApplicationContext(), StartBGLActivity.class);
                     intent.putExtra(ACTIVITY, ACTiVITY_LOCATION);
                 }
                 if (FEEDS == position) {
-                    intent = new Intent(getApplicationContext(), FeedList.class);
+                    intent = new Intent(getApplicationContext(), FeedListActivity.class);
                 }
                 if (FEEDBACK == position) {
-                    intent = new Intent(getApplicationContext(), Feedback.class);
+                    intent = new Intent(getApplicationContext(), FeedbackActivity.class);
                 }
                 if (INSTALLINFO == position) {
 
@@ -398,10 +401,10 @@ public class MainActivity extends AppCompatActivity implements
                     builder.create().show();
                 }
                 if (SETTINGS == position) {
-                    intent = new Intent(getApplicationContext(), Setting.class);
+                    intent = new Intent(getApplicationContext(), SettingsActivity.class);
                 }
                 if (WEBVIEW == position) {
-                    Intent webIntent = new Intent(getApplicationContext(), WebViewPOC.class);
+                    Intent webIntent = new Intent(getApplicationContext(), WebViewPOCActivity.class);
                     startActivity(webIntent);
                 }
                 if (AUTHORING == position) {
@@ -442,14 +445,14 @@ public class MainActivity extends AppCompatActivity implements
                 }
 
                 if (SERVER_LOGS == position) {
-                    intent = new Intent(getApplicationContext(), Logreport.class);
+                    intent = new Intent(getApplicationContext(), LogreportActivity.class);
 
                 }
                 if (MODAL == position) {
                     // new Modal().unit_test_tooltip(mActivity);
                 }
                 if (TEST_TIP == position) {
-                    intent = new Intent(getApplicationContext(), TestPointzi.class);
+                    intent = new Intent(getApplicationContext(), TestPointziActivity.class);
                 }
 
                 if (null != intent) {

@@ -1,4 +1,4 @@
-package com.streethawk.streethawkapp;
+package com.streethawk.streethawkapp.util;
 
 /**
  * Created by anuragkondeya on 2/12/16.

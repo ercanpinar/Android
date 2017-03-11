@@ -1,4 +1,4 @@
-package com.streethawk.streethawkapp;
+package com.streethawk.streethawkapp.activity;
 
 import android.app.Activity;
 import android.content.Context;
@@ -15,8 +15,10 @@ import android.widget.RadioButton;
 import android.widget.Toast;
 
 import com.streethawk.library.core.Util;
+import com.streethawk.streethawkapp.R;
+import com.streethawk.streethawkapp.service.TestService;
 
-public class Setting extends AppCompatActivity implements Constants {
+public class SettingsActivity extends AppCompatActivity implements ConstantsInterface {
 
     Activity mActivity;
 

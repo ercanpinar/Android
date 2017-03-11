@@ -1,4 +1,4 @@
-package com.streethawk.streethawkapp;
+package com.streethawk.streethawkapp.model;
 
 import android.graphics.Bitmap;
 import android.os.Parcel;

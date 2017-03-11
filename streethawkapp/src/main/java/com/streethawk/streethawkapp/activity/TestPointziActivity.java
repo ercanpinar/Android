@@ -1,12 +1,14 @@
-package com.streethawk.streethawkapp;
+package com.streethawk.streethawkapp.activity;
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
+import com.streethawk.streethawkapp.R;
 
-public class TestPointzi extends AppCompatActivity {
+
+public class TestPointziActivity extends AppCompatActivity {
 
     private Activity mActivity;
 

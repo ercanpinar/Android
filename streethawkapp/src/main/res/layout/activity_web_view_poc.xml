@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:id="@+id/webframe"
     android:background="@android:color/transparent"
-    tools:context="com.streethawk.streethawkapp.WebViewPOC">
+    tools:context="com.streethawk.streethawkapp.activity.WebViewPOCActivity">
 
 
 </FrameLayout>

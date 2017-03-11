@@ -1,4 +1,4 @@
-package com.streethawk.streethawkapp;
+package com.streethawk.streethawkapp.receiver;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -10,9 +10,6 @@ public class FeedBroadCastReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-
         //TODO: Add code to display local notification or badge
-
-
     }
 }

@@ -1,4 +1,4 @@
-package com.streethawk.streethawkapp;
+package com.streethawk.streethawkapp.service;
 
 import android.app.Activity;
 import android.app.Notification;

@@ -1,4 +1,4 @@
-package com.streethawk.streethawkapp;
+package com.streethawk.streethawkapp.activity;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.streethawk.library.core.StreetHawk;
 import com.streethawk.library.growth.Growth;
 import com.streethawk.library.growth.IGrowth;
+import com.streethawk.streethawkapp.R;
 
 import org.json.JSONObject;
 

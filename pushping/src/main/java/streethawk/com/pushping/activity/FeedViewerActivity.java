@@ -1,4 +1,4 @@
-package streethawk.com.pushping;
+package streethawk.com.pushping.activity;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -10,7 +10,10 @@ import android.widget.Toast;
 
 import com.streethawk.library.feeds.SHFeedItem;
 
-public class FeedViewerActivity extends Activity implements Constants {
+import streethawk.com.pushping.model.FeedItem;
+import streethawk.com.pushping.R;
+
+public class FeedViewerActivity extends Activity implements ConstantsInterface {
 
     private FeedItem mFeedItem = null;
     private FrameLayout mBaseFrame;

@@ -1,4 +1,4 @@
-package streethawk.com.pushping;
+package streethawk.com.pushping.activity;
 
 import android.content.Context;
 import android.content.Intent;
@@ -9,7 +9,9 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class Logreport extends AppCompatActivity {
+import streethawk.com.pushping.R;
+
+public class LogReportActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

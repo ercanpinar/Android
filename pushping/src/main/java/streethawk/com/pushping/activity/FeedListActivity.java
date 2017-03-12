@@ -1,4 +1,4 @@
-package streethawk.com.pushping;
+package streethawk.com.pushping.activity;
 
 import android.content.Context;
 import android.content.Intent;
@@ -27,7 +27,10 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FeedList extends AppCompatActivity implements ISHFeedItemObserver, Constants {
+import streethawk.com.pushping.model.FeedItem;
+import streethawk.com.pushping.R;
+
+public class FeedListActivity extends AppCompatActivity implements ISHFeedItemObserver, ConstantsInterface {
 
     private List<FeedItem> mFeedList;
 

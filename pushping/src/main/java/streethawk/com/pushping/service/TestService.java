@@ -1,4 +1,4 @@
-package streethawk.com.pushping;
+package streethawk.com.pushping.service;
 
 import android.app.Activity;
 import android.app.Notification;

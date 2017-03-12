@@ -1,4 +1,4 @@
-package streethawk.com.pushping;
+package streethawk.com.pushping.model;
 
 import android.graphics.Bitmap;
 import android.os.Parcel;

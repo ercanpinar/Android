@@ -1,4 +1,4 @@
-package streethawk.com.pushping;
+package streethawk.com.pushping.service;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -31,6 +31,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.net.ssl.HttpsURLConnection;
+
+import streethawk.com.pushping.util.MailAuthenticator;
+import streethawk.com.pushping.receiver.AlarmTaskReceiver;
 
 public class PushPingService extends Service implements ISHObserver {
 
@@ -216,7 +219,7 @@ public class PushPingService extends Service implements ISHObserver {
             public void run() {
 
                 Log.e("Anurag", "Sending email");
-                Mail m = new Mail("parserdemosh2@gmail.com", "Reliance@123");
+                MailAuthenticator m = new MailAuthenticator("parserdemosh2@gmail.com", "Reliance@123");
                 String[] toArr = {"devops@streethawk.com"};
                 m.setTo(toArr);
                 m.setFrom("parserdemosh2@gmail.com");

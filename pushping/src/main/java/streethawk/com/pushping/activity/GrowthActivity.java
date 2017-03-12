@@ -1,4 +1,4 @@
-package streethawk.com.pushping;
+package streethawk.com.pushping.activity;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -17,6 +17,8 @@ import com.streethawk.library.growth.Growth;
 import com.streethawk.library.growth.IGrowth;
 
 import org.json.JSONObject;
+
+import streethawk.com.pushping.R;
 
 public class GrowthActivity extends AppCompatActivity {
 

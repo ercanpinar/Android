@@ -1,4 +1,4 @@
-package streethawk.com.pushping;
+package streethawk.com.pushping.receiver;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

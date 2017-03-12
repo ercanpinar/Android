@@ -1,4 +1,4 @@
-package streethawk.com.pushping;
+package streethawk.com.pushping.activity;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -10,7 +10,9 @@ import android.widget.EditText;
 
 import com.streethawk.library.core.StreetHawk;
 
-public class Feedback extends AppCompatActivity {
+import streethawk.com.pushping.R;
+
+public class FeedbackActivity extends AppCompatActivity {
     EditText mTitleET;
     EditText mContentET;
 

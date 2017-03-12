@@ -1,4 +1,4 @@
-package streethawk.com.pushping;
+package streethawk.com.pushping.util;
 
 import java.util.Date;
 import java.util.Properties;
@@ -19,7 +19,7 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
 
-public class Mail extends javax.mail.Authenticator {
+public class MailAuthenticator extends javax.mail.Authenticator {
     private String _user;
     private String _pass;
 
@@ -53,7 +53,7 @@ public class Mail extends javax.mail.Authenticator {
         _subject = subject;
     }
 
-    public Mail() {
+    public MailAuthenticator() {
         _host = "smtp.gmail.com"; // default smtp server
         _port = "465"; // default smtp port
         _sport = "465"; // default socketfactory port
@@ -79,7 +79,7 @@ public class Mail extends javax.mail.Authenticator {
         CommandMap.setDefaultCommandMap(mc);
     }
 
-    public Mail(String user, String pass) {
+    public MailAuthenticator(String user, String pass) {
         this();
 
         _user = user;

@@ -1,4 +1,4 @@
-package streethawk.com.pushping;
+package streethawk.com.pushping.activity;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -14,11 +14,13 @@ import android.widget.Toast;
 
 import com.streethawk.library.core.StreetHawk;
 
+import streethawk.com.pushping.R;
+
 /*
 import com.streethawk.library.feeds.SHTips;
 import com.streethawk.library.feeds.SHTours;
 */
-public class Analytics extends AppCompatActivity {
+public class AnalyticsActivity extends AppCompatActivity {
 
 
     private Spinner mTagSpinner;

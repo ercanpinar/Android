@@ -1,4 +1,4 @@
-package streethawk.com.pushping;
+package streethawk.com.pushping.activity;
 
 import android.app.Activity;
 import android.content.Context;
@@ -53,7 +53,9 @@ import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.HttpsURLConnection;
 
-public class PushActivity extends AppCompatActivity implements Constants {
+import streethawk.com.pushping.R;
+
+public class PushActivity extends AppCompatActivity implements ConstantsInterface {
 
     private final int ACTION_SIMPLE_PUSH = 0;
     private final int ACTION_DEEPLINK = ACTION_SIMPLE_PUSH + 1;

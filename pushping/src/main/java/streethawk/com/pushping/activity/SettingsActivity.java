@@ -1,4 +1,4 @@
-package streethawk.com.pushping;
+package streethawk.com.pushping.activity;
 
 import android.app.Activity;
 import android.content.Context;
@@ -17,7 +17,11 @@ import android.widget.Toast;
 
 import com.streethawk.library.core.Util;
 
-public class Setting extends AppCompatActivity implements Constants {
+import streethawk.com.pushping.service.PushPingService;
+import streethawk.com.pushping.R;
+import streethawk.com.pushping.service.TestService;
+
+public class SettingsActivity extends AppCompatActivity implements ConstantsInterface {
 
     Activity mActivity;
 

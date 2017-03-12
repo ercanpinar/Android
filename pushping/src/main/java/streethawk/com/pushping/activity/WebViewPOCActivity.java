@@ -1,4 +1,4 @@
-package streethawk.com.pushping;
+package streethawk.com.pushping.activity;
 
 import android.app.Activity;
 import android.content.Context;
@@ -8,11 +8,13 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
 
+import streethawk.com.pushping.R;
+
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
-public class WebViewPOC extends Activity {
+public class WebViewPOCActivity extends Activity {
 
 
     private FrameLayout baseFrame;

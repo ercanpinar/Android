@@ -1,4 +1,4 @@
-package streethawk.com.pushping;
+package streethawk.com.pushping.receiver;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -6,6 +6,8 @@ import android.content.Intent;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import streethawk.com.pushping.service.PushPingService;
 
 public class AlarmTaskReceiver extends BroadcastReceiver {
     private final String TAG = "PushTester";

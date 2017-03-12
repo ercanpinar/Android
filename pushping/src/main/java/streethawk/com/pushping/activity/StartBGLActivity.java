@@ -1,4 +1,4 @@
-package streethawk.com.pushping;
+package streethawk.com.pushping.activity;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -13,7 +13,9 @@ import com.streethawk.library.beacon.Beacons;
 import com.streethawk.library.geofence.SHGeofence;
 import com.streethawk.library.locations.SHLocation;
 
-public class StartBGL extends AppCompatActivity implements Constants {
+import streethawk.com.pushping.R;
+
+public class StartBGLActivity extends AppCompatActivity implements ConstantsInterface {
 
 
     private Button mBtn;

@@ -17,8 +17,8 @@ import android.widget.Toast;
 
 import com.streethawk.library.core.Util;
 
-import streethawk.com.pushping.service.PushPingService;
 import streethawk.com.pushping.R;
+import streethawk.com.pushping.service.PushPingService;
 import streethawk.com.pushping.service.TestService;
 
 public class SettingsActivity extends AppCompatActivity implements ConstantsInterface {

@@ -27,8 +27,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import streethawk.com.pushping.model.FeedItem;
 import streethawk.com.pushping.R;
+import streethawk.com.pushping.model.FeedItem;
 
 public class FeedListActivity extends AppCompatActivity implements ISHFeedItemObserver, ConstantsInterface {
 

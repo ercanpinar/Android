@@ -10,8 +10,8 @@ import android.widget.Toast;
 
 import com.streethawk.library.feeds.SHFeedItem;
 
-import streethawk.com.pushping.model.FeedItem;
 import streethawk.com.pushping.R;
+import streethawk.com.pushping.model.FeedItem;
 
 public class FeedViewerActivity extends Activity implements ConstantsInterface {
 

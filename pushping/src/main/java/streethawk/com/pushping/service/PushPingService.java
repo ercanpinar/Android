@@ -32,8 +32,8 @@ import java.util.Map;
 
 import javax.net.ssl.HttpsURLConnection;
 
-import streethawk.com.pushping.util.MailAuthenticator;
 import streethawk.com.pushping.receiver.AlarmTaskReceiver;
+import streethawk.com.pushping.util.MailAuthenticator;
 
 public class PushPingService extends Service implements ISHObserver {
 
